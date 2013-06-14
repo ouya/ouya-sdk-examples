@@ -54,7 +54,7 @@ if (gamepad_button_check(varPlayer, gp_face1))
     draw_sprite(13, -1, x, y);
 }
 
-if (gamepad_button_check(varPlayer, gp_shoulderl))
+if (gamepad_button_check(varPlayer, gp_shoulderr))
 {
     draw_sprite(15, -1, x, y);
 }
