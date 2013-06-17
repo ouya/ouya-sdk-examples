@@ -45,7 +45,8 @@
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK" />
-    <Reference Include="Ouya.Console.Api">
+    <Reference Include="Ouya.Console.Api, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Ouya.Console.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -70,6 +71,7 @@
     <AndroidAsset Include="Assets\Content\Graphics\ButtonInactive.xnb" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\Raw\key.der" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Values\Strings.xml" />

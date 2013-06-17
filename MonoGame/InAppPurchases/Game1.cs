@@ -1,8 +1,11 @@
 using System;
+using System.Threading.Tasks;
+using Android.OS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Ouya.Console.Api;
 
 namespace InAppPurchases
 {
@@ -16,7 +19,10 @@ namespace InAppPurchases
         SpriteFont font;
         List<ButtonSprite> m_buttons = new List<ButtonSprite>();
         FocusManager m_focusManager = new FocusManager();
-        private string m_debugText = string.Empty;
+        private static string m_debugText = string.Empty;
+        private ButtonSprite BtnGetProducts = null;
+        private ButtonSprite BtnPurchase = null;
+        private ButtonSprite BtnGetReceipts = null;
 
         public Game1()
         {
@@ -44,6 +50,39 @@ namespace InAppPurchases
             base.Initialize();
         }
 
+        public class RequestProductsListener : IOuyaResponseListener
+        {
+            public void Dispose()
+            {
+                
+            }
+
+            public IntPtr Handle
+            {
+                get { return Game1.Activity.Handle; }
+            }
+
+            public void OnCancel()
+            {
+                Game1.m_debugText = "OnCancel";
+            }
+
+            public void OnFailure(int errorCode, string errorMessage, Bundle optionalData)
+            {
+                Game1.m_debugText = "OnFailure";
+            }
+
+            public void OnSuccess(Java.Lang.Object result)
+            {
+                Game1.m_debugText = "OnSuccess";
+            }
+        }
+
+        void ProductListComplete()
+        {
+            
+        }
+
         private void OnClick(object sender, FocusManager.ClickEventArgs clickEventArgs)
         {
             if (null == clickEventArgs.Button)
@@ -52,6 +91,33 @@ namespace InAppPurchases
             }
 
             m_debugText = clickEventArgs.Button.Text;
+
+            if (clickEventArgs.Button == BtnGetProducts)
+            {
+                m_debugText = "Fetching product list...";
+                IList<Purchasable> purchasables = new List<Purchasable>()
+                                                      {
+                                                          new Purchasable("long_sword"),
+                                                          new Purchasable("sharp_axe"),
+                                                          new Purchasable("cool_level"),
+                                                          new Purchasable("awesome_sauce"),
+                                                          new Purchasable("__DECLINED__THIS_PURCHASE"),
+                                                      };
+
+                RequestProductsListener requestProductsListener = new RequestProductsListener();
+
+                Activity1.PurchaseFacade.RequestProductList(purchasables, requestProductsListener);
+            }
+
+            else if (clickEventArgs.Button == BtnPurchase)
+            {
+                
+            }
+
+            else if (clickEventArgs.Button == BtnGetReceipts)
+            {
+                
+            }
         }
 
         /// <summary>
@@ -66,49 +132,49 @@ namespace InAppPurchases
             // TODO: use this.Content to load your game content here
             font = Content.Load<SpriteFont>("spriteFont1");
 
-            ButtonSprite btnGetProducts = new ButtonSprite();
-            btnGetProducts.Initialize(font,
+            BtnGetProducts = new ButtonSprite();
+            BtnGetProducts.Initialize(font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            btnGetProducts.Position = new Vector2(150, 200);
-            btnGetProducts.TextureScale = new Vector2(2f, 0.5f);
-            btnGetProducts.Text = "Get Product List";
-            btnGetProducts.TextOffset = new Vector2(40, 20);
-            m_buttons.Add(btnGetProducts);
+            BtnGetProducts.Position = new Vector2(150, 200);
+            BtnGetProducts.TextureScale = new Vector2(2f, 0.5f);
+            BtnGetProducts.Text = "Get Product List";
+            BtnGetProducts.TextOffset = new Vector2(40, 20);
+            m_buttons.Add(BtnGetProducts);
 
-            ButtonSprite btnPurchase = new ButtonSprite();
-            btnPurchase.Initialize(font,
+            BtnPurchase = new ButtonSprite();
+            BtnPurchase.Initialize(font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            btnPurchase.Position = new Vector2(600, 200);
-            btnPurchase.TextureScale = new Vector2(2f, 0.5f);
-            btnPurchase.Text = "Request Purchase";
-            btnPurchase.TextOffset = new Vector2(40, 20);
-            m_buttons.Add(btnPurchase);
+            BtnPurchase.Position = new Vector2(600, 200);
+            BtnPurchase.TextureScale = new Vector2(2f, 0.5f);
+            BtnPurchase.Text = "Request Purchase";
+            BtnPurchase.TextOffset = new Vector2(40, 20);
+            m_buttons.Add(BtnPurchase);
 
-            ButtonSprite btnGetReceipts = new ButtonSprite();
-            btnGetReceipts.Initialize(font,
+            BtnGetReceipts = new ButtonSprite();
+            BtnGetReceipts.Initialize(font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            btnGetReceipts.Position = new Vector2(1100, 200);
-            btnGetReceipts.TextureScale = new Vector2(1.5f, 0.5f);
-            btnGetReceipts.Text = "Get Receipts";
-            btnGetReceipts.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(btnGetReceipts);
+            BtnGetReceipts.Position = new Vector2(1100, 200);
+            BtnGetReceipts.TextureScale = new Vector2(1.5f, 0.5f);
+            BtnGetReceipts.Text = "Get Receipts";
+            BtnGetReceipts.TextOffset = new Vector2(30, 20);
+            m_buttons.Add(BtnGetReceipts);
 
-            m_focusManager.SelectedButton = btnGetProducts;
-            m_focusManager.Mappings[btnGetProducts] = new FocusManager.ButtonMapping()
+            m_focusManager.SelectedButton = BtnGetProducts;
+            m_focusManager.Mappings[BtnGetProducts] = new FocusManager.ButtonMapping()
                                                           {
-                                                              Right = btnPurchase
+                                                              Right = BtnPurchase
                                                           };
-            m_focusManager.Mappings[btnPurchase] = new FocusManager.ButtonMapping()
+            m_focusManager.Mappings[BtnPurchase] = new FocusManager.ButtonMapping()
                                                        {
-                                                           Left = btnGetProducts,
-                                                           Right = btnGetReceipts
+                                                           Left = BtnGetProducts,
+                                                           Right = BtnGetReceipts
                                                        };
-            m_focusManager.Mappings[btnGetReceipts] = new FocusManager.ButtonMapping()
+            m_focusManager.Mappings[BtnGetReceipts] = new FocusManager.ButtonMapping()
             {
-                Left = btnPurchase,
+                Left = BtnPurchase,
             };
         }
 
