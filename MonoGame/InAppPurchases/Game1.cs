@@ -23,6 +23,7 @@ namespace InAppPurchases
         private ButtonSprite BtnGetProducts = null;
         private ButtonSprite BtnPurchase = null;
         private ButtonSprite BtnGetReceipts = null;
+        private RequestProductsListener ListenerRequestProducts = null;
 
         public Game1()
         {
@@ -47,6 +48,8 @@ namespace InAppPurchases
             // TODO: Add your initialization logic here
             m_focusManager.OnClick += OnClick;
 
+            ListenerRequestProducts = new RequestProductsListener();
+
             base.Initialize();
         }
 
@@ -59,7 +62,7 @@ namespace InAppPurchases
 
             public IntPtr Handle
             {
-                get { return Game1.Activity.Handle; }
+                get { return Activity.Handle; }
             }
 
             public void OnCancel()
@@ -76,11 +79,6 @@ namespace InAppPurchases
             {
                 Game1.m_debugText = "OnSuccess";
             }
-        }
-
-        void ProductListComplete()
-        {
-            
         }
 
         private void OnClick(object sender, FocusManager.ClickEventArgs clickEventArgs)
@@ -104,9 +102,7 @@ namespace InAppPurchases
                                                           new Purchasable("__DECLINED__THIS_PURCHASE"),
                                                       };
 
-                RequestProductsListener requestProductsListener = new RequestProductsListener();
-
-                Activity1.PurchaseFacade.RequestProductList(purchasables, requestProductsListener);
+                Activity1.PurchaseFacade.RequestProductList(purchasables, ListenerRequestProducts);
             }
 
             else if (clickEventArgs.Button == BtnPurchase)

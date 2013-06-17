@@ -30,6 +30,16 @@ namespace InAppPurchases
             }
         }
 
+        private void InvokeClick()
+        {
+            if (null != OnClick &&
+                m_timerSelection < DateTime.Now)
+            {
+                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(250);
+                OnClick.Invoke(SelectedButton, new ClickEventArgs() {Button = SelectedButton});
+            }
+        }
+
         public class ButtonMapping
         {
             public ButtonSprite Up = null;
@@ -104,10 +114,7 @@ namespace InAppPurchases
                     }
                     else if (GetButtonO((PlayerIndex)index))
                     {
-                        if (null != OnClick)
-                        {
-                            OnClick.Invoke(SelectedButton, new ClickEventArgs() { Button = SelectedButton});
-                        }
+                        InvokeClick();
                     }
 
                     #endregion
