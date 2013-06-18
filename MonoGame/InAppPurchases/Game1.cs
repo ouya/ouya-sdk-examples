@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Android.OS;
 using Microsoft.Xna.Framework;
@@ -23,7 +24,8 @@ namespace InAppPurchases
         private ButtonSprite BtnGetProducts = null;
         private ButtonSprite BtnPurchase = null;
         private ButtonSprite BtnGetReceipts = null;
-        private RequestProductsListener ListenerRequestProducts = null;
+        private IOuyaResponseListener ListenerRequestProducts = null;
+        private Task<IList<Product>> TaskRequestProducts = null;
 
         public Game1()
         {
@@ -48,8 +50,6 @@ namespace InAppPurchases
             // TODO: Add your initialization logic here
             m_focusManager.OnClick += OnClick;
 
-            ListenerRequestProducts = new RequestProductsListener();
-
             base.Initialize();
         }
 
@@ -62,7 +62,7 @@ namespace InAppPurchases
 
             public IntPtr Handle
             {
-                get { return Activity.Handle; }
+                get { return Game1.Activity.Handle; }
             }
 
             public void OnCancel()
@@ -102,7 +102,11 @@ namespace InAppPurchases
                                                           new Purchasable("__DECLINED__THIS_PURCHASE"),
                                                       };
 
-                Activity1.PurchaseFacade.RequestProductList(purchasables, ListenerRequestProducts);
+                m_focusManager.SelectedProductIndex = 0;
+                TaskRequestProducts = Activity1.PurchaseFacade.RequestProductList(purchasables);
+
+                //ListenerRequestProducts = new RequestProductsListener();
+                //Activity1.PurchaseFacade.RequestProductList(purchasables, ListenerRequestProducts);
             }
 
             else if (clickEventArgs.Button == BtnPurchase)
@@ -201,6 +205,25 @@ namespace InAppPurchases
                 }
             }
 
+            if (null != TaskRequestProducts)
+            {
+                if (TaskRequestProducts.IsCanceled)
+                {
+                    m_debugText = "Request Products has cancelled.";
+                }
+                else if (TaskRequestProducts.IsCompleted)
+                {
+                    m_debugText = "Request Products has completed.";
+                }
+            }
+
+            if (null != TaskRequestProducts &&
+                !TaskRequestProducts.IsCanceled &&
+                TaskRequestProducts.IsCompleted)
+            {
+                m_focusManager.UpdateTextFocus(TaskRequestProducts.Result.Count);
+            }
+
             base.Update(gameTime);
         }
 
@@ -219,6 +242,20 @@ namespace InAppPurchases
             {
                 button.Draw(spriteBatch);
             }
+
+            if (null != TaskRequestProducts &&
+                !TaskRequestProducts.IsCanceled &&
+                TaskRequestProducts.IsCompleted)
+            {
+                Vector2 position = new Vector2(140, 300);
+                for (int index = 0; index < TaskRequestProducts.Result.Count; ++index)
+                {
+                    Product product = TaskRequestProducts.Result[index];
+                    spriteBatch.DrawString(font, string.Format("Product: {0}", product.Identifier), position, index == m_focusManager.SelectedProductIndex ? Color.Orange : Color.White);
+                    position += new Vector2(0, 20);
+                }
+            }
+
             spriteBatch.End();
 
             base.Draw(gameTime);

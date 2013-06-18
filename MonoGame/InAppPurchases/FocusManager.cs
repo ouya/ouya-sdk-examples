@@ -20,12 +20,16 @@ namespace InAppPurchases
 
         private DateTime m_timerSelection = DateTime.MinValue;
 
+        public int SelectedProductIndex = 0;
+
+        private const int DELAY_MS = 150;
+
         private void SetSelection(ButtonSprite selection)
         {
             if (null != selection &&
                 m_timerSelection < DateTime.Now)
             {
-                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(250);
+                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
                 SelectedButton = selection;
             }
         }
@@ -35,7 +39,7 @@ namespace InAppPurchases
             if (null != OnClick &&
                 m_timerSelection < DateTime.Now)
             {
-                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(250);
+                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
                 OnClick.Invoke(SelectedButton, new ClickEventArgs() {Button = SelectedButton});
             }
         }
@@ -117,6 +121,28 @@ namespace InAppPurchases
                         InvokeClick();
                     }
 
+                    #endregion
+                }
+            }
+        }
+
+        public void UpdateTextFocus(int count)
+        {
+            if (m_timerSelection < DateTime.Now)
+            {
+                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
+
+                for (int index = 0; index < 4; ++index)
+                {
+                    #region DPADS
+                    if (GetDpadDown((PlayerIndex) index))
+                    {
+                        SelectedProductIndex = Math.Min(count - 1, SelectedProductIndex + 1);
+                    }
+                    else if (GetDpadUp((PlayerIndex) index))
+                    {
+                        SelectedProductIndex = Math.Max(0, SelectedProductIndex - 1);
+                    }
                     #endregion
                 }
             }
