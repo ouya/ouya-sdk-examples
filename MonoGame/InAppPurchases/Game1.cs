@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Ouya.Console.Api;
+using Ouya.Csharp;
 
 namespace InAppPurchases
 {
@@ -24,9 +25,11 @@ namespace InAppPurchases
         private ButtonSprite BtnGetProducts = null;
         private ButtonSprite BtnPurchase = null;
         private ButtonSprite BtnGetReceipts = null;
+        private ButtonSprite BtnGetUUID = null;
         private ButtonSprite BtnPause = null;
         private Task<IList<Product>> TaskRequestProducts = null;
         private Task<bool> TaskRequestPurchase = null;
+        private Task<string> TaskRequestGamer = null;
         private Task<IList<Receipt>> TaskRequestReceipts = null;
 
         public Game1()
@@ -107,6 +110,12 @@ namespace InAppPurchases
                 m_focusManager.SelectedReceiptIndex = 0;
                 TaskRequestReceipts = Activity1.PurchaseFacade.RequestReceipts();
             }
+
+            else if (clickEventArgs.Button == BtnGetUUID)
+            {
+                TaskRequestGamer = Activity1.PurchaseFacade.RequestGamerUuid();
+            }
+
             else if (clickEventArgs.Button == BtnPause)
             {
                 m_debugText = "Pause button detected.";
@@ -156,11 +165,21 @@ namespace InAppPurchases
             BtnGetReceipts.TextOffset = new Vector2(30, 20);
             m_buttons.Add(BtnGetReceipts);
 
+            BtnGetUUID = new ButtonSprite();
+            BtnGetUUID.Initialize(font,
+                Content.Load<Texture2D>("Graphics\\ButtonActive"),
+                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
+            BtnGetUUID.Position = new Vector2(1400, 200);
+            BtnGetUUID.TextureScale = new Vector2(1.25f, 0.5f);
+            BtnGetUUID.Text = "Get UUID";
+            BtnGetUUID.TextOffset = new Vector2(30, 20);
+            m_buttons.Add(BtnGetUUID);
+
             BtnPause = new ButtonSprite();
             BtnPause.Initialize(font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnPause.Position = new Vector2(1500, 200);
+            BtnPause.Position = new Vector2(1650, 200);
             BtnPause.TextureScale = new Vector2(1f, 0.5f);
             BtnPause.Text = "Pause";
             BtnPause.TextOffset = new Vector2(30, 20);
@@ -179,11 +198,17 @@ namespace InAppPurchases
             m_focusManager.Mappings[BtnGetReceipts] = new FocusManager.ButtonMapping()
             {
                 Left = BtnPurchase,
+                Right = BtnGetUUID,
+            };
+
+            m_focusManager.Mappings[BtnGetUUID] = new FocusManager.ButtonMapping()
+            {
+                Left = BtnGetReceipts,
             };
 
             m_focusManager.Mappings[BtnPause] = new FocusManager.ButtonMapping()
             {
-                Left = BtnGetReceipts,
+                Left = BtnGetUUID,
             };
         }
 
@@ -235,6 +260,18 @@ namespace InAppPurchases
                 }
             }
 
+            // touch exception property to avoid killing app
+            if (null != TaskRequestGamer)
+            {
+                AggregateException exception = TaskRequestGamer.Exception;
+                if (null != exception)
+                {
+                    m_debugText = string.Format("Request Gamer UUID has exception. {0}", exception);
+                    TaskRequestGamer.Dispose();
+                    TaskRequestGamer = null;
+                }
+            }
+
             // TODO: Add your update logic here
             m_focusManager.UpdateFocus();
 
@@ -261,6 +298,27 @@ namespace InAppPurchases
                     else if (TaskRequestReceipts.IsCompleted)
                     {
                         m_debugText = "Request Receipts has completed.";
+                    }
+                }
+
+                if (null != TaskRequestReceipts &&
+                    !TaskRequestReceipts.IsCanceled &&
+                    TaskRequestReceipts.IsCompleted)
+                {
+                    m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
+                }
+            }
+            else if (m_focusManager.SelectedButton == BtnGetUUID)
+            {
+                if (null != TaskRequestGamer)
+                {
+                    if (TaskRequestGamer.IsCanceled)
+                    {
+                        m_debugText = "Request Gamer UUID has cancelled.";
+                    }
+                    else if (TaskRequestGamer.IsCompleted)
+                    {
+                        m_debugText = string.Format("Request Gamer UUID: {0}", TaskRequestGamer.Result);
                     }
                 }
 
