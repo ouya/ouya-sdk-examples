@@ -21,6 +21,7 @@ namespace InAppPurchases
         private DateTime m_timerSelection = DateTime.MinValue;
 
         public int SelectedProductIndex = 0;
+        public int SelectedReceiptIndex = 0;
 
         private const int DELAY_MS = 150;
 
@@ -126,7 +127,7 @@ namespace InAppPurchases
             }
         }
 
-        public void UpdateTextFocus(int count)
+        public void UpdateProductFocus(int count)
         {
             if (m_timerSelection < DateTime.Now)
             {
@@ -142,6 +143,28 @@ namespace InAppPurchases
                     else if (GetDpadUp((PlayerIndex) index))
                     {
                         SelectedProductIndex = Math.Max(0, SelectedProductIndex - 1);
+                    }
+                    #endregion
+                }
+            }
+        }
+
+        public void UpdateReceiptFocus(int count)
+        {
+            if (m_timerSelection < DateTime.Now)
+            {
+                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
+
+                for (int index = 0; index < 4; ++index)
+                {
+                    #region DPADS
+                    if (GetDpadDown((PlayerIndex)index))
+                    {
+                        SelectedReceiptIndex = Math.Min(count - 1, SelectedReceiptIndex + 1);
+                    }
+                    else if (GetDpadUp((PlayerIndex)index))
+                    {
+                        SelectedReceiptIndex = Math.Max(0, SelectedReceiptIndex - 1);
                     }
                     #endregion
                 }

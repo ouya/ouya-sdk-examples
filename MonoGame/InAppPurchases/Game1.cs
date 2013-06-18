@@ -26,6 +26,8 @@ namespace InAppPurchases
         private ButtonSprite BtnGetReceipts = null;
         private IOuyaResponseListener ListenerRequestProducts = null;
         private Task<IList<Product>> TaskRequestProducts = null;
+        private Task<bool> TaskRequestPurchase = null;
+        private Task<IList<Receipt>> TaskRequestReceipts = null;
 
         public Game1()
         {
@@ -111,12 +113,18 @@ namespace InAppPurchases
 
             else if (clickEventArgs.Button == BtnPurchase)
             {
-                
+                if (null != TaskRequestProducts &&
+                    m_focusManager.SelectedProductIndex < TaskRequestProducts.Result.Count)
+                {
+                    Product product = TaskRequestProducts.Result[m_focusManager.SelectedProductIndex];
+                    TaskRequestPurchase = Activity1.PurchaseFacade.RequestPurchase(product, product.Identifier);
+                }
             }
 
             else if (clickEventArgs.Button == BtnGetReceipts)
             {
-                
+                m_focusManager.SelectedReceiptIndex = 0;
+                TaskRequestReceipts = Activity1.PurchaseFacade.RequestReceipts();
             }
         }
 
@@ -205,23 +213,78 @@ namespace InAppPurchases
                 }
             }
 
-            if (null != TaskRequestProducts)
+            if (m_focusManager.SelectedButton == BtnGetReceipts)
             {
-                if (TaskRequestProducts.IsCanceled)
+                if (null != TaskRequestReceipts)
                 {
-                    m_debugText = "Request Products has cancelled.";
+                    if (TaskRequestReceipts.IsCanceled)
+                    {
+                        m_debugText = "Request Receipts has cancelled.";
+                    }
+                    else if (TaskRequestReceipts.IsCompleted)
+                    {
+                        m_debugText = "Request Receipts has completed.";
+                    }
                 }
-                else if (TaskRequestProducts.IsCompleted)
+
+                if (null != TaskRequestReceipts &&
+                    !TaskRequestReceipts.IsCanceled &&
+                    TaskRequestReceipts.IsCompleted)
                 {
-                    m_debugText = "Request Products has completed.";
+                    m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
                 }
             }
-
-            if (null != TaskRequestProducts &&
-                !TaskRequestProducts.IsCanceled &&
-                TaskRequestProducts.IsCompleted)
+            else
             {
-                m_focusManager.UpdateTextFocus(TaskRequestProducts.Result.Count);
+                if (m_focusManager.SelectedButton == BtnPurchase)
+                {
+                    if (null != TaskRequestPurchase)
+                    {
+                        if (TaskRequestPurchase.IsCanceled)
+                        {
+                            m_debugText = "Request Purchase has cancelled.";
+                        }
+                        else if (TaskRequestPurchase.IsCompleted)
+                        {
+                            if (TaskRequestPurchase.Result)
+                            {
+                                m_debugText = "Request Purchase has completed succesfully.";
+                            }
+                            else
+                            {
+                                m_debugText = "Request Purchase has completed with failure.";
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (null != TaskRequestProducts)
+                    {
+                        if (TaskRequestProducts.IsCanceled)
+                        {
+                            m_debugText = "Request Products has cancelled.";
+                        }
+                        else if (TaskRequestProducts.IsCompleted)
+                        {
+                            if (TaskRequestProducts.Result.Count > 0)
+                            {
+                                m_debugText = "Request Products has completed with results.";
+                            }
+                            else
+                            {
+                                m_debugText = "Request Products has completed without results.";
+                            }
+                        }
+                    }
+                }
+
+                if (null != TaskRequestProducts &&
+                    !TaskRequestProducts.IsCanceled &&
+                    TaskRequestProducts.IsCompleted)
+                {
+                    m_focusManager.UpdateProductFocus(TaskRequestProducts.Result.Count);
+                }
             }
 
             base.Update(gameTime);
@@ -243,6 +306,8 @@ namespace InAppPurchases
                 button.Draw(spriteBatch);
             }
 
+            #region Products
+
             if (null != TaskRequestProducts &&
                 !TaskRequestProducts.IsCanceled &&
                 TaskRequestProducts.IsCompleted)
@@ -255,6 +320,25 @@ namespace InAppPurchases
                     position += new Vector2(0, 20);
                 }
             }
+
+            #endregion
+
+            #region Receipts
+
+            if (null != TaskRequestReceipts &&
+                !TaskRequestReceipts.IsCanceled &&
+                TaskRequestReceipts.IsCompleted)
+            {
+                Vector2 position = new Vector2(1120, 300);
+                for (int index = 0; index < TaskRequestReceipts.Result.Count; ++index)
+                {
+                    Receipt receipt = TaskRequestReceipts.Result[index];
+                    spriteBatch.DrawString(font, string.Format("Receipt: {0}", receipt.Identifier), position, index == m_focusManager.SelectedReceiptIndex ? Color.Orange : Color.White);
+                    position += new Vector2(0, 20);
+                }
+            }
+
+            #endregion
 
             spriteBatch.End();
 
