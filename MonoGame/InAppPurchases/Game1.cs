@@ -24,6 +24,7 @@ namespace InAppPurchases
         private ButtonSprite BtnGetProducts = null;
         private ButtonSprite BtnPurchase = null;
         private ButtonSprite BtnGetReceipts = null;
+        private ButtonSprite BtnPause = null;
         private IOuyaResponseListener ListenerRequestProducts = null;
         private Task<IList<Product>> TaskRequestProducts = null;
         private Task<bool> TaskRequestPurchase = null;
@@ -126,6 +127,11 @@ namespace InAppPurchases
                 m_focusManager.SelectedReceiptIndex = 0;
                 TaskRequestReceipts = Activity1.PurchaseFacade.RequestReceipts();
             }
+            else if (clickEventArgs.Button == BtnPause)
+            {
+                m_debugText = "Pause button pressed.";
+                m_focusManager.SelectedButton = BtnPause;
+            }
         }
 
         /// <summary>
@@ -170,6 +176,16 @@ namespace InAppPurchases
             BtnGetReceipts.TextOffset = new Vector2(30, 20);
             m_buttons.Add(BtnGetReceipts);
 
+            BtnPause = new ButtonSprite();
+            BtnPause.Initialize(font,
+                Content.Load<Texture2D>("Graphics\\ButtonActive"),
+                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
+            BtnPause.Position = new Vector2(1500, 200);
+            BtnPause.TextureScale = new Vector2(1f, 0.5f);
+            BtnPause.Text = "Pause";
+            BtnPause.TextOffset = new Vector2(30, 20);
+            m_buttons.Add(BtnPause);
+
             m_focusManager.SelectedButton = BtnGetProducts;
             m_focusManager.Mappings[BtnGetProducts] = new FocusManager.ButtonMapping()
                                                           {
@@ -184,6 +200,11 @@ namespace InAppPurchases
             {
                 Left = BtnPurchase,
             };
+
+            m_focusManager.Mappings[BtnPause] = new FocusManager.ButtonMapping()
+            {
+                Left = BtnGetReceipts,
+            };
         }
 
         /// <summary>
@@ -196,6 +217,42 @@ namespace InAppPurchases
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             {
                 Exit();
+            }
+
+            // touch exception property to avoid killing app
+            if (null != TaskRequestPurchase)
+            {
+                AggregateException exception = TaskRequestProducts.Exception;
+                if (null != exception)
+                {
+                    m_debugText = string.Format("Request Products has exception. {0}", exception);
+                    TaskRequestProducts.Dispose();
+                    TaskRequestProducts = null;
+                }
+            }
+
+            // touch exception property to avoid killing app
+            if (null != TaskRequestPurchase)
+            {
+                AggregateException exception = TaskRequestPurchase.Exception;
+                if (null != exception)
+                {
+                    m_debugText = string.Format("Request Purchase has exception. {0}", exception);
+                    TaskRequestPurchase.Dispose();
+                    TaskRequestPurchase = null;
+                }
+            }
+
+            // touch exception property to avoid killing app
+            if (null != TaskRequestReceipts)
+            {
+                AggregateException exception = TaskRequestReceipts.Exception;
+                if (null != exception)
+                {
+                    m_debugText = string.Format("Request Receipts has exception. {0}", exception);
+                    TaskRequestReceipts.Dispose();
+                    TaskRequestReceipts = null;
+                }
             }
 
             // TODO: Add your update logic here
@@ -287,6 +344,8 @@ namespace InAppPurchases
                 }
             }
 
+            m_focusManager.UpdatePauseFocus(BtnPause);
+
             base.Update(gameTime);
         }
 
@@ -300,7 +359,7 @@ namespace InAppPurchases
 
             spriteBatch.Begin();
             spriteBatch.DrawString(font, string.Format("Hello from MonoGame! {0}", m_debugText), new Vector2(100, 100), Color.White);
-            spriteBatch.DrawString(font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(120, 120), Color.White);
+            spriteBatch.DrawString(font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
             foreach (ButtonSprite button in m_buttons)
             {
                 button.Draw(spriteBatch);

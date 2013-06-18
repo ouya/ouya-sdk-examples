@@ -80,6 +80,10 @@ namespace InAppPurchases
         {
             return (GetState(index).Buttons.A == ButtonState.Pressed);
         }
+        private bool PausePressed(PlayerIndex index)
+        {
+            return (GetState(index).Buttons.Start == ButtonState.Pressed);
+        }
 
         public class ClickEventArgs : EventArgs
         {
@@ -167,6 +171,17 @@ namespace InAppPurchases
                         SelectedReceiptIndex = Math.Max(0, SelectedReceiptIndex - 1);
                     }
                     #endregion
+                }
+            }
+        }
+
+        public void UpdatePauseFocus(ButtonSprite pauseButton)
+        {
+            for (int index = 0; index < 4; ++index)
+            {
+                if (PausePressed((PlayerIndex)index))
+                {
+                    SetSelection(pauseButton);
                 }
             }
         }
