@@ -2,3 +2,5 @@ MonoGame/VirtualController/bin/*
 MonoGame/VirtualController/obj/*
 MonoGame/InAppPurchases/bin/*
 MonoGame/InAppPurchases/obj/*
+!MonoGame/InAppPurchases/MonoGame.Framework.dll
+!MonoGame/InAppPurchases/Ouya.Console.Api.dll

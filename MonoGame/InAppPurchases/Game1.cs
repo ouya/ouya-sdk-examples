@@ -25,7 +25,6 @@ namespace InAppPurchases
         private ButtonSprite BtnPurchase = null;
         private ButtonSprite BtnGetReceipts = null;
         private ButtonSprite BtnPause = null;
-        private IOuyaResponseListener ListenerRequestProducts = null;
         private Task<IList<Product>> TaskRequestProducts = null;
         private Task<bool> TaskRequestPurchase = null;
         private Task<IList<Receipt>> TaskRequestReceipts = null;
@@ -53,34 +52,18 @@ namespace InAppPurchases
             // TODO: Add your initialization logic here
             m_focusManager.OnClick += OnClick;
 
+            GamePad.EventOnKeyUp += EventOnKeyUp;
+
             base.Initialize();
         }
 
-        public class RequestProductsListener : IOuyaResponseListener
+        private void EventOnKeyUp(object sender, GamePad.KeyEventArgs keyEventArgs)
         {
-            public void Dispose()
+            //m_debugText = string.Format("Detected Key: {0}", keyEventArgs.KeyCode);
+            if (keyEventArgs.KeyCode == 82)
             {
-                
-            }
-
-            public IntPtr Handle
-            {
-                get { return Game1.Activity.Handle; }
-            }
-
-            public void OnCancel()
-            {
-                Game1.m_debugText = "OnCancel";
-            }
-
-            public void OnFailure(int errorCode, string errorMessage, Bundle optionalData)
-            {
-                Game1.m_debugText = "OnFailure";
-            }
-
-            public void OnSuccess(Java.Lang.Object result)
-            {
-                Game1.m_debugText = "OnSuccess";
+                m_focusManager.SelectedButton = BtnPause;
+                OnClick(null, new FocusManager.ClickEventArgs() {Button = BtnPause});
             }
         }
 
@@ -107,9 +90,6 @@ namespace InAppPurchases
 
                 m_focusManager.SelectedProductIndex = 0;
                 TaskRequestProducts = Activity1.PurchaseFacade.RequestProductList(purchasables);
-
-                //ListenerRequestProducts = new RequestProductsListener();
-                //Activity1.PurchaseFacade.RequestProductList(purchasables, ListenerRequestProducts);
             }
 
             else if (clickEventArgs.Button == BtnPurchase)
@@ -129,7 +109,7 @@ namespace InAppPurchases
             }
             else if (clickEventArgs.Button == BtnPause)
             {
-                m_debugText = "Pause button pressed.";
+                m_debugText = "Pause button detected.";
                 m_focusManager.SelectedButton = BtnPause;
             }
         }
@@ -314,7 +294,7 @@ namespace InAppPurchases
                         }
                     }
                 }
-                else
+                else if (m_focusManager.SelectedButton == BtnGetProducts)
                 {
                     if (null != TaskRequestProducts)
                     {
