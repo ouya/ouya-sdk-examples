@@ -402,7 +402,9 @@ namespace InAppPurchases
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, string.Format("Hello from MonoGame! {0}", m_debugText), new Vector2(100, 100), Color.White);
+            spriteBatch.DrawString(font, string.Format("Hello from MonoGame! {0} | {1}",
+                Activity1.PurchaseFacade.IsRunningOnOUYAHardware ? "(Running on OUYA)" : "Not Running on OUYA",
+                m_debugText), new Vector2(100, 100), Color.White);
             spriteBatch.DrawString(font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
             foreach (ButtonSprite button in m_buttons)
             {
