@@ -72,7 +72,8 @@ namespace InAppPurchases
 
         private void OnClick(object sender, FocusManager.ClickEventArgs clickEventArgs)
         {
-            if (null == clickEventArgs.Button)
+            if (null == clickEventArgs ||
+                null == clickEventArgs.Button)
             {
                 return;
             }
@@ -302,8 +303,10 @@ namespace InAppPurchases
                 }
 
                 if (null != TaskRequestReceipts &&
+                    null == TaskRequestReceipts.Exception &&
                     !TaskRequestReceipts.IsCanceled &&
-                    TaskRequestReceipts.IsCompleted)
+                    TaskRequestReceipts.IsCompleted &&
+                    null != TaskRequestReceipts.Result)
                 {
                     m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
                 }
@@ -323,8 +326,10 @@ namespace InAppPurchases
                 }
 
                 if (null != TaskRequestReceipts &&
+                    null == TaskRequestReceipts.Exception &&
                     !TaskRequestReceipts.IsCanceled &&
-                    TaskRequestReceipts.IsCompleted)
+                    TaskRequestReceipts.IsCompleted &&
+                    null != TaskRequestReceipts.Result)
                 {
                     m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
                 }
@@ -375,6 +380,7 @@ namespace InAppPurchases
                 }
 
                 if (null != TaskRequestProducts &&
+                    null == TaskRequestProducts.Exception &&
                     !TaskRequestProducts.IsCanceled &&
                     TaskRequestProducts.IsCompleted)
                 {
@@ -406,6 +412,7 @@ namespace InAppPurchases
             #region Products
 
             if (null != TaskRequestProducts &&
+                null == TaskRequestProducts.Exception &&
                 !TaskRequestProducts.IsCanceled &&
                 TaskRequestProducts.IsCompleted)
             {
@@ -423,8 +430,10 @@ namespace InAppPurchases
             #region Receipts
 
             if (null != TaskRequestReceipts &&
+                null == TaskRequestReceipts.Exception &&
                 !TaskRequestReceipts.IsCanceled &&
-                TaskRequestReceipts.IsCompleted)
+                TaskRequestReceipts.IsCompleted &&
+                null != TaskRequestReceipts.Result)
             {
                 Vector2 position = new Vector2(1120, 300);
                 for (int index = 0; index < TaskRequestReceipts.Result.Count; ++index)
