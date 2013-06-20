@@ -64,22 +64,35 @@ if (gamepad_button_check(varPlayer, gp_shoulderrb))
     draw_sprite(16, -1, x, y);
 }
 
+//rotate input by N degrees to match image
+varDegrees = 135;
+varRadians = varDegrees / 180.0 * 3.14;
+varCos = cos(varRadians);
+varSin = sin(varRadians);
+    
+varX = gamepad_axis_value(varPlayer, gp_axislh);
+varY = gamepad_axis_value(varPlayer, gp_axislv);
+	
 //left stick
 if (gamepad_button_check(varPlayer, gp_stickl))
 {
-    draw_sprite(0, -1, x + axisScaler * gamepad_axis_value(varPlayer, gp_axislh), y + axisScaler * gamepad_axis_value(varPlayer, gp_axislv));
+    draw_sprite(0, -1, x + axisScaler * (varX * varCos - varY * varSin), y + axisScaler * (varX * varSin + varY * varCos));
 }
 else
 {
-    draw_sprite(10, -1, x + axisScaler * gamepad_axis_value(varPlayer, gp_axislh), y + axisScaler * gamepad_axis_value(varPlayer, gp_axislv));
+    draw_sprite(10, -1, x + axisScaler * (varX * varCos - varY * varSin), y + axisScaler * (varX * varSin + varY * varCos));
 }
 
+//rotate by same degrees
+varX = gamepad_axis_value(varPlayer, gp_axisrh);
+varY = gamepad_axis_value(varPlayer, gp_axisrv);
+    
 //right stick
 if (gamepad_button_check(varPlayer, gp_stickr))
 {
-    draw_sprite(1, -1, x + axisScaler * gamepad_axis_value(varPlayer, gp_axisrh), y + axisScaler * gamepad_axis_value(varPlayer, gp_axisrv));
+    draw_sprite(1, -1, x + axisScaler * (varX * varCos - varY * varSin), y + axisScaler * (varX * varSin + varY * varCos));
 }
 else
 {
-    draw_sprite(14, -1, x + axisScaler * gamepad_axis_value(varPlayer, gp_axisrh), y + axisScaler * gamepad_axis_value(varPlayer, gp_axisrv));
+    draw_sprite(14, -1, x + axisScaler * (varX * varCos - varY * varSin), y + axisScaler * (varX * varSin + varY * varCos));
 }

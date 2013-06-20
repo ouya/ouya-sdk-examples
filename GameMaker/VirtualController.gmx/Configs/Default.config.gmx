@@ -17,7 +17,7 @@
   <option_android_arch_mipsr2>True</option_android_arch_mipsr2>
   <option_android_arch_mipsr2sf>True</option_android_arch_mipsr2sf>
   <option_android_arch_x86>True</option_android_arch_x86>
-  <option_android_build_version>1</option_android_build_version>
+  <option_android_build_version>5</option_android_build_version>
   <option_android_color_depth>0</option_android_color_depth>
   <option_android_display_name>VirtualController</option_android_display_name>
   <option_android_flurry_enable>0</option_android_flurry_enable>
