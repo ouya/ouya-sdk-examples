@@ -17,7 +17,7 @@
   <option_android_arch_mipsr2>True</option_android_arch_mipsr2>
   <option_android_arch_mipsr2sf>True</option_android_arch_mipsr2sf>
   <option_android_arch_x86>True</option_android_arch_x86>
-  <option_android_build_version>5</option_android_build_version>
+  <option_android_build_version>24</option_android_build_version>
   <option_android_color_depth>0</option_android_color_depth>
   <option_android_display_name>VirtualController</option_android_display_name>
   <option_android_flurry_enable>0</option_android_flurry_enable>
@@ -32,6 +32,9 @@
   <option_android_icon_36>Configs\Default\android\icons\icon36.png</option_android_icon_36>
   <option_android_icon_48>Configs\Default\android\icons\icon48.png</option_android_icon_48>
   <option_android_icon_72>Configs\Default\android\icons\icon72.png</option_android_icon_72>
+  <option_android_inmobi_enable>0</option_android_inmobi_enable>
+  <option_android_inmobi_id></option_android_inmobi_id>
+  <option_android_inmobi_test_enable>0</option_android_inmobi_test_enable>
   <option_android_install_location>auto</option_android_install_location>
   <option_android_interpolate>-1</option_android_interpolate>
   <option_android_licensing_enable>0</option_android_licensing_enable>
@@ -47,6 +50,7 @@
   <option_android_permission_flags>8</option_android_permission_flags>
   <option_android_pocketchange_enable>0</option_android_pocketchange_enable>
   <option_android_pocketchange_id></option_android_pocketchange_id>
+  <option_android_pocketchange_test_enable>0</option_android_pocketchange_test_enable>
   <option_android_set_device_id></option_android_set_device_id>
   <option_android_splash_png>Configs\Default\android\splash.png</option_android_splash_png>
   <option_android_texture_page>1024</option_android_texture_page>
@@ -117,6 +121,9 @@
   <option_ios_icon_144>Configs\Default\ios\icons\icon144.png</option_ios_icon_144>
   <option_ios_icon_57>Configs\Default\ios\icons\icon57.png</option_ios_icon_57>
   <option_ios_icon_72>Configs\Default\ios\icons\icon72.png</option_ios_icon_72>
+  <option_ios_inmobi_enable>0</option_ios_inmobi_enable>
+  <option_ios_inmobi_id></option_ios_inmobi_id>
+  <option_ios_inmobi_test_enable>0</option_ios_inmobi_test_enable>
   <option_ios_interpolate>-1</option_ios_interpolate>
   <option_ios_ipad_retina_splash_png>Configs\Default\ios\iPadRetinasplash.png</option_ios_ipad_retina_splash_png>
   <option_ios_ipad_splash_png>Configs\Default\ios\iPadsplash.png</option_ios_ipad_splash_png>
@@ -215,7 +222,7 @@
   <option_use_new_audio>True</option_use_new_audio>
   <option_variableerrors>False</option_variableerrors>
   <option_version>100</option_version>
-  <option_version_build>0</option_version_build>
+  <option_version_build>1</option_version_build>
   <option_version_company></option_version_company>
   <option_version_copyright></option_version_copyright>
   <option_version_description></option_version_description>
@@ -234,6 +241,7 @@
   <option_win8_certificate_location>Windows8_TemporaryKey.pfx</option_win8_certificate_location>
   <option_win8_display_name>VirtualController</option_win8_display_name>
   <option_win8_internet_capable>0</option_win8_internet_capable>
+  <option_win8_interpolate>-1</option_win8_interpolate>
   <option_win8_landscape_allowed>-1</option_win8_landscape_allowed>
   <option_win8_landscape_flipped_allowed>-1</option_win8_landscape_flipped_allowed>
   <option_win8_logo>Configs\Default\Windows8\logos\logo150.png</option_win8_logo>
@@ -258,7 +266,7 @@
   <option_win8_texture_page>1024</option_win8_texture_page>
   <option_win8_wide_logo>Configs\Default\Windows8\logos\logo310.png</option_win8_wide_logo>
   <option_windowcolor>clBlack</option_windowcolor>
-  <option_windows_build_version>0</option_windows_build_version>
+  <option_windows_build_version>1</option_windows_build_version>
   <option_windows_company_info></option_windows_company_info>
   <option_windows_copyright_info></option_windows_copyright_info>
   <option_windows_description_info></option_windows_description_info>

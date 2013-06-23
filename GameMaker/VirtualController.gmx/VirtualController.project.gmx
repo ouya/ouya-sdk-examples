@@ -23,6 +23,7 @@
     <sprite>sprites\sprite14_r_stick</sprite>
     <sprite>sprites\sprite15_rb</sprite>
     <sprite>sprites\sprite16_rt</sprite>
+    <sprite>sprites\sprite17_disabled</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
