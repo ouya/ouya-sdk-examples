@@ -32,6 +32,16 @@ namespace InAppPurchases
         private Task<string> TaskRequestGamer = null;
         private Task<IList<Receipt>> TaskRequestReceipts = null;
 
+        /// <summary>
+        /// For purchases all transactions need a unique id
+        /// </summary>
+        private string m_uniquePurchaseId = string.Empty;
+
+        void ClearPurchaseId()
+        {
+            m_uniquePurchaseId = string.Empty;
+        }
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -102,7 +112,11 @@ namespace InAppPurchases
                     m_focusManager.SelectedProductIndex < TaskRequestProducts.Result.Count)
                 {
                     Product product = TaskRequestProducts.Result[m_focusManager.SelectedProductIndex];
-                    TaskRequestPurchase = Activity1.PurchaseFacade.RequestPurchase(product, product.Identifier);
+                    if (string.IsNullOrEmpty(m_uniquePurchaseId))
+                    {
+                        m_uniquePurchaseId = Guid.NewGuid().ToString().ToLower();
+                    }
+                    TaskRequestPurchase = Activity1.PurchaseFacade.RequestPurchase(product, m_uniquePurchaseId);
                 }
             }
 
@@ -226,7 +240,7 @@ namespace InAppPurchases
             }
 
             // touch exception property to avoid killing app
-            if (null != TaskRequestPurchase)
+            if (null != TaskRequestProducts)
             {
                 AggregateException exception = TaskRequestProducts.Exception;
                 if (null != exception)
@@ -246,6 +260,7 @@ namespace InAppPurchases
                     m_debugText = string.Format("Request Purchase has exception. {0}", exception);
                     TaskRequestPurchase.Dispose();
                     TaskRequestPurchase = null;
+                    ClearPurchaseId();
                 }
             }
 
@@ -343,6 +358,7 @@ namespace InAppPurchases
                         if (TaskRequestPurchase.IsCanceled)
                         {
                             m_debugText = "Request Purchase has cancelled.";
+                            ClearPurchaseId(); //clear the purchase id
                         }
                         else if (TaskRequestPurchase.IsCompleted)
                         {
@@ -354,6 +370,7 @@ namespace InAppPurchases
                             {
                                 m_debugText = "Request Purchase has completed with failure.";
                             }
+                            ClearPurchaseId(); //clear the purchase id
                         }
                     }
                 }
