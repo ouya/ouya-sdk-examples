@@ -17,6 +17,11 @@ namespace VirtualController
     class VirtualControllerSprite
     {
         /// <summary>
+        /// Scale axis graphics but this amount
+        /// </summary>
+        private const float AXIS_SCALER = 4f;
+
+        /// <summary>
         /// The controller index
         /// </summary>
         public PlayerIndex Index = PlayerIndex.One;
@@ -189,26 +194,37 @@ namespace VirtualController
 
             #region Sticks
 
+            //rotate input by N degrees to match image
+            float degrees = 135;
+            float radians = degrees / 180f * 3.14f;
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
+
+            Vector2 input = state.ThumbSticks.Left;
+
             if (state.Buttons.LeftStick == ButtonState.Pressed ||
-                Math.Abs(state.ThumbSticks.Left.X) > DeadZone ||
-                Math.Abs(state.ThumbSticks.Left.Y) > DeadZone)
+                Math.Abs(input.X) > DeadZone ||
+                Math.Abs(input.Y) > DeadZone)
             {
-                Draw(spriteBatch, LeftStickActive, Position + 4 * state.ThumbSticks.Left);
+                Draw(spriteBatch, LeftStickActive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
             else
             {
-                Draw(spriteBatch, LeftStickInactive, Position + 4 * state.ThumbSticks.Left);
+                Draw(spriteBatch, LeftStickInactive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
 
+            //rotate by same degrees
+            input = state.ThumbSticks.Right;
+
             if (state.Buttons.RightStick == ButtonState.Pressed ||
-                Math.Abs(state.ThumbSticks.Right.X) > DeadZone ||
-                Math.Abs(state.ThumbSticks.Right.Y) > DeadZone)
+                Math.Abs(input.X) > DeadZone ||
+                Math.Abs(input.Y) > DeadZone)
             {
-                Draw(spriteBatch, RightStickActive, Position + 4 * state.ThumbSticks.Right);
+                Draw(spriteBatch, RightStickActive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
             else
             {
-                Draw(spriteBatch, RightStickInactive, Position + 4 * state.ThumbSticks.Right);
+                Draw(spriteBatch, RightStickInactive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
 
             #endregion
