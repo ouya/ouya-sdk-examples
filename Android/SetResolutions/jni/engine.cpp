@@ -301,6 +301,8 @@ bool Engine::checkWindowResized()
     			mRenderWidth = newW;
     			mRenderHeight = newH;
     	        LOGI("> Render surface size initialized: %dx%d", mRenderWidth, mRenderHeight);
+				LOGI("> Launch Intent here");
+				launchJavaActivity();
             }
         }        
     }
@@ -317,6 +319,8 @@ bool Engine::checkWindowResized()
 			mRenderWidth = sw;
 			mRenderHeight = sh;
 	        LOGI("!!> Render surface size changed: %dx%d", mRenderWidth, mRenderHeight); 
+			LOGI("!!> Launch Intent here");
+			launchJavaActivity();
 	        resized = true;
 		}
     }
@@ -621,6 +625,65 @@ void Engine::updateFrame(bool interactible, long deltaTime)
             renderFrame(false);
         }
     }
+}
+
+// If we cause an exception in JNI, we print the exception info to
+// the log, we clear the exception to avoid a pending-exception
+// crash, and we force the function to return.
+#define EXCEPTION_RETURN(env) \
+	if (env->ExceptionOccurred()) { \
+		env->ExceptionDescribe(); \
+		env->ExceptionClear(); \
+		return false; \
+	}
+
+bool Engine::launchJavaActivity()
+{
+	LOGI(">launchJavaActivity");
+
+	// Find the Intent class
+	jclass intentClass = mApp->appThreadEnv->FindClass("android/content/Intent");
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	jstring actionString = mApp->appThreadEnv->NewStringUTF("tv.ouya.android.setresolutions.MAIN");
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	// Get the initializer/constructor for Uri
+	jmethodID newIntent = mApp->appThreadEnv->GetMethodID(intentClass, "<init>", 
+		"()V");
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	// Call Intent intent = new Intent(actionString);  
+	// Three stages: alloc object, then call init on it (init is the constructor)
+	// then call the set functions
+	// We SHOULD be able to set the action string and Action in <init>; it works on HC and ICS,
+	// but GB fails.  So this longer code is safer on GB.
+	jobject intent = mApp->appThreadEnv->AllocObject(intentClass); 
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	mApp->appThreadEnv->CallVoidMethod(intent, newIntent);
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	jmethodID setAction = mApp->appThreadEnv->GetMethodID(intentClass, "setAction", 
+		"(Ljava/lang/String;)Landroid/content/Intent;");
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	// Set the action
+	mApp->appThreadEnv->CallObjectMethod(intent, setAction, actionString);
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	// startActivity(launchBrowser);  
+	jclass activityClass = mApp->appThreadEnv->FindClass("android/app/Activity");
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	jmethodID startActivity = mApp->appThreadEnv->GetMethodID(activityClass, 
+		"startActivity", "(Landroid/content/Intent;)V");
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	mApp->appThreadEnv->CallVoidMethod(mApp->appThreadThis, startActivity, intent);
+	EXCEPTION_RETURN(mApp->appThreadEnv);
+
+	return true;
 }
 
 int Engine::switchModes(int mode, int buttonIndex )

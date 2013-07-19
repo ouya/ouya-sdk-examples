@@ -57,6 +57,8 @@ public:
 
 	void updateFrame(bool interactible, long deltaTime);
 
+	bool launchJavaActivity();
+
 protected:
 
 	void setGameplayMode(bool paused);
