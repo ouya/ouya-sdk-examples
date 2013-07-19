@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------------
-# File:        android/dynamic_resolution/jni/Android.mk
-# SDK Version: v10.10 
+# File:        android/dynamic_resolution/jni/Application.mk
+# SDK Version: v10.00 
 # Email:       tegradev@nvidia.com
 # Site:        http://developer.nvidia.com/
 #
@@ -18,29 +18,7 @@
 #
 #
 #----------------------------------------------------------------------------------
-LOCAL_PATH := $(subst //,/,$(call my-dir))
-include $(CLEAR_VARS)
-LOCAL_MODULE := dynamic_resolution
+# The ARMv7 is significanly faster due to the use of the hardware FPU
+APP_ABI := armeabi-v7a
+APP_PLATFORM := android-10
 
-LOCAL_SRC_FILES := $(wildcard *.cpp)
-LOCAL_SRC_FILES += $(wildcard *.c)
-
-LOCAL_ARM_MODE   := arm
-
-LOCAL_LDLIBS :=  -lstdc++ -lc -lm -llog -landroid -ldl -lGLESv2 -lEGL
-LOCAL_STATIC_LIBRARIES := nv_and_util nv_egl_util nv_bitfont nv_math nv_glesutil nv_hhdds nv_log nv_shader nv_file nv_thread
-
-include $(BUILD_SHARED_LIBRARY)
-
-$(call import-add-path, C:/NVPACK/TDK_Samples/tegra_android_native_samples_v10p10/libs/jni)
-
-$(call import-module,nv_and_util)
-$(call import-module,nv_egl_util)
-$(call import-module,nv_bitfont)
-$(call import-module,nv_math)
-$(call import-module,nv_glesutil)
-$(call import-module,nv_hhdds)
-$(call import-module,nv_log)
-$(call import-module,nv_shader)
-$(call import-module,nv_file)
-$(call import-module,nv_thread)

@@ -52,7 +52,8 @@ public class ActivityMain extends Activity
         m_btn720p.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent openIntent = new Intent("tv.ouya.android.setresolutions.RESOLUION720P");
+				//Intent openIntent = new Intent("tv.ouya.android.setresolutions.RESOLUION720P");
+				Intent openIntent = new Intent("tv.ouya.android.setresolutions.RESOLUIONNATIVE");
 		        startActivity(openIntent);
 			}
 		});

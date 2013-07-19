@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Android">
+      <Configuration>Debug</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Android">
+      <Configuration>Release</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Android">
+      <Configuration>Profile</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="assets\courier+lucida_256.abc" />
+    <None Include="assets\courier+lucida_256.dds" />
+    <None Include="assets\utahcond+bold_1024.abc" />
+    <None Include="assets\utahcond+bold_1024.dds" />
+    <None Include="assets\demo_.frag" />
+    <None Include="assets\demo_.vert" />
+    <None Include="build.xml" />
+    <None Include="jni\Android.mk" />
+    <None Include="jni\Application.mk" />
+    <None Include="project.properties" />
+    <None Include="res\drawable\icon.png" />
+    <None Include="res\values\strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\engine.cpp" />
+    <ClCompile Include="jni\main.cpp" />
+    <ClCompile Include="jni\resampler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\engine.h" />
+    <ClInclude Include="jni\render_target.h" />
+    <ClInclude Include="jni\resampler.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A8E35F0F-0F83-414A-A987-A9C9CD94167B}</ProjectGuid>
+    <RootNamespace>DynamicResolution</RootNamespace>
+    <ProjectName>dynamic_resolution</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>Application</ConfigurationType>
+    <AndroidTargetAPI>android-15</AndroidTargetAPI>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>Application</ConfigurationType>
+    <AndroidTargetAPI>android-15</AndroidTargetAPI>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Profile|Android'">
+    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>Application</ConfigurationType>
+    <AndroidTargetAPI>android-15</AndroidTargetAPI>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <AdditionalOptions>-verbose %(AdditionalOptions)</AdditionalOptions>
+    </AntBuild>
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\NVPACK\TDK_Samples\tegra_android_native_samples_v10p10\libs\jni</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:/NVPACK/TDK_Samples/tegra_android_native_samples_v10p10/libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>-landroid;-lnv_and_util;-lnv_bitfont;-lnv_egl_util;-lnv_file;-lnv_glesutil;-lnv_hhdds;-lnv_log;-lnv_math;-lnv_shader;-lnv_thread;-lstdc++;-lc;-lm;-llog;-ldl;-lGLESv2;-lEGL;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <AdditionalOptions>-verbose %(AdditionalOptions)</AdditionalOptions>
+      <AntBuildType>Debug</AntBuildType>
+      <SigningType>None</SigningType>
+    </AntBuild>
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\NVPACK\TDK_Samples\tegra_android_native_samples_v10p10\libs\jni</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:/NVPACK/TDK_Samples/tegra_android_native_samples_v10p10/libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>-landroid;-lnv_and_util;-lnv_bitfont;-lnv_egl_util;-lnv_file;-lnv_glesutil;-lnv_hhdds;-lnv_log;-lnv_math;-lnv_shader;-lnv_thread;-lstdc++;-lc;-lm;-llog;-ldl;-lGLESv2;-lEGL;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Android'">
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <AdditionalOptions>-verbose %(AdditionalOptions)</AdditionalOptions>
+    </AntBuild>
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\NVPACK\TDK_Samples\tegra_android_native_samples_v10p10\libs\jni</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:/NVPACK/TDK_Samples/tegra_android_native_samples_v10p10/libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>-landroid;-lnv_and_util;-lnv_bitfont;-lnv_egl_util;-lnv_file;-lnv_glesutil;-lnv_hhdds;-lnv_log;-lnv_math;-lnv_shader;-lnv_thread;-lstdc++;-lc;-lm;-llog;-ldl;-lGLESv2;-lEGL;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

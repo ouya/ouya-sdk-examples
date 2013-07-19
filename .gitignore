@@ -8,3 +8,13 @@ MonoGame/SetResolutions/obj/*
 !MonoGame/SetResolutions/Ouya.Console.Api.dll
 MonoGame/VirtualController/bin/*
 MonoGame/VirtualController/obj/*
+Android/AndroidKeyLogger/
+Android/RawInput/
+Android/SetResolutions/Android/
+Android/SetResolutions/bin/
+Android/SetResolutions/doc/
+Android/SetResolutions/obj/
+Android/SetResolutions/gen/
+AdobeAir/
+NDK/
+MonoGame/Intro/

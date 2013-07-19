@@ -1,0 +1,5 @@
+# GENERATED FILE
+set solib-search-path C:/Users/tgraupmann/Documents/TAGENIGMA/Ouya/Public/ouya-sdk-examples/Android/SetResolutions/Android/Debug;C:/NVPACK/NVNDK/android-ndk-r8d/platforms/android-14/arch-arm/usr/lib
+directory "C:/Users/tgraupmann/Documents/TAGENIGMA/Ouya/Public/ouya-sdk-examples/Android/SetResolutions/jni" "C:/NVPACK/NVNDK/android-ndk-r8d/sources/cxx-stl/system" "C:/NVPACK/NVNDK/android-ndk-r8d/platforms/android-14/arch-arm/usr/include"
+# BEGIN USER COMMANDS
+# END USER COMMANDS

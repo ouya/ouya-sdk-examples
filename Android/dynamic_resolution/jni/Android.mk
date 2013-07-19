@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------------
 # File:        android/dynamic_resolution/jni/Android.mk
-# SDK Version: v10.10 
+# SDK Version: v10.00 
 # Email:       tegradev@nvidia.com
 # Site:        http://developer.nvidia.com/
 #
@@ -18,7 +18,7 @@
 #
 #
 #----------------------------------------------------------------------------------
-LOCAL_PATH := $(subst //,/,$(call my-dir))
+LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := dynamic_resolution
 
@@ -32,7 +32,7 @@ LOCAL_STATIC_LIBRARIES := nv_and_util nv_egl_util nv_bitfont nv_math nv_glesutil
 
 include $(BUILD_SHARED_LIBRARY)
 
-$(call import-add-path, C:/NVPACK/TDK_Samples/tegra_android_native_samples_v10p10/libs/jni)
+$(call import-add-path, ../../../../libs/jni)
 
 $(call import-module,nv_and_util)
 $(call import-module,nv_egl_util)

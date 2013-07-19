@@ -1,47 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="tv.ouya.android.setresolutions"
-      android:versionCode="1"
-      android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="3" />
-    <application android:label="@string/app_name"
-                 android:debuggable="true"
-                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-        <activity android:name=".ActivityInit"
-                  android:label="@string/app_name">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ouya.android.setresolutions" android:versionCode="1" android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="15" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:label="@string/app_name" android:debuggable="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+
+        <activity android:name=".ActivityInit" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="tv.ouya.intent.category.GAME" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityMain"
-                  android:label="@string/app_name">
+        <activity android:name=".ActivityMain" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="tv.ouya.android.setresolutions.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityResolution480p"
-                  android:label="@string/app_name">
+        <activity android:name=".ActivityResolution480p" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="tv.ouya.android.setresolutions.RESOLUION480P" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityResolution720p"
-                  android:label="@string/app_name">
+        <activity android:name=".ActivityResolution720p" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="tv.ouya.android.setresolutions.RESOLUION720P" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityResolution1080p"
-                  android:label="@string/app_name">
+        <activity android:name=".ActivityResolution1080p" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="tv.ouya.android.setresolutions.RESOLUION1080P" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name="android.app.NativeActivity" android:label="@string/app_name"
+             android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <meta-data android:name="android.app.lib_name" android:value="dynamic_resolution" />
+            <intent-filter>
+                <action android:name="tv.ouya.android.setresolutions.RESOLUIONNATIVE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 </manifest> 

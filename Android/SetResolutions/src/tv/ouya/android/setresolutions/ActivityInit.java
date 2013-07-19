@@ -40,4 +40,17 @@ public class ActivityInit extends Activity
     	Intent openIntent = new Intent("tv.ouya.android.setresolutions.MAIN");
         startActivity(openIntent);
     }
+    
+    @Override
+    public void onPause()
+    {
+    	super.onPause();
+    	
+    	//unload the init activity never to be used again
+    	finish();
+    }
+    
+    static {
+        //System.loadLibrary("libdynamic_resolution");
+    }
 }
