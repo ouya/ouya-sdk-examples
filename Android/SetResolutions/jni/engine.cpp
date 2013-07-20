@@ -301,8 +301,6 @@ bool Engine::checkWindowResized()
     			mRenderWidth = newW;
     			mRenderHeight = newH;
     	        LOGI("> Render surface size initialized: %dx%d", mRenderWidth, mRenderHeight);
-				LOGI("> Launch Intent here");
-				launchJavaActivity();
             }
         }        
     }
@@ -319,8 +317,6 @@ bool Engine::checkWindowResized()
 			mRenderWidth = sw;
 			mRenderHeight = sh;
 	        LOGI("!!> Render surface size changed: %dx%d", mRenderWidth, mRenderHeight); 
-			LOGI("!!> Launch Intent here");
-			launchJavaActivity();
 	        resized = true;
 		}
     }
@@ -786,6 +782,14 @@ int Engine::handleInput(AInputEvent* event)
 			mMode = RenderMode::MODE_FBO;
 			switchModes(mMode, mHitBtn);
 		}
+
+		else if(action == AMOTION_EVENT_ACTION_UP &&
+			code == 23) //button O
+		{
+			launchJavaActivity();
+		}
+
+		//LOGI("Key: %d", code); 
 
         // if we are in gameplay mode, we eat the back button and move into
         // pause mode.  If we are already in pause mode, we allow the back
