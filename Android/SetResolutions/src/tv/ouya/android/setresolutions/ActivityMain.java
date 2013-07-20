@@ -18,13 +18,18 @@ package tv.ouya.android.setresolutions;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
+import android.view.View.OnLayoutChangeListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Bundle;
 
 
 public class ActivityMain extends Activity
 {
+	View m_contentView = null;
+	TextView m_tvMainHeader = null;
 	Button m_btn480p = null;
 	Button m_btn720p = null;
 	Button m_btn1080p = null;
@@ -37,9 +42,28 @@ public class ActivityMain extends Activity
         
         setContentView(R.layout.main);
         
+        m_contentView = getWindow().getDecorView().findViewById(android.R.id.content);
+        m_tvMainHeader = (TextView)findViewById(R.id.tvMainHeader);
         m_btn480p = (Button)findViewById(R.id.button480p);
         m_btn720p = (Button)findViewById(R.id.button720p);
         m_btn1080p = (Button)findViewById(R.id.button1080p);
+        
+        m_contentView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight,
+                    int oldBottom) {
+                // its possible that the layout is not complete in which case
+                // we will get all zero values for the positions, so ignore the event
+                if (left == 0 && top == 0 && right == 0 && bottom == 0) {
+                    return;
+                }
+
+               // Do what you need to do with the height/width since they are now set
+                LayoutParams layoutParams = m_contentView.getLayoutParams();
+                m_tvMainHeader.setText("Main Layout @ " + layoutParams.width + "x" + layoutParams.height);
+            }
+        });
         
         m_btn480p.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -65,5 +89,13 @@ public class ActivityMain extends Activity
 		        startActivity(openIntent);				
 			}
 		});
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	super.onResume();
+    	LayoutParams layoutParams = m_contentView.getLayoutParams();
+    	m_tvMainHeader.setText("Main Layout @ " + layoutParams.width + "x" + layoutParams.height);
     }
 }

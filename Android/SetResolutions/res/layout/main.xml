@@ -19,6 +19,7 @@
 	     />
 	<!--  replace above with padding -->
     <TextView
+        android:id="@+id/tvMainHeader"
 	    android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
 	    android:text="Main Layout"
