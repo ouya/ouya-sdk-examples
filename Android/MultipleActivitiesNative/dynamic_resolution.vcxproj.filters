@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="build.xml" />
+    <None Include="AndroidManifest.xml" />
+    <None Include="project.properties" />
+    <None Include="jni\Android.mk">
+      <Filter>jni</Filter>
+    </None>
+    <None Include="jni\Application.mk">
+      <Filter>jni</Filter>
+    </None>
+    <None Include="res\drawable\icon.png">
+      <Filter>res\drawable</Filter>
+    </None>
+    <None Include="res\values\strings.xml">
+      <Filter>res\values</Filter>
+    </None>
+    <None Include="assets\courier+lucida_256.abc">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\courier+lucida_256.dds">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\utahcond+bold_1024.abc">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\utahcond+bold_1024.dds">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\demo_.vert">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\demo_.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="jni">
+      <UniqueIdentifier>{d29c9efc-3a41-4efb-92f8-ac95710ede30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{16d0b375-c192-4615-be34-58c745be6c10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\drawable">
+      <UniqueIdentifier>{abdf558c-954b-4347-ba39-cfcc93cfd480}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\values">
+      <UniqueIdentifier>{58a3c052-a4e3-4564-89db-bb9e9f22c0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{ce28d34c-4a8b-4cd4-b65a-cec0ed9d0f60}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\engine.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\main.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\resampler.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\engine.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\render_target.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\resampler.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
