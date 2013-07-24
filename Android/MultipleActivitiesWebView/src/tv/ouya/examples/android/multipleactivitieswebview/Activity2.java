@@ -58,12 +58,6 @@ public class Activity2 extends Activity
     {
     	super.onResume();
     	
-		if (null != m_WebView.getSettings())
-		{
-			m_WebView.getSettings().setJavaScriptEnabled(true);
-			m_WebView.getSettings().setPluginState(PluginState.ON);
-		}
-    	
 		m_WebView.setWebChromeClient(new WebChromeClient() {
 			public void onPageFinished(WebView view, String url) {
 				Log.i("MultipleActivitiesWebView:", "onPageFinished="+url);
@@ -72,7 +66,7 @@ public class Activity2 extends Activity
 		
 		m_WebView.clearCache(true);
         
-        m_WebView.loadUrl("http://devs.ouya.tv/developers");        
+        m_WebView.loadUrl("https://devs.ouya.tv/developers");        
     }
     
     @Override
