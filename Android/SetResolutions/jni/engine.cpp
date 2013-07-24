@@ -641,7 +641,7 @@ bool Engine::launchJavaActivity()
 	jclass intentClass = mApp->appThreadEnv->FindClass("android/content/Intent");
 	EXCEPTION_RETURN(mApp->appThreadEnv);
 
-	jstring actionString = mApp->appThreadEnv->NewStringUTF("tv.ouya.android.setresolutions.MAIN");
+	jstring actionString = mApp->appThreadEnv->NewStringUTF("tv.ouya.examples.android.setresolutions.MAIN");
 	EXCEPTION_RETURN(mApp->appThreadEnv);
 
 	// Get the initializer/constructor for Uri

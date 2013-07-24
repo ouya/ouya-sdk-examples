@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tv.ouya.android.setresolutions;
+package tv.ouya.examples.android.setresolutions;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,26 +23,34 @@ import android.widget.TextView;
 import android.os.Bundle;
 
 
-public class ActivityResolution1080p extends Activity
+public class ActivityInit extends Activity
 {
-	Button m_btnBack = null;
-	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.layout1080p);
-        
-        m_btnBack = (Button)findViewById(R.id.buttonBack);
-        
-        m_btnBack.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent openIntent = new Intent("tv.ouya.android.setresolutions.MAIN");
-				startActivity(openIntent);
-			}
-		});
+    }
+    
+    @Override
+    public void onStart()
+    {
+    	super.onStart();
+    	
+    	Intent openIntent = new Intent("tv.ouya.examples.android.setresolutions.MAIN");
+        startActivity(openIntent);
+    }
+    
+    @Override
+    public void onPause()
+    {
+    	super.onPause();
+    	
+    	//unload the init activity never to be used again
+    	finish();
+    }
+    
+    static {
+        //System.loadLibrary("libdynamic_resolution");
     }
 }
