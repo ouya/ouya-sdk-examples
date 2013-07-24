@@ -51,20 +51,8 @@ public class Activity2 extends Activity
 		});
         
         m_WebView = (WebView)findViewById(R.id.wvContent);
-    }
-    
-    @Override
-    public void onResume()
-    {
-    	super.onResume();
     	
-		m_WebView.setWebChromeClient(new WebChromeClient() {
-			public void onPageFinished(WebView view, String url) {
-				Log.i("MultipleActivitiesWebView:", "onPageFinished="+url);
-		    }
-		});
-		
-		m_WebView.clearCache(true);
+		m_WebView.setWebChromeClient(new WebChromeClient());		
         
         m_WebView.loadUrl("https://devs.ouya.tv/developers");        
     }
