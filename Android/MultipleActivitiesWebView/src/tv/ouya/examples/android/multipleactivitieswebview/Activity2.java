@@ -17,11 +17,9 @@ package tv.ouya.examples.android.multipleactivitieswebview;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebSettings.PluginState;
 import android.widget.Button;
 import android.os.Bundle;
 
