@@ -20,3 +20,9 @@ NDK/
 MonoGame/Intro/
 Android/MultipleActivities/bin/
 Android/MultipleActivities/gen/
+Android/MultipleActivitiesNative/bin/
+Android/MultipleActivitiesNative/obj/
+Android/MultipleActivitiesNative/gen/
+Android/MultipleActivitiesNative/Android/
+Android/MultipleActivitiesWebView/bin/
+Android/MultipleActivitiesWebView/gen/
