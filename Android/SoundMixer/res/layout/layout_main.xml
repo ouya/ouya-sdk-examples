@@ -35,6 +35,24 @@ limitations under the License.
 	     android:gravity="center"
 	     />
 	<!--  replace above with padding -->
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton
+	    android:id="@+id/btnDownAlarm"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:background="@android:drawable/btn_default_small"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpAlarm"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeAlarm"
 	    android:layout_width="wrap_content"
@@ -43,6 +61,23 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton 
+	    android:id="@+id/btnDownDtmf"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpDtmf"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeDtmf"
 	    android:layout_width="wrap_content"
@@ -51,6 +86,23 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+    </LinearLayout>
+    <LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton 
+	    android:id="@+id/btnDownMusic"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpMusic"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeMusic"
 	    android:layout_width="wrap_content"
@@ -59,6 +111,23 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+    </LinearLayout>
+    <LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton 
+	    android:id="@+id/btnDownNotification"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpNotification"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeNotification"
 	    android:layout_width="wrap_content"
@@ -67,6 +136,23 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+    </LinearLayout>
+    	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton 
+	    android:id="@+id/btnDownRing"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpRing"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeRing"
 	    android:layout_width="wrap_content"
@@ -75,6 +161,23 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+    </LinearLayout>
+    	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton 
+	    android:id="@+id/btnDownSystem"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpSystem"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeSystem"
 	    android:layout_width="wrap_content"
@@ -83,6 +186,23 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+    </LinearLayout>
+    <LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:orientation="horizontal" >
+	<ImageButton 
+	    android:id="@+id/btnDownVoiceCall"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_minus" />
+	<ImageButton 
+	    android:id="@+id/btnUpVoiceCall"
+	    android:layout_width="wrap_content"
+	    android:layout_height="50dp"
+	    android:src="@android:drawable/btn_plus" />
     <TextView
         android:id="@+id/tvVolumeVoiceCall"
 	    android:layout_width="wrap_content"
@@ -91,4 +211,5 @@ limitations under the License.
 	    android:layout_gravity="center"
 	    android:gravity="center"
 	    />
+    </LinearLayout>
 </LinearLayout>
