@@ -25,7 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>varPlayer = 0;
+            <string>varPlayer = 4;
 </string>
           </argument>
         </arguments>
