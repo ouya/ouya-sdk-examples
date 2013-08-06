@@ -7,3 +7,7 @@ In the meantime, head on over to GaslightGames implementation for:
 - In App Purchases
 
 https://github.com/gaslightgames
+
+
+Using Adobe AIR to create OUYA games:
+http://zehfernando.com/2013/using-adobe-air-to-create-ouya-games/
