@@ -291,19 +291,19 @@ local function onAxisEvent( event )
 	end
 	
 	--rotate input by N degrees to match image
-     degrees = 135;
-     radians = degrees / 180 * 3.14;
-     valCos = math.cos(radians);
-     valSin = math.sin(radians);
+     local degrees = 135;
+     local radians = degrees / 180 * 3.14;
+     local valCos = math.cos(radians);
+     local valSin = math.sin(radians);
 	
 	if (tostring(event.axis.descriptor) == strAxisLX) then
-		inputLeftStickX = valAxis;
+		controller.inputLeftStickX = valAxis;
 		
-		tempX = inputLeftStickX;
-		tempY = inputLeftStickY;
+		local tempX = controller.inputLeftStickX;
+		local tempY = controller.inputLeftStickY;
 		
-		newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
-		newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
+		local newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
+		local newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
 		
 		controller.leftStickInactive.x = newX;
 		controller.leftStickInactive.y = newY;
@@ -313,13 +313,13 @@ local function onAxisEvent( event )
 		--print("LX found x=" .. tostring(controller.x))
 	end
 	if (tostring(event.axis.descriptor) == strAxisLY) then
-		inputLeftStickY = valAxis;
+		controller.inputLeftStickY = valAxis;
 		
-		tempX = inputLeftStickX;
-		tempY = inputLeftStickY;
+		local tempX = controller.inputLeftStickX;
+		local tempY = controller.inputLeftStickY;
 		
-		newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
-		newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
+		local newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
+		local newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
 		
 		controller.leftStickInactive.x = newX;
 		controller.leftStickInactive.y = newY;
@@ -329,13 +329,13 @@ local function onAxisEvent( event )
 		--print("LY found")
 	end
 	if (tostring(event.axis.descriptor) == strAxisRX) then
-		inputRightStickX = valAxis;
+		controller.inputRightStickX = valAxis;
 		
-		tempX = inputRightStickX;
-		tempY = inputRightStickY;
+		local tempX = controller.inputRightStickX;
+		local tempY = controller.inputRightStickY;
 		
-		newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
-		newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
+		local newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
+		local newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
 		
 		controller.rightStickInactive.x = newX;
 		controller.rightStickInactive.y = newY;
@@ -344,13 +344,13 @@ local function onAxisEvent( event )
 		--print("RX found")
 	end
 	if (tostring(event.axis.descriptor) == strAxisRY) then
-		inputRightStickY = valAxis;
+		controller.inputRightStickY = valAxis;
 		
-		tempX = inputRightStickX;
-		tempY = inputRightStickY;
+		local tempX = controller.inputRightStickX;
+		local tempY = controller.inputRightStickY;
 		
-		newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
-		newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
+		local newX = controller.x + AXIS_SCALER * (tempX * valCos - tempY * valSin);
+		local newY = controller.y + AXIS_SCALER * (tempX * valSin + tempY * valCos);
 		
 		controller.rightStickInactive.x = newX;
 		controller.rightStickInactive.y = newY;
@@ -359,10 +359,10 @@ local function onAxisEvent( event )
 		--print("RY found")
 	end
 	if (tostring(event.axis.descriptor) == strAxisLT) then
-		print("LT found")
+		--print("LT found")
 	end
 	if (tostring(event.axis.descriptor) == strAxisRT) then
-		print("RT found")
+		--print("RT found")
 	end
 	
 	
