@@ -67,10 +67,10 @@ end
 
 controllers =
 {
-	createController(0, 150, 500, 2, 2),
-	createController(1, 150, 1200, 2, 2),
-	createController(2, 850, 500, 2, 2),
-	createController(0, 850, 1200, 2, 2)
+	createController(1, 150, 500, 2, 2),
+	createController(2, 150, 1200, 2, 2),
+	createController(3, 850, 500, 2, 2),
+	createController(4, 850, 1200, 2, 2)
 };
 
 local function spriteFadeOut (spriteObj)
@@ -83,31 +83,46 @@ local function spriteFadeIn (spriteObj)
 	transition.to(spriteObj, { time=500, alpha=1 })
 end
 
+local function updateControllerAxis(spriteObj)
+	    -- Fetch the input device's axes.
+    local inputAxes = inputDevices[spriteObj.player]:getAxes()
+    if #inputAxes > 0 then
+        -- Print all available axes to the log.
+        for axisIndex = 1, #inputAxes do
+            print(inputAxes[axisIndex].descriptor)
+        end
+    else
+        -- Device does not have any axes.
+        print(inputDevices[spriteObj.player].descriptor .. ": No axes found.")
+    end
+end
+
 -- Called when a key event has been received.
 local function onKeyEvent( event )
-	print("===== onKeyEvent ======")
-	
-    print("Key '" .. event.keyName .. "' has key code: " .. tostring(event.nativeKeyCode))
-	
-	if event.device then
-		print("### device.descriptor = " .. tostring(event.device.descriptor))
-		print("### device.type = " .. tostring(event.device.type))
-		print("### device.productName = " .. tostring(event.device.productName))
-		print("### device.aliasName = " .. tostring(event.device.aliasName))
-		print("### device.androidDeviceId = " .. tostring(event.device.androidDeviceId))
-		print("### device.permanentStringId = " .. tostring(event.device.permanentStringId))
-		print("### device.canVibrate = " .. tostring(event.device.canVibrate))
-		print("### device.isConnected = " .. tostring(event.device.isConnected))
-	else
-		print("### device = nil")
-	end
+	--print("===== onKeyEvent ======")
 	
     if (nil == controllers) then
     	print("controllers not found")
     	return false;
     else
-    	print("controllers found")
+    	--print("controllers found")
     end
+    
+    --print("Key '" .. event.keyName .. "' has key code: " .. tostring(event.nativeKeyCode))
+	
+	if event.device then
+		--print("### device.descriptor = " .. tostring(event.device.descriptor))
+		--print("### device.type = " .. tostring(event.device.type))
+		--print("### device.productName = " .. tostring(event.device.productName))
+		--print("### device.aliasName = " .. tostring(event.device.aliasName))
+		--print("### device.androidDeviceId = " .. tostring(event.device.androidDeviceId))
+		--print("### device.permanentStringId = " .. tostring(event.device.permanentStringId))
+		--print("### device.canVibrate = " .. tostring(event.device.canVibrate))
+		--print("### device.isConnected = " .. tostring(event.device.isConnected))
+	else
+		print("### device = nil")
+		return false;
+	end
 	
 	index = 1
 	
@@ -127,7 +142,13 @@ local function onKeyEvent( event )
     	print("controller not found")
     	return false;
     else
-    	print("controller found")
+    	--print("controller found")
+    end
+    
+    
+	--System Button / Pause Menu
+    if (event.keyName == "menu") then
+    	print ("menu button detected")
     end
 	
 	--DPADS
@@ -198,6 +219,146 @@ local function onKeyEvent( event )
 	return false
 end
 
+-- Called when an axis event has been received.
+local function onAxisEvent( event )
+	--print("===== onKeyEvent ======")
+	
+    if (nil == controllers) then
+    	print("controllers not found")
+    	return false;
+    else
+    	--print("controllers found")
+    end
+    
+	if event.device then
+		--print( event.axis.descriptor .. ": Normalized Value = " .. tostring(event.normalizedValue) )
+		--print("### device.descriptor = " .. tostring(event.device.descriptor))
+		--print("### device.type = " .. tostring(event.device.type))
+		--print("### device.productName = " .. tostring(event.device.productName))
+		--print("### device.aliasName = " .. tostring(event.device.aliasName))
+		--print("### device.androidDeviceId = " .. tostring(event.device.androidDeviceId))
+		--print("### device.permanentStringId = " .. tostring(event.device.permanentStringId))
+		--print("### device.canVibrate = " .. tostring(event.device.canVibrate))
+		--print("### device.isConnected = " .. tostring(event.device.isConnected))
+	else
+		print("### device = nil")
+		return false;
+	end
+	
+	index = 1
+	
+	if (tostring(event.device.descriptor) == "Joystick 1") then
+		index = 1;
+	elseif (tostring(event.device.descriptor) == "Joystick 2") then
+		index = 2;
+	elseif (tostring(event.device.descriptor) == "Joystick 3") then
+		index = 3;
+	elseif (tostring(event.device.descriptor) == "Joystick 4") then
+		index = 4;
+	end
+	
+	
+	controller = controllers[index]
+    if (nil == controller) then
+    	print("controller not found")
+    	return false;
+    else
+    	--print("controller found")
+    end
+    
+	
+	strAxisLX = event.device.descriptor ..  ": Axis 1"
+	strAxisLY = event.device.descriptor ..  ": Axis 2"
+	strAxisRX = event.device.descriptor ..  ": Axis 4"
+	strAxisRY = event.device.descriptor ..  ": Axis 5"
+	strAxisLT = event.device.descriptor ..  ": Axis 3"
+	strAxisRT = event.device.descriptor ..  ": Axis 6"
+	
+	AXIS_SCALER = 15;
+	
+	valAxis = event.normalizedValue;
+	if (math.abs(valAxis) < 0.3) then
+		valAxis = 0;
+	elseif (valAxis < 0) then
+		valAxis = (valAxis + 0.3) / 0.7;
+	elseif (valAxis > 0) then
+		valAxis = (valAxis - 0.3) / 0.7;
+	end
+	
+	--rotate input by N degrees to match image
+     degrees = 135;
+     radians = degrees / 180 * 3.14;
+     valCos = math.cos(radians);
+     valSin = math.sin(radians);
+	
+	if (tostring(event.axis.descriptor) == strAxisLX) then
+		tempX = AXIS_SCALER * valAxis;
+		tempY = controller.leftStickActive.y - controller.y;
+		
+		newX = controller.x + tempX * valCos - tempY * valSin;
+		newY = controller.y + tempX * valSin + tempY * valCos;
+		
+		controller.leftStickInactive.x = newX;
+		controller.leftStickInactive.y = newY;
+		controller.leftStickActive.x = newX;
+		controller.leftStickActive.y = newY;
+			
+		--print("LX found x=" .. tostring(controller.x))
+	end
+	if (tostring(event.axis.descriptor) == strAxisLY) then
+		tempX = controller.leftStickActive.x - controller.x;
+		tempY = AXIS_SCALER * valAxis;
+		
+		newX = controller.x + tempX * valCos - tempY * valSin;
+		newY = controller.y + tempX * valSin + tempY * valCos;
+		
+		controller.leftStickInactive.x = newX;
+		controller.leftStickInactive.y = newY;
+		controller.leftStickActive.x = newX;
+		controller.leftStickActive.y = newY;
+		
+		--print("LY found")
+	end
+	if (tostring(event.axis.descriptor) == strAxisRX) then
+		tempX = AXIS_SCALER * valAxis;
+		tempY = controller.rightStickActive.y - controller.y;
+		
+		newX = controller.x + tempX * valCos - tempY * valSin;
+		newY = controller.y + tempX * valSin + tempY * valCos;
+		
+		controller.rightStickInactive.x = newX;
+		controller.rightStickInactive.y = newY;
+		controller.rightStickActive.x = newX;
+		controller.rightStickActive.y = newY;
+		--print("RX found")
+	end
+	if (tostring(event.axis.descriptor) == strAxisRY) then
+		tempX = controller.rightStickActive.x - controller.x;
+		tempY = AXIS_SCALER * valAxis;
+		
+		newX = controller.x + tempX * valCos - tempY * valSin;
+		newY = controller.y + tempX * valSin + tempY * valCos;
+		
+		controller.rightStickInactive.x = newX;
+		controller.rightStickInactive.y = newY;
+		controller.rightStickActive.x = newX;
+		controller.rightStickActive.y = newY;
+		--print("RY found")
+	end
+	if (tostring(event.axis.descriptor) == strAxisLT) then
+		print("LT found")
+	end
+	if (tostring(event.axis.descriptor) == strAxisRT) then
+		print("RT found")
+	end
+	
+	
+--print("what=" .. tostring(event.axis.descriptor))
+	
+end
 
 -- Add the key event listener.
 Runtime:addEventListener( "key", onKeyEvent )
+
+-- Add the axis event listener.
+Runtime:addEventListener( "axis", onAxisEvent )
