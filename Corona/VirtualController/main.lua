@@ -78,14 +78,34 @@ controllers =
 	createController(4, 850, 1200, 2, 2)
 };
 
+-- Fade out the sprite alpha over 500ms
 local function spriteFadeOut (spriteObj)
 	spriteObj.alpha = 1;
 	transition.to(spriteObj, { time=500, alpha=0 })
 end
 
+-- Fade in the sprite alpha over 500ms
 local function spriteFadeIn (spriteObj)
 	spriteObj.alpha = 0;
 	transition.to(spriteObj, { time=500, alpha=1 })
+end
+
+-- Auto fade the sprite based on the phase, fade In if down, fade out if up
+local function spriteFadeAuto (phase, spriteObj)
+    	if (phase == "down") then
+    		spriteFadeIn(spriteObj)
+    	elseif (phase == "up") then
+    		spriteFadeOut(spriteObj)    	
+    	end
+end
+
+-- Invert auto fade the sprite based on the phase, fade In if up, fade out if down
+local function spriteFadeAutoInv (phase, spriteObj)
+    	if (phase == "up") then
+    		spriteFadeIn(spriteObj)
+    	elseif (phase == "down") then
+    		spriteFadeOut(spriteObj)    	
+    	end
 end
 
 local function updateControllerAxis(spriteObj)
@@ -113,7 +133,7 @@ local function onKeyEvent( event )
     	--print("controllers found")
     end
     
-    --print("Key '" .. event.keyName .. "' has key code: " .. tostring(event.nativeKeyCode))
+    --print("Key '" .. event.keyName .. "' has key code: " .. tostring(event.nativeKeyCode) .. " phase: " .. event.phase);
 	
 	if event.device then
 		--print("### device.descriptor = " .. tostring(event.device.descriptor))
@@ -129,7 +149,7 @@ local function onKeyEvent( event )
 		return false;
 	end
 	
-	index = 1
+	local index = 1
 	
 	if (tostring(event.device.descriptor) == "Joystick 1") then
 		index = 1;
@@ -142,7 +162,7 @@ local function onKeyEvent( event )
 	end
 
 	
-	controller = controllers[index]
+	local controller = controllers[index]
     if (nil == controller) then
     	print("controller not found")
     	return false;
@@ -153,70 +173,72 @@ local function onKeyEvent( event )
     
 	--System Button / Pause Menu
     if (event.keyName == "menu") then
-    	print ("menu button detected")
+    	if (event.phase == "up") then
+    		print ("menu button detected")
+    	end
     end
 	
 	--DPADS
     if (event.keyName == "down") then
-    	spriteFadeOut(controller.dpadDown)
+    	spriteFadeAuto(event.phase, controller.dpadDown)
     end
     
     if (event.keyName == "left") then
-    	spriteFadeOut(controller.dpadLeft)
+    	spriteFadeAuto(event.phase, controller.dpadLeft)
     end
     
     if (event.keyName == "right") then
-    	spriteFadeOut(controller.dpadRight)
+    	spriteFadeAuto(event.phase, controller.dpadRight)
     end
     
     if (event.keyName == "up") then
-    	spriteFadeOut(controller.dpadUp)
+    	spriteFadeAuto(event.phase, controller.dpadUp)
     end
     
     --end of DPADS
     
     if (event.keyName == "leftJoystickButton") then
-    	spriteFadeOut(controller.leftStickActive)
-    	spriteFadeIn(controller.leftStickInactive)
+    	spriteFadeAuto(event.phase, controller.leftStickActive)
+    	spriteFadeAutoInv(event.phase, controller.leftStickInactive)
     end
 
 	-- BUTTONS
 
     if (event.keyName == "rightJoystickButton") then
-    	spriteFadeOut(controller.rightStickActive)
-    	spriteFadeIn(controller.rightStickInactive)
+    	spriteFadeAuto(event.phase, controller.rightStickActive)
+    	spriteFadeAutoInv(event.phase, controller.rightStickInactive)
     end
     
     if (event.keyName == "buttonX") then
-    	spriteFadeOut(controller.buttonU)
+    	spriteFadeAuto(event.phase, controller.buttonU)
     end
     
     if (event.keyName == "buttonA") then
-    	spriteFadeOut(controller.buttonO)
+    	spriteFadeAuto(event.phase, controller.buttonO)
     end
     
     if (event.keyName == "buttonB") then
-    	spriteFadeOut(controller.buttonA)
+    	spriteFadeAuto(event.phase, controller.buttonA)
     end
     
     if (event.keyName == "buttonY") then
-    	spriteFadeOut(controller.buttonY)
+    	spriteFadeAuto(event.phase, controller.buttonY)
     end
     
     if (event.keyName == "leftShoulderButton1") then
-    	spriteFadeOut(controller.leftBumper)
+    	spriteFadeAuto(event.phase, controller.leftBumper)
     end
     
     if (event.keyName == "leftShoulderButton2") then
-    	spriteFadeOut(controller.leftTrigger)
+    	spriteFadeAuto(event.phase, controller.leftTrigger)
     end
     
     if (event.keyName == "rightShoulderButton1") then
-    	spriteFadeOut(controller.rightBumper)
+    	spriteFadeAuto(event.phase, controller.rightBumper)
     end
     
     if (event.keyName == "rightShoulderButton2") then
-    	spriteFadeOut(controller.rightTrigger)
+    	spriteFadeAuto(event.phase, controller.rightTrigger)
     end
     
     -- End of BUTTONS
@@ -250,7 +272,7 @@ local function onAxisEvent( event )
 		return false;
 	end
 	
-	index = 1
+	local index = 1
 	
 	if (tostring(event.device.descriptor) == "Joystick 1") then
 		index = 1;
@@ -263,7 +285,7 @@ local function onAxisEvent( event )
 	end
 	
 	
-	controller = controllers[index]
+	local controller = controllers[index]
     if (nil == controller) then
     	print("controller not found")
     	return false;
@@ -272,16 +294,16 @@ local function onAxisEvent( event )
     end
     
 	
-	strAxisLX = event.device.descriptor ..  ": Axis 1"
-	strAxisLY = event.device.descriptor ..  ": Axis 2"
-	strAxisRX = event.device.descriptor ..  ": Axis 4"
-	strAxisRY = event.device.descriptor ..  ": Axis 5"
-	strAxisLT = event.device.descriptor ..  ": Axis 3"
-	strAxisRT = event.device.descriptor ..  ": Axis 6"
+	local strAxisLX = event.device.descriptor ..  ": Axis 1"
+	local strAxisLY = event.device.descriptor ..  ": Axis 2"
+	local strAxisRX = event.device.descriptor ..  ": Axis 4"
+	local strAxisRY = event.device.descriptor ..  ": Axis 5"
+	local strAxisLT = event.device.descriptor ..  ": Axis 3"
+	local strAxisRT = event.device.descriptor ..  ": Axis 6"
 	
-	AXIS_SCALER = 15;
+	local AXIS_SCALER = 10;
 	
-	valAxis = event.normalizedValue;
+	local valAxis = event.normalizedValue;
 	if (math.abs(valAxis) < 0.3) then
 		valAxis = 0;
 	elseif (valAxis < 0) then
