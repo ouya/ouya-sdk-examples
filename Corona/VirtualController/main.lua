@@ -293,14 +293,7 @@ local function onAxisEvent( event )
     	--print("controller found")
     end
     
-	
-	local strAxisLX = event.device.descriptor ..  ": Axis 1"
-	local strAxisLY = event.device.descriptor ..  ": Axis 2"
-	local strAxisRX = event.device.descriptor ..  ": Axis 4"
-	local strAxisRY = event.device.descriptor ..  ": Axis 5"
-	local strAxisLT = event.device.descriptor ..  ": Axis 3"
-	local strAxisRT = event.device.descriptor ..  ": Axis 6"
-	
+    
 	local AXIS_SCALER = 10;
 	
 	local valAxis = event.normalizedValue;
@@ -318,7 +311,9 @@ local function onAxisEvent( event )
      local valCos = math.cos(radians);
      local valSin = math.sin(radians);
 	
-	if (tostring(event.axis.descriptor) == strAxisLX) then
+	if (event.axis.number == 1) then
+		--print("LX found x=" .. tostring(controller.x))
+		
 		controller.inputLeftStickX = valAxis;
 		
 		local tempX = controller.inputLeftStickX;
@@ -331,10 +326,11 @@ local function onAxisEvent( event )
 		controller.leftStickInactive.y = newY;
 		controller.leftStickActive.x = newX;
 		controller.leftStickActive.y = newY;
-			
-		--print("LX found x=" .. tostring(controller.x))
 	end
-	if (tostring(event.axis.descriptor) == strAxisLY) then
+	
+	if (event.axis.number == 2) then
+		--print("LY found")
+		
 		controller.inputLeftStickY = valAxis;
 		
 		local tempX = controller.inputLeftStickX;
@@ -347,10 +343,11 @@ local function onAxisEvent( event )
 		controller.leftStickInactive.y = newY;
 		controller.leftStickActive.x = newX;
 		controller.leftStickActive.y = newY;
-		
-		--print("LY found")
 	end
-	if (tostring(event.axis.descriptor) == strAxisRX) then
+	
+	if (event.axis.number == 4) then
+		--print("RX found")
+		
 		controller.inputRightStickX = valAxis;
 		
 		local tempX = controller.inputRightStickX;
@@ -363,9 +360,11 @@ local function onAxisEvent( event )
 		controller.rightStickInactive.y = newY;
 		controller.rightStickActive.x = newX;
 		controller.rightStickActive.y = newY;
-		--print("RX found")
 	end
-	if (tostring(event.axis.descriptor) == strAxisRY) then
+	
+	if (event.axis.number == 5) then
+		--print("RY found")
+		
 		controller.inputRightStickY = valAxis;
 		
 		local tempX = controller.inputRightStickX;
@@ -378,12 +377,13 @@ local function onAxisEvent( event )
 		controller.rightStickInactive.y = newY;
 		controller.rightStickActive.x = newX;
 		controller.rightStickActive.y = newY;
-		--print("RY found")
 	end
-	if (tostring(event.axis.descriptor) == strAxisLT) then
+
+	if (event.axis.number == 3) then
 		--print("LT found")
 	end
-	if (tostring(event.axis.descriptor) == strAxisRT) then
+	
+		if (event.axis.number == 6) then
 		--print("RT found")
 	end
 	
