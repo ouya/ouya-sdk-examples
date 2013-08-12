@@ -24,15 +24,15 @@
 	 The "label" attribute sets the name of the application as how it is shown to the end-user.
 	 -->
 	<application android:name="CoronaApplication"
-	             android:label="InAppPurchases"
+	             android:label="SimpleLuaExtension"
 	             android:hardwareAccelerated="true"
 	             android:debuggable="true">
 		
 		<!-- The main Corona activity that runs the Corona project. -->
 		<activity android:name="com.ansca.corona.CoronaActivity"
-		          android:screenOrientation="portrait"
+		          android:screenOrientation="landscape"
 		          android:configChanges="keyboardHidden|orientation|screenSize"
-		          android:label="InAppPurchases"
+		          android:label="SimpleLuaExtension"
 		          android:launchMode="singleTask"
 		          android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 			<intent-filter>

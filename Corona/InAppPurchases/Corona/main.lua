@@ -80,11 +80,11 @@ end
 
 local centerX = display.contentCenterX;
 
-btnProducts = createButton(centerX - 1200, 400, 3, 1, "Get Products", -130, -30, 48);
-btnPurchase = createButton(centerX - 600, 400, 3.5, 1, "Request Purchase", -200, -30, 48);
-btnReceipts = createButton(centerX, 400, 3, 1, "Get Receipts", -130, -30, 48);
-btnFetch = createButton(centerX + 600, 400, 3.75, 1, "Fetch Gamer UUID", -200, -30, 48);
-btnPause = createButton(centerX + 1300, 400, 1.5, 1, "Pause", -60, -30, 48);
+btnProducts = createButton(centerX - 400, 400, 1.5, 0.5, "Get Products", -70, -25, 24);
+btnPurchase = createButton(centerX - 175, 400, 1.75, 0.5, "Request Purchase", -100, -25, 24);
+btnReceipts = createButton(centerX + 50, 400, 1.5, 0.5, "Get Receipts", -70, -25, 24);
+btnFetch = createButton(centerX + 275, 400, 1.75, 0.5, "Fetch Gamer UUID", -100, -25, 24);
+btnPause = createButton(centerX + 450, 400, 0.75, 0.5, "Pause", -35, -25, 24);
 
 btnProducts.btnRight = btnPurchase;
 btnPurchase.btnLeft = btnProducts;
