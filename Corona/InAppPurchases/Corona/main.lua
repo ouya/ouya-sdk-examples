@@ -4,6 +4,13 @@
 --
 -----------------------------------------------------------------------------------------
 
+local DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+
+if nil ~= myTests then
+	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
+	myTests.ouyaSetDeveloperId(DEVELOPER_ID);
+end
+
 local function updateSprite(spriteObj, x, y, xScale, yScale, alpha)
 
 	spriteObj.x = x;

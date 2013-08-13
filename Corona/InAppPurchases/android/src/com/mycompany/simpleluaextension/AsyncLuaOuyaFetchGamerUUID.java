@@ -17,7 +17,7 @@ public class AsyncLuaOuyaFetchGamerUUID implements com.naef.jnlua.NamedJavaFunct
 	 */
 	@Override
 	public String getName() {
-		return "asyncCallLuaFunction";
+		return "asyncLuaOuyaFetchGamerUUID";
 	}
 	
 	/**
@@ -30,6 +30,11 @@ public class AsyncLuaOuyaFetchGamerUUID implements com.naef.jnlua.NamedJavaFunct
 	 */
 	@Override
 	public int invoke(com.naef.jnlua.LuaState luaState) {
+		
+		OuyaCoronaPlugin.fetchGamerUUID();
+		
+		/*
+		
 		// Check if the first argument is a function.
 		// Will print a stack trace if not or if no argument was given.
 		int luaFunctionStackIndex = 1;
@@ -99,6 +104,8 @@ public class AsyncLuaOuyaFetchGamerUUID implements com.naef.jnlua.NamedJavaFunct
 				dispatcher.send(task);
 			}
 		});
+		
+		*/
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;
