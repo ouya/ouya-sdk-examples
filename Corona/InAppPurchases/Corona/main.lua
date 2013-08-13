@@ -96,6 +96,10 @@ btnPause.btnLeft = btnFetch;
 
 setButtonFocus (btnProducts);
 
+function onAsyncCall()
+        print("onAsyncCall() has succeeded")
+end
+
 -- Called when a key event has been received.
 local function onKeyEvent( event )
 	--print("===== onKeyEvent ======")
@@ -123,8 +127,11 @@ local function onKeyEvent( event )
     
 	-- BUTTONS
     
-    if (event.keyName == "buttonA") then
-    	--spriteFadeAuto(event.phase, controller.buttonO)
+    if (event.keyName == "buttonA" and event.phase == "down") then -- OUYA BUTTON_O
+    	if focusButton == btnFetch then
+    		print "Invoking asyncLuaOuyaFetchGamerUUID...";
+    		myTests.asyncLuaOuyaFetchGamerUUID(onAsyncCall);
+    	end
     end
        
     -- End of BUTTONS
