@@ -146,9 +146,11 @@ local function onKeyEvent( event )
     
     if (event.keyName == "buttonA" and event.phase == "down") then -- OUYA BUTTON_O
     	if focusButton == btnFetch then
-    		print "Invoking asyncLuaOuyaFetchGamerUUID...";
-    		myTests.asyncLuaOuyaFetchGamerUUID(onAsyncCall);
-    		--myTests.asyncLuaOuyaFetchGamerUUID(onAsyncFetchGamerUUID);
+    		--print "Invoking asyncLuaOuyaFetchGamerUUID(onAsyncCall)...";
+    		--myTests.asyncLuaOuyaFetchGamerUUID(onAsyncCall);
+    		
+    		print "Invoking asyncLuaOuyaFetchGamerUUID(onAsyncFetchGamerUUID)...";
+    		myTests.asyncLuaOuyaFetchGamerUUID(onAsyncFetchGamerUUID);
     	end
     end
        
