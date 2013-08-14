@@ -107,6 +107,16 @@ function onAsyncCall()
         print("onAsyncCall() has succeeded")
 end
 
+function onAsyncFetchGamerUUID(gamerUUID)
+	if gamerUUID == nil then
+        print("onAsyncFetchGamerUUID: (nil)");
+	elseif gamerUUID == "" then
+        print("onAsyncFetchGamerUUID: (empty)");
+	else
+        print("onAsyncFetchGamerUUID: " .. gamerUUID);
+	end
+end
+
 -- Called when a key event has been received.
 local function onKeyEvent( event )
 	--print("===== onKeyEvent ======")
@@ -138,6 +148,7 @@ local function onKeyEvent( event )
     	if focusButton == btnFetch then
     		print "Invoking asyncLuaOuyaFetchGamerUUID...";
     		myTests.asyncLuaOuyaFetchGamerUUID(onAsyncCall);
+    		--myTests.asyncLuaOuyaFetchGamerUUID(onAsyncFetchGamerUUID);
     	end
     end
        
