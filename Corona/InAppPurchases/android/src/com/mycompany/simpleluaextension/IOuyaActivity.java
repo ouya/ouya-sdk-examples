@@ -78,4 +78,14 @@ public class IOuyaActivity
 	{
 		m_applicationKey = applicationKey;
 	}
+	
+	protected static CallbacksFetchGamerUUID m_callbacksFetchGamerUUID = null;
+	public static CallbacksFetchGamerUUID GetCallbacksFetchGamerUUID()
+	{
+		return m_callbacksFetchGamerUUID;
+	}
+	public static void SetCallbacksFetchGamerUUID(CallbacksFetchGamerUUID callbacksFetchGamerUUID)
+	{
+		m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
+	}
 }
