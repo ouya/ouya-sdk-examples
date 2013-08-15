@@ -146,7 +146,7 @@ public class CallbacksFetchGamerUUID {
 							// pass as argument
 							luaState.pushString(errorMessage);
 							
-							luaState.call(1, 0);
+							luaState.call(2, 0);
 						}
 						catch (Exception ex) {
 							ex.printStackTrace();

@@ -230,16 +230,8 @@ public class TestOuyaFacade
                                         });
 
                 if (!wasHandledByAuthHelper) {
-                    showError("Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-
-					Gson gson = new Gson();
-					ErrorResponse er = new ErrorResponse();
-					er.errorCode = errorCode;
-					er.errorMessage = errorMessage;
-					String jsonData = gson.toJson(er);
-
-					Log.i("TestOuyaFacade", "m_fetchGamerUUIDListener FetchGamerUUIDFailureListener=" + jsonData);
-					//UnityPlayer.UnitySendMessage("OuyaGameObject", "FetchGamerUUIDFailureListener", jsonData);
+					Log.i("TestOuyaFacade", "Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
+					IOuyaActivity.GetCallbacksFetchGamerUUID().onFailure(errorCode, errorMessage);
                 }
             }
         };
