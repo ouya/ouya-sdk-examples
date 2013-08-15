@@ -116,7 +116,6 @@ function onSuccessFetchGamerUUID(gamerUUID)
         print("onSuccessFetchGamerUUID: " .. gamerUUID);
 	end
 end
-
 function onFailureFetchGamerUUID(errorCode, errorMessage)
 	if errorCode == nil then
         print("onFailureFetchGamerUUID: errorCode=(nil)");
@@ -130,9 +129,80 @@ function onFailureFetchGamerUUID(errorCode, errorMessage)
         print("onFailureFetchGamerUUID: errorMessage=" .. errorMessage);
 	end
 end
-
 function onCancelFetchGamerUUID()
         print("onCancelFetchGamerUUID");
+end
+
+function onSuccessRequestProducts(products)
+	if products == nil then
+        print("onSuccessRequestProducts: (nil)");
+	else
+        print("onSuccessRequestProducts: "); -- .. products.length);
+	end
+end
+function onFailureRequestProducts(errorCode, errorMessage)
+	if errorCode == nil then
+        print("onFailureRequestProducts: errorCode=(nil)");
+	else
+        print("onFailureRequestProducts: errorCode=" .. errorCode);
+	end
+	
+	if errorMessage == nil then
+        print("onFailureRequestProducts: errorMessage=(nil)");
+	else
+        print("onFailureRequestProducts: errorMessage=" .. errorMessage);
+	end
+end
+function onCancelRequestProducts()
+        print("onCancelRequestProducts");
+end
+
+function onSuccessRequestPurchase(product)
+	if product == nil then
+        print("onSuccessRequestPurchase: (nil)");
+	else
+        print("onSuccessRequestPurchase: "); -- .. product.identifier);
+	end
+end
+function onFailureRequestPurchase(errorCode, errorMessage)
+	if errorCode == nil then
+        print("onFailureRequestPurchase: errorCode=(nil)");
+	else
+        print("onFailureRequestPurchase: errorCode=" .. errorCode);
+	end
+	
+	if errorMessage == nil then
+        print("onFailureRequestPurchase: errorMessage=(nil)");
+	else
+        print("onFailureRequestPurchase: errorMessage=" .. errorMessage);
+	end
+end
+function onCancelRequestPurchase()
+        print("onCancelRequestPurchase");
+end
+
+function onSuccessRequestReceipts(receipts)
+	if receipts == nil then
+        print("onSuccessRequestReceipts: (nil)");
+	else
+        print("onSuccessRequestReceipts: "); -- .. receipts.length);
+	end
+end
+function onFailureRequestReceipts(errorCode, errorMessage)
+	if errorCode == nil then
+        print("onFailureRequestReceipts: errorCode=(nil)");
+	else
+        print("onFailureRequestReceipts: errorCode=" .. errorCode);
+	end
+	
+	if errorMessage == nil then
+        print("onFailureRequestReceipts: errorMessage=(nil)");
+	else
+        print("onFailureRequestReceipts: errorMessage=" .. errorMessage);
+	end
+end
+function onCancelRequestReceipts()
+        print("onCancelRequestReceipts");
 end
 
 -- Called when a key event has been received.
@@ -163,12 +233,18 @@ local function onKeyEvent( event )
 	-- BUTTONS
     
     if (event.keyName == "buttonA" and event.phase == "down") then -- OUYA BUTTON_O
-    	if focusButton == btnFetch then
-    		--print "Invoking asyncLuaOuyaFetchGamerUUID(onAsyncCall)...";
-    		--myTests.asyncLuaOuyaFetchGamerUUID(onAsyncCall);
-    		
-    		print "Invoking asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID)...";
+    	if focusButton == btnFetch then    		
+    		print "Invoking asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID)...";
     		myTests.asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID);
+    	elseif focusButton == btnProducts then
+    		print "Invoking asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts)...";
+    		myTests.asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+    	elseif focusButton == btnPurchase then
+    		print "Invoking asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase)...";
+    		myTests.asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);	
+    	elseif focusButton == btnReceipts then
+    		print "Invoking asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts)...";
+    		myTests.asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);	
     	end
     end
        

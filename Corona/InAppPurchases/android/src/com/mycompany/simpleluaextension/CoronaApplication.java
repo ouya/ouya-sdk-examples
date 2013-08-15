@@ -39,6 +39,9 @@ public class CoronaApplication extends android.app.Application {
 			luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
 				new OuyaSetDeveloperId(),
 				new AsyncLuaOuyaFetchGamerUUID(),
+				new AsyncLuaOuyaRequestProducts(),
+				new AsyncLuaOuyaRequestPurchase(),
+				new AsyncLuaOuyaRequestReceipts(),
 				new GetRandomBooleanLuaFunction(),
 				new GetRandomNumberLuaFunction(),
 				new GetRandomStringLuaFunction(),
