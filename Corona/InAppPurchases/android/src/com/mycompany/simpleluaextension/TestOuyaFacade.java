@@ -217,21 +217,15 @@ public class TestOuyaFacade
                                             public void onFailure(int errorCode, String errorMessage,
                                                                   Bundle optionalData) {
                                                 //showError("Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-												Gson gson = new Gson();
-												ErrorResponse er = new ErrorResponse();
-												er.errorCode = errorCode;
-												er.errorMessage = errorMessage;
-												String jsonData = gson.toJson(er);
-
-												Log.i("TestOuyaFacade", "m_fetchGamerUUIDListener FetchGamerUUIDFailureListener=" + jsonData);
-												//UnityPlayer.UnitySendMessage("OuyaGameObject", "FetchGamerUUIDFailureListener", jsonData);
+												Log.i("TestOuyaFacade", "Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
+												IOuyaActivity.GetCallbacksFetchGamerUUID().onFailure(errorCode, errorMessage);
                                             }
 
                                             @Override
                                             public void onCancel() {
                                                 //showError("Unable to fetch gamer UUID");
 												Log.i("TestOuyaFacade", "m_fetchGamerUUIDListener FetchGamerUUIDCancelListener");
-												//UnityPlayer.UnitySendMessage("OuyaGameObject", "FetchGamerUUIDCancelListener", "");
+												IOuyaActivity.GetCallbacksFetchGamerUUID().onCancel();
                                             }
                                         });
 

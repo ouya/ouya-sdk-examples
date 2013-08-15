@@ -107,14 +107,32 @@ function onAsyncCall()
         print("onAsyncCall() has succeeded")
 end
 
-function onAsyncFetchGamerUUID(gamerUUID)
+function onSuccessFetchGamerUUID(gamerUUID)
 	if gamerUUID == nil then
-        print("onAsyncFetchGamerUUID: (nil)");
+        print("onSuccessFetchGamerUUID: (nil)");
 	elseif gamerUUID == "" then
-        print("onAsyncFetchGamerUUID: (empty)");
+        print("onSuccessFetchGamerUUID: (empty)");
 	else
-        print("onAsyncFetchGamerUUID: " .. gamerUUID);
+        print("onSuccessFetchGamerUUID: " .. gamerUUID);
 	end
+end
+
+function onFailureFetchGamerUUID(errorCode, errorMessage)
+	if errorCode == nil then
+        print("onFailureFetchGamerUUID: errorCode=(nil)");
+	else
+        print("onFailureFetchGamerUUID: errorCode=" .. errorCode);
+	end
+	
+	if errorMessage == nil then
+        print("onFailureFetchGamerUUID: errorMessage=(nil)");
+	else
+        print("onFailureFetchGamerUUID: errorMessage=" .. errorMessage);
+	end
+end
+
+function onCancelFetchGamerUUID()
+        print("onCancelFetchGamerUUID");
 end
 
 -- Called when a key event has been received.
@@ -149,8 +167,8 @@ local function onKeyEvent( event )
     		--print "Invoking asyncLuaOuyaFetchGamerUUID(onAsyncCall)...";
     		--myTests.asyncLuaOuyaFetchGamerUUID(onAsyncCall);
     		
-    		print "Invoking asyncLuaOuyaFetchGamerUUID(onAsyncFetchGamerUUID)...";
-    		myTests.asyncLuaOuyaFetchGamerUUID(onAsyncFetchGamerUUID);
+    		print "Invoking asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID)...";
+    		myTests.asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID);
     	end
     end
        
