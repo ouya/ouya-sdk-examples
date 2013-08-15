@@ -88,4 +88,34 @@ public class IOuyaActivity
 	{
 		m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
 	}
+	
+	protected static CallbacksRequestProducts m_callbacksRequestProducts = null;
+	public static CallbacksRequestProducts GetCallbacksRequestProducts()
+	{
+		return m_callbacksRequestProducts;
+	}
+	public static void SetCallbacksRequestProducts(CallbacksRequestProducts callbacksRequestProducts)
+	{
+		m_callbacksRequestProducts = callbacksRequestProducts;
+	}
+	
+	protected static CallbacksRequestPurchase m_callbacksRequestPurchase = null;
+	public static CallbacksRequestPurchase GetCallbacksRequestPurchase()
+	{
+		return m_callbacksRequestPurchase;
+	}
+	public static void SetCallbacksRequestPurchase(CallbacksRequestPurchase callbacksRequestPurchase)
+	{
+		m_callbacksRequestPurchase = callbacksRequestPurchase;
+	}
+	
+	protected static CallbacksRequestReceipts m_callbacksRequestReceipts = null;
+	public static CallbacksRequestReceipts GetCallbacksRequestReceipts()
+	{
+		return m_callbacksRequestReceipts;
+	}
+	public static void SetCallbacksRequestReceipts(CallbacksRequestReceipts callbacksRequestReceipts)
+	{
+		m_callbacksRequestReceipts = callbacksRequestReceipts;
+	}
 }

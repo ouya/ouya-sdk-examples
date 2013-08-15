@@ -31,10 +31,10 @@ public class AsyncLuaOuyaRequestProducts implements com.naef.jnlua.NamedJavaFunc
 	@Override
 	public int invoke(com.naef.jnlua.LuaState luaState) {
 		
-		CallbacksFetchGamerUUID callbacks = new CallbacksFetchGamerUUID(luaState);
+		CallbacksRequestProducts callbacks = new CallbacksRequestProducts(luaState);
 		
 		// store for access
-		IOuyaActivity.SetCallbacksFetchGamerUUID(callbacks);
+		IOuyaActivity.SetCallbacksRequestProducts(callbacks);
 		
 		// invoke service
 		OuyaCoronaPlugin.fetchGamerUUID();
