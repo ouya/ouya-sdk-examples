@@ -1,20 +1,24 @@
 package com.mycompany.simpleluaextension;
 
+import android.util.Log;
+
 
 public class CallbacksFetchGamerUUID {
 	
-	private com.naef.jnlua.LuaState m_luaState = null;
+	private int m_luaFunctionStackIndex = 1;
+	
+	private int m_luaFunctionReferenceKey = 0;
+	
+	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
+	
+	private String m_gamerUUID = "";
 	
 	public CallbacksFetchGamerUUID(com.naef.jnlua.LuaState luaState) {
-		m_luaState = luaState;
-	}
-	
-	public void onSuccess(final String gamerUUID) {
+		
 		// Check if the first argument is a function.
 		// Will print a stack trace if not or if no argument was given.
-		int luaFunctionStackIndex = 1;
 		try {
-			m_luaState.checkType(luaFunctionStackIndex, com.naef.jnlua.LuaType.FUNCTION);
+			luaState.checkType(m_luaFunctionStackIndex, com.naef.jnlua.LuaType.FUNCTION);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -26,16 +30,24 @@ public class CallbacksFetchGamerUUID {
 		// Note that the ref() method expects the value to be stored is at the top of the Lua stack.
 		// So, we must first push the Lua function to the top. The ref() method will automatically pop off
 		// the push Lua function afterwards.
-		m_luaState.pushValue(luaFunctionStackIndex);
-		final int luaFunctionReferenceKey = m_luaState.ref(com.naef.jnlua.LuaState.REGISTRYINDEX);
+		luaState.pushValue(m_luaFunctionStackIndex);
+		m_luaFunctionReferenceKey = luaState.ref(com.naef.jnlua.LuaState.REGISTRYINDEX);
 		
 		// Set up a dispatcher which allows us to send a task to the Corona runtime thread from another thread.
 		// This way we can call the given Lua function on the same thread that Lua runs in.
 		// This dispatcher will only send tasks to the Corona runtime that owns the given Lua state object.
 		// Once the Corona runtime is disposed/destroyed, which happens when the Corona activy is destroyed,
 		// then this dispatcher will no longer be able to send tasks.
-		final com.ansca.corona.CoronaRuntimeTaskDispatcher dispatcher =
-					new com.ansca.corona.CoronaRuntimeTaskDispatcher(m_luaState);
+		m_dispatcher = new com.ansca.corona.CoronaRuntimeTaskDispatcher(luaState);
+	}
+	
+	public void setGamerUUID(String gamerUUID) {
+		m_gamerUUID = gamerUUID;
+		
+		Log.i("CallbacksFetchGamerUUID", "setGamerUUID=" + m_gamerUUID);
+	}
+	
+	public void onSuccess() {
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -54,10 +66,10 @@ public class CallbacksFetchGamerUUID {
 							com.naef.jnlua.LuaState luaState = runtime.getLuaState();
 							
 							// Fetch the Lua function stored in the registry and push it to the top of the stack.
-							luaState.rawGet(com.naef.jnlua.LuaState.REGISTRYINDEX, luaFunctionReferenceKey);
+							luaState.rawGet(com.naef.jnlua.LuaState.REGISTRYINDEX, m_luaFunctionReferenceKey);
 							
 							// Remove the Lua function from the registry.
-							luaState.unref(com.naef.jnlua.LuaState.REGISTRYINDEX, luaFunctionReferenceKey);
+							luaState.unref(com.naef.jnlua.LuaState.REGISTRYINDEX, m_luaFunctionReferenceKey);
 							
 							// Call the Lua function that was just pushed to the top of the stack.
 							// The 1st argument indicates the number of arguments that we are passing to the Lua function.
@@ -69,7 +81,7 @@ public class CallbacksFetchGamerUUID {
 							//luaState.call(0, 0);
 							
 							// pass as argument
-							luaState.pushString(gamerUUID);
+							luaState.pushString(m_gamerUUID);
 							
 							luaState.call(1, 0);
 						}
@@ -82,7 +94,7 @@ public class CallbacksFetchGamerUUID {
 				// Send the above task to the Corona runtime asynchronously.
 				// The send() method will do nothing if the Corona runtime is no longer available, which can
 				// happen if the runtime was disposed/destroyed after the user has exited the Corona activity.
-				dispatcher.send(task);
+				m_dispatcher.send(task);
 			}
 		});
 	}
