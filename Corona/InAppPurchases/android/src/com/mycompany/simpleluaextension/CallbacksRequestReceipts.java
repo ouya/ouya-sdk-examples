@@ -11,7 +11,7 @@ public class CallbacksRequestReceipts {
 	private int m_luaStackIndexOnFailure = 2;
 	private int m_luaReferenceKeyOnFailure = 0;
 	
-	private int m_luaStackIndexOnCancel = 1;
+	private int m_luaStackIndexOnCancel = 3;
 	private int m_luaReferenceKeyOnCancel = 0;
 	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
