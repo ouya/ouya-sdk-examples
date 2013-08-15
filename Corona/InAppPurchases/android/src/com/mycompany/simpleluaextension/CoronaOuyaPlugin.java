@@ -26,12 +26,9 @@ import java.io.File;
 
 import tv.ouya.console.api.*;
 
-public class OuyaCoronaPlugin
+public class CoronaOuyaPlugin
 {
 	private static final String TAG = "OuyaCoronaPlugin";
-	
-	// The plugin has an instance of the OuyaFacade
-	private static TestOuyaFacade m_test = null;
 
 	// the developer id is sent from Corona
 	private static String m_developerId = "";
@@ -42,7 +39,7 @@ public class OuyaCoronaPlugin
 	// For debugging enable logging for testing
 	private static Boolean m_enableDebugLogging = true;
 	
-	public OuyaCoronaPlugin() {
+	public CoronaOuyaPlugin() {
 	}
 
 	// most of the java functions that are called, need the ouya facade initialized
@@ -59,7 +56,7 @@ public class OuyaCoronaPlugin
 				return;
 			}
 
-			if (null == m_test)
+			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
 				//wait to read the application key
 				if (null == IOuyaActivity.GetApplicationKey())
@@ -80,15 +77,16 @@ public class OuyaCoronaPlugin
 					else
 					{
 						Log.i(TAG, "InitializeTest: m_developerId is valid,  constructing TestOuyaFacade");
-						m_test = new TestOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-						IOuyaActivity.SetTestOuyaFacade(m_test);
+						IOuyaActivity.GetCoronaOuyaFacade() = new TestOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
+						IOuyaActivity.SetTestOuyaFacade(IOuyaActivity.GetCoronaOuyaFacade());
 					}
 					*/
 					
-					m_test = new TestOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
+					CoronaOuyaFacade coronaOuyaFacade =
+						new CoronaOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
 					
 					//make facade accessible by activity
-					IOuyaActivity.SetTestOuyaFacade(m_test);
+					IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
 
 					Log.i(TAG, "OuyaUnityPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
 					//IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "SendIAPInitComplete", "");
@@ -132,13 +130,13 @@ public class OuyaCoronaPlugin
 				return;
 			}
 
-			if (null == m_test)
+			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: m_test is null");
+				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: m_test is valid");
+				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: CoronaOuyaFacade is valid");
 				
 				if (m_developerId == "") {
 					Log.i(TAG, "OuyaUnityPlugin.m_developerId is not set");
@@ -146,7 +144,7 @@ public class OuyaCoronaPlugin
 					Log.i(TAG, "OuyaUnityPlugin.m_developerId valid: " + m_developerId);
 				}
 				
-				m_test.fetchGamerUUID();
+				IOuyaActivity.GetCoronaOuyaFacade().fetchGamerUUID();
 			}
 		}
 		catch (Exception ex) 
@@ -167,14 +165,14 @@ public class OuyaCoronaPlugin
 				return;
 			}
 
-			if (null == m_test)
+			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: m_test is null");
+				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: m_test is valid");
-				m_test.requestProducts();
+				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
+				IOuyaActivity.GetCoronaOuyaFacade().requestProducts();
 			}
 		}
 		catch (Exception ex) 
@@ -189,7 +187,7 @@ public class OuyaCoronaPlugin
 		{
 			Log.i(TAG, "clearGetProductList");
 		
-			TestOuyaFacade.PRODUCT_IDENTIFIER_LIST.clear();
+			CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST.clear();
 		}
 		catch (Exception ex) 
 		{
@@ -204,7 +202,7 @@ public class OuyaCoronaPlugin
 			Log.i(TAG, "addGetProduct productId: " + productId);
 		
 			boolean found = false;
-			for (Purchasable purchasable : TestOuyaFacade.PRODUCT_IDENTIFIER_LIST)
+			for (Purchasable purchasable : CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST)
 			{
 				//Log.i(TAG, "addGetProduct " + purchasable.getProductId() + "==" + productId);
 				if (purchasable.getProductId().equals(productId))
@@ -222,7 +220,7 @@ public class OuyaCoronaPlugin
 			{
 				//Log.i(TAG, "addGetProduct added productId: " + productId);
 				Purchasable newPurchasable = new Purchasable(new String(productId));
-				TestOuyaFacade.PRODUCT_IDENTIFIER_LIST.add(newPurchasable);
+				CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST.add(newPurchasable);
 			}
 		}
 		catch (Exception ex) 
@@ -236,12 +234,12 @@ public class OuyaCoronaPlugin
 		try
 		{
 			int count = 0;
-			for (Purchasable purchasable : TestOuyaFacade.PRODUCT_IDENTIFIER_LIST)
+			for (Purchasable purchasable : CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST)
 			{
 				++count;
 			}
 			Log.i(TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has " + count + " elements");
-			for (Purchasable purchasable : TestOuyaFacade.PRODUCT_IDENTIFIER_LIST)
+			for (Purchasable purchasable : CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST)
 			{
 				Log.i(TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has: " + purchasable.getProductId());
 			}
@@ -264,16 +262,16 @@ public class OuyaCoronaPlugin
 				return "";
 			}
 
-			if (null == m_test)
+			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: m_test is null");
+				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: m_test is valid");
+				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
 				Product product = new Product();
 				product.setIdentifier(sku);
-				m_test.requestPurchase(product);
+				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);
 			}
 		}
 		catch (Exception ex) 
@@ -295,14 +293,14 @@ public class OuyaCoronaPlugin
 				return;
 			}
 
-			if (null == m_test)
+			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: m_test is null");
+				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: m_test is valid");
-				m_test.requestReceipts();
+				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
+				IOuyaActivity.GetCoronaOuyaFacade().requestReceipts();
 			}
 		}
 		catch (Exception ex) 

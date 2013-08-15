@@ -34,9 +34,9 @@ import tv.ouya.console.api.OuyaController;
  * activity is displayed and will persist after the activity is destroyed. The name of this class must be set in the
  * AndroidManifest.xml file's "application" tag or else an instance of this class will not be created on startup.
  */
-public class OuyaCoronaActivity extends com.ansca.corona.CoronaActivity {
+public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	
-	private final String TAG = "OuyaCoronaActivity";
+	private final String TAG = "CoronaOuyaActivity";
 	
 	private boolean m_waitToExit = true;
 	
@@ -72,7 +72,7 @@ public class OuyaCoronaActivity extends com.ansca.corona.CoronaActivity {
 		OuyaController.init(context);
 		
 		// Initialize the OUYA Corona Plugin
-		OuyaCoronaPlugin ouyaCoronaPlugin = new OuyaCoronaPlugin();
+		CoronaOuyaPlugin ouyaCoronaPlugin = new CoronaOuyaPlugin();
 		IOuyaActivity.SetOuyaCoronaPlugin(ouyaCoronaPlugin);
 		
 		Thread timer = new Thread() {
@@ -80,7 +80,7 @@ public class OuyaCoronaActivity extends com.ansca.corona.CoronaActivity {
 				// wait for developer id to be set
 				while (m_waitToExit) {
 					
-					final OuyaCoronaPlugin ouyaCoronaPlugin = IOuyaActivity.GetOuyaCoronaPlugin();
+					final CoronaOuyaPlugin ouyaCoronaPlugin = IOuyaActivity.GetOuyaCoronaPlugin();
 					if (null != ouyaCoronaPlugin) {
 						if (ouyaCoronaPlugin.getDeveloperId() != "") {
 							Log.i(TAG, "Detected developer id initializing...");
@@ -128,10 +128,10 @@ public class OuyaCoronaActivity extends com.ansca.corona.CoronaActivity {
     private BroadcastReceiver mAuthChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-			TestOuyaFacade test = IOuyaActivity.GetTestOuyaFacade();
-			if (null != test)
+			CoronaOuyaFacade coronaOuyaFacade = IOuyaActivity.GetCoronaOuyaFacade();
+			if (null != coronaOuyaFacade)
 			{
-				test.requestReceipts();
+				coronaOuyaFacade.requestReceipts();
 			}
         }
     };
@@ -192,15 +192,15 @@ public class OuyaCoronaActivity extends com.ansca.corona.CoronaActivity {
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if(resultCode == RESULT_OK) {
-			TestOuyaFacade test = IOuyaActivity.GetTestOuyaFacade();
-			if (null != test)
+        	CoronaOuyaFacade coronaOuyaFacade = IOuyaActivity.GetCoronaOuyaFacade();
+			if (null != coronaOuyaFacade)
 			{
 				switch (requestCode) {
-					case TestOuyaFacade.GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-						test.fetchGamerUUID();
+					case CoronaOuyaFacade.GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
+						coronaOuyaFacade.fetchGamerUUID();
 						break;
-					case TestOuyaFacade.PURCHASE_AUTHENTICATION_ACTIVITY_ID:
-						test.restartInterruptedPurchase();
+					case CoronaOuyaFacade.PURCHASE_AUTHENTICATION_ACTIVITY_ID:
+						coronaOuyaFacade.restartInterruptedPurchase();
 						break;
 				}
             }

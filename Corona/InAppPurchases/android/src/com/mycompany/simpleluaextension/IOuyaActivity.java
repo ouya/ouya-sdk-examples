@@ -44,23 +44,23 @@ public class IOuyaActivity
 	}
 
 	// save reference to the testFacade
-	protected static TestOuyaFacade m_testOuyaFacade = null;
-	public static TestOuyaFacade GetTestOuyaFacade()
+	protected static CoronaOuyaFacade m_coronaOuyaFacade = null;
+	public static CoronaOuyaFacade GetCoronaOuyaFacade()
 	{
-		return m_testOuyaFacade;
+		return m_coronaOuyaFacade;
 	}
-	public static void SetTestOuyaFacade(TestOuyaFacade testOuyaFacade)
+	public static void SetCoronaOuyaFacade(CoronaOuyaFacade coronaOuyaFacade)
 	{
-		m_testOuyaFacade = testOuyaFacade;
+		m_coronaOuyaFacade = coronaOuyaFacade;
 	}
 	
 	// save reference to the ouya corona plugin
-	protected static OuyaCoronaPlugin m_ouyaCoronaPlugin = null;
-	public static OuyaCoronaPlugin GetOuyaCoronaPlugin()
+	protected static CoronaOuyaPlugin m_ouyaCoronaPlugin = null;
+	public static CoronaOuyaPlugin GetOuyaCoronaPlugin()
 	{
 		return m_ouyaCoronaPlugin;
 	}
-	public static void SetOuyaCoronaPlugin(OuyaCoronaPlugin ouyaCoronaPlugin)
+	public static void SetOuyaCoronaPlugin(CoronaOuyaPlugin ouyaCoronaPlugin)
 	{
 		m_ouyaCoronaPlugin = ouyaCoronaPlugin;
 	}

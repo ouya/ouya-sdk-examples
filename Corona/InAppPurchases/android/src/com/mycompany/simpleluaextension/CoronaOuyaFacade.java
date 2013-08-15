@@ -49,7 +49,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.util.*;
 
-public class TestOuyaFacade
+public class CoronaOuyaFacade
 {
     /**
      * The tag for log messages
@@ -140,7 +140,7 @@ public class TestOuyaFacade
 	// Custom-iap-code, listener for getting products
 	CancelIgnoringOuyaResponseListener<ArrayList<Product>> m_productListListener = null;
 
-	public TestOuyaFacade(Context context, Bundle savedInstanceState, String developerId, byte[] applicationKey)
+	public CoronaOuyaFacade(Context context, Bundle savedInstanceState, String developerId, byte[] applicationKey)
 	{
 		try
 		{

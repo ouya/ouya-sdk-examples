@@ -37,7 +37,7 @@ public class AsyncLuaOuyaFetchGamerUUID implements com.naef.jnlua.NamedJavaFunct
 		IOuyaActivity.SetCallbacksFetchGamerUUID(callbacks);
 		
 		// invoke service
-		OuyaCoronaPlugin.fetchGamerUUID();
+		CoronaOuyaPlugin.fetchGamerUUID();
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;

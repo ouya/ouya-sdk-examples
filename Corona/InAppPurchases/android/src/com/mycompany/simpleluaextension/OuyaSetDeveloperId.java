@@ -32,7 +32,7 @@ public class OuyaSetDeveloperId implements com.naef.jnlua.NamedJavaFunction {
 			// Will throw an exception if it is not of type string.
 			String value = luaState.checkString(1);
 			
-			OuyaCoronaPlugin.setDeveloperId(value);
+			CoronaOuyaPlugin.setDeveloperId(value);
 		}
 		catch (Exception ex) {
 			// An exception will occur if given an invalid argument or no argument. Print the error.
