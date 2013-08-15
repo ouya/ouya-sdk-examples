@@ -6,6 +6,8 @@
 
 local DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
+json = require "json"
+
 if nil ~= myTests then
 	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
 	myTests.ouyaSetDeveloperId(DEVELOPER_ID);
@@ -140,6 +142,13 @@ function onSuccessRequestProducts(jsonData)
 		print("onSuccessRequestProducts: (empty)");
 	else
         print("onSuccessRequestProducts: jsonData=" .. jsonData);
+        local products = json.decode(jsonData);
+		if products ~= nil then
+        	--print("onSuccessRequestProducts: t=" .. t);
+        	for i=1,#products do
+				print ("onSuccessRequestProducts: identifier=" .. products[i].identifier .. " name=" .. products[i].name .. " priceInCents=" .. products[i].priceInCents);
+		    end
+		end
 	end
 end
 function onFailureRequestProducts(errorCode, errorMessage)
