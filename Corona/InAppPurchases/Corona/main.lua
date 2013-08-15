@@ -133,11 +133,13 @@ function onCancelFetchGamerUUID()
         print("onCancelFetchGamerUUID");
 end
 
-function onSuccessRequestProducts(products)
-	if products == nil then
+function onSuccessRequestProducts(jsonData)
+	if jsonData == nil then
         print("onSuccessRequestProducts: (nil)");
+	elseif jsonData == "" then
+		print("onSuccessRequestProducts: (empty)");
 	else
-        print("onSuccessRequestProducts: "); -- .. products.length);
+        print("onSuccessRequestProducts: jsonData=" .. jsonData);
 	end
 end
 function onFailureRequestProducts(errorCode, errorMessage)

@@ -163,9 +163,9 @@ public class CallbacksRequestProducts {
 		
 	}
 	
-	public void onSuccess(final String gamerUUID) {
+	public void onSuccess(final String jsonData) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onSuccess=" + gamerUUID);
+		Log.i("CallbacksRequestProducts", "onSuccess jsonData=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -190,8 +190,9 @@ public class CallbacksRequestProducts {
 							luaState.unref(com.naef.jnlua.LuaState.REGISTRYINDEX, m_luaReferenceKeyOnSuccess);
 							
 							// pass as argument
-							luaState.pushString(gamerUUID);
+							luaState.pushString(jsonData);
 							
+							// call the method and pass the jsonData
 							luaState.call(1, 0);
 						}
 						catch (Exception ex) {
@@ -208,7 +209,7 @@ public class CallbacksRequestProducts {
 	
 	public void onFailure(final int errorCode, final String errorMessage) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
+		Log.i("CallbacksRequestProducts", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -254,7 +255,7 @@ public class CallbacksRequestProducts {
 	
 	public void onCancel() {
 		
-		Log.i("CallbacksFetchGamerUUID", "onCancel");
+		Log.i("CallbacksRequestProducts", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
