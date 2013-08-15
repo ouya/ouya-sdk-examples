@@ -11,8 +11,6 @@ public class CallbacksFetchGamerUUID {
 	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
 	
-	private String m_gamerUUID = "";
-	
 	public CallbacksFetchGamerUUID(com.naef.jnlua.LuaState luaState) {
 		
 		// Check if the first argument is a function.
@@ -41,13 +39,9 @@ public class CallbacksFetchGamerUUID {
 		m_dispatcher = new com.ansca.corona.CoronaRuntimeTaskDispatcher(luaState);
 	}
 	
-	public void setGamerUUID(String gamerUUID) {
-		m_gamerUUID = gamerUUID;
+	public void onSuccess(final String gamerUUID) {
 		
-		Log.i("CallbacksFetchGamerUUID", "setGamerUUID=" + m_gamerUUID);
-	}
-	
-	public void onSuccess() {
+		Log.i("CallbacksFetchGamerUUID", "setGamerUUID=" + gamerUUID);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -81,7 +75,7 @@ public class CallbacksFetchGamerUUID {
 							//luaState.call(0, 0);
 							
 							// pass as argument
-							luaState.pushString(m_gamerUUID);
+							luaState.pushString(gamerUUID);
 							
 							luaState.call(1, 0);
 						}

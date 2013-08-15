@@ -193,8 +193,7 @@ public class TestOuyaFacade
 				*/
 				Log.i("TestOuyaFacade", "m_fetchGamerUUIDListener FetchGamerUUIDSuccessListener=" + result);
 				
-				IOuyaActivity.GetCallbacksFetchGamerUUID().setGamerUUID(result);
-				IOuyaActivity.GetCallbacksFetchGamerUUID().onSuccess();
+				IOuyaActivity.GetCallbacksFetchGamerUUID().onSuccess(result);
             }
 
             @Override
