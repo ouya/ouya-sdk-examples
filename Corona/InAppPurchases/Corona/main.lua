@@ -87,10 +87,29 @@ local function setButtonFocus (btnNext)
 	
 end
 
-local function displayProductList()
+local function clearProductText()
+	print ("clear product text: " .. #productTextList);
+	for i=1,#productTextList do
+		local txtProduct = productTextList[i];
+		print ("deleting text=" .. txtProduct.text);
+		display.remove(txtProduct);
+	end
+	productTextList = { };
 end
 
-local centerX = display.contentCenterX;
+local function displayProductList()
+	clearProductText();
+	if getProducts ~= nil then
+		for i=1,#getProducts do
+				print ("onSuccessRequestProducts: identifier=" .. getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents);
+				local label = getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents;
+				local txtProduct = display.newText(label, centerX - 200, 425 + i * 30, "Helvetica", 24);
+				productTextList[#productTextList + 1] = txtProduct;
+	    end
+	end
+end
+
+centerX = display.contentCenterX;
 
 txtHello = display.newText("Hello from Corona SDK", centerX - 500, 200, "Helvetica", 24);
 txtStatus = display.newText("", centerX, 200, "Helvetica", 24);
@@ -113,7 +132,7 @@ btnPause.btnLeft = btnFetch;
 
 setButtonFocus (btnProducts);
 
-getProductList = { };
+getProducts = { };
 productTextList = { };
 displayProductList();
 
@@ -157,13 +176,8 @@ function onSuccessRequestProducts(jsonData)
 		print("onSuccessRequestProducts: (empty)");
 	else
         print("onSuccessRequestProducts: jsonData=" .. jsonData);
-        local products = json.decode(jsonData);
-		if products ~= nil then
-        	--print("onSuccessRequestProducts: t=" .. t);
-        	for i=1,#products do
-				print ("onSuccessRequestProducts: identifier=" .. products[i].identifier .. " name=" .. products[i].name .. " priceInCents=" .. products[i].priceInCents);
-		    end
-		end
+        getProducts = json.decode(jsonData);
+		displayProductList();
 	end
 end
 function onFailureRequestProducts(errorCode, errorMessage)
@@ -271,9 +285,12 @@ local function onKeyEvent( event )
     	if focusButton == btnFetch then
     		txtStatus.text = "Fetching Gamer UUID...";
     		txtGamerUUID.text = "Gamer UUID:";
+    		getProducts = { };
+    		displayProductList();
     		print "Invoking asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID)...";
     		myTests.asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID);
     	elseif focusButton == btnProducts then
+    		clearProductText();
     		txtStatus.text = "Requesting products...";
     		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
     		print "Invoking asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts, products)...";
