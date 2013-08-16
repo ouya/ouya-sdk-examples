@@ -87,7 +87,15 @@ local function setButtonFocus (btnNext)
 	
 end
 
+local function displayProductList()
+end
+
 local centerX = display.contentCenterX;
+
+txtHello = display.newText("Hello from Corona SDK", centerX - 500, 200, "Helvetica", 24);
+txtStatus = display.newText("", centerX, 200, "Helvetica", 24);
+txtGamerUUID = display.newText("Gamer UUID: (unknown)", centerX - 300, 240, "Helvetica", 24);
+txtInstructions = display.newText("Use DPAD to switch between buttons | Press O to click the button", centerX - 300, 325, "Helvetica", 24);
 
 btnProducts = createButton(centerX - 400, 400, 1.5, 0.5, "Get Products", -70, -25, 24);
 btnPurchase = createButton(centerX - 175, 400, 1.75, 0.5, "Request Purchase", -100, -25, 24);
@@ -105,20 +113,25 @@ btnPause.btnLeft = btnFetch;
 
 setButtonFocus (btnProducts);
 
-function onAsyncCall()
-        print("onAsyncCall() has succeeded")
-end
+getProductList = { };
+productTextList = { };
+displayProductList();
 
 function onSuccessFetchGamerUUID(gamerUUID)
+	txtStatus.text = "onSuccessFetchGamerUUID";
 	if gamerUUID == nil then
         print("onSuccessFetchGamerUUID: (nil)");
+        txtGamerUUID.text = "Gamer UUID: (nil)";
 	elseif gamerUUID == "" then
         print("onSuccessFetchGamerUUID: (empty)");
+        txtGamerUUID.text = "Gamer UUID: (empty)";
 	else
         print("onSuccessFetchGamerUUID: " .. gamerUUID);
+        txtGamerUUID.text = "Gamer UUID: " .. gamerUUID;
 	end
 end
 function onFailureFetchGamerUUID(errorCode, errorMessage)
+	txtStatus.text = "onFailureFetchGamerUUID";
 	if errorCode == nil then
         print("onFailureFetchGamerUUID: errorCode=(nil)");
 	else
@@ -132,10 +145,12 @@ function onFailureFetchGamerUUID(errorCode, errorMessage)
 	end
 end
 function onCancelFetchGamerUUID()
-        print("onCancelFetchGamerUUID");
+	txtStatus.text = "onCancelFetchGamerUUID";
+	print("onCancelFetchGamerUUID");
 end
 
 function onSuccessRequestProducts(jsonData)
+	txtStatus.text = "onSuccessRequestProducts";
 	if jsonData == nil then
         print("onSuccessRequestProducts: (nil)");
 	elseif jsonData == "" then
@@ -152,6 +167,7 @@ function onSuccessRequestProducts(jsonData)
 	end
 end
 function onFailureRequestProducts(errorCode, errorMessage)
+	txtStatus.text = "onFailureRequestProducts";
 	if errorCode == nil then
         print("onFailureRequestProducts: errorCode=(nil)");
 	else
@@ -165,10 +181,12 @@ function onFailureRequestProducts(errorCode, errorMessage)
 	end
 end
 function onCancelRequestProducts()
-        print("onCancelRequestProducts");
+	txtStatus.text = "onCancelRequestProducts";
+	print("onCancelRequestProducts");
 end
 
 function onSuccessRequestPurchase(product)
+	txtStatus.text = "onSuccessRequestPurchase";
 	if product == nil then
         print("onSuccessRequestPurchase: (nil)");
 	else
@@ -176,6 +194,7 @@ function onSuccessRequestPurchase(product)
 	end
 end
 function onFailureRequestPurchase(errorCode, errorMessage)
+	txtStatus.text = "onFailureRequestPurchase";
 	if errorCode == nil then
         print("onFailureRequestPurchase: errorCode=(nil)");
 	else
@@ -189,10 +208,12 @@ function onFailureRequestPurchase(errorCode, errorMessage)
 	end
 end
 function onCancelRequestPurchase()
-        print("onCancelRequestPurchase");
+	txtStatus.text = "onCancelRequestPurchase";
+	print("onCancelRequestPurchase");
 end
 
 function onSuccessRequestReceipts(receipts)
+	txtStatus.text = "onSuccessRequestReceipts";
 	if receipts == nil then
         print("onSuccessRequestReceipts: (nil)");
 	else
@@ -200,6 +221,7 @@ function onSuccessRequestReceipts(receipts)
 	end
 end
 function onFailureRequestReceipts(errorCode, errorMessage)
+	txtStatus.text = "onFailureRequestReceipts";
 	if errorCode == nil then
         print("onFailureRequestReceipts: errorCode=(nil)");
 	else
@@ -213,7 +235,8 @@ function onFailureRequestReceipts(errorCode, errorMessage)
 	end
 end
 function onCancelRequestReceipts()
-        print("onCancelRequestReceipts");
+	txtStatus.text = "onCancelRequestReceipts";
+	print("onCancelRequestReceipts");
 end
 
 -- Called when a key event has been received.
@@ -227,6 +250,7 @@ local function onKeyEvent( event )
 	    
 	--System Button / Pause Menu
     if (event.keyName == "menu" and event.phase == "up") then
+		txtStatus.text = "Pause Detected";
     	setButtonFocus(btnPause);
     end
 	
@@ -245,17 +269,22 @@ local function onKeyEvent( event )
     
     if (event.keyName == "buttonA" and event.phase == "down") then -- OUYA BUTTON_O
     	if focusButton == btnFetch then
+    		txtStatus.text = "Fetching Gamer UUID...";
+    		txtGamerUUID.text = "Gamer UUID:";
     		print "Invoking asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID)...";
     		myTests.asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID);
     	elseif focusButton == btnProducts then
+    		txtStatus.text = "Requesting products...";
     		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
     		print "Invoking asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts, products)...";
     		myTests.asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts, products);
     	elseif focusButton == btnPurchase then
+    		txtStatus.text = "Requesting purchase...";
     		local purchasable = "long_sword";
     		print "Invoking asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase, purchasable)...";
     		myTests.asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase, purchasable);	
     	elseif focusButton == btnReceipts then
+    		txtStatus.text = "Requesting receipts...";
     		print "Invoking asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts)...";
     		myTests.asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);	
     	end
