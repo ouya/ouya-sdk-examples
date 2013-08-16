@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mycompany.simpleluaextension;
+package tv.ouya.sdk.corona;
 
 import android.app.Activity;
 import android.content.Intent;

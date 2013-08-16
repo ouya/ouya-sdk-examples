@@ -1,6 +1,22 @@
+/*
+ * Copyright (C) 2012, 2013 OUYA, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.mycompany.simpleluaextension;
 
-//import tv.ouya.examples.corona.inapppurchases;
+import tv.ouya.sdk.corona.*;
 
 /**
  * Extends the Application class to receive Corona runtime events and to extend the Lua API.
@@ -37,7 +53,7 @@ public class CoronaApplication extends android.app.Application {
 			
 			// Add a module named "myTests" to Lua having the following functions.
 			luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
-				new OuyaSetDeveloperId(),
+				new AsyncLuaOuyaSetDeveloperId(),
 				new AsyncLuaOuyaFetchGamerUUID(),
 				new AsyncLuaOuyaRequestProducts(),
 				new AsyncLuaOuyaRequestPurchase(),

@@ -1,9 +1,25 @@
-package com.mycompany.simpleluaextension;
+/*
+ * Copyright (C) 2012, 2013 OUYA, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package tv.ouya.sdk.corona;
 
 import android.util.Log;
 
 
-public class CallbacksRequestReceipts {
+public class CallbacksRequestPurchase {
 	
 	private int m_luaStackIndexOnSuccess = 1;
 	private int m_luaReferenceKeyOnSuccess = 0;
@@ -14,15 +30,19 @@ public class CallbacksRequestReceipts {
 	private int m_luaStackIndexOnCancel = 3;
 	private int m_luaReferenceKeyOnCancel = 0;
 	
-	private int m_luaStackIndexJson = 4;
+	private int m_luaStackIndexPurchasable = 4;
+	
+	public String m_purchasable = "";
 	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
 	
-	public CallbacksRequestReceipts(com.naef.jnlua.LuaState luaState) {
+	public CallbacksRequestPurchase(com.naef.jnlua.LuaState luaState) {
 		
 		setupCallbackOnSuccess(luaState);
 		setupCallbackOnFailure(luaState);
 		setupCallbackOnCancel(luaState);
+		
+		setupPurchasable(luaState);
 		
 		// Set up a dispatcher which allows us to send a task to the Corona runtime thread from another thread.
 		m_dispatcher = new com.ansca.corona.CoronaRuntimeTaskDispatcher(luaState);
@@ -73,9 +93,33 @@ public class CallbacksRequestReceipts {
 		m_luaReferenceKeyOnCancel = luaState.ref(com.naef.jnlua.LuaState.REGISTRYINDEX);
 	}
 	
+	private void setupPurchasable(com.naef.jnlua.LuaState luaState) {
+		// Check if the first argument is a function.
+		// Will print a stack trace if not or if no argument was given.
+		try {
+			luaState.checkType(m_luaStackIndexPurchasable, com.naef.jnlua.LuaType.STRING);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return;
+		}
+		
+		try {
+			// Will throw an exception if it is not of type string.
+			m_purchasable = luaState.checkString(m_luaStackIndexPurchasable);
+			
+			// Print the string to the Android logging system.
+			System.out.println("Argument purchasable= \"" + m_purchasable + "\"");
+		}
+		catch (Exception ex) {
+			// An exception will occur if given an invalid argument or no argument. Print the error.
+			ex.printStackTrace();
+		}	
+	}
+	
 	public void onSuccess(final String jsonData) {
 		
-		Log.i("CallbacksRequestReceipts", "onSuccess jsonData=" + jsonData);
+		Log.i("CallbacksRequestPurchase", "onSuccess jsonData=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -118,7 +162,7 @@ public class CallbacksRequestReceipts {
 	
 	public void onFailure(final int errorCode, final String errorMessage) {
 		
-		Log.i("CallbacksRequestReceipts", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
+		Log.i("CallbacksRequestPurchase", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -164,7 +208,7 @@ public class CallbacksRequestReceipts {
 	
 	public void onCancel() {
 		
-		Log.i("CallbacksRequestReceipts", "onCancel");
+		Log.i("CallbacksRequestPurchase", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
