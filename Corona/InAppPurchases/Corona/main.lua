@@ -285,12 +285,11 @@ local function onKeyEvent( event )
     	if focusButton == btnFetch then
     		txtStatus.text = "Fetching Gamer UUID...";
     		txtGamerUUID.text = "Gamer UUID:";
-    		getProducts = { };
-    		displayProductList();
     		print "Invoking asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID)...";
     		myTests.asyncLuaOuyaFetchGamerUUID(onSuccessFetchGamerUUID, onFailureFetchGamerUUID, onCancelFetchGamerUUID);
     	elseif focusButton == btnProducts then
-    		clearProductText();
+    		getProducts = { };
+    		displayProductList();
     		txtStatus.text = "Requesting products...";
     		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
     		print "Invoking asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts, products)...";
