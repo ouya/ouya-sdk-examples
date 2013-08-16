@@ -104,6 +104,11 @@ local function displayProductList()
 				print ("onSuccessRequestProducts: identifier=" .. getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents);
 				local label = getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents;
 				local txtProduct = display.newText(label, centerX - 200, 425 + i * 30, "Helvetica", 24);
+				if (1 + selectedProduct) == i then
+					txtProduct:setTextColor(255, 255, 255);
+				else
+					txtProduct:setTextColor(255, 127, 0);
+				end
 				productTextList[#productTextList + 1] = txtProduct;
 	    end
 	end
@@ -132,6 +137,7 @@ btnPause.btnLeft = btnFetch;
 
 setButtonFocus (btnProducts);
 
+selectedProduct = 0;
 getProducts = { };
 productTextList = { };
 displayProductList();
@@ -275,6 +281,22 @@ local function onKeyEvent( event )
     
     if (event.keyName == "right" and event.phase == "down") then
 		setButtonFocus(focusButton.btnRight);
+    end
+    
+    if (focusButton == btnProducts or focusButton == btnPurchase) then
+	    if (event.keyName == "up" and event.phase == "down") then
+			if #getProducts > 1 then
+				selectedProduct = (selectedProduct + #getProducts - 1) % #getProducts;
+				displayProductList();
+			end
+	    end
+	    
+	    if (event.keyName == "down" and event.phase == "down") then
+			if #getProducts > 1 then
+				selectedProduct = (selectedProduct + 1) % #getProducts;
+				displayProductList();
+			end
+	    end
     end
         
     --end of DPADS
