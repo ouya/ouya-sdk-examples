@@ -20,8 +20,6 @@
 
 local DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
-json = require "json"
-
 globals = require "globals"
 helpers = require "helpers"
 inputs = require "inputs"

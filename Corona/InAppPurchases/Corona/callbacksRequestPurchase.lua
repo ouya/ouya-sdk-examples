@@ -19,6 +19,7 @@
 -----------------------------------------------------------------------------------------
 
 globals = require "globals"
+json = require "json"
 
 local callbacksRequestPurchase = {}
 
