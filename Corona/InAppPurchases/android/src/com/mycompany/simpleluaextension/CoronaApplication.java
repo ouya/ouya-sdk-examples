@@ -42,19 +42,6 @@ public class CoronaApplication extends android.app.Application {
 				new AsyncLuaOuyaRequestProducts(),
 				new AsyncLuaOuyaRequestPurchase(),
 				new AsyncLuaOuyaRequestReceipts(),
-				new GetRandomBooleanLuaFunction(),
-				new GetRandomNumberLuaFunction(),
-				new GetRandomStringLuaFunction(),
-				new GetRandomArrayLuaFunction(),
-				new GetRandomTableLuaFunction(),
-				new PrintBooleanLuaFunction(),
-				new PrintNumberLuaFunction(),
-				new PrintStringLuaFunction(),
-				new PrintArrayLuaFunction(),
-				new PrintTableLuaFunction(),
-				new PrintTableValuesXYLuaFunction(),
-				new CallLuaFunction(),
-				new AsyncCallLuaFunction(),
 			};
 			luaState.register("myTests", luaFunctions);
 			luaState.pop(1);
