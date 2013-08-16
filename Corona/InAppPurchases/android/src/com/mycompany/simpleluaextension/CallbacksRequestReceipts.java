@@ -14,6 +14,8 @@ public class CallbacksRequestReceipts {
 	private int m_luaStackIndexOnCancel = 3;
 	private int m_luaReferenceKeyOnCancel = 0;
 	
+	private int m_luaStackIndexJson = 4;
+	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
 	
 	public CallbacksRequestReceipts(com.naef.jnlua.LuaState luaState) {
@@ -71,9 +73,9 @@ public class CallbacksRequestReceipts {
 		m_luaReferenceKeyOnCancel = luaState.ref(com.naef.jnlua.LuaState.REGISTRYINDEX);
 	}
 	
-	public void onSuccess(final String gamerUUID) {
+	public void onSuccess(final String jsonData) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onSuccess=" + gamerUUID);
+		Log.i("CallbacksRequestReceipts", "onSuccess jsonData=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -98,7 +100,7 @@ public class CallbacksRequestReceipts {
 							luaState.unref(com.naef.jnlua.LuaState.REGISTRYINDEX, m_luaReferenceKeyOnSuccess);
 							
 							// pass as argument
-							luaState.pushString(gamerUUID);
+							luaState.pushString(jsonData);
 							
 							luaState.call(1, 0);
 						}
@@ -116,7 +118,7 @@ public class CallbacksRequestReceipts {
 	
 	public void onFailure(final int errorCode, final String errorMessage) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
+		Log.i("CallbacksRequestReceipts", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -162,7 +164,7 @@ public class CallbacksRequestReceipts {
 	
 	public void onCancel() {
 		
-		Log.i("CallbacksFetchGamerUUID", "onCancel");
+		Log.i("CallbacksRequestReceipts", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {

@@ -475,17 +475,7 @@ public class CoronaOuyaFacade
             }
 			catch (ParseException e)
 			{
-                //throw new RuntimeException(e);
-				
-				Gson gson = new Gson();
-				ErrorResponse er = new ErrorResponse();
-				er.errorCode = 0;
-				er.errorMessage = "RuntimeException: " + e;
-				String jsonData = gson.toJson(er);
-
-				Log.i(LOG_TAG, "ReceiptListener ReceiptListFailureListener=" + jsonData);
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListFailureListener", jsonData);
-
+				IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
 				return;
 
             }
@@ -501,64 +491,25 @@ public class CoronaOuyaFacade
                     }
 					catch (IOException ioe)
 					{
-                        //throw new RuntimeException(ioe);
-
-						Gson gson = new Gson();
-						ErrorResponse er = new ErrorResponse();
-						er.errorCode = 0;
-						er.errorMessage = "IOException: " + ioe;
-						String jsonData = gson.toJson(er);
-
-						Log.i(LOG_TAG, "ReceiptListener ReceiptListFailureListener=" + jsonData);
-						//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListFailureListener", jsonData);
-
+						IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + ioe);
 						return;
 
                     }
                 }
 				else
 				{
-                    //throw new RuntimeException(e);
-					Gson gson = new Gson();
-					ErrorResponse er = new ErrorResponse();
-					er.errorCode = 0;
-					er.errorMessage = "RuntimeException: " + e;
-					String jsonData = gson.toJson(er);
-
-					Log.i(LOG_TAG, "ReceiptListener ReceiptListFailureListener=" + jsonData);
-					//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListFailureListener", jsonData);
-
+					IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
 					return;
                 }
             }
 			catch (GeneralSecurityException e)
 			{
-                //throw new RuntimeException(e);
-
-				Gson gson = new Gson();
-				ErrorResponse er = new ErrorResponse();
-				er.errorCode = 0;
-				er.errorMessage = "GeneralSecurityException: " + e;
-				String jsonData = gson.toJson(er);
-
-				Log.i(LOG_TAG, "ReceiptListener ReceiptListFailureListener=" + jsonData);
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListFailureListener", jsonData);
-
+				IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "GeneralSecurityException: " + e);
 				return;
             }
 			catch (IOException e)
 			{
-                //throw new RuntimeException(e);
-				
-				Gson gson = new Gson();
-				ErrorResponse er = new ErrorResponse();
-				er.errorCode = 0;
-				er.errorMessage = "IOException: " + e;
-				String jsonData = gson.toJson(er);
-
-				Log.i(LOG_TAG, "ReceiptListener ReceiptListFailureListener=" + jsonData);
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListFailureListener", jsonData);
-
+				IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + e);
 				return;
             }
             Collections.sort(receipts, new Comparator<Receipt>() {
@@ -571,27 +522,16 @@ public class CoronaOuyaFacade
             mReceiptList = receipts;
 
 			// custom-iap-code
-
-			// clear the old list
-			Log.i(LOG_TAG, "ReceiptListener ReceiptListClearListener");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListClearListener", "");
-
-			//send each item in the list
-			if(mReceiptList != null)
-			{
-				for (Receipt receipt : mReceiptList)
-				{
-					Gson gson = new Gson();
-					String jsonData = gson.toJson(receipt);
-
-					Log.i(LOG_TAG, "ReceiptListener ReceiptListListener jsonData=" + jsonData);
-					//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListListener", jsonData);
-				}
+			if(mReceiptList != null) {
+				Gson gson = new Gson();
+				String jsonData = gson.toJson(mReceiptList);
+				
+				Log.i(LOG_TAG, "ReceiptListener ReceiptListListener jsonData=" + jsonData);
+				IOuyaActivity.GetCallbacksRequestReceipts().onSuccess(jsonData);
+			} else {
+				Log.i(LOG_TAG, "ReceiptListener ReceiptListListener jsonData=(empty)");
+				IOuyaActivity.GetCallbacksRequestReceipts().onSuccess("");
 			}
-
-			//send the complete message
-			Log.i(LOG_TAG, "ReceiptListener ReceiptListCompleteListener");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListCompleteListener", "");
         }
 
         /**
@@ -609,7 +549,7 @@ public class CoronaOuyaFacade
         @Override
         public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
             Log.w(LOG_TAG, "Request Receipts error (code " + errorCode + ": " + errorMessage + ")");
-            showError("Could not fetch receipts (error " + errorCode + ": " + errorMessage + ")");
+            IOuyaActivity.GetCallbacksRequestReceipts().onFailure(errorCode, errorMessage);
         }
 
         /**
@@ -619,10 +559,8 @@ public class CoronaOuyaFacade
         @Override
         public void onCancel()
 		{
-			showError("Fetch receipts was cancelled");
-
 			Log.i(LOG_TAG, "ReceiptListener Invoke ReceiptListCancelListener");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListCancelListener", "");
+			IOuyaActivity.GetCallbacksRequestReceipts().onCancel();
 		}
     }
 

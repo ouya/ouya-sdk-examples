@@ -171,7 +171,7 @@ public class CoronaOuyaPlugin
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
+				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: CoronaOuyaFacade is valid");
 				IOuyaActivity.GetCoronaOuyaFacade().requestProducts();
 			}
 		}
@@ -268,7 +268,7 @@ public class CoronaOuyaPlugin
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
+				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: CoronaOuyaFacade is valid");
 				Product product = new Product();
 				product.setIdentifier(identifier);
 				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);

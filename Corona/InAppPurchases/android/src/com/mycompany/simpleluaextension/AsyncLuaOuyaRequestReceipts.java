@@ -37,7 +37,7 @@ public class AsyncLuaOuyaRequestReceipts implements com.naef.jnlua.NamedJavaFunc
 		IOuyaActivity.SetCallbacksRequestReceipts(callbacks);
 		
 		// invoke service
-		CoronaOuyaPlugin.fetchGamerUUID();
+		CoronaOuyaPlugin.getReceiptsAsync();
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;

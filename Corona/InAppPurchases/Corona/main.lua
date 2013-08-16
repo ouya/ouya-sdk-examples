@@ -101,7 +101,7 @@ local function displayProductList()
 	clearProductText();
 	if getProducts ~= nil then
 		for i=1,#getProducts do
-				print ("onSuccessRequestProducts: identifier=" .. getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents);
+				print ("displayProductList: identifier=" .. getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents);
 				local label = getProducts[i].identifier .. " name=" .. getProducts[i].name .. " priceInCents=" .. getProducts[i].priceInCents;
 				local txtProduct = display.newText(label, centerX - 200, 425 + i * 30, "Helvetica", 24);
 				if (1 + selectedProduct) == i then
@@ -110,6 +110,29 @@ local function displayProductList()
 					txtProduct:setTextColor(255, 127, 0);
 				end
 				productTextList[#productTextList + 1] = txtProduct;
+	    end
+	end
+end
+
+local function clearReceiptText()
+	print ("clear receipt text: " .. #receiptTextList);
+	for i=1,#receiptTextList do
+		local txtReceipt = receiptTextList[i];
+		print ("deleting text=" .. txtReceipt.text);
+		display.remove(txtReceipt);
+	end
+	receiptTextList = { };
+end
+
+local function displayReceiptList()
+	clearReceiptText();
+	if getReceipts ~= nil then
+		for i=1,#getReceipts do
+				print ("displayReceiptList: identifier=" .. getReceipts[i].identifier); -- .. " name=" .. getReceipts[i].name .. " priceInCents=" .. getReceipts[i].priceInCents);
+				local label = getReceipts[i].identifier .. " name="; -- .. getReceipts[i].name .. " priceInCents=" .. getReceipts[i].priceInCents;
+				local txtReceipt = display.newText(label, centerX - 200, 425 + i * 30, "Helvetica", 24);
+				txtReceipt:setTextColor(255, 127, 0);
+				receiptTextList[#receiptTextList + 1] = txtReceipt;
 	    end
 	end
 end
@@ -141,6 +164,9 @@ selectedProduct = 0;
 getProducts = { };
 productTextList = { };
 displayProductList();
+
+getReceipts = { };
+receiptTextList = { };
 
 function onSuccessFetchGamerUUID(gamerUUID)
 	txtStatus.text = "onSuccessFetchGamerUUID";
@@ -235,12 +261,16 @@ function onCancelRequestPurchase()
 	print("onCancelRequestPurchase");
 end
 
-function onSuccessRequestReceipts(receipts)
+function onSuccessRequestReceipts(jsonData)
 	txtStatus.text = "onSuccessRequestReceipts";
-	if receipts == nil then
+	if jsonData == nil then
         print("onSuccessRequestReceipts: (nil)");
+	elseif jsonData == "" then
+		print("onSuccessRequestReceipts: (empty)");
 	else
-        print("onSuccessRequestReceipts: "); -- .. receipts.length);
+        print("onSuccessRequestReceipts: jsonData=" .. jsonData);
+        getReceipts = json.decode(jsonData);
+		displayReceiptList();
 	end
 end
 function onFailureRequestReceipts(errorCode, errorMessage)
@@ -329,6 +359,8 @@ local function onKeyEvent( event )
     			txtStatus.text = "Select a product for purchase...";
     		end
     	elseif focusButton == btnReceipts then
+    		getReceipts = { };
+    		displayReceiptList();
     		txtStatus.text = "Requesting receipts...";
     		print "Invoking asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts)...";
     		myTests.asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);	
