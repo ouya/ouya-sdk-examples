@@ -55,7 +55,5 @@ globals.btnPause.btnLeft = globals.btnFetch;
 
 ui.setButtonFocus (globals.btnProducts);
 
-ui.displayProductList();
-
 -- Add the key event listener.
 Runtime:addEventListener( "key", inputs.onKeyEvent )
