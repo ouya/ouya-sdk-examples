@@ -1,1 +1,1 @@
-adb install -r bin/SimpleLuaExtension-release.apk
+adb install -r bin/CoronaInAppPurchases-release.apk

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.mycompany.simpleluaextension"
+          package="tv.ouya.examples.corona.inapppurchases"
           android:versionCode="1"
           android:versionName="1.0"
 	      android:installLocation="auto">
@@ -24,7 +24,7 @@
 	 The "label" attribute sets the name of the application as how it is shown to the end-user.
 	 -->
 	<application android:name="CoronaApplication"
-	             android:label="SimpleLuaExtension"
+	             android:label="CoronaInAppPurchases"
 	             android:hardwareAccelerated="true"
 	             android:debuggable="true">
 		
@@ -32,7 +32,7 @@
 		<activity android:name="CoronaOuyaActivity"
 		          android:screenOrientation="landscape"
 		          android:configChanges="keyboardHidden|orientation|screenSize"
-		          android:label="SimpleLuaExtension"
+		          android:label="CoronaInAppPurchases"
 		          android:launchMode="singleTask"
 		          android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 			<intent-filter>
@@ -41,59 +41,5 @@
 				<category android:name="tv.ouya.intent.category.GAME" />
 			</intent-filter>
 		</activity>
-		
-		<!-- Other Corona activities that can be launched by the main Corona activity. -->
-		<activity android:name="com.ansca.corona.CameraActivity"
-		          android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		          android:configChanges="keyboardHidden|orientation|screenSize"
-		          android:screenOrientation="portrait" />
-		<activity android:name="com.ansca.corona.VideoActivity"
-		          android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		          android:configChanges="keyboardHidden|orientation|screenSize" />
-		<activity android:name="com.ansca.corona.purchasing.StoreActivity"
-		          android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		          android:configChanges="keyboardHidden|screenSize|orientation" />
-		
-		<!-- Corona content provider required by the video player and mail app to access this app's local files. -->
-		<provider android:name="com.ansca.corona.FileContentProvider"
-		          android:authorities="com.mycompany.simpleluaextension.files" />
-		
-		<!-- Corona service used to perform background operations such as managing notifications. -->
-		<service android:name="com.ansca.corona.CoronaService" />
-
-		<!--
-		 Receiver which automatically starts this application after the Android device starts up.
-		 This is needed to show this application's active status bar notifications and reschedule pending
-		 notifications after the device boots up, because they will only be shown if the app is running.
-		 This receiver only works if the "android.permission.RECEIVE_BOOT_COMPLETED" permission has been set.
-		-->
-		<receiver android:name="com.ansca.corona.SystemStartupBroadcastReceiver">
-			<intent-filter>
-				<action android:name="android.intent.action.BOOT_COMPLETED" />
-			</intent-filter>
-		</receiver>
-
-		<!-- Handles local/scheduled notification events. -->
-		<receiver android:name="com.ansca.corona.notifications.AlarmManagerBroadcastReceiver" />
-		<receiver android:name="com.ansca.corona.notifications.StatusBarBroadcastReceiver" />
-
-		<!-- Listens for Google Cloud Messaging push notifications and registration messages. -->
-		<receiver android:name="com.ansca.corona.notifications.GoogleCloudMessagingBroadcastReceiver"
-		          android:permission="com.google.android.c2dm.permission.SEND" >
-			<intent-filter>
-				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
-				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-				<category android:name="com.mycompany.simpleluaextension" />
-			</intent-filter>
-		</receiver>
-
-		<!-- Listens for Google Play/Marketplace in-app purchase responses and notifications. -->
-		<receiver android:name="com.ansca.corona.purchasing.GoogleStoreBroadcastReceiver">
-			<intent-filter>
-				<action android:name="com.android.vending.billing.IN_APP_NOTIFY" />
-				<action android:name="com.android.vending.billing.RESPONSE_CODE" />
-				<action android:name="com.android.vending.billing.PURCHASE_STATE_CHANGED" />
-			</intent-filter>
-		</receiver>
 	</application>
 </manifest>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mycompany.simpleluaextension;
+package tv.ouya.examples.corona.inapppurchases;
 
 import tv.ouya.sdk.corona.*;
 
