@@ -157,10 +157,7 @@ public class CallbacksRequestProducts {
 		catch (Exception ex) {
 			// An exception will occur if given an invalid argument or no argument. Print the error.
 			ex.printStackTrace();
-		}
-		
-		
-		
+		}	
 	}
 	
 	public void onSuccess(final String jsonData) {

@@ -138,7 +138,7 @@ public class CoronaOuyaFacade
 	CancelIgnoringOuyaResponseListener<String> m_fetchGamerUUIDListener = null;
 
 	// Custom-iap-code, listener for getting products
-	CancelIgnoringOuyaResponseListener<ArrayList<Product>> m_productListListener = null;
+	OuyaResponseListener<ArrayList<Product>> m_productListListener = null;
 
 	public CoronaOuyaFacade(Context context, Bundle savedInstanceState, String developerId, byte[] applicationKey)
 	{
@@ -236,7 +236,7 @@ public class CoronaOuyaFacade
         };
 
 		// custom-iap-code
-		m_productListListener = new CancelIgnoringOuyaResponseListener<ArrayList<Product>>()
+		m_productListListener = new OuyaResponseListener<ArrayList<Product>>()
 		{
 			@Override
 			public void onSuccess(final ArrayList<Product> products) {
@@ -246,7 +246,6 @@ public class CoronaOuyaFacade
 
 				// clear the old list
 				Log.i(LOG_TAG, "m_productListListener ProductListClearListener");
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ProductListClearListener", "");
 
 				//send each item in the list
 				if (null != mProductList) {
@@ -272,6 +271,11 @@ public class CoronaOuyaFacade
 
 				Log.i(LOG_TAG, "Unable to request products (error " + errorCode + ": " + errorMessage + ")");
 				IOuyaActivity.GetCallbacksRequestProducts().onFailure(errorCode, errorMessage);
+			}
+			
+			@Override
+			public void onCancel() {
+				IOuyaActivity.GetCallbacksRequestProducts().onCancel();
 			}
 		};
 	}
@@ -430,7 +434,6 @@ public class CoronaOuyaFacade
 
 		//custom-iap-code
 		Log.i(LOG_TAG, "requestPurchase(" + product.getIdentifier() + ")");
-		//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "requestPurchase(" + product.getIdentifier() + ")");
         
 		ouyaFacade.requestPurchase(purchasable, new PurchaseListener(product));
     }
@@ -618,7 +621,7 @@ public class CoronaOuyaFacade
 		{
 			showError("Fetch receipts was cancelled");
 
-			Log.i(LOG_TAG, "PurchaseListener Invoke ReceiptListCancelListener");
+			Log.i(LOG_TAG, "ReceiptListener Invoke ReceiptListCancelListener");
 			//UnityPlayer.UnitySendMessage("OuyaGameObject", "ReceiptListCancelListener", "");
 		}
     }
@@ -743,7 +746,7 @@ public class CoronaOuyaFacade
 				String jsonData = gson.toJson(product);
 
 				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseSuccessListener", jsonData);
+				IOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
 			}
 			else if (null != storedProduct)
 			{
@@ -751,7 +754,7 @@ public class CoronaOuyaFacade
 				String jsonData = gson.toJson(storedProduct);
 
 				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseSuccessListener", jsonData);
+				IOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
 			}
         }
 
@@ -796,15 +799,7 @@ public class CoronaOuyaFacade
                                         public void onFailure(int errorCode, String errorMessage,
                                                               Bundle optionalData)
 										{
-											Gson gson = new Gson();
-											ErrorResponse er = new ErrorResponse();
-											er.errorCode = errorCode;
-											er.errorMessage = errorMessage;
-											String jsonData = gson.toJson(er);
-
-											Log.i(LOG_TAG, "PurchaseListener PurchaseFailureListener=" + jsonData);
-											//UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseFailureListener", jsonData);
-
+											IOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
 											return;
                                         }
 
@@ -812,8 +807,7 @@ public class CoronaOuyaFacade
                                         public void onCancel()
 										{
 											Log.i(LOG_TAG, "PurchaseListener PurchaseCancelListener=");
-											//UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseCancelListener", "");
-
+											IOuyaActivity.GetCallbacksRequestPurchase().onCancel();
 											return;
                                         }
                                     });
@@ -821,15 +815,7 @@ public class CoronaOuyaFacade
 
             if(!wasHandledByAuthHelper)
 			{
-				Gson gson = new Gson();
-				ErrorResponse er = new ErrorResponse();
-				er.errorCode = errorCode;
-				er.errorMessage = errorMessage;
-				String jsonData = gson.toJson(er);
-
-				Log.i(LOG_TAG, "PurchaseListener PurchaseFailureListener=" + jsonData);
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseFailureListener", jsonData);
-
+				IOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
 				return;				
             }
         }
@@ -841,11 +827,10 @@ public class CoronaOuyaFacade
         @Override
         public void onCancel()
 		{
-			showError("Purchase was cancelled");
+			//showError("Purchase was cancelled");
 
 			Log.i(LOG_TAG, "PurchaseListener Invoke PurchaseCancelListener");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseCancelListener", "");
+			IOuyaActivity.GetCallbacksRequestPurchase().onCancel();
 		}
     }
-
 }

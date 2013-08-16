@@ -205,12 +205,15 @@ function onCancelRequestProducts()
 	print("onCancelRequestProducts");
 end
 
-function onSuccessRequestPurchase(product)
+function onSuccessRequestPurchase(jsonData)
 	txtStatus.text = "onSuccessRequestPurchase";
-	if product == nil then
+	if jsonData == nil then
         print("onSuccessRequestPurchase: (nil)");
+	elseif jsonData == "" then
+		print("onSuccessRequestPurchase: (empty)");
 	else
-        print("onSuccessRequestPurchase: "); -- .. product.identifier);
+        print("onSuccessRequestPurchase: jsonData=" .. jsonData);
+        local purchase = json.decode(jsonData);
 	end
 end
 function onFailureRequestPurchase(errorCode, errorMessage)
@@ -317,10 +320,14 @@ local function onKeyEvent( event )
     		print "Invoking asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts, products)...";
     		myTests.asyncLuaOuyaRequestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts, products);
     	elseif focusButton == btnPurchase then
-    		txtStatus.text = "Requesting purchase...";
-    		local purchasable = "long_sword";
-    		print "Invoking asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase, purchasable)...";
-    		myTests.asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase, purchasable);	
+    		if #getProducts > 1 and selectedProduct < #getProducts then
+	    		txtStatus.text = "Requesting purchase: " .. getProducts[selectedProduct + 1].name;
+	    		local purchasable = getProducts[selectedProduct + 1].identifier;
+	    		print "Invoking asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase, purchasable)...";
+	    		myTests.asyncLuaOuyaRequestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase, purchasable);
+    		else
+    			txtStatus.text = "Select a product for purchase...";
+    		end
     	elseif focusButton == btnReceipts then
     		txtStatus.text = "Requesting receipts...";
     		print "Invoking asyncLuaOuyaRequestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts)...";

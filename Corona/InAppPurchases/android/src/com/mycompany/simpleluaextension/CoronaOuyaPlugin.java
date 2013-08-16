@@ -250,11 +250,11 @@ public class CoronaOuyaPlugin
 		}
 	}
 
-	public static String requestPurchaseAsync(String sku)
+	public static String requestPurchaseAsync(String identifier)
 	{
 		try
 		{
-			Log.i(TAG, "requestPurchaseAsync sku: " + sku);
+			Log.i(TAG, "requestPurchaseAsync identifier: " + identifier);
 		
 			if (!m_enableIAP)
 			{
@@ -270,7 +270,7 @@ public class CoronaOuyaPlugin
 			{
 				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
 				Product product = new Product();
-				product.setIdentifier(sku);
+				product.setIdentifier(identifier);
 				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);
 			}
 		}

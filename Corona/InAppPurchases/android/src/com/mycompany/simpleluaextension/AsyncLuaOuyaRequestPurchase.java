@@ -37,7 +37,7 @@ public class AsyncLuaOuyaRequestPurchase implements com.naef.jnlua.NamedJavaFunc
 		IOuyaActivity.SetCallbacksRequestPurchase(callbacks);
 		
 		// invoke service
-		CoronaOuyaPlugin.fetchGamerUUID();
+		CoronaOuyaPlugin.requestPurchaseAsync(callbacks.m_purchasable);
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;

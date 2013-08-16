@@ -14,6 +14,10 @@ public class CallbacksRequestPurchase {
 	private int m_luaStackIndexOnCancel = 3;
 	private int m_luaReferenceKeyOnCancel = 0;
 	
+	private int m_luaStackIndexPurchasable = 4;
+	
+	public String m_purchasable = "";
+	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
 	
 	public CallbacksRequestPurchase(com.naef.jnlua.LuaState luaState) {
@@ -21,6 +25,8 @@ public class CallbacksRequestPurchase {
 		setupCallbackOnSuccess(luaState);
 		setupCallbackOnFailure(luaState);
 		setupCallbackOnCancel(luaState);
+		
+		setupPurchasable(luaState);
 		
 		// Set up a dispatcher which allows us to send a task to the Corona runtime thread from another thread.
 		m_dispatcher = new com.ansca.corona.CoronaRuntimeTaskDispatcher(luaState);
@@ -71,9 +77,33 @@ public class CallbacksRequestPurchase {
 		m_luaReferenceKeyOnCancel = luaState.ref(com.naef.jnlua.LuaState.REGISTRYINDEX);
 	}
 	
-	public void onSuccess(final String gamerUUID) {
+	private void setupPurchasable(com.naef.jnlua.LuaState luaState) {
+		// Check if the first argument is a function.
+		// Will print a stack trace if not or if no argument was given.
+		try {
+			luaState.checkType(m_luaStackIndexPurchasable, com.naef.jnlua.LuaType.STRING);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return;
+		}
 		
-		Log.i("CallbacksFetchGamerUUID", "onSuccess=" + gamerUUID);
+		try {
+			// Will throw an exception if it is not of type string.
+			m_purchasable = luaState.checkString(m_luaStackIndexPurchasable);
+			
+			// Print the string to the Android logging system.
+			System.out.println("Argument purchasable= \"" + m_purchasable + "\"");
+		}
+		catch (Exception ex) {
+			// An exception will occur if given an invalid argument or no argument. Print the error.
+			ex.printStackTrace();
+		}	
+	}
+	
+	public void onSuccess(final String jsonData) {
+		
+		Log.i("CallbacksRequestPurchase", "onSuccess jsonData=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -98,7 +128,7 @@ public class CallbacksRequestPurchase {
 							luaState.unref(com.naef.jnlua.LuaState.REGISTRYINDEX, m_luaReferenceKeyOnSuccess);
 							
 							// pass as argument
-							luaState.pushString(gamerUUID);
+							luaState.pushString(jsonData);
 							
 							luaState.call(1, 0);
 						}
@@ -116,7 +146,7 @@ public class CallbacksRequestPurchase {
 	
 	public void onFailure(final int errorCode, final String errorMessage) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
+		Log.i("CallbacksRequestPurchase", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -162,7 +192,7 @@ public class CallbacksRequestPurchase {
 	
 	public void onCancel() {
 		
-		Log.i("CallbacksFetchGamerUUID", "onCancel");
+		Log.i("CallbacksRequestPurchase", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
