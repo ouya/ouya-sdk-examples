@@ -21,13 +21,14 @@
 globals = require "globals"
 helpers = require "helpers"
 inputs = require "inputs"
+ui = require "ui"
 
 globals.controllers =
 {
-	helpers.createController(1, 150, 500, 2, 2),
-	helpers.createController(2, 150, 1200, 2, 2),
-	helpers.createController(3, 850, 500, 2, 2),
-	helpers.createController(4, 850, 1200, 2, 2)
+	ui.createController(1, 150, 500, 2, 2),
+	ui.createController(2, 150, 1200, 2, 2),
+	ui.createController(3, 850, 500, 2, 2),
+	ui.createController(4, 850, 1200, 2, 2)
 };
 
 -- Add the key event listener.
