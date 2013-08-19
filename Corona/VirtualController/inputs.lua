@@ -183,6 +183,7 @@ inputs.onKeyEvent = function (event)
     --print("Key '" .. event.keyName .. "' has key code: " .. tostring(event.nativeKeyCode) .. " phase: " .. event.phase);
 	
 	if event.device then
+		--print("### device.displayName = " .. tostring(event.device.displayName))
 		--print("### device.descriptor = " .. tostring(event.device.descriptor))
 		--print("### device.type = " .. tostring(event.device.type))
 		--print("### device.productName = " .. tostring(event.device.productName))
@@ -217,6 +218,8 @@ inputs.onKeyEvent = function (event)
     	--print("controller found")
     end
     
+    -- set the joystick name
+    controller.txtLabel.text = tostring(event.device.displayName);
     
 	--System Button / Pause Menu
     if (event.keyName == "menu") then

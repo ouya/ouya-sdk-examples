@@ -53,7 +53,9 @@ ui.createController = function (player, x, y, xScale, yScale)
         rightBumper = display.newImage("rb.png"),
         rightTrigger = display.newImage("rt.png"),
         rightStickInactive = display.newImage("r_stick.png"),
-        rightStickActive = display.newImage("thumbr.png")
+        rightStickActive = display.newImage("thumbr.png"),
+        
+        txtLabel = display.newText("Unknown", x - 100, y + 250, "Helvetica", 48);
 	};
 	
 	helpers.updateSprite(spriteObj.buttonA, x, y, xScale, yScale, 0);
