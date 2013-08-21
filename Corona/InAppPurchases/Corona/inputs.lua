@@ -71,22 +71,22 @@ inputs.onKeyEvent = function (event)
     
 	-- BUTTONS
     
-    if (event.keyName == "buttonA" and event.phase == "down") then -- OUYA BUTTON_O
+    if (event.keyName == "buttonA" and event.phase == "down" and nil ~= ouyaSDK) then -- OUYA BUTTON_O
     	if globals.focusButton == globals.btnFetch then
     		globals.txtStatus.text = "Fetching Gamer UUID...";
     		globals.txtGamerUUID.text = "Gamer UUID:";
-    		myTests.asyncLuaOuyaFetchGamerUUID(callbacksFetchGamerUUID.onSuccess, callbacksFetchGamerUUID.onFailure, callbacksFetchGamerUUID.onCancel);
+    		ouyaSDK.asyncLuaOuyaFetchGamerUUID(callbacksFetchGamerUUID.onSuccess, callbacksFetchGamerUUID.onFailure, callbacksFetchGamerUUID.onCancel);
     	elseif globals.focusButton == globals.btnProducts then
     		globals.getProducts = { };
     		ui.displayProductList();
     		globals.txtStatus.text = "Requesting products...";
     		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
-    		myTests.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, products);
+    		ouyaSDK.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, products);
     	elseif globals.focusButton == globals.btnPurchase then
     		if #globals.getProducts > 1 and globals.selectedProduct < #globals.getProducts then
 	    		globals.txtStatus.text = "Requesting purchase: " .. globals.getProducts[globals.selectedProduct + 1].name;
 	    		local purchasable = globals.getProducts[globals.selectedProduct + 1].identifier;
-	    		myTests.asyncLuaOuyaRequestPurchase(callbacksRequestPurchase.onSuccess, callbacksRequestPurchase.onFailure, callbacksRequestPurchase.onCancel, purchasable);
+	    		ouyaSDK.asyncLuaOuyaRequestPurchase(callbacksRequestPurchase.onSuccess, callbacksRequestPurchase.onFailure, callbacksRequestPurchase.onCancel, purchasable);
     		else
     			globals.txtStatus.text = "Select a product for purchase...";
     		end
@@ -94,7 +94,7 @@ inputs.onKeyEvent = function (event)
     		globals.getReceipts = { };
     		ui.displayReceiptList();
     		globals.txtStatus.text = "Requesting receipts...";
-    		myTests.asyncLuaOuyaRequestReceipts(callbacksRequestReceipts.onSuccess, callbacksRequestReceipts.onFailure, callbacksRequestReceipts.onCancel);	
+    		ouyaSDK.asyncLuaOuyaRequestReceipts(callbacksRequestReceipts.onSuccess, callbacksRequestReceipts.onFailure, callbacksRequestReceipts.onCancel);	
     	end
     end
        

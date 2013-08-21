@@ -25,9 +25,9 @@ helpers = require "helpers"
 inputs = require "inputs"
 ui = require "ui"
 
-if nil ~= myTests then
+if nil ~= ouyaSDK then
 	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
-	myTests.ouyaSetDeveloperId(DEVELOPER_ID);
+	ouyaSDK.ouyaSetDeveloperId(DEVELOPER_ID);
 end
 
 globals.centerX = display.contentCenterX;
