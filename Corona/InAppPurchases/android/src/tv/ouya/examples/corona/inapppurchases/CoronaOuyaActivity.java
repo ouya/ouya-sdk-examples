@@ -22,6 +22,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.NativeActivity;
 import android.content.*;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -68,7 +69,24 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		super.onCreate(savedInstanceState);
 		
 		Log.i(TAG, "***Starting Activity*********");
+
+		Context context = getBaseContext();
+
+		// load the application key from Corona assets
+		try {
+			AssetManager assetManager = context.getAssets();
+			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
+			byte[] applicationKey = new byte[inputStream.available()];
+			inputStream.read(applicationKey);
+			inputStream.close();
+			IOuyaActivity.SetApplicationKey(applicationKey);
+			
+			Log.i(TAG, "***Loaded signing key*********");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
+		/*
 		// load the raw resource for the application key
 		try {
 			InputStream inputStream = getResources().openRawResource(R.raw.key);
@@ -81,8 +99,7 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		Context context = getBaseContext();
+		*/
 
 		// Init the controller
 		OuyaController.init(context);
