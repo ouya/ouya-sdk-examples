@@ -28,3 +28,12 @@ Android/MultipleActivitiesWebView/bin/
 Android/MultipleActivitiesWebView/gen/
 Android/SoundMixer/bin/
 Android/SoundMixer/gen/
+Corona/InAppPurchases/android/bin
+Corona/InAppPurchases/android/assets
+Corona/InAppPurchases/android/gen
+Corona/InAppPurchasesPlugin/android/bin
+Corona/InAppPurchasesPlugin/android/assets
+Corona/InAppPurchasesPlugin/android/gen
+Corona/OuyaCoronaPlugin/android-plugin/bin
+Corona/OuyaCoronaPlugin/android-plugin/assets
+Corona/OuyaCoronaPlugin/android-plugin/gen
