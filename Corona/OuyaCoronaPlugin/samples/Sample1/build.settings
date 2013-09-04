@@ -1,0 +1,15 @@
+settings =
+{
+	orientation =
+	{
+		default = "landscapeRight", 
+		supported = { "landscapeRight" },
+	},
+	plugins =
+	{
+		["plugin.ouya"] =
+		{
+			publisherId = "tv.ouya"
+		},
+	},
+}

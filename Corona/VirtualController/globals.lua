@@ -14,25 +14,12 @@
 
 -----------------------------------------------------------------------------------------
 --
--- main.lua
+-- globals.lua
 --
 -----------------------------------------------------------------------------------------
 
-globals = require "globals"
-helpers = require "helpers"
-inputs = require "inputs"
-ui = require "ui"
+local globals = {}
 
-globals.controllers =
-{
-	ui.createController(1, -100, 500, 2, 2),
-	ui.createController(2, -100, 1200, 2, 2),
-	ui.createController(3, 1000, 500, 2, 2),
-	ui.createController(4, 1000, 1200, 2, 2)
-};
+globals.controllers = { };
 
--- Add the key event listener.
-Runtime:addEventListener( "key", inputs.onKeyEvent )
-
--- Add the axis event listener.
-Runtime:addEventListener( "axis", inputs.onAxisEvent )
+return globals;

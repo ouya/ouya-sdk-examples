@@ -8,6 +8,14 @@ settings = {
 		supported = { "landscapeRight", }
 	},
 	
+   android =
+   {
+      mainIntentFilter =
+      {
+         categories = { "tv.ouya.intent.category.GAME" },
+      }
+   },
+	
 	iphone = {
 		plist = {
 			UIStatusBarHidden = false,

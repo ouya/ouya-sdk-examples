@@ -11,28 +11,19 @@
 -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
-
------------------------------------------------------------------------------------------
+ 
+ -----------------------------------------------------------------------------------------
 --
--- main.lua
+-- config.lua
 --
 -----------------------------------------------------------------------------------------
-
-globals = require "globals"
-helpers = require "helpers"
-inputs = require "inputs"
-ui = require "ui"
-
-globals.controllers =
+ 
+application =
 {
-	ui.createController(1, -100, 500, 2, 2),
-	ui.createController(2, -100, 1200, 2, 2),
-	ui.createController(3, 1000, 500, 2, 2),
-	ui.createController(4, 1000, 1200, 2, 2)
-};
-
--- Add the key event listener.
-Runtime:addEventListener( "key", inputs.onKeyEvent )
-
--- Add the axis event listener.
-Runtime:addEventListener( "axis", inputs.onAxisEvent )
+	content =
+	{
+		width = 1280,
+		height = 720,
+		scale = "letterbox", 
+	},
+} 

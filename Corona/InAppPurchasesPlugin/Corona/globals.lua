@@ -14,25 +14,30 @@
 
 -----------------------------------------------------------------------------------------
 --
--- main.lua
+-- globals.lua
 --
 -----------------------------------------------------------------------------------------
 
-globals = require "globals"
-helpers = require "helpers"
-inputs = require "inputs"
-ui = require "ui"
+local globals = {}
 
-globals.controllers =
-{
-	ui.createController(1, -100, 500, 2, 2),
-	ui.createController(2, -100, 1200, 2, 2),
-	ui.createController(3, 1000, 500, 2, 2),
-	ui.createController(4, 1000, 1200, 2, 2)
-};
+globals.centerX = 0;
 
--- Add the key event listener.
-Runtime:addEventListener( "key", inputs.onKeyEvent )
+globals.txtHello = nil;
+globals.txtStatus = nil;
+globals.txtGamerUUID = nil;
+globals.txtInstructions = nil;
 
--- Add the axis event listener.
-Runtime:addEventListener( "axis", inputs.onAxisEvent )
+globals.btnProducts = nil;
+globals.btnPurchase = nil;
+globals.btnReceipts = nil;
+globals.btnFetch = nil;
+globals.btnPause = nil;
+
+globals.selectedProduct = 0;
+globals.getProducts = { };
+globals.productTextList = { };
+
+globals.getReceipts = { };
+globals.receiptTextList = { };
+
+return globals;
