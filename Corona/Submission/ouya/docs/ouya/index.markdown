@@ -21,7 +21,12 @@ Ouya is only supported on Android.
 
 local ouya = require("plugin.ouya") 
 
-This causes the plugin to initialize which registers the Java Named Functions making it possible to call into the ODK.JAR from Lua.
+This causes the plugin to initialize which registers the Java Named Functions making it possible to call into the plugin from Lua.
+
+
+#### key.der
+
+This is the signing key from the developer portal that goes into your Corona Assets folder (next to main.lua).
 
 
 ## Functions
