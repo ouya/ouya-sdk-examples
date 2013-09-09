@@ -1,0 +1,9 @@
+files
+{
+	VirtualController.cpp
+}
+
+subprojects
+{
+	IwGx
+}
