@@ -31,18 +31,14 @@ This is the signing key from the developer portal that goes into your Corona Ass
 
 ## Functions
 
-#### plugin_ouya.developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
-Be sure to set your developer id from the developer portal.
-
-
-#### plugin_ouya.ouyaSetDeveloperId
+#### ouyaSDK.ouyaSetDeveloperId
 
 Before IAP functions can be invoked the developer id must be set.
 This developer id corresponds with the signing key, and bundle id, and needs to match for proper encryption/decryption.
 
 
-#### plugin_ouya.asyncLuaOuyaFetchGamerUUID
+#### ouyaSDK.asyncLuaOuyaFetchGamerUUID
 
 Requires developer id to be set.
 
@@ -51,7 +47,7 @@ This method has success, failure, and cancel callbacks.
 The success event provides access to the gamer's unique identifier.
 
 
-#### plugin_ouya.asyncLuaOuyaRequestProducts
+#### ouyaSDK.asyncLuaOuyaRequestProducts
 
 Requires developer id to be set.
 
@@ -64,7 +60,7 @@ The failure event provides an error code and description.
 The cancel event provides no arguments and indicates the request was cancelled.
 
 
-#### plugin_ouya.asyncLuaOuyaRequestPurchase
+#### ouyaSDK.asyncLuaOuyaRequestPurchase
 
 Requires developer id to be set.
 
@@ -77,7 +73,7 @@ The failure event provides an error code and description.
 The cancel event provides no arguments and indicates the request was cancelled.
 
 
-#### plugin_ouya.asyncLuaOuyaRequestReceipts
+#### ouyaSDK.asyncLuaOuyaRequestReceipts
 
 Requires developer id to be set.
 
@@ -88,6 +84,41 @@ The success event returns the list of receipts associated with the bundle identi
 The failure event provides an error code and description.
 
 The cancel event provides no arguments and indicates the request was cancelled.
+
+
+#### plugin_ouya.developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+
+Be sure to set your developer id from the developer portal.
+
+
+#### plugin_ouya.initialize
+
+Common method handles initialization for the wrapper methods.
+
+
+#### plugin_ouya.ouyaSetDeveloperId
+
+Wraps calling ouyaSDK.ouyaSetDeveloperId so that the plugin is only initialized once.
+
+
+#### plugin_ouya.asyncLuaOuyaFetchGamerUUID
+
+Wraps calling ouyaSDK.asyncLuaOuyaFetchGamerUUID to check if the plugin has been initialized before invoking.
+
+
+#### plugin_ouya.asyncLuaOuyaRequestProducts
+
+Wraps calling ouyaSDK.asyncLuaOuyaRequestProducts to check if the plugin has been initialized before invoking.
+
+
+#### plugin_ouya.asyncLuaOuyaRequestPurchase
+
+Wraps calling ouyaSDK.asyncLuaOuyaRequestPurchase to check if the plugin has been initialized before invoking.
+
+
+#### plugin_ouya.asyncLuaOuyaRequestReceipts
+
+Wraps calling ouyaSDK.asyncLuaOuyaRequestReceipts to check if the plugin has been initialized before invoking.
 
 
 ## Project Settings
