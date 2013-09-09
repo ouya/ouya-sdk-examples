@@ -100,7 +100,10 @@ settings =
 
 ### Enterprise
 
-The required AndroidManifest.xml settings go here...
+The plugin is compatible with Corona Enterpise.
+
+You'll find more enterprise specific examples on the OUYA site. https://github.com/ouya/docs/blob/master/corona.md
+
 
 ## Sample Code
 
