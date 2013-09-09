@@ -1,13 +1,11 @@
 # ouya.*
 
-> --------------------- ------------------------------------------------------------------------------------------
-> __Type__              plugin.ouya
-> __Revision__          001
-> __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
-> __Sample code__       
-> __See also__          [Marketplace](http://www.coronalabs.com/store/plugin)
-> __Availability__      Pro, Enterprise
-> --------------------- ------------------------------------------------------------------------------------------
+> __Type__              plugin.ouya<br/>
+> __Revision__          001<br/>
+> __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork<br/>
+> __See also__          [Marketplace](http://www.coronalabs.com/store/plugin)<br/>
+> __Availability__      Pro, Enterprise<br/>
+
 
 ## Overview
 
@@ -25,19 +23,59 @@ Ouya is only supported on Android.
 
 ## Functions
 
+
 #### plugin_ouya.ouyaSetDeveloperId
 
 Before IAP functions can be invoked the developer id must be set. This developer id corresponds with the signing key, and bundle id, and needs to match for proper encryption/decryption.
 
+
 #### plugin_ouya.asyncLuaOuyaFetchGamerUUID
 
-After setting the developer id, the gamer unique identifier can be accessed.
+Requires developer id to be set.
+
+This method has success, failure, and cancel callbacks.
+
+The success event provides access to the gamer's unique identifier.
+
 
 #### plugin_ouya.asyncLuaOuyaRequestProducts
 
+Requires developer id to be set.
+
+This method has success, failure, and cancel callbacks.
+
+The success event provides access purchasable details for name, description, and price for the given entitlement/consumable purchasable identifier.
+
+The failure event provides an error code and description.
+
+The cancel event provides no arguments and indicates the request was cancelled.
 
 
-#### [ouya.function2()][plugin.ouya.nameOfFunction2MarkdownFile]
+#### plugin_ouya.asyncLuaOuyaRequestPurchase
+
+Requires developer id to be set.
+
+This method has success, failure, and cancel callbacks.
+
+The success event provides opens the purchase dialog for the requested purchasable identifier.
+
+The failure event provides an error code and description.
+
+The cancel event provides no arguments and indicates the request was cancelled.
+
+
+#### plugin_ouya.asyncLuaOuyaRequestReceipts
+
+Requires developer id to be set.
+
+This method has success, failure, and cancel callbacks.
+
+The success event returns the list of receipts associated with the bundle identifier for the gamer.
+
+The failure event provides an error code and description.
+
+The cancel event provides no arguments and indicates the request was cancelled.
+
 
 ## Project Settings
 
