@@ -98,7 +98,7 @@ When you build using the Corona Simulator, the server automatically takes care o
 
 All you need to do is add an entry into a `plugins` table of your `build.settings`. The following is an example of a minimal `build.settings` file:
 
-``````
+```
 settings =
 {
 	plugins =
@@ -109,7 +109,20 @@ settings =
 		},
 	},		
 }
-``````
+```
+
+Adding the intent filter your game icon to appear in the OUYA Play section.
+
+```
+   android =
+   {
+      mainIntentFilter =
+      {
+         categories = { "tv.ouya.intent.category.GAME" },
+      }
+   },
+```
+
 
 ### Enterprise
 
