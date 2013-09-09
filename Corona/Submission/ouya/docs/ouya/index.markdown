@@ -1,16 +1,19 @@
 # ouya.*
 
 > --------------------- ------------------------------------------------------------------------------------------
-> __Type__              [library][api.type.library]
-> __Revision__          [REVISION_LABEL](REVISION_URL)
-> __Keywords__          ouya, store, gameNetwork
+> __Type__              plugin.ouya
+> __Revision__          001
+> __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
 > __Sample code__       
 > __See also__          [Marketplace](http://www.coronalabs.com/store/plugin)
-> __Availability__      Starter, Pro, Enterprise
+> __Availability__      Pro, Enterprise
 > --------------------- ------------------------------------------------------------------------------------------
 
 ## Overview
 
+The OUYA plugin is available for Corona PRO and Corona Enterprise.
+The plugin adds an interface for in-app-purchases which allows purchases of entitlements and consumables.
+The plugin also adds support for accessing the gamer unique identifier.
 
 ## Platforms
 
@@ -22,7 +25,17 @@ Ouya is only supported on Android.
 
 ## Functions
 
-#### [ouya.function1()][plugin.ouya.nameOfFunction1MarkdownFile]
+#### plugin_ouya.ouyaSetDeveloperId
+
+Before IAP functions can be invoked the developer id must be set. This developer id corresponds with the signing key, and bundle id, and needs to match for proper encryption/decryption.
+
+#### plugin_ouya.asyncLuaOuyaFetchGamerUUID
+
+After setting the developer id, the gamer unique identifier can be accessed.
+
+#### plugin_ouya.asyncLuaOuyaRequestProducts
+
+
 
 #### [ouya.function2()][plugin.ouya.nameOfFunction2MarkdownFile]
 
