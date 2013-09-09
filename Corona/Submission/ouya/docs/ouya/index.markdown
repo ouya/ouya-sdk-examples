@@ -53,8 +53,7 @@ The required AndroidManifest.xml settings go here...
 
 ## Sample Code
 
-Provide links to sample projects here...
-Expected to be hosted by Ouya's website or a 3rd party website such as GitHub.
+<a target=_blank href="https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/InAppPurchasesPlugin"><b>InAppPurchasesPlugin</b></a> - Uses ouya plugin for in-app-purchases for Mac and Windows (required Corona PRO)
 
 ## Support
 
