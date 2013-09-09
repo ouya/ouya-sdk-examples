@@ -19,14 +19,22 @@ Ouya is only supported on Android.
 
 ## Syntax
 
-	local ouya = require "ouya"
+local ouya = require("plugin.ouya") 
+
+This causes the plugin to initialize which registers the Java Named Functions making it possible to call into the ODK.JAR from Lua.
+
 
 ## Functions
+
+#### plugin_ouya.developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+
+Be sure to set your developer id from the developer portal.
 
 
 #### plugin_ouya.ouyaSetDeveloperId
 
-Before IAP functions can be invoked the developer id must be set. This developer id corresponds with the signing key, and bundle id, and needs to match for proper encryption/decryption.
+Before IAP functions can be invoked the developer id must be set.
+This developer id corresponds with the signing key, and bundle id, and needs to match for proper encryption/decryption.
 
 
 #### plugin_ouya.asyncLuaOuyaFetchGamerUUID
