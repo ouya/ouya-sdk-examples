@@ -111,7 +111,7 @@ settings =
 }
 ```
 
-Adding the intent filter your game icon to appear in the OUYA Play section.
+Add the intent filter so that your game icon will appear in the OUYA Play section.
 
 ```
    android =
