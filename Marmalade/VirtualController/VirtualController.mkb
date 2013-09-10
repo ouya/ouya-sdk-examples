@@ -8,3 +8,9 @@ subprojects
 	IwGx
 	iw2d
 }
+
+assets
+{
+	(data-ram/data-gles1)
+	"tiles.group.bin"
+}
