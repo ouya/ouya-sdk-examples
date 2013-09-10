@@ -1,0 +1,7 @@
+// General materials
+CIwMaterial
+{
+	name "cutter"
+	texture0 "cutter.png"
+	colAmbient {255 255 255}
+}

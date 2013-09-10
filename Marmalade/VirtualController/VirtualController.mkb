@@ -6,4 +6,5 @@ files
 subprojects
 {
 	IwGx
+	iw2d
 }
