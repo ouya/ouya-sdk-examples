@@ -11,10 +11,14 @@ VirtualControllerSprite m_controllers[4];
 static char g_debugButtonEvent[256];
 static char g_debugKeyEvent[256];
 static char g_debugMotionEvent[256];
+static char g_debugTouchEvent[256];
+static char g_debugTouchMotionEvent[256];
 
 static int32 ButtonEventHandler(void* _systemData, void* userData);
 static int32 KeyEventHandler(void* _systemData, void* userData);
 static int32 MotionEventHandler(void* _systemData, void* userData);
+static int32 TouchEventHandler(void* _systemData, void* userData);
+static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
 void setupTextures()
 {
@@ -115,6 +119,14 @@ void registerInput()
 
 	// Register motion event handler
 	s3ePointerRegister(S3E_POINTER_MOTION_EVENT, &MotionEventHandler, NULL);
+
+	// Register touch event handler
+	s3ePointerRegister(S3E_POINTER_TOUCH_EVENT, &TouchEventHandler, NULL);
+
+	// Register touch motion event handler
+	s3ePointerRegister(S3E_POINTER_TOUCH_MOTION_EVENT, &TouchMotionEventHandler, NULL);
+
+	
 }
 
 void render()
@@ -125,9 +137,11 @@ void render()
 		m_controllers[index].Render();
 	}
 
-	IwGxPrintString(300, 75, g_debugButtonEvent);
-	IwGxPrintString(300, 100, g_debugKeyEvent);
-	IwGxPrintString(300, 125, g_debugMotionEvent);
+	IwGxPrintString(300, 50, g_debugButtonEvent);
+	IwGxPrintString(300, 75, g_debugKeyEvent);
+	IwGxPrintString(300, 100, g_debugMotionEvent);
+	IwGxPrintString(300, 125, g_debugTouchEvent);
+	IwGxPrintString(300, 150, g_debugTouchMotionEvent);
 
 	IwGxFlush();
 	IwGxSwapBuffers();
@@ -150,6 +164,8 @@ int main()
 	sprintf(g_debugButtonEvent, "ButtonEvent:");
 	sprintf(g_debugKeyEvent, "KeyEvent:");
 	sprintf(g_debugMotionEvent, "MotionEvent:");
+	sprintf(g_debugTouchEvent, "TouchEvent:");
+	sprintf(g_debugTouchMotionEvent, "TouchMotionEvent:");
 
 	while (!s3eDeviceCheckQuitRequest())
 	{
@@ -290,6 +306,46 @@ static int32 MotionEventHandler(void* systemData, void* userData)
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
 	sprintf(g_debugMotionEvent, "MotionEventHandler: Key event detected. key=%d", keyPressed);
+
+	render();
+
+    return 0;
+}
+
+static int32 TouchEventHandler(void* systemData, void* userData)
+{
+	//sprintf(g_StatusString, "TouchEventHandler");
+
+	// Wake up and take control from the OS
+    s3eDeviceUnYield();
+
+    s3ePointerUpdate();
+
+    // Read in the type of key that has been pressed
+    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
+    s3eKey keyPressed = (*pkeyPressed).m_Key;
+
+	sprintf(g_debugTouchEvent, "TouchEventHandler: Key event detected. key=%d", keyPressed);
+
+	render();
+
+    return 0;
+}
+
+static int32 TouchMotionEventHandler(void* systemData, void* userData)
+{
+	//sprintf(g_StatusString, "TouchMotionEventHandler");
+
+	// Wake up and take control from the OS
+    s3eDeviceUnYield();
+
+    s3ePointerUpdate();
+
+    // Read in the type of key that has been pressed
+    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
+    s3eKey keyPressed = (*pkeyPressed).m_Key;
+
+	sprintf(g_debugTouchMotionEvent, "TouchMotionEventHandler: Key event detected. key=%d", keyPressed);
 
 	render();
 
