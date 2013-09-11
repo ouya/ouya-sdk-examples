@@ -43,6 +43,8 @@ public:
 	// Name of the device
 	char* DeviceName;
 
+	VirtualControllerSprite();
+
     // Set the texture references        
     void Initialize(
         CIw2DImage* buttonA,

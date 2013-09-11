@@ -1,5 +1,28 @@
 #include "VirtualControllerSprite.h"
 
+VirtualControllerSprite::VirtualControllerSprite()
+{
+	DeviceName = "Unknown";
+
+    ButtonA = NULL;
+    ButtonO = NULL;
+    ButtonU = NULL;
+    ButtonY = NULL;
+    Controller = NULL;
+    DpadDown = NULL;
+    DpadLeft = NULL;
+    DpadRight = NULL;
+    DpadUp = NULL;
+    LeftBumper = NULL;
+    LeftTrigger = NULL;
+    LeftStickActive = NULL;
+    LeftStickInactive = NULL;
+    RightBumper = NULL;
+    RightTrigger = NULL;
+    RightStickActive = NULL;
+    RightStickInactive = NULL;
+}
+
 void VirtualControllerSprite::Initialize(
 	CIw2DImage* buttonA,
 	CIw2DImage* controller,
@@ -43,6 +66,23 @@ void VirtualControllerSprite::Initialize(
 void VirtualControllerSprite::Render()
 {
 	Render(Controller);
+
+    Render(ButtonA);
+    Render(ButtonO);
+    Render(ButtonU);
+    Render(ButtonY);
+    Render(DpadDown);
+    Render(DpadLeft);
+    Render(DpadRight);
+    Render(DpadUp);
+    Render(LeftBumper);
+    Render(LeftTrigger);
+    Render(LeftStickActive);
+    Render(LeftStickInactive);
+    Render(RightBumper);
+    Render(RightTrigger);
+    Render(RightStickActive);
+    Render(RightStickInactive);
 
 	if (DeviceName)
 	{
