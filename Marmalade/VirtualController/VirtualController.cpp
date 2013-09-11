@@ -1,18 +1,25 @@
 #include "IwGx.h"
 #include "IwResManager.h"
 #include "Iw2D.h"
+#include "VirtualControllerSprite.h"
 
-CIw2DImage* m_cutter = NULL;
+VirtualControllerSprite m_controllers[4];
 
 void setupTextures()
 {
 	IwGetResManager()->LoadGroup("tiles.group");
-	m_cutter = Iw2DCreateImageResource("cutter");
+	
+	CIw2DImage* cutter = Iw2DCreateImageResource("cutter");
+
+	for (int index = 0; index < 4; ++index)
+	{
+		m_controllers[index].Controller = cutter;
+	}
 }
 
 void destroyTextures()
 {
-	delete m_cutter;
+	delete m_controllers[0].Controller;
 }
 
 int main()
@@ -26,7 +33,10 @@ int main()
 	{
 		IwGxClear();
 		IwGxPrintString(120, 150, "Hello, World!");
-		Iw2DDrawImage(m_cutter, CIwFVec2(0, 0), CIwFVec2(128, 128));
+		for (int index = 0; index < 4; ++index)
+		{
+			m_controllers[index].Render();
+		}
 		IwGxFlush();
 		IwGxSwapBuffers();
 	}

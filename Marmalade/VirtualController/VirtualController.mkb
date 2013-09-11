@@ -1,6 +1,8 @@
 files
 {
 	VirtualController.cpp
+	VirtualControllerSprite.h
+	VirtualControllerSprite.cpp
 }
 
 subprojects
