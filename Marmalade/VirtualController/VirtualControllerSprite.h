@@ -21,6 +21,7 @@ public:
     // The position of the sprite
     CIwFVec2 Position;
 
+	// Images for drawing
     CIw2DImage* ButtonA;
     CIw2DImage* ButtonO;
     CIw2DImage* ButtonU;
@@ -39,9 +40,35 @@ public:
     CIw2DImage* RightStickActive;
     CIw2DImage* RightStickInactive;
 
+	// Name of the device
+	char* DeviceName;
+
+    // Set the texture references        
+    void Initialize(
+        CIw2DImage* buttonA,
+        CIw2DImage* controller,
+        CIw2DImage* dpadDown,
+        CIw2DImage* dpadLeft,
+        CIw2DImage* dpadRight,
+        CIw2DImage* dpadUp,
+        CIw2DImage* leftBumper,
+        CIw2DImage* leftTrigger,
+        CIw2DImage* leftStickInactive,
+        CIw2DImage* buttonO,
+        CIw2DImage* rightBumper,
+        CIw2DImage* rightTrigger,
+        CIw2DImage* rightStickInactive,
+        CIw2DImage* leftStickActive,
+        CIw2DImage* rightStickActive,
+        CIw2DImage* buttonU,
+        CIw2DImage* buttonY);
+
+	// Render the controller
 	void Render();
 
 private:
+
+	// Render an image with error checking
 	void Render(CIw2DImage* image);
 
 };

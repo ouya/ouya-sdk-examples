@@ -11,9 +11,31 @@ void setupTextures()
 	
 	CIw2DImage* cutter = Iw2DCreateImageResource("cutter");
 
+	m_controllers[0].Position = CIwFVec2(400, 150);
+	m_controllers[1].Position = CIwFVec2(1000, 150);
+	m_controllers[2].Position = CIwFVec2(400, 550);
+	m_controllers[3].Position = CIwFVec2(1000, 550);
+
 	for (int index = 0; index < 4; ++index)
 	{
-		m_controllers[index].Controller = cutter;
+		m_controllers[index].Initialize(
+			NULL,
+			cutter,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL);
 	}
 }
 
@@ -32,7 +54,6 @@ int main()
 	while (!s3eDeviceCheckQuitRequest())
 	{
 		IwGxClear();
-		IwGxPrintString(120, 150, "Hello, World!");
 		for (int index = 0; index < 4; ++index)
 		{
 			m_controllers[index].Render();
