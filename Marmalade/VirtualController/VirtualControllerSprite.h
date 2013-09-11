@@ -40,6 +40,22 @@ public:
     CIw2DImage* RightStickActive;
     CIw2DImage* RightStickInactive;
 
+	// pressed state
+	bool PressedButtonA;
+    bool PressedButtonO;
+    bool PressedButtonU;
+    bool PressedButtonY;
+    bool PressedDpadDown;
+    bool PressedDpadLeft;
+    bool PressedDpadRight;
+    bool PressedDpadUp;
+    bool PressedLeftBumper;
+    bool PressedLeftTrigger;
+    bool PressedLeftStick;
+    bool PressedRightBumper;
+    bool PressedRightTrigger;
+    bool PressedRightStick;
+
 	// Name of the device
 	char* DeviceName;
 

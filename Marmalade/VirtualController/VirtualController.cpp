@@ -1,9 +1,20 @@
 #include "IwGx.h"
 #include "IwResManager.h"
 #include "Iw2D.h"
+#include "s3e.h"
 #include "VirtualControllerSprite.h"
 
+//the controller instances
 VirtualControllerSprite m_controllers[4];
+
+//player status information
+static char g_debugButtonEvent[256];
+static char g_debugKeyEvent[256];
+static char g_debugMotionEvent[256];
+
+static int32 ButtonEventHandler(void* _systemData, void* userData);
+static int32 KeyEventHandler(void* _systemData, void* userData);
+static int32 MotionEventHandler(void* _systemData, void* userData);
 
 void setupTextures()
 {
@@ -75,7 +86,51 @@ void setupTextures()
 
 void destroyTextures()
 {
+	delete m_controllers[0].ButtonA;
+	delete m_controllers[0].ButtonO;
+	delete m_controllers[0].ButtonU;
+	delete m_controllers[0].ButtonY;
 	delete m_controllers[0].Controller;
+	delete m_controllers[0].DpadDown;
+	delete m_controllers[0].DpadLeft;
+	delete m_controllers[0].DpadRight;
+	delete m_controllers[0].DpadUp;
+	delete m_controllers[0].LeftBumper;
+	delete m_controllers[0].LeftTrigger;
+	delete m_controllers[0].LeftStickActive;
+	delete m_controllers[0].LeftStickInactive;
+	delete m_controllers[0].RightBumper;
+	delete m_controllers[0].RightTrigger;
+	delete m_controllers[0].RightStickActive;
+	delete m_controllers[0].RightStickInactive;
+}
+
+void registerInput()
+{
+	// Register pointer event handler
+    s3ePointerRegister(S3E_POINTER_BUTTON_EVENT, &ButtonEventHandler, NULL);
+
+    // Register keyboard event handler
+    s3eKeyboardRegister(S3E_KEYBOARD_KEY_EVENT, &KeyEventHandler, NULL);
+
+	// Register motion event handler
+	s3ePointerRegister(S3E_POINTER_MOTION_EVENT, &MotionEventHandler, NULL);
+}
+
+void render()
+{
+	IwGxClear();
+	for (int index = 0; index < 4; ++index)
+	{
+		m_controllers[index].Render();
+	}
+
+	IwGxPrintString(300, 75, g_debugButtonEvent);
+	IwGxPrintString(300, 100, g_debugKeyEvent);
+	IwGxPrintString(300, 125, g_debugMotionEvent);
+
+	IwGxFlush();
+	IwGxSwapBuffers();
 }
 
 int main()
@@ -85,19 +140,158 @@ int main()
 	IwResManagerInit();
 	Iw2DInit();
 	setupTextures();
+	registerInput();
+
+    const int textWidth = s3eDebugGetInt(S3E_DEBUG_FONT_SIZE_WIDTH);
+    const int textHeight = s3eDebugGetInt(S3E_DEBUG_FONT_SIZE_HEIGHT);
+    const int width = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
+    const int height = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
+
+	sprintf(g_debugButtonEvent, "ButtonEvent:");
+	sprintf(g_debugKeyEvent, "KeyEvent:");
+	sprintf(g_debugMotionEvent, "MotionEvent:");
+
 	while (!s3eDeviceCheckQuitRequest())
 	{
-		IwGxClear();
-		for (int index = 0; index < 4; ++index)
-		{
-			m_controllers[index].Render();
-		}
-		IwGxFlush();
-		IwGxSwapBuffers();
+		render();
+
+		// Yield until unyield is called or a quit request is recieved
+        s3eDeviceYield(S3E_DEVICE_YIELD_FOREVER);
 	}
 	destroyTextures();
 	Iw2DTerminate();
 	IwResManagerTerminate();
 	IwGxTerminate();
 	return 0;
+}
+
+/*
+ * Key event handler:
+ * systemData contains a structure of type s3eKeyboardEvent which contains
+ * information about the pressed key.
+ * Note the generic makeup of the callback function, which always supplies
+ * the parameters:
+ * systemData - callback-specific system supplied data.
+ * userData - data supplied by user at callback registration (in this case
+ * NULL) and returns int32 as success staus.
+ */
+static int32 ButtonEventHandler(void* systemData, void* userData)
+{
+	//sprintf(g_StatusString, "ButtonEventHandler");
+
+    // Wake up and take control from the OS
+    s3eDeviceUnYield();
+
+    s3ePointerUpdate();
+
+    // Read in the type of key that has been pressed
+    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
+    s3eKey keyPressed = (*pkeyPressed).m_Key;
+
+	sprintf(g_debugButtonEvent, "ButtonEventHandler: Key event detected. key=%d", keyPressed);
+
+	render();
+
+    return 0;
+}
+
+static int32 KeyEventHandler(void* systemData, void* userData)
+{
+	//sprintf(g_StatusString, "KeyEventHandler");
+
+    // Wake up and take control from the OS
+    s3eDeviceUnYield();
+
+    s3ePointerUpdate();
+
+    // Read in the type of key that has been pressed
+    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
+    s3eKey keyPressed = (*pkeyPressed).m_Key;
+
+	sprintf(g_debugKeyEvent, "KeyEventHandler: Key event detected. key=%d pressed=%s", keyPressed, (*pkeyPressed).m_Pressed ? "true" : "false");
+
+	if (keyPressed == 210)
+	{
+		m_controllers[0].PressedButtonA = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 208)
+	{
+		m_controllers[0].PressedButtonO = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 203)
+	{
+		m_controllers[0].PressedButtonU = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 202)
+	{
+		m_controllers[0].PressedButtonY = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 205)
+	{
+		m_controllers[0].PressedDpadDown = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 206)
+	{
+		m_controllers[0].PressedDpadLeft = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 207)
+	{
+		m_controllers[0].PressedDpadRight = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 204)
+	{
+		m_controllers[0].PressedDpadUp = (*pkeyPressed).m_Pressed;
+	}
+
+	else if (keyPressed == 74)
+	{
+		m_controllers[0].PressedLeftBumper = (*pkeyPressed).m_Pressed;
+	}
+
+	//m_controllers[0].PressedLeftTrigger;
+	//m_controllers[0].PressedLeftStick;
+
+	else if (keyPressed == 75)
+	{
+		m_controllers[0].PressedRightBumper = (*pkeyPressed).m_Pressed;
+	}
+
+	//m_controllers[0].PressedRightTrigger;
+	//m_controllers[0].PressedRightStick;
+
+	else if (keyPressed == 127)
+	{
+		// system buton
+	}
+
+	render();
+
+    return 0;
+}
+
+static int32 MotionEventHandler(void* systemData, void* userData)
+{
+	//sprintf(g_StatusString, "MotionEventHandler");
+
+	// Wake up and take control from the OS
+    s3eDeviceUnYield();
+
+    s3ePointerUpdate();
+
+    // Read in the type of key that has been pressed
+    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
+    s3eKey keyPressed = (*pkeyPressed).m_Key;
+
+	sprintf(g_debugMotionEvent, "MotionEventHandler: Key event detected. key=%d", keyPressed);
+
+	render();
+
+    return 0;
 }

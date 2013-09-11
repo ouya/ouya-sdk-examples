@@ -21,6 +21,21 @@ VirtualControllerSprite::VirtualControllerSprite()
     RightTrigger = NULL;
     RightStickActive = NULL;
     RightStickInactive = NULL;
+
+	PressedButtonA = false;
+	PressedButtonO = false;
+	PressedButtonU = false;
+	PressedButtonY = false;
+	PressedDpadDown = false;
+	PressedDpadLeft = false;
+	PressedDpadRight = false;
+	PressedDpadUp = false;
+	PressedLeftBumper = false;
+	PressedLeftTrigger = false;
+	PressedLeftStick = false;
+	PressedRightBumper = false;
+	PressedRightTrigger = false;
+	PressedRightStick = false;
 }
 
 void VirtualControllerSprite::Initialize(
@@ -67,22 +82,83 @@ void VirtualControllerSprite::Render()
 {
 	Render(Controller);
 
-    Render(ButtonA);
-    Render(ButtonO);
-    Render(ButtonU);
-    Render(ButtonY);
-    Render(DpadDown);
-    Render(DpadLeft);
-    Render(DpadRight);
-    Render(DpadUp);
-    Render(LeftBumper);
-    Render(LeftTrigger);
-    Render(LeftStickActive);
-    Render(LeftStickInactive);
-    Render(RightBumper);
-    Render(RightTrigger);
-    Render(RightStickActive);
-    Render(RightStickInactive);
+	if (PressedButtonA)
+	{
+		Render(ButtonA);
+	}
+
+	if (PressedButtonO)
+	{
+		Render(ButtonO);
+	}
+
+    if (PressedButtonU)
+	{
+		Render(ButtonU);
+	}
+
+	if (PressedButtonY)
+	{
+		Render(ButtonY);
+	}
+
+	if (PressedDpadDown)
+	{
+		Render(DpadDown);
+	}
+
+    if (PressedDpadLeft)
+	{
+		Render(DpadLeft);
+	}
+
+	if (PressedDpadRight)
+	{
+		Render(DpadRight);
+	}
+
+    if (PressedDpadUp)
+	{
+		Render(DpadUp);
+	}	
+	
+	if (PressedLeftBumper)
+	{
+		Render(LeftBumper);
+	}
+
+	if (PressedLeftTrigger)
+	{
+		Render(LeftTrigger);
+	}
+
+    if (PressedLeftStick)
+	{
+		Render(LeftStickActive);
+	}
+	else
+	{
+		Render(LeftStickInactive);
+	}
+
+	if (PressedRightBumper)
+	{
+		Render(RightBumper);
+	}
+
+	if (PressedRightTrigger)
+	{
+		Render(RightTrigger);
+	}
+
+	if (PressedRightStick)
+	{
+		Render(RightStickActive);
+	}
+	else
+	{
+		Render(RightStickInactive);
+	}    
 
 	if (DeviceName)
 	{
