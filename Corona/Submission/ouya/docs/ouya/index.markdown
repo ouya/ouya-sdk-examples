@@ -29,6 +29,10 @@ This causes the plugin to initialize which registers the Java Named Functions ma
 This is the signing key from the developer portal that goes into your Corona Assets folder (next to main.lua).
 
 
+## Source
+
+The [https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/OuyaCoronaPlugin/android-plugin](source) for the plugin.ouya.jar is available and not needed for a Corona PRO or Corona Enterprise project to use in-app-purchase.
+
 ## Functions
 
 Before in-app-purchase functions can be invoked, wait a couple seconds to allow Java to load the ouya plugin.
