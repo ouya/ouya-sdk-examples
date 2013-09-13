@@ -31,6 +31,9 @@ This is the signing key from the developer portal that goes into your Corona Ass
 
 ## Functions
 
+Before in-app-purchase functions can be invoked, wait a couple seconds to allow Java to load the ouya plugin.
+When you invoke an in-app-purchase method wait for the callback to happen before making a call to another in-app-purchase function.
+Each call should happen in serial versus asyncronous.
 
 #### ouyaSDK.ouyaSetDeveloperId
 
