@@ -31,7 +31,7 @@ This is the signing key from the developer portal that goes into your Corona Ass
 
 ## Source
 
-The [https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/OuyaCoronaPlugin/android-plugin](source) for the plugin.ouya.jar is available and not needed for a Corona PRO or Corona Enterprise project to use in-app-purchase.
+The [source](https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/OuyaCoronaPlugin/android-plugin) for the plugin.ouya.jar is available and not needed for a Corona PRO or Corona Enterprise project to use in-app-purchase.
 
 ## Functions
 
