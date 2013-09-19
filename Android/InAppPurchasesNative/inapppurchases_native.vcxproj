@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="NsightTegraProject">
     <NsightTegraProjectRevisionNumber>4</NsightTegraProjectRevisionNumber>
@@ -24,12 +24,16 @@
     <None Include="assets\utahcond+bold_1024.dds" />
     <None Include="AndroidManifest.xml" />
     <None Include="bin\res\drawable\icon.png" />
-    <None Include="build.xml" />
+    <None Include="build.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
     <None Include="project.properties" />
     <None Include="res\drawable\icon.png" />
-    <None Include="res\values\strings.xml" />
+    <None Include="res\values\strings.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jni\engine.cpp" />
@@ -42,8 +46,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{593996DF-6386-46C1-BC24-DD089C8796F5}</ProjectGuid>
-    <RootNamespace>NativeBasic</RootNamespace>
-    <ProjectName>InAppPurchasesNative</ProjectName>
+    <RootNamespace>inapppurchases_native</RootNamespace>
+    <ProjectName>inapppurchases_native</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
