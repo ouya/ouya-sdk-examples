@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="NsightTegraProject">
+    <NsightTegraProjectRevisionNumber>4</NsightTegraProjectRevisionNumber>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Tegra-Android">
+      <Configuration>Debug</Configuration>
+      <Platform>Tegra-Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Tegra-Android">
+      <Configuration>Release</Configuration>
+      <Platform>Tegra-Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Tegra-Android">
+      <Configuration>Profile</Configuration>
+      <Platform>Tegra-Android</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\courier+lucida_256.abc" />
+    <None Include="assets\courier+lucida_256.dds" />
+    <None Include="assets\utahcond+bold_1024.abc" />
+    <None Include="assets\utahcond+bold_1024.dds" />
+    <None Include="AndroidManifest.xml" />
+    <None Include="bin\res\drawable\icon.png" />
+    <None Include="build.xml" />
+    <None Include="jni\Android.mk" />
+    <None Include="jni\Application.mk" />
+    <None Include="project.properties" />
+    <None Include="res\drawable\icon.png" />
+    <None Include="res\values\strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\engine.cpp" />
+    <ClCompile Include="jni\TextButton.cpp" />
+    <ClCompile Include="jni\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\engine.h" />
+    <ClInclude Include="jni\TextButton.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{593996DF-6386-46C1-BC24-DD089C8796F5}</ProjectGuid>
+    <RootNamespace>NativeBasic</RootNamespace>
+    <ProjectName>InAppPurchasesNative</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
+    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>Application</ConfigurationType>
+    <AndroidTargetAPI>android-15</AndroidTargetAPI>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
+    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>Application</ConfigurationType>
+    <AndroidTargetAPI>android-15</AndroidTargetAPI>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Profile|Tegra-Android'">
+    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>Application</ConfigurationType>
+    <AndroidTargetAPI>android-15</AndroidTargetAPI>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+    </AntBuild>
+    <Link>
+      <AdditionalLibraryDirectories>$(NVSamplesPath)/libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>android;nv_and_util;nv_bitfont;nv_egl_util;nv_file;nv_glesutil;nv_hhdds;nv_log;nv_math;nv_shader;nv_thread;stdc++;c;m;log;dl;GLESv2;EGL;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(NVSamplesPath)/libs/jni</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <AdditionalOptions>-verbose %(AdditionalOptions)</AdditionalOptions>
+      <AntBuildType>Debug</AntBuildType>
+      <SigningType>None</SigningType>
+    </AntBuild>
+    <Link>
+      <AdditionalLibraryDirectories>../../libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>android;nv_and_util;nv_bitfont;nv_egl_util;nv_file;nv_glesutil;nv_hhdds;nv_log;nv_math;nv_shader;nv_thread;stdc++;c;m;log;dl;GLESv2;EGL;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../libs/jni</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Tegra-Android'">
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <AdditionalOptions>-verbose %(AdditionalOptions)</AdditionalOptions>
+    </AntBuild>
+    <Link>
+      <AdditionalLibraryDirectories>../../libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>android;nv_and_util;nv_bitfont;nv_egl_util;nv_file;nv_glesutil;nv_hhdds;nv_log;nv_math;nv_shader;nv_thread;stdc++;c;m;log;dl;GLESv2;EGL;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../libs/jni</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
