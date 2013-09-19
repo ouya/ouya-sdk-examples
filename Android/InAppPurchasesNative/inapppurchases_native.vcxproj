@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="NsightTegraProject">
     <NsightTegraProjectRevisionNumber>4</NsightTegraProjectRevisionNumber>
@@ -22,7 +22,9 @@
     <None Include="assets\courier+lucida_256.dds" />
     <None Include="assets\utahcond+bold_1024.abc" />
     <None Include="assets\utahcond+bold_1024.dds" />
-    <None Include="AndroidManifest.xml" />
+    <None Include="AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="bin\res\drawable\icon.png" />
     <None Include="build.xml">
       <SubType>Designer</SubType>
@@ -37,11 +39,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jni\engine.cpp" />
+    <ClCompile Include="jni\PluginOuya.cpp" />
     <ClCompile Include="jni\TextButton.cpp" />
     <ClCompile Include="jni\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\engine.h" />
+    <ClInclude Include="jni\PluginOuya.h" />
     <ClInclude Include="jni\TextButton.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

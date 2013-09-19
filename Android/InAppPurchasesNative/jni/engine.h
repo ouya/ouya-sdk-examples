@@ -2,6 +2,7 @@
 #define __ENGINE_H
 
 #include "TextButton.h"
+#include "PluginOuya.h"
 
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
@@ -72,6 +73,8 @@ protected:
 	TextButton m_uiPause;
 
 	TextButton* m_selectedButton;
+
+	PluginOuya m_pluginOuya;
 };
 
 

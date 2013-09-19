@@ -307,6 +307,22 @@ int Engine::handleInput(AInputEvent* event)
 			if (m_selectedButton)
 			{
 				LOGI("Executing action");
+				if (m_selectedButton == &m_uiRequestGamerUUID)
+				{
+					m_pluginOuya.AsyncOuyaFetchGamerUUID(NULL, NULL, NULL);
+				}
+				if (m_selectedButton == &m_uiRequestProducts)
+				{
+					m_pluginOuya.AsyncOuyaRequestProducts(NULL, NULL, NULL, NULL);
+				}
+				if (m_selectedButton == &m_uiRequestPurchase)
+				{
+					m_pluginOuya.AsyncOuyaRequestPurchase(NULL, NULL, NULL, NULL);
+				}
+				if (m_selectedButton == &m_uiRequestReceipts)
+				{
+					m_pluginOuya.AsyncOuyaRequestReceipts(NULL, NULL, NULL);
+				}
 			}
 		}
 	}
