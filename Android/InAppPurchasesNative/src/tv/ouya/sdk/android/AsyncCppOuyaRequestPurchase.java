@@ -16,20 +16,17 @@
 
 package tv.ouya.sdk.android;
 
-import android.util.Log;
 
+public class AsyncCppOuyaRequestPurchase {
 
-public class AsyncOuyaSetDeveloperId {
-	
-	static final String LOG_TAG = "AsyncOuyaSetDeveloperId";
+	public static void invoke() {
 
-	public static void invoke(String developerId) {
-		try {
-			Log.i(LOG_TAG, "Java: AsyncOuyaSetDeveloperId(" + developerId + ");");
-			//CoronaOuyaPlugin.setDeveloperId(value);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		CallbacksRequestPurchase callbacks = new CallbacksRequestPurchase();
+
+		// store for access
+		IOuyaActivity.SetCallbacksRequestPurchase(callbacks);
+
+		// invoke service
+		NativeOuyaPlugin.requestPurchaseAsync(callbacks.m_purchasable);
 	}
 }

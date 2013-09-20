@@ -41,11 +41,11 @@ private:
 	void OuyaSetDeveloperId();
 
 	// cached references
-	jclass jc_AsyncOuyaSetDeveloperId;
-	jclass jc_AsyncOuyaFetchGamerUUID;
-	jclass jc_AsyncOuyaRequestProducts;
-	jclass jc_AsyncOuyaRequestPurchase;
-	jclass jc_AsyncOuyaRequestReceipts;
+	jclass jc_AsyncCppOuyaSetDeveloperId;
+	jclass jc_AsyncCppOuyaFetchGamerUUID;
+	jclass jc_AsyncCppOuyaRequestProducts;
+	jclass jc_AsyncCppOuyaRequestPurchase;
+	jclass jc_AsyncCppOuyaRequestReceipts;
 };
 
 #endif

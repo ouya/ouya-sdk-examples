@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="NsightTegraProject">
     <NsightTegraProjectRevisionNumber>4</NsightTegraProjectRevisionNumber>
@@ -31,6 +31,8 @@
     </None>
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
+    <None Include="libs\gson-2.2.2.jar" />
+    <None Include="libs\ouya-sdk.jar" />
     <None Include="project.properties" />
     <None Include="res\drawable\icon.png" />
     <None Include="res\values\strings.xml">
@@ -49,7 +51,18 @@
     <ClInclude Include="jni\TextButton.h" />
   </ItemGroup>
   <ItemGroup>
-    <JCompile Include="src\tv\ouya\sdk\android\AsyncOuyaSetDeveloperId.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\AsyncCppOuyaFetchGamerUUID.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\AsyncCppOuyaRequestProducts.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\AsyncCppOuyaRequestPurchase.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\AsyncCppOuyaRequestReceipts.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\AsyncCppOuyaSetDeveloperId.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\CallbacksFetchGamerUUID.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\CallbacksRequestProducts.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\CallbacksRequestPurchase.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\CallbacksRequestReceipts.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\IOuyaActivity.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\NativeOuyaFacade.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\NativeOuyaPlugin.java" />
     <JCompile Include="src\tv\ouya\sdk\android\OuyaNativeActivity.java" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -62,7 +75,10 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
+    <LibraryPath>
+    </LibraryPath>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
     <AndroidStlType>gnustl_static</AndroidStlType>
     <ConfigurationType>Application</ConfigurationType>
@@ -81,10 +97,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
     <AntBuild>
       <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <JarDependencies>gson-2.2.2.jar;ouya-sdk.jar</JarDependencies>
+      <JarDirectories>libs</JarDirectories>
     </AntBuild>
     <Link>
       <AdditionalLibraryDirectories>$(NVSamplesPath)/libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>android;nv_and_util;nv_bitfont;nv_egl_util;nv_file;nv_glesutil;nv_hhdds;nv_log;nv_math;nv_shader;nv_thread;stdc++;c;m;log;dl;GLESv2;EGL;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>android;nv_and_util;nv_bitfont;nv_egl_util;nv_file;nv_glesutil;nv_hhdds;nv_log;nv_math;nv_shader;nv_thread;stdc++;c;m;log;dl;GLESv2;EGL;%(AdditionalDependencies);</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>

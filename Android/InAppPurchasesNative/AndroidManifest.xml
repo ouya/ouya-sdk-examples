@@ -23,7 +23,6 @@
             </intent-filter>
         </activity>
     </application>
-	<!-- This is the platform API where NativeActivity was introduced. -->
-  <uses-sdk android:targetSdkVersion="15"  android:minSdkVersion="9" />
+  <uses-sdk android:targetSdkVersion="16"  android:minSdkVersion="16" />
 </manifest> 
 <!-- END_INCLUDE(manifest) -->

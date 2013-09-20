@@ -21,26 +21,6 @@ JavaVM* g_jvm = 0;
 		env->ExceptionClear(); \
 	}
 
-void CheckEngine()
-{
-	if (g_engine)
-	{
-		LOGI("Engine is initialized");
-		LOGI("OOOOOOOOOOOOOOOOOOOOOOOOOO");
-		LOGI("OOOOOOOOOOOOOOOOOOOOOOOOOO");
-		LOGI("OOOOOOOOOOOOOOOOOOOOOOOOOO");
-		LOGI("OOOOOOOOOOOOOOOOOOOOOOOOOO");
-	}
-	else
-	{
-		LOGI("Engine not initialized");
-		LOGI("XXXXXXXXXXXXXXXXXXXXXXXXXX");
-		LOGI("XXXXXXXXXXXXXXXXXXXXXXXXXX");
-		LOGI("XXXXXXXXXXXXXXXXXXXXXXXXXX");
-		LOGI("XXXXXXXXXXXXXXXXXXXXXXXXXX");
-	}
-}
-
 // package tv.ouya.sdk.android;
 // public class OuyaNativeActivity extends NativeActivity
 //
@@ -73,11 +53,9 @@ extern "C"
 			LOGI("JVM IS INVALID");
 		}
 
-		CheckEngine();
-
 		JNIEnv* env;
 		jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-		jvm->AttachCurrentThread(&env, NULL);
+		//jvm->AttachCurrentThread(&env, NULL);
 
 		g_pluginOuya.CacheClasses("JNI_OnLoad", env);
 		g_pluginOuya.CheckJava("JNI_OnLoad", env);
@@ -95,8 +73,6 @@ extern "C"
 
 		LOGI("***********Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI***********");
 
-		CheckEngine();
-		
 		g_pluginOuya.CheckJava("Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI", env);
 
 		*/
@@ -122,7 +98,7 @@ void android_main(struct android_app* app)
 
 	JavaVM* jvm;
 	app->appThreadEnv->GetJavaVM(&jvm);
-	jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
+	//jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
 	g_pluginOuya.CheckJava("android_main", app->appThreadEnv);
 
     // Make sure glue isn't stripped.
