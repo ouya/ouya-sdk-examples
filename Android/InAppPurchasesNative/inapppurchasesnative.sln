@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "inapppurchases_native", "inapppurchases_native.vcxproj", "{593996DF-6386-46C1-BC24-DD089C8796F5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "inapppurchasesnative", "inapppurchasesnative.vcxproj", "{593996DF-6386-46C1-BC24-DD089C8796F5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{20420B48-ABBF-40BB-9A6C-E1661E29C75A} = {20420B48-ABBF-40BB-9A6C-E1661E29C75A}
 		{BCC17F53-1271-497E-BB0D-D73B6406DA0E} = {BCC17F53-1271-497E-BB0D-D73B6406DA0E}

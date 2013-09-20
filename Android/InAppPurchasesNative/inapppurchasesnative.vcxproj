@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="NsightTegraProject">
     <NsightTegraProjectRevisionNumber>4</NsightTegraProjectRevisionNumber>
@@ -48,10 +48,14 @@
     <ClInclude Include="jni\PluginOuya.h" />
     <ClInclude Include="jni\TextButton.h" />
   </ItemGroup>
+  <ItemGroup>
+    <JCompile Include="src\tv\ouya\sdk\android\AsyncOuyaSetDeveloperId.java" />
+    <JCompile Include="src\tv\ouya\sdk\android\OuyaNativeActivity.java" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{593996DF-6386-46C1-BC24-DD089C8796F5}</ProjectGuid>
-    <RootNamespace>inapppurchases_native</RootNamespace>
-    <ProjectName>inapppurchases_native</ProjectName>
+    <RootNamespace>inapppurchasesnative</RootNamespace>
+    <ProjectName>inapppurchasesnative</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />

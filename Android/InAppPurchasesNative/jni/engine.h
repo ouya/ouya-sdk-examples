@@ -7,7 +7,7 @@
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
 
-#define APP_NAME "inapppurchases_native"
+#define APP_NAME "inapppurchasesnative"
 
 #define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
 											 APP_NAME, \
@@ -22,7 +22,7 @@
 class Engine
 {
 public:
-	Engine(NvEGLUtil& egl, struct android_app* app);
+	Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya);
 	~Engine();
 
 	bool isGameplayMode() { return mGameplayMode; }
@@ -30,6 +30,8 @@ public:
 	void updateFrame(bool interactible, long deltaTime);
 
 protected:
+
+	PluginOuya* m_pluginOuya;
 
 	void setGameplayMode(bool paused);
 
@@ -73,8 +75,6 @@ protected:
 	TextButton m_uiPause;
 
 	TextButton* m_selectedButton;
-
-	PluginOuya m_pluginOuya;
 };
 
 

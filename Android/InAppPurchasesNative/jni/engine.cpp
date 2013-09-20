@@ -10,10 +10,11 @@
 #include <nv_bitfont/nv_bitfont.h>
 #include <nv_shader/nv_shader.h>
 
-Engine::Engine(NvEGLUtil& egl, struct android_app* app) :
+Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya) :
 	mEgl(egl)
 {
     mApp = app;
+	m_pluginOuya = pluginOuya;
 
 	mResizePending = false;
 
@@ -30,6 +31,9 @@ Engine::Engine(NvEGLUtil& egl, struct android_app* app) :
 	m_uiInitialized = false;
 
 	nv_shader_init(app->activity->assetManager);
+
+	m_pluginOuya->SetApp(app);
+	m_pluginOuya->SetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 }
 
 Engine::~Engine()
@@ -309,19 +313,19 @@ int Engine::handleInput(AInputEvent* event)
 				LOGI("Executing action");
 				if (m_selectedButton == &m_uiRequestGamerUUID)
 				{
-					m_pluginOuya.AsyncOuyaFetchGamerUUID(NULL, NULL, NULL);
+					m_pluginOuya->AsyncOuyaFetchGamerUUID(NULL, NULL, NULL);
 				}
 				if (m_selectedButton == &m_uiRequestProducts)
 				{
-					m_pluginOuya.AsyncOuyaRequestProducts(NULL, NULL, NULL, NULL);
+					m_pluginOuya->AsyncOuyaRequestProducts(NULL, NULL, NULL, NULL);
 				}
 				if (m_selectedButton == &m_uiRequestPurchase)
 				{
-					m_pluginOuya.AsyncOuyaRequestPurchase(NULL, NULL, NULL, NULL);
+					m_pluginOuya->AsyncOuyaRequestPurchase(NULL, NULL, NULL, NULL);
 				}
 				if (m_selectedButton == &m_uiRequestReceipts)
 				{
-					m_pluginOuya.AsyncOuyaRequestReceipts(NULL, NULL, NULL);
+					m_pluginOuya->AsyncOuyaRequestReceipts(NULL, NULL, NULL);
 				}
 			}
 		}

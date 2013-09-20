@@ -20,7 +20,7 @@
 #----------------------------------------------------------------------------------
 LOCAL_PATH := $(subst //,/,$(call my-dir))
 include $(CLEAR_VARS)
-LOCAL_MODULE := inapppurchases_native
+LOCAL_MODULE := inapppurchasesnative
 
 LOCAL_SRC_FILES := $(wildcard *.cpp)
 LOCAL_SRC_FILES += $(wildcard *.c)
@@ -33,6 +33,7 @@ LOCAL_STATIC_LIBRARIES := nv_and_util nv_egl_util nv_bitfont nv_math nv_glesutil
 include $(BUILD_SHARED_LIBRARY)
 
 $(call import-add-path, ../../../libs/jni)
+$(call import-add-path, ../../../libs)
 
 $(call import-module,nv_and_util)
 $(call import-module,nv_egl_util)
