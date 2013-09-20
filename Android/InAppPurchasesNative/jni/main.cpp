@@ -76,11 +76,13 @@ extern "C"
 
 	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI( JNIEnv* env, jobject thiz )
 	{
-		//return (*env)->NewStringUTF(env, "Hello from JNI !");
-
 		LOGI("***********Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI***********");
 
 		CheckEngine();
+
+		LOGI("Allocate DeveloperId String");
+		jstring developerIdString = env->NewStringUTF("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+		EXCEPTION_RETURN(env);
 
  		LOGI("Find tv/ouya/sdk/android/AsyncOuyaSetDeveloperId");
 		g_pluginOuya.m_jcAsyncOuyaSetDeveloperId = env->FindClass("tv/ouya/sdk/android/AsyncOuyaSetDeveloperId");
@@ -99,12 +101,12 @@ extern "C"
 		EXCEPTION_RETURN(env);
 
 		LOGI("get the invoke method");
-		//jmethodID constructSetDeveloperId = env->GetMethodID(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId, "<init>", "()V");
-		//EXCEPTION_RETURN(env);
+		jmethodID invokeSetDeveloperId = env->GetStaticMethodID(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId, "invoke", "(Ljava/lang/String;)V");
+		EXCEPTION_RETURN(env);
 
 		LOGI("execute the invoke method");
-		//env->CallObjectMethod(objSetDeveloperId, methodInvoke, strDeveloperId);
-		//EXCEPTION_RETURN(env);
+		env->CallStaticVoidMethod(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
+		EXCEPTION_RETURN(env);
 	}
 }
 
