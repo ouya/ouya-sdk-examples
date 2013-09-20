@@ -10,9 +10,13 @@ public:
 
 	bool Initialized;
 
-	jclass m_jcAsyncOuyaSetDeveloperId;
-
 	PluginOuya();
+
+	void FindClass(const char* tag, JNIEnv* env, const char* className, jclass* jc);
+
+	void CacheClasses(const char* tag, JNIEnv* env);
+
+	void CheckJava(const char* tag, JNIEnv* env);
 
 	void SetApp(struct android_app* app);
 
@@ -35,6 +39,13 @@ private:
 	const char* m_developerId;
 
 	void OuyaSetDeveloperId();
+
+	// cached references
+	jclass jc_AsyncOuyaSetDeveloperId;
+	jclass jc_AsyncOuyaFetchGamerUUID;
+	jclass jc_AsyncOuyaRequestProducts;
+	jclass jc_AsyncOuyaRequestPurchase;
+	jclass jc_AsyncOuyaRequestReceipts;
 };
 
 #endif

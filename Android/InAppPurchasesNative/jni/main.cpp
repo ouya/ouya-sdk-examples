@@ -12,6 +12,8 @@
 
 Engine* g_engine = 0;
 PluginOuya g_pluginOuya;
+JNIEnv* g_env = 0;
+JavaVM* g_jvm = 0;
 
 #define EXCEPTION_RETURN(env) \
 	if (env->ExceptionOccurred()) { \
@@ -60,6 +62,8 @@ extern "C"
 	{
 		LOGI("************JNI_OnLoad*************");
 
+		g_jvm = jvm;
+
 		if (jvm)
 		{
 			LOGI("JVM IS VALID");
@@ -71,42 +75,31 @@ extern "C"
 
 		CheckEngine();
 
+		JNIEnv* env;
+		jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
+		jvm->AttachCurrentThread(&env, NULL);
+
+		g_pluginOuya.CacheClasses("JNI_OnLoad", env);
+		g_pluginOuya.CheckJava("JNI_OnLoad", env);
+
+		//spawn thread? Check for access?
+
 		return JNI_VERSION_1_6;
 	}
 
-	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI( JNIEnv* env, jobject thiz )
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI(JNIEnv* env, jobject thiz)
 	{
+		return;
+
+		/*
+
 		LOGI("***********Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI***********");
 
 		CheckEngine();
+		
+		g_pluginOuya.CheckJava("Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI", env);
 
-		LOGI("Allocate DeveloperId String");
-		jstring developerIdString = env->NewStringUTF("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
-		EXCEPTION_RETURN(env);
-
- 		LOGI("Find tv/ouya/sdk/android/AsyncOuyaSetDeveloperId");
-		g_pluginOuya.m_jcAsyncOuyaSetDeveloperId = env->FindClass("tv/ouya/sdk/android/AsyncOuyaSetDeveloperId");
-		EXCEPTION_RETURN(env);
-
-		LOGI("allocate the object");
-		jobject objSetDeveloperId = env->AllocObject(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId); 
-		EXCEPTION_RETURN(env);
-
-		LOGI("get the constructor");
-		jmethodID constructSetDeveloperId = env->GetMethodID(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId, "<init>", "()V");
-		EXCEPTION_RETURN(env);
-
-		LOGI("construct the object");
-		env->CallVoidMethod(objSetDeveloperId, constructSetDeveloperId);
-		EXCEPTION_RETURN(env);
-
-		LOGI("get the invoke method");
-		jmethodID invokeSetDeveloperId = env->GetStaticMethodID(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId, "invoke", "(Ljava/lang/String;)V");
-		EXCEPTION_RETURN(env);
-
-		LOGI("execute the invoke method");
-		env->CallStaticVoidMethod(g_pluginOuya.m_jcAsyncOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
-		EXCEPTION_RETURN(env);
+		*/
 	}
 }
 
@@ -118,6 +111,19 @@ extern "C"
 void android_main(struct android_app* app)
 {
 	LOGI("**********android_main***********");
+
+	//g_jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
+	//g_pluginOuya.CheckJava("android_main", app->appThreadEnv);
+
+	//JNIEnv* env;
+	//g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
+	//g_jvm->AttachCurrentThread(&env, NULL);
+	//g_pluginOuya.CheckJava("android_main", env);	
+
+	JavaVM* jvm;
+	app->appThreadEnv->GetJavaVM(&jvm);
+	jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
+	g_pluginOuya.CheckJava("android_main", app->appThreadEnv);
 
     // Make sure glue isn't stripped.
     app_dummy();
