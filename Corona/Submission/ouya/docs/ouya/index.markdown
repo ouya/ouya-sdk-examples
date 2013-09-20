@@ -171,7 +171,7 @@ You'll find more enterprise specific examples on the OUYA site. https://github.c
 
 ## Sample Code
 
-<a target=_blank href="https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/InAppPurchasesPlugin"><b>InAppPurchasesPlugin</b></a> - Uses ouya plugin for in-app-purchases for Mac and Windows (required Corona PRO)
+<a target=_blank href="https://github.com/ouya/ouya-sdk-examples/blob/master/Corona/Submission/ouya/docs/ouya/index.markdown"><b>InAppPurchasesPlugin</b></a> - Uses ouya plugin for in-app-purchases for Mac and Windows (required Corona PRO)
 
 ## Support
 
