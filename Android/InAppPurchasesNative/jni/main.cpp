@@ -58,7 +58,6 @@ extern "C"
 		//jvm->AttachCurrentThread(&env, NULL);
 
 		g_pluginOuya.CacheClasses("JNI_OnLoad", env);
-		g_pluginOuya.CheckJava("JNI_OnLoad", env);
 
 		//spawn thread? Check for access?
 
@@ -88,6 +87,9 @@ void android_main(struct android_app* app)
 {
 	LOGI("**********android_main***********");
 
+	g_pluginOuya.SetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+	g_pluginOuya.SetApp(app);
+
 	//g_jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
 	//g_pluginOuya.CheckJava("android_main", app->appThreadEnv);
 
@@ -96,10 +98,12 @@ void android_main(struct android_app* app)
 	//g_jvm->AttachCurrentThread(&env, NULL);
 	//g_pluginOuya.CheckJava("android_main", env);	
 
-	JavaVM* jvm;
-	app->appThreadEnv->GetJavaVM(&jvm);
+	//JavaVM* jvm;
+	//app->appThreadEnv->GetJavaVM(&jvm);
 	//jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
-	g_pluginOuya.CheckJava("android_main", app->appThreadEnv);
+	g_pluginOuya.Initialize();
+
+	
 
     // Make sure glue isn't stripped.
     app_dummy();

@@ -16,29 +16,27 @@ public:
 
 	void CacheClasses(const char* tag, JNIEnv* env);
 
-	void CheckJava(const char* tag, JNIEnv* env);
-
 	void SetApp(struct android_app* app);
 
 	void Initialize();
 
 	void SetDeveloperId(const char* developerId);
 
+	void AsyncSetDeveloperId();
+
 	void AsyncOuyaFetchGamerUUID(void* onSuccess, void* onFailure, void* onCancel);
 
-	void AsyncOuyaRequestProducts (void* onSuccess, void* onFailure, void* onCancel, void* products);
+	void AsyncOuyaRequestProducts(void* onSuccess, void* onFailure, void* onCancel, void* products);
 
-	void AsyncOuyaRequestPurchase (void* onSuccess, void* onFailure, void* onCancel, const char* purchasable);
+	void AsyncOuyaRequestPurchase(void* onSuccess, void* onFailure, void* onCancel, const char* purchasable);
 
-	void AsyncOuyaRequestReceipts (void* onSuccess, void* onFailure, void* onCancel);
+	void AsyncOuyaRequestReceipts(void* onSuccess, void* onFailure, void* onCancel);
 
 private:
 
 	struct android_app* m_app;
 
 	const char* m_developerId;
-
-	void OuyaSetDeveloperId();
 
 	// cached references
 	jclass jc_AsyncCppOuyaSetDeveloperId;
