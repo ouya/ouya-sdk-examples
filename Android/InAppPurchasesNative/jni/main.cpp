@@ -12,6 +12,7 @@
 
 Engine* g_engine = 0;
 PluginOuya g_pluginOuya;
+UI g_ui;
 JNIEnv* g_env = 0;
 JavaVM* g_jvm = 0;
 
@@ -101,6 +102,7 @@ void android_main(struct android_app* app)
 	//JavaVM* jvm;
 	//app->appThreadEnv->GetJavaVM(&jvm);
 	//jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
+	g_ui.Initialize(&g_pluginOuya);
 	g_pluginOuya.Initialize();
 
 	
@@ -116,7 +118,7 @@ void android_main(struct android_app* app)
         return;
     }
 
-    g_engine = new Engine(*egl, app, &g_pluginOuya);
+    g_engine = new Engine(*egl, app, &g_pluginOuya, &g_ui);
 
 	long lastTime = egl->getSystemTime();
 

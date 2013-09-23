@@ -3,6 +3,7 @@
 
 #include "TextButton.h"
 #include "PluginOuya.h"
+#include "UI.h"
 
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
@@ -22,7 +23,7 @@
 class Engine
 {
 public:
-	Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya);
+	Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya, UI* ui);
 	~Engine();
 
 	bool isGameplayMode() { return mGameplayMode; }
@@ -32,6 +33,7 @@ public:
 protected:
 
 	PluginOuya* m_pluginOuya;
+	UI* m_ui;
 
 	void setGameplayMode(bool paused);
 
@@ -65,16 +67,6 @@ protected:
 	int mForceRender;
 
     double mTimeVal;
-
-	bool m_uiInitialized;
-
-	TextButton m_uiRequestGamerUUID;
-	TextButton m_uiRequestProducts;
-	TextButton m_uiRequestPurchase;
-	TextButton m_uiRequestReceipts;
-	TextButton m_uiPause;
-
-	TextButton* m_selectedButton;
 };
 
 

@@ -10,11 +10,12 @@
 #include <nv_bitfont/nv_bitfont.h>
 #include <nv_shader/nv_shader.h>
 
-Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya) :
+Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya, UI* ui) :
 	mEgl(egl)
 {
     mApp = app;
 	m_pluginOuya = pluginOuya;
+	m_ui = ui;
 
 	mResizePending = false;
 
@@ -28,8 +29,6 @@ Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya) 
 	app->onAppCmd = &Engine::handleCmdThunk;
     app->onInputEvent = &Engine::handleInputThunk;
 
-	m_uiInitialized = false;
-
 	nv_shader_init(app->activity->assetManager);
 
 	m_pluginOuya->SetApp(app);
@@ -38,54 +37,14 @@ Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya) 
 
 Engine::~Engine()
 {
-	m_uiRequestGamerUUID.Destroy();
-	m_uiRequestProducts.Destroy();
-	m_uiRequestPurchase.Destroy();
-	m_uiRequestReceipts.Destroy();
-	m_uiPause.Destroy();
+	m_ui->Destroy();
 
 	NVBFCleanup();
 }
 
 bool Engine::initUI()
 {
-	if (m_uiInitialized)
-		return true;
-
-	#define NUM_FONTS	2
-	static NvBool fontsSplit[NUM_FONTS] = {1,1}; /* all are split */
-	static const char *fontFiles[NUM_FONTS] = {
-	    "courier+lucida_256.dds",
-	    "utahcond+bold_1024.dds"
-	};
-	if (NVBFInitialize(NUM_FONTS, (const char**)fontFiles, fontsSplit, 0))
-	{
-		LOGW("Could not initialize NvBitFont");
-		return false;
-	}
-
-	m_uiRequestGamerUUID.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get GamerUUID]", NVBF_COLORSTR_WHITE "Get GamerUUID");
-	m_uiRequestProducts.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get Products]", NVBF_COLORSTR_WHITE "Get Products");
-	m_uiRequestPurchase.Setup(2, 32, NVBF_COLORSTR_GREEN "[Purchase]", NVBF_COLORSTR_WHITE "Purchase");
-	m_uiRequestReceipts.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get Receipts]", NVBF_COLORSTR_WHITE "Get Receipts");
-	m_uiPause.Setup(2, 32, NVBF_COLORSTR_GREEN "[Pause]", NVBF_COLORSTR_WHITE "Pause");
-
-	m_uiRequestGamerUUID.Down = &m_uiRequestProducts;
-
-	m_uiRequestProducts.Right = &m_uiRequestPurchase;
-	m_uiRequestProducts.Up = &m_uiRequestGamerUUID;
-
-	m_uiRequestPurchase.Left = &m_uiRequestProducts;
-	m_uiRequestPurchase.Right = &m_uiRequestReceipts;
-
-	m_uiRequestReceipts.Left = &m_uiRequestPurchase;
-
-	m_uiPause.Left = &m_uiRequestReceipts;
-
-	m_selectedButton = &m_uiPause;
-	m_uiPause.SetActive(true);
-
-	m_uiInitialized = true;
+	m_ui->InitUI();	
 
 	return true;
 }
@@ -122,20 +81,7 @@ bool Engine::resizeIfNeeded()
 
 	NVBFSetScreenRes(w, h);
 
-	m_uiRequestGamerUUID.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiRequestGamerUUID.SetPosition(w/5, h/6);
-
-	m_uiRequestProducts.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiRequestProducts.SetPosition(w/5, h/4);
-
-	m_uiRequestPurchase.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiRequestPurchase.SetPosition(w*2/5, h/4);
-
-	m_uiRequestReceipts.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiRequestReceipts.SetPosition(w*3/5, h/4);
-
-	m_uiPause.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiPause.SetPosition(w*4/5, h/4);
+	m_ui->Resize(w, h);	
 
 	mResizePending = false;
 
@@ -169,11 +115,7 @@ bool Engine::renderFrame(bool allocateIfNeeded)
 	// start rendering bitfont text overlaid here.
 	NVBFTextRenderPrep();
 		
-	m_uiRequestGamerUUID.Render();
-	m_uiRequestProducts.Render();
-	m_uiRequestPurchase.Render();
-	m_uiRequestReceipts.Render();
-	m_uiPause.Render();
+	m_ui->Render();
 
 	// done rendering overlaid text.
 	NVBFTextRenderDone();
@@ -245,90 +187,7 @@ int Engine::handleInput(AInputEvent* event)
 		//sprintf(buffer, "%d", code);
 		//LOGI(buffer);
 
-		if (action == AMOTION_EVENT_ACTION_UP &&
-			code == 82) //system button
-		{
-			if (m_selectedButton)
-			{
-				m_selectedButton->SetActive(false);
-			}
-
-			m_selectedButton = &m_uiPause;
-			m_uiPause.SetActive(true);
-		}
-
-		else if (action == AMOTION_EVENT_ACTION_UP &&
-			code == 21) //dpad left
-		{
-			if (m_selectedButton &&
-				m_selectedButton->Left)
-			{
-				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Left;
-				m_selectedButton->SetActive(true);
-			}
-		}
-
-		else if (action == AMOTION_EVENT_ACTION_UP &&
-			code == 22) //dpad right
-		{
-			if (m_selectedButton &&
-				m_selectedButton->Right)
-			{
-				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Right;
-				m_selectedButton->SetActive(true);
-			}
-		}
-
-		else if (action == AMOTION_EVENT_ACTION_UP &&
-			code == 19) //dpad up
-		{
-			if (m_selectedButton &&
-				m_selectedButton->Up)
-			{
-				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Up;
-				m_selectedButton->SetActive(true);
-			}
-		}
-
-		else if (action == AMOTION_EVENT_ACTION_UP &&
-			code == 20) //dpad down
-		{
-			if (m_selectedButton &&
-				m_selectedButton->Down)
-			{
-				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Down;
-				m_selectedButton->SetActive(true);
-			}
-		}
-
-		else if(action == AMOTION_EVENT_ACTION_UP &&
-			code == 23) //button O
-		{
-			if (m_selectedButton)
-			{
-				LOGI("Executing action");
-				if (m_selectedButton == &m_uiRequestGamerUUID)
-				{
-					m_pluginOuya->AsyncOuyaFetchGamerUUID(NULL, NULL, NULL);
-				}
-				if (m_selectedButton == &m_uiRequestProducts)
-				{
-					m_pluginOuya->AsyncOuyaRequestProducts(NULL, NULL, NULL, NULL);
-				}
-				if (m_selectedButton == &m_uiRequestPurchase)
-				{
-					m_pluginOuya->AsyncOuyaRequestPurchase(NULL, NULL, NULL, NULL);
-				}
-				if (m_selectedButton == &m_uiRequestReceipts)
-				{
-					m_pluginOuya->AsyncOuyaRequestReceipts(NULL, NULL, NULL);
-				}
-			}
-		}
+		m_ui->HandleInput(code, action);
 	}
 
     return 0;
