@@ -93,9 +93,13 @@ public class CallbacksFetchGamerUUID {
 		*/
 	}
 
+	public native void CallbacksFetchGamerUUIDOnSuccess(String gamerUUID);
+
 	public void onSuccess(final String gamerUUID) {
 
 		Log.i("CallbacksFetchGamerUUID", "onSuccess=" + gamerUUID);
+
+		CallbacksFetchGamerUUIDOnSuccess(gamerUUID);
 
 		/*
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="NsightTegraProject">
     <NsightTegraProjectRevisionNumber>4</NsightTegraProjectRevisionNumber>
@@ -47,6 +47,10 @@
     <ClCompile Include="jni\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jni\CallbacksFetchGamerUUID.h" />
+    <ClInclude Include="jni\CallbacksRequestProducts.h" />
+    <ClInclude Include="jni\CallbacksRequestPurchase.h" />
+    <ClInclude Include="jni\CallbacksRequestReceipts.h" />
     <ClInclude Include="jni\engine.h" />
     <ClInclude Include="jni\PluginOuya.h" />
     <ClInclude Include="jni\TextButton.h" />

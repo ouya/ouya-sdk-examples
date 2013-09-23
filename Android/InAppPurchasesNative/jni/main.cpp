@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <EGL/egl.h>
 #include <EGL/eglplatform.h>
 #include <GLES2/gl2.h>
@@ -63,6 +65,23 @@ extern "C"
 		//spawn thread? Check for access?
 
 		return JNI_VERSION_1_6;
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
+	{
+		LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
+		const char* strGamerUUID = env->GetStringUTFChars(gamerUUID, false);
+		
+		char buffer[256];
+		sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID);
+		LOGI(buffer);
+
+		char* copy = new char[strlen(strGamerUUID)];
+		strcpy(copy, strGamerUUID);
+
+		g_ui.SetGamerUUID(copy);
+
+		return;
 	}
 
 	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI(JNIEnv* env, jobject thiz)

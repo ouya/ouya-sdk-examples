@@ -1,6 +1,10 @@
 #ifndef __UI_H__
 #define __UI_H__
 
+#include "CallbacksFetchGamerUUID.h"
+#include "CallbacksRequestProducts.h"
+#include "CallbacksRequestPurchase.h"
+#include "CallbacksRequestReceipts.h"
 #include "PluginOuya.h"
 #include "TextButton.h"
 
@@ -22,6 +26,8 @@ public:
 
 	void HandleInput(int keyCode, int action);
 
+	void SetGamerUUID(char* gamerUUID);
+
 private:
 
 	PluginOuya* m_pluginOuya;
@@ -33,9 +39,14 @@ private:
 	TextButton m_uiRequestPurchase;
 	TextButton m_uiRequestReceipts;
 	TextButton m_uiPause;
+	void* m_uiLabelFetch;
 
 	TextButton* m_selectedButton;
 
+	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+	CallbacksRequestProducts* m_callbacksRequestProducts;
+	CallbacksRequestPurchase* m_callbacksRequestPurchase;
+	CallbacksRequestReceipts* m_callbacksRequestReceipts;
 };
 
 #endif

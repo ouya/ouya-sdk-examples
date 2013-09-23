@@ -19,9 +19,11 @@ package tv.ouya.sdk.android;
 
 public class AsyncCppOuyaRequestPurchase {
 
-	public static void invoke() {
+	public static void invoke(String purchasable) {
 
 		CallbacksRequestPurchase callbacks = new CallbacksRequestPurchase();
+
+		callbacks.m_purchasable = purchasable;
 
 		// store for access
 		IOuyaActivity.SetCallbacksRequestPurchase(callbacks);

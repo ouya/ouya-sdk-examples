@@ -1,8 +1,15 @@
 #ifndef __PLUGIN_OUYA_H__
 #define __PLUGIN_OUYA_H__
 
+#include "CallbacksFetchGamerUUID.h"
+#include "CallbacksRequestProducts.h"
+#include "CallbacksRequestPurchase.h"
+#include "CallbacksRequestReceipts.h"
+
 #include <nv_and_util/nv_native_app_glue.h>
 #include <jni.h>
+
+class UI;
 
 class PluginOuya
 {
@@ -24,13 +31,13 @@ public:
 
 	void AsyncSetDeveloperId();
 
-	void AsyncOuyaFetchGamerUUID(void* onSuccess, void* onFailure, void* onCancel);
+	void AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
 
-	void AsyncOuyaRequestProducts(void* onSuccess, void* onFailure, void* onCancel, void* products);
+	void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts);
 
-	void AsyncOuyaRequestPurchase(void* onSuccess, void* onFailure, void* onCancel, const char* purchasable);
+	void AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const char* purchasable);
 
-	void AsyncOuyaRequestReceipts(void* onSuccess, void* onFailure, void* onCancel);
+	void AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts);
 
 private:
 

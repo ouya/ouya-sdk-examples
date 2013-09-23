@@ -49,6 +49,11 @@ bool UI::InitUI()
 		return false;
 	}
 
+	m_uiLabelFetch = NVBFTextAlloc();
+	NVBFTextSetFont(m_uiLabelFetch, 2);
+	NVBFTextSetSize(m_uiLabelFetch, 32);
+    NVBFTextSetColor(m_uiLabelFetch, NV_PC_PREDEF_WHITE);
+
 	m_uiRequestGamerUUID.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get GamerUUID]", NVBF_COLORSTR_WHITE "Get GamerUUID");
 	m_uiRequestProducts.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get Products]", NVBF_COLORSTR_WHITE "Get Products");
 	m_uiRequestPurchase.Setup(2, 32, NVBF_COLORSTR_GREEN "[Purchase]", NVBF_COLORSTR_WHITE "Purchase");
@@ -77,6 +82,9 @@ bool UI::InitUI()
 
 void UI::Destroy()
 {
+	NVBFTextFree(m_uiLabelFetch);
+	m_uiLabelFetch = 0;
+
 	m_uiRequestGamerUUID.Destroy();
 	m_uiRequestProducts.Destroy();
 	m_uiRequestPurchase.Destroy();
@@ -86,6 +94,9 @@ void UI::Destroy()
 
 void UI::Resize(int w, int h)
 {
+	NVBFTextCursorAlign(m_uiLabelFetch, NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
+	NVBFTextCursorPos(m_uiLabelFetch, w*4/5, h/6);
+
 	m_uiRequestGamerUUID.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
 	m_uiRequestGamerUUID.SetPosition(w/5, h/6);
 
@@ -104,6 +115,8 @@ void UI::Resize(int w, int h)
 
 void UI::Render()
 {
+	NVBFTextRender(m_uiLabelFetch);
+
 	m_uiRequestGamerUUID.Render();
 	m_uiRequestProducts.Render();
 	m_uiRequestPurchase.Render();
@@ -181,20 +194,28 @@ void UI::HandleInput(int keyCode, int action)
 			LOGI("Executing action");
 			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
-				m_pluginOuya->AsyncOuyaFetchGamerUUID(NULL, NULL, NULL);
+				m_pluginOuya->AsyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
 			}
 			if (m_selectedButton == &m_uiRequestProducts)
 			{
-				m_pluginOuya->AsyncOuyaRequestProducts(NULL, NULL, NULL, NULL);
+				m_pluginOuya->AsyncOuyaRequestProducts(m_callbacksRequestProducts);
 			}
 			if (m_selectedButton == &m_uiRequestPurchase)
 			{
-				m_pluginOuya->AsyncOuyaRequestPurchase(NULL, NULL, NULL, NULL);
+				m_pluginOuya->AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, "hello");
 			}
 			if (m_selectedButton == &m_uiRequestReceipts)
 			{
-				m_pluginOuya->AsyncOuyaRequestReceipts(NULL, NULL, NULL);
+				m_pluginOuya->AsyncOuyaRequestReceipts(m_callbacksRequestReceipts);
 			}
 		}
+	}
+}
+
+void UI::SetGamerUUID(char* gamerUUID)
+{
+	if (m_uiLabelFetch)
+	{
+		NVBFTextSetString(m_uiLabelFetch, gamerUUID);
 	}
 }

@@ -115,7 +115,7 @@ void PluginOuya::AsyncSetDeveloperId()
 	Initialized = true;
 }
 
-void PluginOuya::AsyncOuyaFetchGamerUUID(void* onSuccess, void* onFailure, void* onCancel)
+void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
 {
 	Initialize();
 
@@ -132,7 +132,7 @@ void PluginOuya::AsyncOuyaFetchGamerUUID(void* onSuccess, void* onFailure, void*
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 
-void PluginOuya::AsyncOuyaRequestProducts(void* onSuccess, void* onFailure, void* onCancel, void* products)
+void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts)
 {
 	Initialize();
 
@@ -145,11 +145,11 @@ void PluginOuya::AsyncOuyaRequestProducts(void* onSuccess, void* onFailure, void
 	EXCEPTION_RETURN(LOG_TAG, env);
 
 	LOGI("execute the invoke method");
-	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestProducts, invokeMethod);
+	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestProducts, invokeMethod, (int)callbacksRequestProducts);
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 
-void PluginOuya::AsyncOuyaRequestPurchase(void* onSuccess, void* onFailure, void* onCancel, const char* purchasable)
+void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const char* purchasable)
 {
 	Initialize();
 
@@ -162,7 +162,7 @@ void PluginOuya::AsyncOuyaRequestPurchase(void* onSuccess, void* onFailure, void
 	EXCEPTION_RETURN(LOG_TAG, env);
 
 	LOGI("get the invoke method");
-	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestPurchase, "invoke", "()V");
+	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestPurchase, "invoke", "(Ljava/lang/String;)V");
 	EXCEPTION_RETURN(LOG_TAG, env);
 
 	LOGI("execute the invoke method");
@@ -170,7 +170,7 @@ void PluginOuya::AsyncOuyaRequestPurchase(void* onSuccess, void* onFailure, void
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 
-void PluginOuya::AsyncOuyaRequestReceipts(void* onSuccess, void* onFailure, void* onCancel)
+void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts)
 {
 	Initialize();
 
