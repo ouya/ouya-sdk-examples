@@ -40,6 +40,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="jni\CallbacksFetchGamerUUID.cpp" />
+    <ClCompile Include="jni\CallbackSingleton.cpp" />
     <ClCompile Include="jni\engine.cpp" />
     <ClCompile Include="jni\PluginOuya.cpp" />
     <ClCompile Include="jni\TextButton.cpp" />
@@ -47,6 +49,7 @@
     <ClCompile Include="jni\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jni\CallbackSingleton.h" />
     <ClInclude Include="jni\CallbacksFetchGamerUUID.h" />
     <ClInclude Include="jni\CallbacksRequestProducts.h" />
     <ClInclude Include="jni\CallbacksRequestPurchase.h" />

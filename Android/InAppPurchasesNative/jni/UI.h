@@ -26,7 +26,7 @@ public:
 
 	void HandleInput(int keyCode, int action);
 
-	void SetGamerUUID(char* gamerUUID);
+	void SetGamerUUID(const char* gamerUUID);
 
 private:
 

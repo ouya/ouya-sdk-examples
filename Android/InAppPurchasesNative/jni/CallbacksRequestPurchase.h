@@ -7,7 +7,7 @@ public:
 
 	void OnSuccess();
 
-	void OnFailure();
+	void OnFailure(int errorCode, char* errorMessage);
 
 	void OnCancel();
 };

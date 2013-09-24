@@ -212,7 +212,7 @@ void UI::HandleInput(int keyCode, int action)
 	}
 }
 
-void UI::SetGamerUUID(char* gamerUUID)
+void UI::SetGamerUUID(const char* gamerUUID)
 {
 	if (m_uiLabelFetch)
 	{

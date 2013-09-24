@@ -5,9 +5,9 @@ class CallbacksFetchGamerUUID
 {
 public:
 
-	void OnSuccess();
+	void OnSuccess(const char* gamerUUID);
 
-	void OnFailure();
+	void OnFailure(int errorCode, char* errorMessage);
 
 	void OnCancel();
 };

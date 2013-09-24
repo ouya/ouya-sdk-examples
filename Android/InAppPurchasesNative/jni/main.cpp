@@ -8,8 +8,8 @@
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
 
+#include "CallbackSingleton.h"
 #include "engine.h"
-
 #include "PluginOuya.h"
 
 Engine* g_engine = 0;
@@ -67,23 +67,6 @@ extern "C"
 		return JNI_VERSION_1_6;
 	}
 
-	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
-	{
-		LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
-		const char* strGamerUUID = env->GetStringUTFChars(gamerUUID, false);
-		
-		char buffer[256];
-		sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID);
-		LOGI(buffer);
-
-		char* copy = new char[strlen(strGamerUUID)];
-		strcpy(copy, strGamerUUID);
-
-		g_ui.SetGamerUUID(copy);
-
-		return;
-	}
-
 	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI(JNIEnv* env, jobject thiz)
 	{
 		return;
@@ -123,7 +106,8 @@ void android_main(struct android_app* app)
 	//jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
 	g_ui.Initialize(&g_pluginOuya);
 	g_pluginOuya.Initialize();
-
+	CallbackSingleton::GetInstance()->Initialize(&g_ui);
+	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = new CallbacksFetchGamerUUID();
 	
 
     // Make sure glue isn't stripped.
