@@ -26,3 +26,15 @@ void CallbacksFetchGamerUUID::OnSuccess(const char* gamerUUID)
 
 	CallbackSingleton::GetInstance()->GetUI()->SetGamerUUID(gamerUUID);
 }
+
+void CallbacksFetchGamerUUID::OnFailure(int errorCode, const char* errorMessage)
+{
+	char buffer[256];
+	sprintf(buffer, "CallbacksFetchGamerUUID::OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage);
+	LOGI(buffer);
+}
+
+void CallbacksFetchGamerUUID::OnCancel()
+{
+	LOGI("CallbacksFetchGamerUUID::OnCancel");
+}

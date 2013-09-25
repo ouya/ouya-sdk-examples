@@ -7,7 +7,7 @@ public:
 
 	void OnSuccess(const char* gamerUUID);
 
-	void OnFailure(int errorCode, char* errorMessage);
+	void OnFailure(int errorCode, const char* errorMessage);
 
 	void OnCancel();
 };

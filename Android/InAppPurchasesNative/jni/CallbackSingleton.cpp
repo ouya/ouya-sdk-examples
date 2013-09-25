@@ -67,4 +67,36 @@ extern "C"
 			callback->OnSuccess(strGamerUUID);
 		}
 	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure***********");
+		
+		const char* strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID);
+		//LOGI(buffer);
+		
+		CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+		if (callback)
+		{
+			callback->OnFailure(errorCode, strErrorMessage);
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel(JNIEnv* env, jobject thiz)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel***********");
+		
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel: Returned to C");
+		//LOGI(buffer);
+		
+		CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+		if (callback)
+		{
+			callback->OnCancel();
+		}
+	}
 }
