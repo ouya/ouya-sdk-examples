@@ -25,6 +25,14 @@
 UI::UI()
 {
 	m_uiInitialized = false;
+
+	m_productIds = new char*[5];
+
+	m_productIds[0] = "long_sword";
+	m_productIds[1] = "sharp_axe";
+	m_productIds[2] = "cool_level";
+	m_productIds[3] = "awesome_sauce";
+	m_productIds[4] = "__DECLINED__THIS_PURCHASE";
 }
 
 void UI::Initialize(PluginOuya* pluginOuya)
@@ -198,7 +206,7 @@ void UI::HandleInput(int keyCode, int action)
 			}
 			if (m_selectedButton == &m_uiRequestProducts)
 			{
-				m_pluginOuya->AsyncOuyaRequestProducts(m_callbacksRequestProducts);
+				m_pluginOuya->AsyncOuyaRequestProducts(m_callbacksRequestProducts, m_productIds);
 			}
 			if (m_selectedButton == &m_uiRequestPurchase)
 			{

@@ -16,10 +16,35 @@
 
 package tv.ouya.sdk.android;
 
+import android.util.Log;
+
 
 public class AsyncCppOuyaRequestProducts {
 
-	public static void invoke() {
+	static final String LOG_TAG = "AsyncCppOuyaRequestProducts";
+
+	public static void invoke(String[] products) {		
+		
+		Log.i(LOG_TAG, "Java: AsyncCppOuyaRequestProducts");
+		
+		//clear the list of products
+		NativeOuyaPlugin.clearGetProductList();
+
+		if (null == products) {
+			Log.i(LOG_TAG, "Java: Products=null");
+			return;
+		}
+
+		Log.i(LOG_TAG, "Java: Products Length=" + products.length);
+		
+		for (String product : products) {
+			Log.i(LOG_TAG, "Java: Product: " + product);
+			// add to the product list
+			NativeOuyaPlugin.addGetProduct(product);
+		}
+		
+		//show added products
+		NativeOuyaPlugin.debugGetProductList();
 
 		CallbacksRequestProducts callbacks = new CallbacksRequestProducts();
 

@@ -108,6 +108,9 @@ void android_main(struct android_app* app)
 	g_pluginOuya.Initialize();
 	CallbackSingleton::GetInstance()->Initialize(&g_ui);
 	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = new CallbacksFetchGamerUUID();
+	CallbackSingleton::GetInstance()->m_callbacksRequestProducts = new CallbacksRequestProducts();
+	CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = new CallbacksRequestPurchase();
+	CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = new CallbacksRequestReceipts();
 	
 
     // Make sure glue isn't stripped.

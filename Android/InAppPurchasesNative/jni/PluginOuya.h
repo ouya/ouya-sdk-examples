@@ -33,7 +33,7 @@ public:
 
 	void AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
 
-	void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts);
+	void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, char** productIds);
 
 	void AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const char* purchasable);
 

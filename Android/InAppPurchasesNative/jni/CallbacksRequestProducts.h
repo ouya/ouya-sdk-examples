@@ -5,9 +5,9 @@ class CallbacksRequestProducts
 {
 public:
 
-	void OnSuccess();
+	void OnSuccess(const char* jsonData);
 
-	void OnFailure(int errorCode, char* errorMessage);
+	void OnFailure(int errorCode, const char* errorMessage);
 
 	void OnCancel();
 };

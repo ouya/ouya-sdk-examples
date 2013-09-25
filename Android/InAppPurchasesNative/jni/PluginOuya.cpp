@@ -132,7 +132,7 @@ void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetch
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 
-void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts)
+void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, char** productIds)
 {
 	Initialize();
 
@@ -140,12 +140,28 @@ void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksReq
 
 	JNIEnv* env = m_app->appThreadEnv;
 
+	int count = 5;
+
+	LOGI("get string class");
+
+	// Get a class reference for java.lang.String
+	jclass classString = env->FindClass("java/lang/String");
+	
+	LOGI("create array");
+	jobjectArray products = env->NewObjectArray(count, classString, NULL);
+
+	LOGI("populate items");
+	for (int i = 0; i < count; ++i) {
+		env->SetObjectArrayElement(products, i, env->NewStringUTF(productIds[i]));
+    }
+
+
 	LOGI("get the invoke method");
-	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestProducts, "invoke", "()V");
+	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestProducts, "invoke", "([Ljava/lang/String;)V");
 	EXCEPTION_RETURN(LOG_TAG, env);
 
 	LOGI("execute the invoke method");
-	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestProducts, invokeMethod, (int)callbacksRequestProducts);
+	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestProducts, invokeMethod, products);
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 

@@ -190,9 +190,13 @@ public class CallbacksRequestProducts {
 		*/
 	}
 
+	public native void CallbacksRequestProductsOnSuccess(String jsonData);
+
 	public void onSuccess(final String jsonData) {
 
 		Log.i("CallbacksRequestProducts", "onSuccess jsonData=" + jsonData);
+
+		CallbacksRequestProductsOnSuccess(jsonData);
 
 		/*
 

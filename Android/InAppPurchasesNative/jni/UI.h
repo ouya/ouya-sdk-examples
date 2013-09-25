@@ -30,6 +30,8 @@ public:
 
 private:
 
+	char** m_productIds;
+
 	PluginOuya* m_pluginOuya;
 
 	bool m_uiInitialized;
