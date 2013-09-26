@@ -44,6 +44,8 @@
     <ClCompile Include="jni\CallbackSingleton.cpp" />
     <ClCompile Include="jni\CallbacksRequestProducts.cpp" />
     <ClCompile Include="jni\engine.cpp" />
+    <ClCompile Include="jni\JSON.cpp" />
+    <ClCompile Include="jni\JSONValue.cpp" />
     <ClCompile Include="jni\PluginOuya.cpp" />
     <ClCompile Include="jni\TextButton.cpp" />
     <ClCompile Include="jni\main.cpp" />
@@ -56,6 +58,12 @@
     <ClInclude Include="jni\CallbacksRequestPurchase.h" />
     <ClInclude Include="jni\CallbacksRequestReceipts.h" />
     <ClInclude Include="jni\engine.h" />
+    <ClInclude Include="jni\JSON.h" />
+    <ClInclude Include="jni\JSONValue.h" />
+    <ClInclude Include="jni\lib_json\json\autolink.h" />
+    <ClInclude Include="jni\lib_json\json\config.h" />
+    <ClInclude Include="jni\lib_json\json\features.h" />
+    <ClInclude Include="jni\lib_json\json\forwards.h" />
     <ClInclude Include="jni\PluginOuya.h" />
     <ClInclude Include="jni\TextButton.h" />
     <ClInclude Include="jni\UI.h" />
@@ -113,10 +121,10 @@
     <Link>
       <AdditionalLibraryDirectories>$(NVSamplesPath)/libs/jni/nv_obj/$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>android;nv_and_util;nv_bitfont;nv_egl_util;nv_file;nv_glesutil;nv_hhdds;nv_log;nv_math;nv_shader;nv_thread;stdc++;c;m;log;dl;GLESv2;EGL;%(AdditionalDependencies);</AdditionalDependencies>
-      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(NVSamplesPath)/libs/jni</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(NVSamplesPath)/libs/jni;$(SolutionDir)jni/include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
