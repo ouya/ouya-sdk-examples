@@ -62,14 +62,13 @@ void CallbacksRequestProducts::OnSuccess(const char* jsonData)
 		}
 		if (item[L"identifier"]->IsString())
 		{
-			const wchar_t* wstr = item[L"identifier"]->AsString().c_str();
+			const std::wstring wstr = item[L"identifier"]->AsString();
 
-			///*
-			//char id[512];
-			//std::wcsrtombs(id, &wstr, 512, 0);
-			//sprintf(id, "id=%s\r\n", str);
-			//LOGI(id);
-			//*/
+			const std::string cstr( wstr.begin(), wstr.end() );
+
+			const char* id = cstr.c_str();
+
+			LOGI(id);
 		}
 	}
 
