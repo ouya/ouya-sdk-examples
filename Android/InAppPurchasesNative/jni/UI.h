@@ -6,6 +6,7 @@
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
 #include "PluginOuya.h"
+#include "Product.h"
 #include "TextButton.h"
 
 class UI
@@ -28,11 +29,19 @@ public:
 
 	void SetGamerUUID(const char* gamerUUID);
 
+	void ClearProducts();
+
+	void AddProduct(Product product);
+
 private:
 
 	char** m_productIds;
 
 	PluginOuya* m_pluginOuya;
+
+	std::vector<Product> m_pendingProducts;
+
+	std::vector<TextButton> m_products;
 
 	bool m_uiInitialized;
 

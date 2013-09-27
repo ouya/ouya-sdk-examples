@@ -22,11 +22,13 @@
 
 void CallbacksRequestProducts::OnSuccess(const char* jsonData)
 {
-	char buffer[1024];
-	sprintf(buffer, "CallbacksRequestProducts::OnSuccess:  %s\r\n", jsonData);
-	LOGI(buffer);
+	//char buffer[1024];
+	//sprintf(buffer, "CallbacksRequestProducts::OnSuccess:  %s\r\n", jsonData);
+	//LOGI(buffer);
 
-	LOGI("Parsing JSON Data");
+	CallbackSingleton::GetInstance()->GetUI()->ClearProducts();
+
+	//LOGI("Parsing JSON Data");
 
 	// Parse example data
 	JSONValue* value = JSON::Parse(jsonData);
@@ -50,6 +52,8 @@ void CallbacksRequestProducts::OnSuccess(const char* jsonData)
 	{
 		Product newProduct;
 		newProduct.ParseJSON(data[i]);
+
+		CallbackSingleton::GetInstance()->GetUI()->AddProduct(newProduct);
 	}
 }
 

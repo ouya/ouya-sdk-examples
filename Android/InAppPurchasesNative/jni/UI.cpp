@@ -43,7 +43,44 @@ void UI::Initialize(PluginOuya* pluginOuya)
 bool UI::InitUI()
 {
 	if (m_uiInitialized)
+	{
+		for (int index = 0; index < m_pendingProducts.size(); ++index)
+		{
+			char buffer[1024];
+
+			//sprintf(buffer, "Copy product %s", m_pendingProducts[index].Identifier.c_str());
+			//LOGI(buffer);
+
+			TextButton txtProduct;
+			Product* newProduct = new Product(m_pendingProducts[index]);
+			txtProduct.DataContext = newProduct;
+
+			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
+			//LOGI(buffer);
+
+			sprintf(buffer, NVBF_COLORSTR_GREEN "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+			txtProduct.ActiveText = buffer;
+
+			sprintf(buffer, NVBF_COLORSTR_WHITE "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+			txtProduct.InactiveText = buffer;
+
+			txtProduct.Setup(2, 32, txtProduct.ActiveText.c_str(), txtProduct.InactiveText.c_str());
+
+			m_products.push_back(txtProduct);
+
+			int w = 1920;
+			int h = 1080;
+
+			txtProduct.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
+			txtProduct.SetPosition(w/5, h/3 + index * 25);
+			txtProduct.SetActive(index == 0);
+		}
+
+		m_pendingProducts.clear();
+
+
 		return true;
+	}
 
 	#define NUM_FONTS	2
 	static NvBool fontsSplit[NUM_FONTS] = {1,1}; /* all are split */
@@ -98,6 +135,8 @@ void UI::Destroy()
 	m_uiRequestPurchase.Destroy();
 	m_uiRequestReceipts.Destroy();
 	m_uiPause.Destroy();
+
+	ClearProducts();
 }
 
 void UI::Resize(int w, int h)
@@ -119,6 +158,12 @@ void UI::Resize(int w, int h)
 
 	m_uiPause.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
 	m_uiPause.SetPosition(w*4/5, h/4);
+
+	for (int index = 0; index < m_products.size(); ++index)
+	{
+		m_products[index].SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
+		m_uiRequestGamerUUID.SetPosition(w/5, h/2 + index * 15);
+	}
 }
 
 void UI::Render()
@@ -130,6 +175,11 @@ void UI::Render()
 	m_uiRequestPurchase.Render();
 	m_uiRequestReceipts.Render();
 	m_uiPause.Render();
+
+	for (int index = 0; index < m_products.size(); ++index)
+	{
+		m_products[index].Render();
+	}
 }
 
 void UI::HandleInput(int keyCode, int action)
@@ -226,4 +276,18 @@ void UI::SetGamerUUID(const char* gamerUUID)
 	{
 		NVBFTextSetString(m_uiLabelFetch, gamerUUID);
 	}
+}
+
+void UI::ClearProducts()
+{
+	for (int index = 0; index < m_products.size(); ++index)
+	{
+		m_products[index].Destroy();
+	}
+	m_products.clear();
+}
+
+void UI::AddProduct(Product product)
+{
+	m_pendingProducts.push_back(product);
 }

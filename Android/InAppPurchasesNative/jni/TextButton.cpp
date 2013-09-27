@@ -2,8 +2,8 @@
 
 TextButton::TextButton()
 {
-	ActiveText = 0;
-	InactiveText = 0;
+	ActiveText = "";
+	InactiveText = "";
 
 	Down = 0;
 	Left = 0;
@@ -26,7 +26,17 @@ TextButton::TextButton(char* activeText, char* inactiveText, TextButton* down, T
 	UIText = 0;
 }
 
-void TextButton::Setup(int font, int size, char* activeText, char* inactiveText)
+void TextButton::Setup(int font, int size)
+{
+	UIText = NVBFTextAlloc();
+	NVBFTextSetFont(UIText, font);
+	NVBFTextSetSize(UIText, size);
+    NVBFTextSetColor(UIText, NV_PC_PREDEF_WHITE);
+	
+	SetActive(false);
+}
+
+void TextButton::Setup(int font, int size, const char* activeText, const char* inactiveText)
 {
 	UIText = NVBFTextAlloc();
 	NVBFTextSetFont(UIText, font);
@@ -60,11 +70,11 @@ void TextButton::SetActive(bool flag)
 	{
 		if (flag)
 		{
-			NVBFTextSetString(UIText, ActiveText);
+			NVBFTextSetString(UIText, ActiveText.c_str());
 		}
 		else
 		{
-			NVBFTextSetString(UIText, InactiveText);
+			NVBFTextSetString(UIText, InactiveText.c_str());
 		}
 	}
 }

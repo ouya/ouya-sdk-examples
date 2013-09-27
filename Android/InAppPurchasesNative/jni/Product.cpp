@@ -20,6 +20,26 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
+Product::Product()
+{
+	CurrencyCode = "";
+	Identifier = "";
+	Name = "";
+	ProductVersionToBundle = 0;
+	LocalPrice = 0;
+	PriceInCents = 0;
+}
+
+Product::Product(const Product& copy)
+{
+	CurrencyCode = copy.CurrencyCode;
+	Identifier = copy.Identifier;
+	Name = copy.Name;
+	ProductVersionToBundle = copy.ProductVersionToBundle;
+	LocalPrice = copy.LocalPrice;
+	PriceInCents = copy.PriceInCents;
+}
+
 void Product::ParseJSON(JSONValue* json)
 {
 	if (!json)

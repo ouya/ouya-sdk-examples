@@ -13,6 +13,10 @@ public:
 	float LocalPrice;
 	int PriceInCents;
 
+	Product();
+
+	Product(const Product& copy);
+
 	void ParseJSON(JSONValue* json);
 };
 
