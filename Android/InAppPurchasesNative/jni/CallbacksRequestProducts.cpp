@@ -1,13 +1,12 @@
 #include "CallbacksRequestProducts.h"
 #include "CallbackSingleton.h"
 #include "JSON.h"
+#include "Product.h"
 
 #include <stdio.h>
 #include <android/log.h>
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
-
-#include <iostream>
 
 #define APP_NAME "inapppurchasesnative_CallbacksRequestProducts"
 
@@ -49,32 +48,9 @@ void CallbacksRequestProducts::OnSuccess(const char* jsonData)
 
 	for (unsigned int i = 0; i < data.size(); i++)
 	{
-		if (!data[i]->IsObject())
-		{
-			LOGI("Parsing JSON Failed: Not an object item");
-			continue;
-		}
-		JSONObject item = data[i]->AsObject();
-		if (item.find(L"identifier") == item.end())
-		{
-			LOGI("Parsing JSON Failed: Can't find identifier");
-			continue;
-		}
-		if (item[L"identifier"]->IsString())
-		{
-			const std::wstring wstr = item[L"identifier"]->AsString();
-
-			const std::string cstr( wstr.begin(), wstr.end() );
-
-			const char* id = cstr.c_str();
-
-			LOGI(id);
-		}
+		Product newProduct;
+		newProduct.ParseJSON(data[i]);
 	}
-
-	LOGI("*******************");
-	LOGI("*******************");
-	LOGI("*******************");
 }
 
 void CallbacksRequestProducts::OnFailure(int errorCode, const char* errorMessage)
