@@ -23,6 +23,8 @@ public:
 
 	void Resize(int w, int h);
 
+	bool HasUIChanged();
+
 	void Render();
 
 	void HandleInput(int keyCode, int action);
@@ -44,6 +46,8 @@ private:
 	std::vector<TextButton> m_products;
 
 	bool m_uiInitialized;
+
+	bool m_uiChanged;
 
 	TextButton m_uiRequestGamerUUID;
 	TextButton m_uiRequestProducts;

@@ -72,8 +72,13 @@ bool Engine::checkWindowResized()
 
 bool Engine::resizeIfNeeded()
 {
-	if (!mResizePending)
+	if (m_ui->HasUIChanged())
+	{
+	}
+	else if (!mResizePending)
+	{
 		return false;
+	}
 
 	int w = mEgl.getWidth();
 	int h = mEgl.getHeight();
@@ -114,7 +119,7 @@ bool Engine::renderFrame(bool allocateIfNeeded)
 	
 	// start rendering bitfont text overlaid here.
 	NVBFTextRenderPrep();
-		
+
 	m_ui->Render();
 
 	// done rendering overlaid text.

@@ -33,6 +33,8 @@ UI::UI()
 	m_productIds[2] = "cool_level";
 	m_productIds[3] = "awesome_sauce";
 	m_productIds[4] = "__DECLINED__THIS_PURCHASE";
+
+	m_uiChanged = false;
 }
 
 void UI::Initialize(PluginOuya* pluginOuya)
@@ -44,39 +46,38 @@ bool UI::InitUI()
 {
 	if (m_uiInitialized)
 	{
-		for (int index = 0; index < m_pendingProducts.size(); ++index)
+		// delay creation of new labels for the rendering thread
+		if (m_pendingProducts.size() > 0)
 		{
-			char buffer[1024];
+			for (int index = 0; index < m_pendingProducts.size(); ++index)
+			{
+				char buffer[1024];
 
-			//sprintf(buffer, "Copy product %s", m_pendingProducts[index].Identifier.c_str());
-			//LOGI(buffer);
+				//sprintf(buffer, "Copy product %s", m_pendingProducts[index].Identifier.c_str());
+				//LOGI(buffer);
 
-			TextButton txtProduct;
-			Product* newProduct = new Product(m_pendingProducts[index]);
-			txtProduct.DataContext = newProduct;
+				TextButton txtProduct;
+				Product* newProduct = new Product(m_pendingProducts[index]);
+				txtProduct.DataContext = newProduct;
 
-			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
-			//LOGI(buffer);
+				//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
+				//LOGI(buffer);
 
-			sprintf(buffer, NVBF_COLORSTR_GREEN "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
-			txtProduct.ActiveText = buffer;
+				sprintf(buffer, NVBF_COLORSTR_GREEN "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+				txtProduct.ActiveText = buffer;
 
-			sprintf(buffer, NVBF_COLORSTR_WHITE "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
-			txtProduct.InactiveText = buffer;
+				sprintf(buffer, NVBF_COLORSTR_WHITE "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+				txtProduct.InactiveText = buffer;
 
-			txtProduct.Setup(2, 32, txtProduct.ActiveText.c_str(), txtProduct.InactiveText.c_str());
+				txtProduct.Setup(2, 32, txtProduct.ActiveText.c_str(), txtProduct.InactiveText.c_str());
 
-			m_products.push_back(txtProduct);
+				m_products.push_back(txtProduct);
+			}
 
-			int w = 1920;
-			int h = 1080;
+			m_uiChanged = true;
 
-			txtProduct.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-			txtProduct.SetPosition(w/5, h/3 + index * 25);
-			txtProduct.SetActive(index == 0);
+			m_pendingProducts.clear();
 		}
-
-		m_pendingProducts.clear();
 
 
 		return true;
@@ -162,8 +163,18 @@ void UI::Resize(int w, int h)
 	for (int index = 0; index < m_products.size(); ++index)
 	{
 		m_products[index].SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-		m_uiRequestGamerUUID.SetPosition(w/5, h/2 + index * 15);
+		m_products[index].SetPosition(w/5, h/3 + index * 25);
 	}
+}
+
+bool UI::HasUIChanged()
+{
+	if (m_uiChanged)
+	{
+		m_uiChanged = false;
+		return true;
+	}
+	return false;
 }
 
 void UI::Render()
