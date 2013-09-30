@@ -20,7 +20,7 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestProducts::OnSuccess(const char* jsonData)
+void CallbacksRequestProducts::OnSuccess(std::string jsonData)
 {
 	//char buffer[1024];
 	//sprintf(buffer, "CallbacksRequestProducts::OnSuccess:  %s\r\n", jsonData);
@@ -31,7 +31,7 @@ void CallbacksRequestProducts::OnSuccess(const char* jsonData)
 	//LOGI("Parsing JSON Data");
 
 	// Parse example data
-	JSONValue* value = JSON::Parse(jsonData);
+	JSONValue* value = JSON::Parse(jsonData.c_str());
 
 	if (value == NULL)
 	{
@@ -57,7 +57,7 @@ void CallbacksRequestProducts::OnSuccess(const char* jsonData)
 	}
 }
 
-void CallbacksRequestProducts::OnFailure(int errorCode, const char* errorMessage)
+void CallbacksRequestProducts::OnFailure(int errorCode, std::string errorMessage)
 {
 }
 

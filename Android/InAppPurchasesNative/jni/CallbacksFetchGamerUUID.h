@@ -1,13 +1,15 @@
 #ifndef __CALLBACKS_FETCH_GAMER_UUID_H__
 #define __CALLBACKS_FETCH_GAMER_UUID_H__
 
+#include <string>
+
 class CallbacksFetchGamerUUID
 {
 public:
 
-	void OnSuccess(const char* gamerUUID);
+	void OnSuccess(std::string gamerUUID);
 
-	void OnFailure(int errorCode, const char* errorMessage);
+	void OnFailure(int errorCode, std::string errorMessage);
 
 	void OnCancel();
 };

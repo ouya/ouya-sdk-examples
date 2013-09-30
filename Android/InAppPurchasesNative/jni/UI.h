@@ -36,7 +36,7 @@ public:
 
 	void HandleInput(int keyCode, int action);
 
-	void SetGamerUUID(const char* gamerUUID);
+	void SetGamerUUID(std::string gamerUUID);
 
 	void ClearProducts();
 

@@ -20,10 +20,10 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestReceipts::OnSuccess(const char* jsonData)
+void CallbacksRequestReceipts::OnSuccess(std::string jsonData)
 {
 	char buffer[1024];
-	sprintf(buffer, "CallbacksRequestReceipts::OnSuccess:  %s\r\n", jsonData);
+	sprintf(buffer, "CallbacksRequestReceipts::OnSuccess:  %s\r\n", jsonData.c_str());
 	LOGI(buffer);
 
 	CallbackSingleton::GetInstance()->GetUI()->ClearReceipts();
@@ -31,7 +31,7 @@ void CallbacksRequestReceipts::OnSuccess(const char* jsonData)
 	LOGI("Parsing JSON Data");
 
 	// Parse example data
-	JSONValue* value = JSON::Parse(jsonData);
+	JSONValue* value = JSON::Parse(jsonData.c_str());
 
 	if (value == NULL)
 	{
@@ -57,7 +57,7 @@ void CallbacksRequestReceipts::OnSuccess(const char* jsonData)
 	}
 }
 
-void CallbacksRequestReceipts::OnFailure(int errorCode, char* errorMessage)
+void CallbacksRequestReceipts::OnFailure(int errorCode, std::string errorMessage)
 {
 }
 

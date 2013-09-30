@@ -388,11 +388,11 @@ void UI::HandleInput(int keyCode, int action)
 	}
 }
 
-void UI::SetGamerUUID(const char* gamerUUID)
+void UI::SetGamerUUID(std::string gamerUUID)
 {
 	if (m_uiLabelFetch)
 	{
-		NVBFTextSetString(m_uiLabelFetch, gamerUUID);
+		NVBFTextSetString(m_uiLabelFetch, gamerUUID.c_str());
 	}
 }
 

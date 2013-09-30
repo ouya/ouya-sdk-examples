@@ -18,19 +18,19 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksFetchGamerUUID::OnSuccess(const char* gamerUUID)
+void CallbacksFetchGamerUUID::OnSuccess(std::string gamerUUID)
 {
 	char buffer[256];
-	sprintf(buffer, "CallbacksFetchGamerUUID::OnSuccess:  %s", gamerUUID);
+	sprintf(buffer, "CallbacksFetchGamerUUID::OnSuccess:  %s", gamerUUID.c_str());
 	LOGI(buffer);
 
 	CallbackSingleton::GetInstance()->GetUI()->SetGamerUUID(gamerUUID);
 }
 
-void CallbacksFetchGamerUUID::OnFailure(int errorCode, const char* errorMessage)
+void CallbacksFetchGamerUUID::OnFailure(int errorCode, std::string errorMessage)
 {
 	char buffer[256];
-	sprintf(buffer, "CallbacksFetchGamerUUID::OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage);
+	sprintf(buffer, "CallbacksFetchGamerUUID::OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	LOGI(buffer);
 }
 
