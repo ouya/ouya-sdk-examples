@@ -90,7 +90,7 @@ void android_main(struct android_app* app)
 {
 	LOGI("**********android_main***********");
 
-	g_pluginOuya.SetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+	g_pluginOuya.SetDeveloperId("34eec327-0040-4b01-ace8-23a94e3a8394");
 	g_pluginOuya.SetApp(app);
 
 	//g_jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
