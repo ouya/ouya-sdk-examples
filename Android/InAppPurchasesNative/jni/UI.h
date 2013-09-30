@@ -9,6 +9,8 @@
 #include "Product.h"
 #include "TextButton.h"
 
+#include <string>
+
 class UI
 {
 public:
@@ -37,13 +39,15 @@ public:
 
 private:
 
-	char** m_productIds;
+	std::vector<std::string> m_productIds;
 
 	PluginOuya* m_pluginOuya;
 
 	std::vector<Product> m_pendingProducts;
 
-	std::vector<TextButton> m_products;
+	std::vector<TextButton*> m_products;
+
+	TextButton* m_selectedProduct;
 
 	bool m_uiInitialized;
 

@@ -3,7 +3,8 @@
 #include <android/log.h>
 #include "engine.h"
 
-#include <stdio.h>
+#include <string>
+#include <vector>
 
 #define LOG_TAG "PluginOuya"
 
@@ -23,16 +24,16 @@
 PluginOuya::PluginOuya()
 {
 	Initialized = false;
-	m_developerId = NULL;
+	m_developerId = "";
 	jc_AsyncCppOuyaSetDeveloperId = NULL;
 }
 
-void PluginOuya::FindClass(const char* tag, JNIEnv* env, const char* className, jclass* jc)
+void PluginOuya::FindClass(const char* tag, JNIEnv* env, std::string className, jclass* jc)
 {
 	char buffer[256];
-	sprintf(buffer, "Find %s", className);
+	sprintf(buffer, "Find %s", className.c_str());
 	__android_log_print(ANDROID_LOG_INFO, "PluginOuya", buffer);
-	jclass localRef = env->FindClass(className);
+	jclass localRef = env->FindClass(className.c_str());
 	(*jc) = (jclass)env->NewGlobalRef(localRef);
 }
 
@@ -68,7 +69,7 @@ void PluginOuya::Initialize()
 	}
 }
 
-void PluginOuya::SetDeveloperId(const char* developerId)
+void PluginOuya::SetDeveloperId(std::string developerId)
 {
 	m_developerId = developerId;
 }
@@ -89,7 +90,7 @@ void PluginOuya::AsyncSetDeveloperId()
 	JNIEnv* env = m_app->appThreadEnv;
 
 	LOGI("Allocate DeveloperId String");
-	jstring developerIdString = env->NewStringUTF(m_developerId);
+	jstring developerIdString = env->NewStringUTF(m_developerId.c_str());
 	EXCEPTION_RETURN(LOG_TAG, env);
 
 	LOGI("allocate the object");
@@ -132,7 +133,7 @@ void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetch
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 
-void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, char** productIds)
+void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, std::vector<std::string> productIds)
 {
 	Initialize();
 
@@ -140,19 +141,17 @@ void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksReq
 
 	JNIEnv* env = m_app->appThreadEnv;
 
-	int count = 5;
-
 	LOGI("get string class");
 
 	// Get a class reference for java.lang.String
 	jclass classString = env->FindClass("java/lang/String");
 	
 	LOGI("create array");
-	jobjectArray products = env->NewObjectArray(count, classString, NULL);
+	jobjectArray products = env->NewObjectArray(productIds.size(), classString, NULL);
 
 	LOGI("populate items");
-	for (int i = 0; i < count; ++i) {
-		env->SetObjectArrayElement(products, i, env->NewStringUTF(productIds[i]));
+	for (int i = 0; i < productIds.size(); ++i) {
+		env->SetObjectArrayElement(products, i, env->NewStringUTF(productIds[i].c_str()));
     }
 
 
@@ -165,7 +164,7 @@ void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksReq
 	EXCEPTION_RETURN(LOG_TAG, env);
 }
 
-void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const char* purchasable)
+void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, std::string purchasable)
 {
 	Initialize();
 
@@ -174,7 +173,7 @@ void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksReq
 	JNIEnv* env = m_app->appThreadEnv;
 
 	LOGI("Allocate purchasable String");
-	jstring purchasableString = env->NewStringUTF(purchasable);
+	jstring purchasableString = env->NewStringUTF(purchasable.c_str());
 	EXCEPTION_RETURN(LOG_TAG, env);
 
 	LOGI("get the invoke method");

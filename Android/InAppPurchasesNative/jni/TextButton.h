@@ -22,7 +22,7 @@ public:
 	void* DataContext;
 
 	TextButton();
-	TextButton(char* activeText, char* inactiveText, TextButton* down, TextButton* left, TextButton* right, TextButton* up);
+	TextButton(std::string activeText, std::string inactiveText, TextButton* down, TextButton* left, TextButton* right, TextButton* up);
 
 	void Setup(int font, int size);
 

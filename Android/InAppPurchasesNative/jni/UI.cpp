@@ -1,5 +1,7 @@
 #include "ui.h"
 
+#include <algorithm>
+
 #include <EGL/egl.h>
 #include <EGL/eglplatform.h>
 #include <GLES2/gl2.h>
@@ -26,13 +28,13 @@ UI::UI()
 {
 	m_uiInitialized = false;
 
-	m_productIds = new char*[5];
+	m_productIds.push_back("long_sword");
+	m_productIds.push_back("sharp_axe");
+	m_productIds.push_back("cool_level");
+	m_productIds.push_back("awesome_sauce");
+	m_productIds.push_back("__DECLINED__THIS_PURCHASE");
 
-	m_productIds[0] = "long_sword";
-	m_productIds[1] = "sharp_axe";
-	m_productIds[2] = "cool_level";
-	m_productIds[3] = "awesome_sauce";
-	m_productIds[4] = "__DECLINED__THIS_PURCHASE";
+	m_selectedProduct = NULL;
 
 	m_uiChanged = false;
 }
@@ -56,22 +58,37 @@ bool UI::InitUI()
 				//sprintf(buffer, "Copy product %s", m_pendingProducts[index].Identifier.c_str());
 				//LOGI(buffer);
 
-				TextButton txtProduct;
+				TextButton* txtProduct = new TextButton();
 				Product* newProduct = new Product(m_pendingProducts[index]);
-				txtProduct.DataContext = newProduct;
+				txtProduct->DataContext = newProduct;
 
 				//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
 				//LOGI(buffer);
 
-				sprintf(buffer, NVBF_COLORSTR_GREEN "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
-				txtProduct.ActiveText = buffer;
+				sprintf(buffer, NVBF_COLORSTR_WHITE "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+				txtProduct->ActiveText = buffer;
 
-				sprintf(buffer, NVBF_COLORSTR_WHITE "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
-				txtProduct.InactiveText = buffer;
+				sprintf(buffer, NVBF_COLORSTR_GRAY "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+				txtProduct->InactiveText = buffer;
 
-				txtProduct.Setup(2, 32, txtProduct.ActiveText.c_str(), txtProduct.InactiveText.c_str());
+				txtProduct->Setup(2, 32, txtProduct->ActiveText.c_str(), txtProduct->InactiveText.c_str());
+
+				txtProduct->Right = &m_uiRequestPurchase;
 
 				m_products.push_back(txtProduct);
+
+				if (index == 0)
+				{
+					m_selectedProduct = m_products[0];
+					m_products[0]->SetActive(true);
+					m_uiRequestProducts.Left = m_selectedProduct;
+					m_uiRequestPurchase.Left = m_selectedProduct;
+				}
+				else
+				{
+					m_products[index-1]->Down = m_products[index];
+					m_products[index]->Up = m_products[index-1];
+				}
 			}
 
 			m_uiChanged = true;
@@ -106,17 +123,19 @@ bool UI::InitUI()
 	m_uiRequestReceipts.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get Receipts]", NVBF_COLORSTR_WHITE "Get Receipts");
 	m_uiPause.Setup(2, 32, NVBF_COLORSTR_GREEN "[Pause]", NVBF_COLORSTR_WHITE "Pause");
 
-	m_uiRequestGamerUUID.Down = &m_uiRequestProducts;
+	m_uiRequestGamerUUID.Down = &m_uiRequestReceipts;
+	m_uiRequestGamerUUID.Left = &m_uiRequestProducts;
 
-	m_uiRequestProducts.Right = &m_uiRequestPurchase;
-	m_uiRequestProducts.Up = &m_uiRequestGamerUUID;
+	m_uiRequestProducts.Down = &m_uiRequestPurchase;
+	m_uiRequestProducts.Right = &m_uiRequestGamerUUID;
 
-	m_uiRequestPurchase.Left = &m_uiRequestProducts;
+	m_uiRequestPurchase.Up = &m_uiRequestProducts;
 	m_uiRequestPurchase.Right = &m_uiRequestReceipts;
 
 	m_uiRequestReceipts.Left = &m_uiRequestPurchase;
+	m_uiRequestReceipts.Up = &m_uiRequestGamerUUID;
 
-	m_uiPause.Left = &m_uiRequestReceipts;
+	m_uiPause.Up = &m_uiRequestReceipts;
 
 	m_selectedButton = &m_uiPause;
 	m_uiPause.SetActive(true);
@@ -146,10 +165,10 @@ void UI::Resize(int w, int h)
 	NVBFTextCursorPos(m_uiLabelFetch, w*4/5, h/6);
 
 	m_uiRequestGamerUUID.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiRequestGamerUUID.SetPosition(w/5, h/6);
+	m_uiRequestGamerUUID.SetPosition(w*3/5, h/6);
 
 	m_uiRequestProducts.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiRequestProducts.SetPosition(w/5, h/4);
+	m_uiRequestProducts.SetPosition(w*2/5, h/6);
 
 	m_uiRequestPurchase.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
 	m_uiRequestPurchase.SetPosition(w*2/5, h/4);
@@ -158,12 +177,12 @@ void UI::Resize(int w, int h)
 	m_uiRequestReceipts.SetPosition(w*3/5, h/4);
 
 	m_uiPause.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-	m_uiPause.SetPosition(w*4/5, h/4);
+	m_uiPause.SetPosition(w/2, h/2);
 
 	for (int index = 0; index < m_products.size(); ++index)
 	{
-		m_products[index].SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-		m_products[index].SetPosition(w/5, h/3 + index * 25);
+		m_products[index]->SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
+		m_products[index]->SetPosition(w/5, h/3 + index * 25);
 	}
 }
 
@@ -189,7 +208,7 @@ void UI::Render()
 
 	for (int index = 0; index < m_products.size(); ++index)
 	{
-		m_products[index].Render();
+		m_products[index]->Render();
 	}
 }
 
@@ -225,7 +244,10 @@ void UI::HandleInput(int keyCode, int action)
 		if (m_selectedButton &&
 			m_selectedButton->Right)
 		{
-			m_selectedButton->SetActive(false);
+			if (std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
+			{
+				m_selectedButton->SetActive(false);
+			}
 			m_selectedButton = m_selectedButton->Right;
 			m_selectedButton->SetActive(true);
 		}
@@ -240,6 +262,13 @@ void UI::HandleInput(int keyCode, int action)
 			m_selectedButton->SetActive(false);
 			m_selectedButton = m_selectedButton->Up;
 			m_selectedButton->SetActive(true);
+
+			if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
+			{
+				m_selectedProduct = m_selectedButton;
+				m_uiRequestProducts.Left = m_selectedProduct;
+				m_uiRequestPurchase.Left = m_selectedProduct;
+			}
 		}
 	}
 
@@ -252,6 +281,13 @@ void UI::HandleInput(int keyCode, int action)
 			m_selectedButton->SetActive(false);
 			m_selectedButton = m_selectedButton->Down;
 			m_selectedButton->SetActive(true);
+
+			if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
+			{
+				m_selectedProduct = m_selectedButton;
+				m_uiRequestProducts.Left = m_selectedProduct;
+				m_uiRequestPurchase.Left = m_selectedProduct;
+			}
 		}
 	}
 
@@ -271,7 +307,14 @@ void UI::HandleInput(int keyCode, int action)
 			}
 			if (m_selectedButton == &m_uiRequestPurchase)
 			{
-				m_pluginOuya->AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, "hello");
+				if (NULL != m_selectedProduct)
+				{
+					Product* product = (Product*)m_selectedProduct->DataContext;
+					if (product)
+					{
+						m_pluginOuya->AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, product->Identifier);
+					}
+				}
 			}
 			if (m_selectedButton == &m_uiRequestReceipts)
 			{
@@ -293,9 +336,15 @@ void UI::ClearProducts()
 {
 	for (int index = 0; index < m_products.size(); ++index)
 	{
-		m_products[index].Destroy();
+		m_products[index]->Destroy();
+		delete m_products[index];
 	}
 	m_products.clear();
+
+	m_uiRequestProducts.Left = NULL;
+	m_uiRequestPurchase.Left = NULL;
+
+	m_selectedProduct = NULL;
 }
 
 void UI::AddProduct(Product product)
