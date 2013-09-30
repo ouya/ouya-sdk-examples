@@ -7,9 +7,12 @@
 #include "CallbacksRequestReceipts.h"
 #include "PluginOuya.h"
 #include "Product.h"
+#include "Receipt.h"
 #include "TextButton.h"
 
 #include <string>
+
+class Engine;
 
 class UI
 {
@@ -18,6 +21,8 @@ public:
 	UI();
 
 	void Initialize(PluginOuya* pluginOuya);
+
+	void SetEngine(Engine* engine);
 
 	bool InitUI();
 
@@ -35,17 +40,25 @@ public:
 
 	void ClearProducts();
 
+	void ClearReceipts();
+
 	void AddProduct(Product product);
 
+	void AddReceipt(Receipt receipt);
+
 private:
+
+	Engine* m_engine;
 
 	std::vector<std::string> m_productIds;
 
 	PluginOuya* m_pluginOuya;
 
 	std::vector<Product> m_pendingProducts;
-
 	std::vector<TextButton*> m_products;
+
+	std::vector<Receipt> m_pendingReceipts;
+	std::vector<TextButton*> m_receipts;
 
 	TextButton* m_selectedProduct;
 
@@ -66,6 +79,9 @@ private:
 	CallbacksRequestProducts* m_callbacksRequestProducts;
 	CallbacksRequestPurchase* m_callbacksRequestPurchase;
 	CallbacksRequestReceipts* m_callbacksRequestReceipts;
+
+	void RenderThreadInitProducts();
+	void RenderThreadInitReceipts();
 };
 
 #endif

@@ -116,4 +116,21 @@ extern "C"
 			callback->OnSuccess(strJsonData);
 		}
 	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+	{
+		LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
+		
+		const char* strJsonData = env->GetStringUTFChars(jsonData, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData);
+		//LOGI(buffer);
+		
+		CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+		if (callback)
+		{
+			callback->OnSuccess(strJsonData);
+		}
+	}
 }

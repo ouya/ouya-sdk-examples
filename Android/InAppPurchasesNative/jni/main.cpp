@@ -126,6 +126,8 @@ void android_main(struct android_app* app)
 
     g_engine = new Engine(*egl, app, &g_pluginOuya, &g_ui);
 
+	g_ui.SetEngine(g_engine);
+
 	long lastTime = egl->getSystemTime();
 
     // loop waiting for stuff to do.

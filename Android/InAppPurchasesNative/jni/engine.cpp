@@ -42,6 +42,11 @@ Engine::~Engine()
 	NVBFCleanup();
 }
 
+struct android_app* Engine::GetApp()
+{
+	return mApp;
+}
+
 bool Engine::initUI()
 {
 	m_ui->InitUI();	
@@ -222,11 +227,16 @@ void Engine::handleCommand(int cmd)
 			break;
 
         case APP_CMD_LOST_FOCUS:
+			LOGI("Focus Lost, hack, regaining focus...\r\n");
+			mApp->activity->callbacks->onWindowFocusChanged(mApp->activity, true);
+			LOGI("Focus Lost, hack complete***\r\n");
+			requestForceRender();
+			break;
 		case APP_CMD_PAUSE:
         	// Move out of gameplay mode if we are in it.  But if we are
 			// in another dialog mode, leave it as-is
-            if (mGameplayMode)
-				setGameplayMode(false);
+            //if (mGameplayMode)
+			//	setGameplayMode(false);
 			requestForceRender();
             break;
 

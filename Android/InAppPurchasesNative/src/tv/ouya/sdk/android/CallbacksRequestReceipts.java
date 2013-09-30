@@ -103,9 +103,13 @@ public class CallbacksRequestReceipts {
 		*/
 	}
 
+	public native void CallbacksRequestReceiptsOnSuccess(String jsonData);
+
 	public void onSuccess(final String jsonData) {
 
 		Log.i("CallbacksRequestReceipts", "onSuccess jsonData=" + jsonData);
+
+		CallbacksRequestReceiptsOnSuccess(jsonData);
 
 		/*
 

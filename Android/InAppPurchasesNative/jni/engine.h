@@ -30,6 +30,8 @@ public:
 
 	void updateFrame(bool interactible, long deltaTime);
 
+	struct android_app* GetApp();
+
 protected:
 
 	PluginOuya* m_pluginOuya;

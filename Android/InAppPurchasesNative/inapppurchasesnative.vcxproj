@@ -43,12 +43,14 @@
     <ClCompile Include="jni\CallbacksFetchGamerUUID.cpp" />
     <ClCompile Include="jni\CallbackSingleton.cpp" />
     <ClCompile Include="jni\CallbacksRequestProducts.cpp" />
+    <ClCompile Include="jni\CallbacksRequestReceipts.cpp" />
     <ClCompile Include="jni\engine.cpp" />
     <ClCompile Include="jni\JSON.cpp" />
     <ClCompile Include="jni\JsonUtil.cpp" />
     <ClCompile Include="jni\JSONValue.cpp" />
     <ClCompile Include="jni\PluginOuya.cpp" />
     <ClCompile Include="jni\Product.cpp" />
+    <ClCompile Include="jni\Receipt.cpp" />
     <ClCompile Include="jni\TextButton.cpp" />
     <ClCompile Include="jni\main.cpp" />
     <ClCompile Include="jni\UI.cpp" />
@@ -69,6 +71,7 @@
     <ClInclude Include="jni\lib_json\json\forwards.h" />
     <ClInclude Include="jni\PluginOuya.h" />
     <ClInclude Include="jni\Product.h" />
+    <ClInclude Include="jni\Receipt.h" />
     <ClInclude Include="jni\TextButton.h" />
     <ClInclude Include="jni\UI.h" />
   </ItemGroup>

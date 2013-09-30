@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "engine.h"
 
 #include <algorithm>
 
@@ -34,6 +35,9 @@ UI::UI()
 	m_productIds.push_back("awesome_sauce");
 	m_productIds.push_back("__DECLINED__THIS_PURCHASE");
 
+	m_engine = NULL;
+	m_pluginOuya = NULL;
+
 	m_selectedProduct = NULL;
 
 	m_uiChanged = false;
@@ -44,59 +48,102 @@ void UI::Initialize(PluginOuya* pluginOuya)
 	m_pluginOuya = pluginOuya;
 }
 
+void UI::SetEngine(Engine* engine)
+{
+	m_engine = engine;
+}
+
+void UI::RenderThreadInitProducts()
+{
+	// delay creation of new labels for the rendering thread
+	if (m_pendingProducts.size() > 0)
+	{
+		for (int index = 0; index < m_pendingProducts.size(); ++index)
+		{
+			char buffer[1024];
+
+			//sprintf(buffer, "Copy product %s", m_pendingProducts[index].Identifier.c_str());
+			//LOGI(buffer);
+
+			TextButton* txtProduct = new TextButton();
+			Product* newProduct = new Product(m_pendingProducts[index]);
+			txtProduct->DataContext = newProduct;
+
+			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
+			//LOGI(buffer);
+
+			sprintf(buffer, NVBF_COLORSTR_WHITE "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+			txtProduct->ActiveText = buffer;
+
+			sprintf(buffer, NVBF_COLORSTR_GRAY "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+			txtProduct->InactiveText = buffer;
+
+			txtProduct->Setup(2, 32);
+
+			txtProduct->Right = &m_uiRequestPurchase;
+
+			m_products.push_back(txtProduct);
+
+			if (index == 0)
+			{
+				m_selectedProduct = m_products[0];
+				m_products[0]->SetActive(true);
+				m_uiRequestProducts.Left = m_selectedProduct;
+				m_uiRequestPurchase.Left = m_selectedProduct;
+			}
+			else
+			{
+				m_products[index-1]->Down = m_products[index];
+				m_products[index]->Up = m_products[index-1];
+			}
+		}
+
+		m_uiChanged = true;
+
+		m_pendingProducts.clear();
+	}
+}
+
+void UI::RenderThreadInitReceipts()
+{
+	// delay creation of new labels for the rendering thread
+	if (m_pendingReceipts.size() > 0)
+	{
+		for (int index = 0; index < m_pendingReceipts.size(); ++index)
+		{
+			char buffer[1024];
+
+			//sprintf(buffer, "Copy receipt %s", m_pendingReceipts[index].Identifier.c_str());
+			//LOGI(buffer);
+
+			TextButton* txtReceipt = new TextButton();
+			Receipt* newReceipt = new Receipt(m_pendingReceipts[index]);
+			txtReceipt->DataContext = newReceipt;
+
+			//sprintf(buffer, "Setting up receipt ui %s", newReceipt->Identifier.c_str());
+			//LOGI(buffer);
+
+			sprintf(buffer, NVBF_COLORSTR_GRAY "%s (%.2f)", newReceipt->Identifier.c_str(), newReceipt->LocalPrice);
+			txtReceipt->ActiveText = buffer;
+			txtReceipt->InactiveText = buffer;
+
+			txtReceipt->Setup(2, 32);
+
+			m_receipts.push_back(txtReceipt);
+		}
+
+		m_uiChanged = true;
+
+		m_pendingReceipts.clear();
+	}
+}
+
 bool UI::InitUI()
 {
 	if (m_uiInitialized)
 	{
-		// delay creation of new labels for the rendering thread
-		if (m_pendingProducts.size() > 0)
-		{
-			for (int index = 0; index < m_pendingProducts.size(); ++index)
-			{
-				char buffer[1024];
-
-				//sprintf(buffer, "Copy product %s", m_pendingProducts[index].Identifier.c_str());
-				//LOGI(buffer);
-
-				TextButton* txtProduct = new TextButton();
-				Product* newProduct = new Product(m_pendingProducts[index]);
-				txtProduct->DataContext = newProduct;
-
-				//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
-				//LOGI(buffer);
-
-				sprintf(buffer, NVBF_COLORSTR_WHITE "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
-				txtProduct->ActiveText = buffer;
-
-				sprintf(buffer, NVBF_COLORSTR_GRAY "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
-				txtProduct->InactiveText = buffer;
-
-				txtProduct->Setup(2, 32, txtProduct->ActiveText.c_str(), txtProduct->InactiveText.c_str());
-
-				txtProduct->Right = &m_uiRequestPurchase;
-
-				m_products.push_back(txtProduct);
-
-				if (index == 0)
-				{
-					m_selectedProduct = m_products[0];
-					m_products[0]->SetActive(true);
-					m_uiRequestProducts.Left = m_selectedProduct;
-					m_uiRequestPurchase.Left = m_selectedProduct;
-				}
-				else
-				{
-					m_products[index-1]->Down = m_products[index];
-					m_products[index]->Up = m_products[index-1];
-				}
-			}
-
-			m_uiChanged = true;
-
-			m_pendingProducts.clear();
-		}
-
-
+		RenderThreadInitProducts();
+		RenderThreadInitReceipts();
 		return true;
 	}
 
@@ -157,6 +204,7 @@ void UI::Destroy()
 	m_uiPause.Destroy();
 
 	ClearProducts();
+	ClearReceipts();
 }
 
 void UI::Resize(int w, int h)
@@ -184,6 +232,12 @@ void UI::Resize(int w, int h)
 		m_products[index]->SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
 		m_products[index]->SetPosition(w/5, h/3 + index * 25);
 	}
+
+	for (int index = 0; index < m_receipts.size(); ++index)
+	{
+		m_receipts[index]->SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
+		m_receipts[index]->SetPosition(w*4/5, h/3 + index * 25);
+	}
 }
 
 bool UI::HasUIChanged()
@@ -210,6 +264,11 @@ void UI::Render()
 	{
 		m_products[index]->Render();
 	}
+
+	for (int index = 0; index < m_receipts.size(); ++index)
+	{
+		m_receipts[index]->Render();
+	}
 }
 
 void UI::HandleInput(int keyCode, int action)
@@ -217,13 +276,18 @@ void UI::HandleInput(int keyCode, int action)
 	if (action == AMOTION_EVENT_ACTION_UP &&
 		keyCode == 82) //system button
 	{
-		if (m_selectedButton)
+		if (m_selectedButton &&
+			std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
 		{
 			m_selectedButton->SetActive(false);
 		}
 
 		m_selectedButton = &m_uiPause;
 		m_uiPause.SetActive(true);
+
+		LOGI("Key event, hack, regaining focus...\r\n");
+		m_engine->GetApp()->activity->callbacks->onWindowFocusChanged(m_engine->GetApp()->activity, true);
+		LOGI("Key event, hack complete***\r\n");
 	}
 
 	else if (action == AMOTION_EVENT_ACTION_UP &&
@@ -347,7 +411,22 @@ void UI::ClearProducts()
 	m_selectedProduct = NULL;
 }
 
+void UI::ClearReceipts()
+{
+	for (int index = 0; index < m_receipts.size(); ++index)
+	{
+		m_receipts[index]->Destroy();
+		delete m_receipts[index];
+	}
+	m_receipts.clear();
+}
+
 void UI::AddProduct(Product product)
 {
 	m_pendingProducts.push_back(product);
+}
+
+void UI::AddReceipt(Receipt receipt)
+{
+	m_pendingReceipts.push_back(receipt);
 }

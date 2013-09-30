@@ -5,7 +5,7 @@ class CallbacksRequestReceipts
 {
 public:
 
-	void OnSuccess();
+	void OnSuccess(const char* jsonData);
 
 	void OnFailure(int errorCode, char* errorMessage);
 
