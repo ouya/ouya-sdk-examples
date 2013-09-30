@@ -229,14 +229,14 @@ void UI::Resize(int w, int h)
 
 	for (int index = 0; index < m_products.size(); ++index)
 	{
-		m_products[index]->SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-		m_products[index]->SetPosition(w/5, h/3 + index * 25);
+		m_products[index]->SetAlignment(NVBF_ALIGN_RIGHT, NVBF_ALIGN_CENTER);
+		m_products[index]->SetPosition(w*0.45f, h/3 + index * 25);
 	}
 
 	for (int index = 0; index < m_receipts.size(); ++index)
 	{
-		m_receipts[index]->SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
-		m_receipts[index]->SetPosition(w*4/5, h/3 + index * 25);
+		m_receipts[index]->SetAlignment(NVBF_ALIGN_LEFT, NVBF_ALIGN_CENTER);
+		m_receipts[index]->SetPosition(w*0.55f, h/3 + index * 25);
 	}
 }
 
