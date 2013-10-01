@@ -153,6 +153,7 @@ bool UI::InitUI()
 	{
 		RenderThreadInitProducts();
 		RenderThreadInitReceipts();
+		SetDirections();
 		return true;
 	}
 
@@ -311,6 +312,8 @@ void UI::HandleInput(int keyCode, int action)
 		m_selectedButton = &m_uiPause;
 		m_uiPause.SetActive(true);
 
+		SetDirections();
+
 		LOGI("Key event, hack, regaining focus...\r\n");
 		m_engine->GetApp()->activity->callbacks->onWindowFocusChanged(m_engine->GetApp()->activity, true);
 		LOGI("Key event, hack complete***\r\n");
@@ -325,6 +328,8 @@ void UI::HandleInput(int keyCode, int action)
 			m_selectedButton->SetActive(false);
 			m_selectedButton = m_selectedButton->Left;
 			m_selectedButton->SetActive(true);
+
+			SetDirections();
 		}
 	}
 
@@ -340,6 +345,8 @@ void UI::HandleInput(int keyCode, int action)
 			}
 			m_selectedButton = m_selectedButton->Right;
 			m_selectedButton->SetActive(true);
+
+			SetDirections();
 		}
 	}
 
@@ -359,6 +366,8 @@ void UI::HandleInput(int keyCode, int action)
 				m_uiRequestProducts.Left = m_selectedProduct;
 				m_uiRequestPurchase.Left = m_selectedProduct;
 			}
+
+			SetDirections();
 		}
 	}
 
@@ -378,6 +387,8 @@ void UI::HandleInput(int keyCode, int action)
 				m_uiRequestProducts.Left = m_selectedProduct;
 				m_uiRequestPurchase.Left = m_selectedProduct;
 			}
+
+			SetDirections();
 		}
 	}
 
@@ -429,6 +440,58 @@ void UI::SetMessage(std::string message)
 		std::string text = "Message: ";
 		text.append(message);
 		NVBFTextSetString(m_uiLabelMessage, text.c_str());
+	}
+}
+
+void UI::SetDirections()
+{
+	if (m_selectedButton)
+	{
+		std::string text;
+		if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
+		{
+			text = "Select a product with the DPAD (up/down) | DPAD (right) Return to Purchase";
+		}
+		else if (m_selectedButton == &m_uiRequestGamerUUID)
+		{
+			text = "Press (O): to fetch the gamer uuid | DPAD (left) Get Products | DPAD (down) Get Receipts";
+		}
+		else if (m_selectedButton == &m_uiRequestProducts)
+		{
+			if (m_products.size() > 0)
+			{
+				text = "Press (O): Get products | DPAD (left) Select a product | DPAD (down) Purchase | DPAD (right) Fetch gamer uuid";
+			}
+			else
+			{
+				text = "Press (O): Get products | DPAD (down) Purchase | DPAD (right) Fetch gamer uuid";
+			}
+		}
+		else if (m_selectedButton == &m_uiRequestPurchase)
+		{
+			if (m_products.size() > 0)
+			{
+				text = "Press (O): to purchase products | DPAD (left) Select a product | DPAD (up) Get products | DPAD (right) Get receipts";
+			}
+			else
+			{
+				text = "DPAD (up) Get products | DPAD (right) Get receipts";
+			}
+		}
+		else if (m_selectedButton == &m_uiRequestReceipts)
+		{
+			text = "Press (O): to get receipts | DPAD (left) Purchase a product  | DPAD (up) Fetch gamer uuid";
+		}
+		else if (m_selectedButton == &m_uiPause)
+		{
+			text = "Pause detected | DPAD (up) Get receipts";
+		}
+		else
+		{
+			return;
+		}
+
+		NVBFTextSetString(m_uiLabelDirections, text.c_str());
 	}
 }
 

@@ -40,6 +40,8 @@ public:
 
 	void SetMessage(std::string message);
 
+	void SetDirections();
+
 	void ClearProducts();
 
 	void ClearReceipts();
