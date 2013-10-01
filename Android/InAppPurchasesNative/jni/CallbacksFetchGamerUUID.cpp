@@ -20,9 +20,9 @@
 
 void CallbacksFetchGamerUUID::OnSuccess(std::string gamerUUID)
 {
-	char buffer[256];
-	sprintf(buffer, "CallbacksFetchGamerUUID::OnSuccess:  %s", gamerUUID.c_str());
-	LOGI(buffer);
+	//char buffer[256];
+	//sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
+	//LOGI(buffer);
 
 	CallbackSingleton::GetInstance()->GetUI()->SetGamerUUID(gamerUUID);
 }

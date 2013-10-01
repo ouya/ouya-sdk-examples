@@ -22,13 +22,13 @@
 
 void CallbacksRequestReceipts::OnSuccess(std::string jsonData)
 {
-	char buffer[1024];
-	sprintf(buffer, "CallbacksRequestReceipts::OnSuccess:  %s\r\n", jsonData.c_str());
-	LOGI(buffer);
+	//char buffer[1024];
+	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
+	//LOGI(buffer);
 
 	CallbackSingleton::GetInstance()->GetUI()->ClearReceipts();
 
-	LOGI("Parsing JSON Data");
+	//LOGI("Parsing JSON Data");
 
 	// Parse example data
 	JSONValue* value = JSON::Parse(jsonData.c_str());

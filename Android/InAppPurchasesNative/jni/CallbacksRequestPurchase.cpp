@@ -21,7 +21,9 @@
 
 void CallbacksRequestPurchase::OnSuccess(std::string jsonData)
 {
-	LOGI("CallbacksRequestReceipts::OnSuccess");
+	char buffer[1024];
+	sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
+	LOGI(buffer);
 }
 
 void CallbacksRequestPurchase::OnFailure(int errorCode, std::string errorMessage)

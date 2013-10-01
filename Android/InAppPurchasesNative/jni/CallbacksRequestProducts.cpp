@@ -23,7 +23,7 @@
 void CallbacksRequestProducts::OnSuccess(std::string jsonData)
 {
 	//char buffer[1024];
-	//sprintf(buffer, "CallbacksRequestProducts::OnSuccess:  %s\r\n", jsonData);
+	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
 	//LOGI(buffer);
 
 	CallbackSingleton::GetInstance()->GetUI()->ClearProducts();
