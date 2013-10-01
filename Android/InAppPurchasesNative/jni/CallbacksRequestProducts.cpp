@@ -25,6 +25,7 @@ void CallbacksRequestProducts::OnSuccess(std::string jsonData)
 	//char buffer[1024];
 	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
 	//LOGI(buffer);
+	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestProducts::OnSuccess");
 
 	CallbackSingleton::GetInstance()->GetUI()->ClearProducts();
 
@@ -59,12 +60,14 @@ void CallbacksRequestProducts::OnSuccess(std::string jsonData)
 
 void CallbacksRequestProducts::OnFailure(int errorCode, std::string errorMessage)
 {
-	char buffer[256];
-	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
-	LOGI(buffer);
+	//char buffer[256];
+	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
+	//LOGI(buffer);
+	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestProducts::OnFailure");
 }
 
 void CallbacksRequestProducts::OnCancel()
 {
-	LOGI("OnCancel");
+	//LOGI("OnCancel");
+	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestProducts::OnCancel");
 }

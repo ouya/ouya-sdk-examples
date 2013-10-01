@@ -38,6 +38,8 @@ public:
 
 	void SetGamerUUID(std::string gamerUUID);
 
+	void SetMessage(std::string message);
+
 	void ClearProducts();
 
 	void ClearReceipts();
@@ -73,12 +75,18 @@ private:
 	TextButton m_uiPause;
 	void* m_uiLabelFetch;
 
+	void* m_uiLabelDirections;
+	void* m_uiLabelMessage;
+
 	TextButton* m_selectedButton;
 
 	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
 	CallbacksRequestProducts* m_callbacksRequestProducts;
 	CallbacksRequestPurchase* m_callbacksRequestPurchase;
 	CallbacksRequestReceipts* m_callbacksRequestReceipts;
+
+	void SetupLabel(void** uiLabel, int font, int size, std::string text);
+	void DestroyLabel(void** uiLabel);
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();

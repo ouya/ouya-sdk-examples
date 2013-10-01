@@ -138,6 +138,15 @@ void UI::RenderThreadInitReceipts()
 	}
 }
 
+void UI::SetupLabel(void** uiLabel, int font, int size, std::string text)
+{
+	*uiLabel = NVBFTextAlloc();
+	NVBFTextSetFont(*uiLabel, font);
+	NVBFTextSetSize(*uiLabel, size);
+	NVBFTextSetColor(*uiLabel, NV_PC_PREDEF_WHITE);
+    NVBFTextSetString(*uiLabel, text.c_str());
+}
+
 bool UI::InitUI()
 {
 	if (m_uiInitialized)
@@ -159,10 +168,9 @@ bool UI::InitUI()
 		return false;
 	}
 
-	m_uiLabelFetch = NVBFTextAlloc();
-	NVBFTextSetFont(m_uiLabelFetch, 2);
-	NVBFTextSetSize(m_uiLabelFetch, 32);
-    NVBFTextSetColor(m_uiLabelFetch, NV_PC_PREDEF_WHITE);
+	SetupLabel((void**)&m_uiLabelFetch, 2, 32, NVBF_COLORSTR_WHITE "");
+	SetupLabel((void**)&m_uiLabelDirections, 2, 32, NVBF_COLORSTR_WHITE "Directions:");
+	SetupLabel((void**)&m_uiLabelMessage, 2, 32, NVBF_COLORSTR_WHITE "Message:");
 
 	m_uiRequestGamerUUID.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get GamerUUID]", NVBF_COLORSTR_WHITE "Get GamerUUID");
 	m_uiRequestProducts.Setup(2, 32, NVBF_COLORSTR_GREEN "[Get Products]", NVBF_COLORSTR_WHITE "Get Products");
@@ -192,10 +200,20 @@ bool UI::InitUI()
 	return true;
 }
 
+void UI::DestroyLabel(void** uiLabel)
+{
+	if (*uiLabel)
+	{
+		NVBFTextFree(*uiLabel);
+		*uiLabel = 0;
+	}
+}
+
 void UI::Destroy()
 {
-	NVBFTextFree(m_uiLabelFetch);
-	m_uiLabelFetch = 0;
+	DestroyLabel(&m_uiLabelFetch);
+	DestroyLabel(&m_uiLabelDirections);
+	DestroyLabel(&m_uiLabelMessage);
 
 	m_uiRequestGamerUUID.Destroy();
 	m_uiRequestProducts.Destroy();
@@ -211,6 +229,12 @@ void UI::Resize(int w, int h)
 {
 	NVBFTextCursorAlign(m_uiLabelFetch, NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
 	NVBFTextCursorPos(m_uiLabelFetch, w*4/5, h/6);
+
+	NVBFTextCursorAlign(m_uiLabelDirections, NVBF_ALIGN_LEFT, NVBF_ALIGN_CENTER);
+	NVBFTextCursorPos(m_uiLabelDirections, w/5, h*2/3);
+
+	NVBFTextCursorAlign(m_uiLabelMessage, NVBF_ALIGN_LEFT, NVBF_ALIGN_CENTER);
+	NVBFTextCursorPos(m_uiLabelMessage, w/5 + 25, h*2/3 + 50);
 
 	m_uiRequestGamerUUID.SetAlignment(NVBF_ALIGN_CENTER, NVBF_ALIGN_CENTER);
 	m_uiRequestGamerUUID.SetPosition(w*3/5, h/6);
@@ -253,6 +277,8 @@ bool UI::HasUIChanged()
 void UI::Render()
 {
 	NVBFTextRender(m_uiLabelFetch);
+	NVBFTextRender(m_uiLabelDirections);
+	NVBFTextRender(m_uiLabelMessage);
 
 	m_uiRequestGamerUUID.Render();
 	m_uiRequestProducts.Render();
@@ -393,6 +419,16 @@ void UI::SetGamerUUID(std::string gamerUUID)
 	if (m_uiLabelFetch)
 	{
 		NVBFTextSetString(m_uiLabelFetch, gamerUUID.c_str());
+	}
+}
+
+void UI::SetMessage(std::string message)
+{
+	if (m_uiLabelMessage)
+	{
+		std::string text = "Message: ";
+		text.append(message);
+		NVBFTextSetString(m_uiLabelMessage, text.c_str());
 	}
 }
 

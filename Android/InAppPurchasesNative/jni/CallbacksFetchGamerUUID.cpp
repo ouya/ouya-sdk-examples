@@ -23,18 +23,20 @@ void CallbacksFetchGamerUUID::OnSuccess(std::string gamerUUID)
 	//char buffer[256];
 	//sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
 	//LOGI(buffer);
-
+	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksFetchGamerUUID::OnSuccess");
 	CallbackSingleton::GetInstance()->GetUI()->SetGamerUUID(gamerUUID);
 }
 
 void CallbacksFetchGamerUUID::OnFailure(int errorCode, std::string errorMessage)
 {
-	char buffer[256];
-	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
-	LOGI(buffer);
+	//char buffer[256];
+	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
+	//LOGI(buffer);
+	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksFetchGamerUUID::OnFailure");
 }
 
 void CallbacksFetchGamerUUID::OnCancel()
 {
-	LOGI("OnCancel");
+	//LOGI("OnCancel");
+	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksFetchGamerUUID::OnCancel");
 }
