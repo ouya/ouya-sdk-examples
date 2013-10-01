@@ -26,7 +26,7 @@ public:
 
 	void Setup(int font, int size);
 
-	void Setup(int font, int size, const char* activeText, const char* inactiveText);
+	void Setup(int font, int size, std::string activeText, std::string inactiveText);
 
 	void SetAlignment(NvU8 horizontal, NvU8 vertical);
 

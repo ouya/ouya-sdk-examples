@@ -36,7 +36,7 @@ void TextButton::Setup(int font, int size)
 	SetActive(false);
 }
 
-void TextButton::Setup(int font, int size, const char* activeText, const char* inactiveText)
+void TextButton::Setup(int font, int size, std::string activeText, std::string inactiveText)
 {
 	UIText = NVBFTextAlloc();
 	NVBFTextSetFont(UIText, font);

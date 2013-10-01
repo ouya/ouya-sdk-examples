@@ -55,10 +55,10 @@ extern "C"
 	{
 		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
 		
-		const char* strGamerUUID = env->GetStringUTFChars(gamerUUID, NULL);
+		std::string strGamerUUID = env->GetStringUTFChars(gamerUUID, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID.c_str());
 		//LOGI(buffer);
 		
 		CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
@@ -72,10 +72,10 @@ extern "C"
 	{
 		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure***********");
 		
-		const char* strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 		//LOGI(buffer);
 		
 		CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
@@ -104,10 +104,10 @@ extern "C"
 	{
 		LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
 		
-		const char* strJsonData = env->GetStringUTFChars(jsonData, NULL);
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
 		//LOGI(buffer);
 		
 		CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
@@ -121,10 +121,10 @@ extern "C"
 	{
 		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
 		
-		const char* strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 		//LOGI(buffer);
 		
 		CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
@@ -153,10 +153,10 @@ extern "C"
 	{
 		LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
 		
-		const char* strJsonData = env->GetStringUTFChars(jsonData, NULL);
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
 		//LOGI(buffer);
 		
 		CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
@@ -170,10 +170,10 @@ extern "C"
 	{
 		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
 		
-		const char* strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 		//LOGI(buffer);
 		
 		CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
@@ -202,10 +202,10 @@ extern "C"
 	{
 		LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
 		
-		const char* strJsonData = env->GetStringUTFChars(jsonData, NULL);
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
 		//LOGI(buffer);
 		
 		CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
@@ -219,10 +219,10 @@ extern "C"
 	{
 		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
 		
-		const char* strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 		//char buffer[256];
-		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID);
+		//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 		//LOGI(buffer);
 		
 		CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
