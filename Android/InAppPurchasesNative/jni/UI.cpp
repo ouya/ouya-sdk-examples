@@ -400,25 +400,37 @@ void UI::HandleInput(int keyCode, int action)
 			LOGI("Executing action");
 			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
+				SetMessage("Fetching gamer uuid...");
 				m_pluginOuya->AsyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
 			}
 			if (m_selectedButton == &m_uiRequestProducts)
 			{
+				SetMessage("Requesting products...");
 				m_pluginOuya->AsyncOuyaRequestProducts(m_callbacksRequestProducts, m_productIds);
 			}
 			if (m_selectedButton == &m_uiRequestPurchase)
 			{
-				if (NULL != m_selectedProduct)
+				if (NULL == m_selectedProduct)
+				{
+					SetMessage("No product selected.");
+				}
+				else
 				{
 					Product* product = (Product*)m_selectedProduct->DataContext;
-					if (product)
+					if (NULL == product)
 					{
+						SetMessage("No product selected.");
+					}
+					else
+					{
+						SetMessage("Requesting purchase...");
 						m_pluginOuya->AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, product->Identifier);
 					}
 				}
 			}
 			if (m_selectedButton == &m_uiRequestReceipts)
 			{
+				SetMessage("Requesting receipts...");
 				m_pluginOuya->AsyncOuyaRequestReceipts(m_callbacksRequestReceipts);
 			}
 		}
