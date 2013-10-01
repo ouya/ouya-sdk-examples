@@ -43,6 +43,7 @@
     <ClCompile Include="jni\CallbacksFetchGamerUUID.cpp" />
     <ClCompile Include="jni\CallbackSingleton.cpp" />
     <ClCompile Include="jni\CallbacksRequestProducts.cpp" />
+    <ClCompile Include="jni\CallbacksRequestPurchase.cpp" />
     <ClCompile Include="jni\CallbacksRequestReceipts.cpp" />
     <ClCompile Include="jni\engine.cpp" />
     <ClCompile Include="jni\JSON.cpp" />

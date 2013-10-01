@@ -59,8 +59,12 @@ void CallbacksRequestProducts::OnSuccess(std::string jsonData)
 
 void CallbacksRequestProducts::OnFailure(int errorCode, std::string errorMessage)
 {
+	char buffer[256];
+	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
+	LOGI(buffer);
 }
 
 void CallbacksRequestProducts::OnCancel()
 {
+	LOGI("OnCancel");
 }

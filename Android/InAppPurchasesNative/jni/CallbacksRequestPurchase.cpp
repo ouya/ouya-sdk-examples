@@ -1,12 +1,13 @@
-#include "CallbacksFetchGamerUUID.h"
+#include "CallbacksRequestPurchase.h"
 #include "CallbackSingleton.h"
+#include "JSON.h"
 
 #include <stdio.h>
 #include <android/log.h>
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
 
-#define APP_NAME "inapppurchasesnative_CallbacksFetchGamerUUID"
+#define APP_NAME "inapppurchasesnative_CallbacksRequestPurchase"
 
 #define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
 											 APP_NAME, \
@@ -18,23 +19,19 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksFetchGamerUUID::OnSuccess(std::string gamerUUID)
+void CallbacksRequestPurchase::OnSuccess(std::string jsonData)
 {
-	char buffer[256];
-	sprintf(buffer, "CallbacksFetchGamerUUID::OnSuccess:  %s", gamerUUID.c_str());
-	LOGI(buffer);
-
-	CallbackSingleton::GetInstance()->GetUI()->SetGamerUUID(gamerUUID);
+	LOGI("CallbacksRequestReceipts::OnSuccess");
 }
 
-void CallbacksFetchGamerUUID::OnFailure(int errorCode, std::string errorMessage)
+void CallbacksRequestPurchase::OnFailure(int errorCode, std::string errorMessage)
 {
 	char buffer[256];
 	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	LOGI(buffer);
 }
 
-void CallbacksFetchGamerUUID::OnCancel()
+void CallbacksRequestPurchase::OnCancel()
 {
 	LOGI("OnCancel");
 }
