@@ -94,18 +94,46 @@ namespace OuyaSDK
 
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
+			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
 		
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
 			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
+
+			// Parse example data
+			JSONValue* value = JSON::Parse(strJsonData.c_str());
+
+			if (value == NULL)
+			{
+				LOGI("Parsing JSON Failed");
+				return;
+			}
+
+			if (!value->IsArray())
+			{
+				LOGI("Parsing JSON Failed: Not an array");
+				return;
+			}
+
+			// Retrieve the main object
+			JSONArray data = value->AsArray();
+
+			std::vector<Product> products;
+
+			for (unsigned int i = 0; i < data.size(); i++)
+			{
+				OuyaSDK::Product newProduct;
+				newProduct.ParseJSON(data[i]);
+
+				products.push_back(newProduct);
+			}
 		
 			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
 			if (callback)
 			{
-				callback->OnSuccess(strJsonData);
+				callback->OnSuccess(products);
 			}
 		}
 
@@ -199,11 +227,41 @@ namespace OuyaSDK
 			//char buffer[256];
 			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
+
+			//LOGI("Parsing JSON Data");
+
+			// Parse example data
+			JSONValue* value = JSON::Parse(strJsonData.c_str());
+
+			if (value == NULL)
+			{
+				LOGI("Parsing JSON Failed");
+				return;
+			}
+
+			if (!value->IsArray())
+			{
+				LOGI("Parsing JSON Failed: Not an array");
+				return;
+			}
+
+			// Retrieve the main object
+			JSONArray data = value->AsArray();
+
+			std::vector<Receipt> receipts;
+
+			for (unsigned int i = 0; i < data.size(); i++)
+			{
+				OuyaSDK::Receipt newReceipt;
+				newReceipt.ParseJSON(data[i]);
+
+				receipts.push_back(newReceipt);
+			}
 		
 			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
 			if (callback)
 			{
-				callback->OnSuccess(strJsonData);
+				callback->OnSuccess(receipts);
 			}
 		}
 

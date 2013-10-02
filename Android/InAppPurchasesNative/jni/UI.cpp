@@ -61,10 +61,10 @@ void UI::RenderThreadInitProducts()
 			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
 			//LOGI(buffer);
 
-			sprintf(buffer, NVBF_COLORSTR_WHITE "[%s %s]", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+			sprintf(buffer, NVBF_COLORSTR_WHITE "--> %s (%.2f)", newProduct->Identifier.c_str(), newProduct->LocalPrice);
 			txtProduct->ActiveText = buffer;
 
-			sprintf(buffer, NVBF_COLORSTR_GRAY "%s %s", newProduct->Identifier.c_str(), newProduct->Name.c_str());
+			sprintf(buffer, NVBF_COLORSTR_GRAY "%s (%.2f)", newProduct->Identifier.c_str(), newProduct->LocalPrice);
 			txtProduct->InactiveText = buffer;
 
 			txtProduct->Setup(2, 32);

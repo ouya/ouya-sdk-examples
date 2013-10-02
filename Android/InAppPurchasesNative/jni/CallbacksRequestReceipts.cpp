@@ -21,41 +21,16 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestReceipts::OnSuccess(const std::string& jsonData)
+void CallbacksRequestReceipts::OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts)
 {
-	//char buffer[1024];
-	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
-	//LOGI(buffer);
+	//LOGI("OnSuccess);
 	Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
 
 	Application::m_ui.ClearReceipts();
 
-	//LOGI("Parsing JSON Data");
-
-	// Parse example data
-	JSONValue* value = JSON::Parse(jsonData.c_str());
-
-	if (value == NULL)
+	for (int index = 0; index < receipts.size(); ++index)
 	{
-		LOGI("Parsing JSON Failed");
-		return;
-	}
-
-	if (!value->IsArray())
-	{
-		LOGI("Parsing JSON Failed: Not an array");
-		return;
-	}
-
-	// Retrieve the main object
-	JSONArray data = value->AsArray();
-
-	for (unsigned int i = 0; i < data.size(); i++)
-	{
-		OuyaSDK::Receipt newReceipt;
-		newReceipt.ParseJSON(data[i]);
-
-		Application::m_ui.AddReceipt(newReceipt);
+		Application::m_ui.AddReceipt(receipts[index]);
 	}
 }
 

@@ -58,6 +58,9 @@ public class NativeOuyaFacade
 
     private static final String LOG_TAG = "NativeOuyaFacade";
 
+	// For debugging enable logging for testing
+	private static final Boolean m_enableDebugLogging = false;
+
     /*
      * Before this app will run, you must define some purchasable items on the developer website. Once
      * you have defined those items, put their Product IDs in the List below.
@@ -176,8 +179,7 @@ public class NativeOuyaFacade
 
 	private void Init(String developerId)
 	{
-		Log.i(LOG_TAG, "OuyaFacade.init(context, " + developerId + ");");
-		//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "ouyaFacade.init(context, " + developerId + ");");
+		Log.i(LOG_TAG, "init(context, " + developerId + ");");
         ouyaFacade.init(context, developerId);
 
 		// custom-iap-code
@@ -352,14 +354,14 @@ public class NativeOuyaFacade
 		//custom-iap-code
 		if (null != m_productListListener)
 		{
-			Log.i(LOG_TAG, "requestProducts m_productListListener is valid");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "requestProducts m_productListListener is valid");
+			if (m_enableDebugLogging) {
+				Log.i(LOG_TAG, "requestProducts m_productListListener is valid");
+			}
 			ouyaFacade.requestProductList(PRODUCT_IDENTIFIER_LIST, m_productListListener);
 		}
 		else
 		{
 			Log.i(LOG_TAG, "requestProducts m_productListListener is null");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "requestProducts m_productListListener is null");
 		}
     }
 
@@ -368,14 +370,14 @@ public class NativeOuyaFacade
 		//custom-iap-code
 		if (null != m_fetchGamerUUIDListener)
 		{
-			Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is valid");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "fetchGamerUUID m_fetchGamerUUIDListener is valid");
+			if (m_enableDebugLogging) {
+				Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is valid");
+			}
 			ouyaFacade.requestGamerUuid(m_fetchGamerUUIDListener);
 		}
 		else
 		{
 			Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is null");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "fetchGamerUUID m_fetchGamerUUIDListener is null");
 		}        
     }
 

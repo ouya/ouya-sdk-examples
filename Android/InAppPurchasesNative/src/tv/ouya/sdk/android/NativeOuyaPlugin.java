@@ -34,17 +34,14 @@ public class NativeOuyaPlugin
 	// the developer id is sent from native code
 	private static String m_developerId = "";
 
-	// ENABLE IAP mode this is for testing/debugging to turn off IAP
-	private static Boolean m_enableIAP = true;
-
 	// For debugging enable logging for testing
-	private static Boolean m_enableDebugLogging = true;
+	private static final Boolean m_enableDebugLogging = false;
 	
 	public NativeOuyaPlugin() {
 	}
 
 	// most of the java functions that are called, need the ouya facade initialized
-	public static void InitializeTest()
+	public static void Initialize()
 	{
 		try		
 		{
@@ -52,7 +49,7 @@ public class NativeOuyaPlugin
 			{
 				if (m_enableDebugLogging)
 				{
-					Log.i(TAG, "OuyaUnityPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
+					Log.i(TAG, "NativeOuyaPlugin.Initialize: IOuyaActivity.GetActivity() is null");
 				}
 				return;
 			}
@@ -67,36 +64,22 @@ public class NativeOuyaPlugin
 				{
 					if (m_enableDebugLogging)
 					{
-						Log.i(TAG, "InitializeTest: Unity has initialized,  constructing TestOuyaFacade");
+						Log.i(TAG, "Initialize: constructing NativeOuyaFacade");
 					}
 
-					/*
-					if (null == IOuyaActivity.GetSavedInstanceState())
-					{
-						Log.i(TAG, "InitializeTest: IOuyaActivity.GetSavedInstanceState() == null");
-					}
-					else
-					{
-						Log.i(TAG, "InitializeTest: m_developerId is valid,  constructing TestOuyaFacade");
-						IOuyaActivity.GetNativeOuyaFacade() = new TestOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-						IOuyaActivity.SetTestOuyaFacade(IOuyaActivity.GetNativeOuyaFacade());
-					}
-					*/
-					
 					NativeOuyaFacade nativeOuyaFacade =
 						new NativeOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
 					
 					//make facade accessible by activity
 					IOuyaActivity.SetNativeOuyaFacade(nativeOuyaFacade);
 
-					Log.i(TAG, "OuyaUnityPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
-					//IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "SendIAPInitComplete", "");
+					//Log.i(TAG, "NativeOuyaPlugin.Initialize: OuyaGameObject send SendIAPInitComplete");
 				}
 			}
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "InitializeTest: InitializeTest exception: " + ex.toString());
+			Log.i(TAG, "Initialize: Exception: " + ex.toString());
 		}
 	}
 	
@@ -109,7 +92,9 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "setDeveloperId developerId: " + developerId);
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "setDeveloperId developerId: " + developerId);
+			}
 			m_developerId = developerId;
 		}
 		catch (Exception ex) 
@@ -123,26 +108,26 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID");
-
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID IAP is disabled");
-				return;
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "NativeOuyaPlugin.fetchGamerUUID");
 			}
 
 			if (null == IOuyaActivity.GetNativeOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: NativeOuyaFacade is null");
+				Log.i(TAG, "NativeOuyaPlugin.fetchGamerUUID: NativeOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: NativeOuyaFacade is valid");
+				if (m_enableDebugLogging) {
+					Log.i(TAG, "NativeOuyaPlugin.fetchGamerUUID: NativeOuyaFacade is valid");
+				}
 				
 				if (m_developerId == "") {
-					Log.i(TAG, "OuyaUnityPlugin.m_developerId is not set");
+					Log.i(TAG, "NativeOuyaPlugin.m_developerId is not set");
 				} else {
-					Log.i(TAG, "OuyaUnityPlugin.m_developerId valid: " + m_developerId);
+					if (m_enableDebugLogging) {
+						Log.i(TAG, "NativeOuyaPlugin.m_developerId valid: " + m_developerId);
+					}
 				}
 				
 				IOuyaActivity.GetNativeOuyaFacade().fetchGamerUUID();
@@ -150,7 +135,7 @@ public class NativeOuyaPlugin
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "OuyaUnityPlugin: fetchGamerUUID exception: " + ex.toString());
+			Log.i(TAG, "NativeOuyaPlugin: fetchGamerUUID exception: " + ex.toString());
 		}
 	}
 
@@ -158,27 +143,25 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "OuyaUnityPlugin.getProductsAsync");
-
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync IAP is disabled");
-				return;
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "NativeOuyaPlugin.getProductsAsync");
 			}
 
 			if (null == IOuyaActivity.GetNativeOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: NativeOuyaFacade is null");
+				Log.i(TAG, "NativeOuyaPlugin.getProductsAsync: NativeOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: NativeOuyaFacade is valid");
+				if (m_enableDebugLogging) {
+					Log.i(TAG, "NativeOuyaPlugin.getProductsAsync: NativeOuyaFacade is valid");
+				}
 				IOuyaActivity.GetNativeOuyaFacade().requestProducts();
 			}
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
+			Log.i(TAG, "NativeOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
 	}
 
@@ -186,7 +169,9 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "clearGetProductList");
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "clearGetProductList");
+			}
 		
 			NativeOuyaFacade.PRODUCT_IDENTIFIER_LIST.clear();
 		}
@@ -200,7 +185,9 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "addGetProduct productId: " + productId);
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "addGetProduct productId: " + productId);
+			}
 		
 			boolean found = false;
 			for (Purchasable purchasable : NativeOuyaFacade.PRODUCT_IDENTIFIER_LIST)
@@ -239,10 +226,10 @@ public class NativeOuyaPlugin
 			{
 				++count;
 			}
-			Log.i(TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has " + count + " elements");
+			Log.i(TAG, "debugProductList NativeOuyaFacade.PRODUCT_IDENTIFIER_LIST has " + count + " elements");
 			for (Purchasable purchasable : NativeOuyaFacade.PRODUCT_IDENTIFIER_LIST)
 			{
-				Log.i(TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has: " + purchasable.getProductId());
+				Log.i(TAG, "debugProductList NativeOuyaFacade.PRODUCT_IDENTIFIER_LIST has: " + purchasable.getProductId());
 			}
 		}
 		catch (Exception ex) 
@@ -255,21 +242,19 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "requestPurchaseAsync identifier: " + identifier);
-		
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync IAP is disabled");
-				return "";
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "requestPurchaseAsync identifier: " + identifier);
 			}
-
+		
 			if (null == IOuyaActivity.GetNativeOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: NativeOuyaFacade is null");
+				Log.i(TAG, "NativeOuyaPlugin.requestPurchaseAsync: NativeOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: NativeOuyaFacade is valid");
+				if (m_enableDebugLogging) {
+					Log.i(TAG, "NativeOuyaPlugin.requestPurchaseAsync: NativeOuyaFacade is valid");
+				}
 				Product product = new Product();
 				product.setIdentifier(identifier);
 				IOuyaActivity.GetNativeOuyaFacade().requestPurchase(product);
@@ -286,27 +271,25 @@ public class NativeOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync");
-
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync IAP is disabled");
-				return;
+			if (m_enableDebugLogging) {
+				Log.i(TAG, "NativeOuyaPlugin.getReceiptsAsync");
 			}
 
 			if (null == IOuyaActivity.GetNativeOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: NativeOuyaFacade is null");
+				Log.i(TAG, "NativeOuyaPlugin.getReceiptsAsync: NativeOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: NativeOuyaFacade is valid");
+				if (m_enableDebugLogging) {
+					Log.i(TAG, "NativeOuyaPlugin.getReceiptsAsync: NativeOuyaFacade is valid");
+				}
 				IOuyaActivity.GetNativeOuyaFacade().requestReceipts();
 			}
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
+			Log.i(TAG, "NativeOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
 	}
 }

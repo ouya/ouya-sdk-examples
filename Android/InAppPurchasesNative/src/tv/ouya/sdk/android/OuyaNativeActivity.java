@@ -108,7 +108,7 @@ public class OuyaNativeActivity extends NativeActivity
 								public void run()
 								{
 									Log.i(LOG_TAG, "NativeOuyaPlugin initializing...");
-									nativeOuyaPlugin.InitializeTest(); //rename NativeOuyaFacade
+									nativeOuyaPlugin.Initialize();
 								}
 							};
 

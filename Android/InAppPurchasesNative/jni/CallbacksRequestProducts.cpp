@@ -21,7 +21,7 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestProducts::OnSuccess(const std::string& jsonData)
+void CallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& products)
 {
 	//char buffer[1024];
 	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
@@ -32,30 +32,9 @@ void CallbacksRequestProducts::OnSuccess(const std::string& jsonData)
 
 	//LOGI("Parsing JSON Data");
 
-	// Parse example data
-	JSONValue* value = JSON::Parse(jsonData.c_str());
-
-	if (value == NULL)
+	for (int index = 0; index < products.size(); index++)
 	{
-		LOGI("Parsing JSON Failed");
-		return;
-	}
-
-	if (!value->IsArray())
-	{
-		LOGI("Parsing JSON Failed: Not an array");
-		return;
-	}
-
-	// Retrieve the main object
-	JSONArray data = value->AsArray();
-
-	for (unsigned int i = 0; i < data.size(); i++)
-	{
-		OuyaSDK::Product newProduct;
-		newProduct.ParseJSON(data[i]);
-
-		Application::m_ui.AddProduct(newProduct);
+		Application::m_ui.AddProduct(products[index]);
 	}
 }
 
