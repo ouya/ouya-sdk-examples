@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "CallbacksRequestReceipts.h"
 #include "CallbackSingleton.h"
 #include "JSON.h"
@@ -20,14 +21,14 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestReceipts::OnSuccess(std::string jsonData)
+void CallbacksRequestReceipts::OnSuccess(const std::string& jsonData)
 {
 	//char buffer[1024];
 	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
 	//LOGI(buffer);
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestReceipts::OnSuccess");
+	Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
 
-	CallbackSingleton::GetInstance()->GetUI()->ClearReceipts();
+	Application::m_ui.ClearReceipts();
 
 	//LOGI("Parsing JSON Data");
 
@@ -54,20 +55,20 @@ void CallbacksRequestReceipts::OnSuccess(std::string jsonData)
 		Receipt newReceipt;
 		newReceipt.ParseJSON(data[i]);
 
-		CallbackSingleton::GetInstance()->GetUI()->AddReceipt(newReceipt);
+		Application::m_ui.AddReceipt(newReceipt);
 	}
 }
 
-void CallbacksRequestReceipts::OnFailure(int errorCode, std::string errorMessage)
+void CallbacksRequestReceipts::OnFailure(int errorCode, const std::string& errorMessage)
 {
 	//char buffer[256];
 	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	//LOGI(buffer);
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestReceipts::OnSuccess");
+	Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
 }
 
 void CallbacksRequestReceipts::OnCancel()
 {
 	//LOGI("OnCancel");
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestReceipts::OnSuccess");
+	Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
 }

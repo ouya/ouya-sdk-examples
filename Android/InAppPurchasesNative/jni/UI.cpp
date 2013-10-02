@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "ui.h"
 #include "engine.h"
 
@@ -36,16 +37,10 @@ UI::UI()
 	m_productIds.push_back("__DECLINED__THIS_PURCHASE");
 
 	m_engine = NULL;
-	m_pluginOuya = NULL;
 
 	m_selectedProduct = NULL;
 
 	m_uiChanged = false;
-}
-
-void UI::Initialize(PluginOuya* pluginOuya)
-{
-	m_pluginOuya = pluginOuya;
 }
 
 void UI::SetEngine(Engine* engine)
@@ -315,12 +310,12 @@ void UI::HandleInput(int keyCode, int action)
 		SetDirections();
 
 		LOGI("Key event, hack, regaining focus...\r\n");
-		m_engine->GetApp()->activity->callbacks->onWindowFocusChanged(m_engine->GetApp()->activity, true);
+		Application::m_app->activity->callbacks->onWindowFocusChanged(Application::m_app->activity, true);
 		LOGI("Key event, hack complete***\r\n");
 	}
 
 	else if (action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 21) //dpad left
+		keyCode == 21) //dpad left -- move hardcoded vals to a .h defines
 	{
 		if (m_selectedButton &&
 			m_selectedButton->Left)
@@ -401,12 +396,12 @@ void UI::HandleInput(int keyCode, int action)
 			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
 				SetMessage("Fetching gamer uuid...");
-				m_pluginOuya->AsyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
+				Application::m_pluginOuya.AsyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
 			}
 			if (m_selectedButton == &m_uiRequestProducts)
 			{
 				SetMessage("Requesting products...");
-				m_pluginOuya->AsyncOuyaRequestProducts(m_callbacksRequestProducts, m_productIds);
+				Application::m_pluginOuya.AsyncOuyaRequestProducts(m_callbacksRequestProducts, m_productIds);
 			}
 			if (m_selectedButton == &m_uiRequestPurchase)
 			{
@@ -424,20 +419,20 @@ void UI::HandleInput(int keyCode, int action)
 					else
 					{
 						SetMessage("Requesting purchase...");
-						m_pluginOuya->AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, product->Identifier);
+						Application::m_pluginOuya.AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, product->Identifier);
 					}
 				}
 			}
 			if (m_selectedButton == &m_uiRequestReceipts)
 			{
 				SetMessage("Requesting receipts...");
-				m_pluginOuya->AsyncOuyaRequestReceipts(m_callbacksRequestReceipts);
+				Application::m_pluginOuya.AsyncOuyaRequestReceipts(m_callbacksRequestReceipts);
 			}
 		}
 	}
 }
 
-void UI::SetGamerUUID(std::string gamerUUID)
+void UI::SetGamerUUID(const std::string& gamerUUID)
 {
 	if (m_uiLabelFetch)
 	{
@@ -445,7 +440,7 @@ void UI::SetGamerUUID(std::string gamerUUID)
 	}
 }
 
-void UI::SetMessage(std::string message)
+void UI::SetMessage(const std::string& message)
 {
 	if (m_uiLabelMessage)
 	{

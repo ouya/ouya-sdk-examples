@@ -6,9 +6,9 @@
 class JsonUtil
 {
 public:
-	static std::string ParseString(JSONObject item, std::wstring fieldName);
-	static int ParseInt(JSONObject item, std::wstring fieldName);
-	static float ParseFloat(JSONObject item, std::wstring fieldName);
+	static std::string ParseString(JSONObject item, const std::wstring& fieldName);
+	static int ParseInt(JSONObject item, const std::wstring& fieldName);
+	static float ParseFloat(JSONObject item, const std::wstring& fieldName);
 };
 
 #endif

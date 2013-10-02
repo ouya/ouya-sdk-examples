@@ -9,17 +9,12 @@ class CallbackSingleton
 {
 private:
 	static CallbackSingleton* m_instance;
-	UI* m_ui;
 
 	CallbackSingleton();
 
 public:
 
 	static CallbackSingleton* GetInstance();
-
-	void Initialize(UI* ui);
-
-	UI* GetUI();
 
 	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
 	CallbacksRequestProducts* m_callbacksRequestProducts;

@@ -7,9 +7,9 @@ class CallbacksRequestReceipts
 {
 public:
 
-	void OnSuccess(std::string jsonData);
+	void OnSuccess(const std::string& jsonData);
 
-	void OnFailure(int errorCode, std::string errorMessage);
+	void OnFailure(int errorCode, const std::string& errorMessage);
 
 	void OnCancel();
 };

@@ -20,8 +20,6 @@ public:
 	
 	UI();
 
-	void Initialize(PluginOuya* pluginOuya);
-
 	void SetEngine(Engine* engine);
 
 	bool InitUI();
@@ -36,9 +34,9 @@ public:
 
 	void HandleInput(int keyCode, int action);
 
-	void SetGamerUUID(std::string gamerUUID);
+	void SetGamerUUID(const std::string& gamerUUID);
 
-	void SetMessage(std::string message);
+	void SetMessage(const std::string& message);
 
 	void SetDirections();
 
@@ -55,8 +53,6 @@ private:
 	Engine* m_engine;
 
 	std::vector<std::string> m_productIds;
-
-	PluginOuya* m_pluginOuya;
 
 	std::vector<Product> m_pendingProducts;
 	std::vector<TextButton*> m_products;

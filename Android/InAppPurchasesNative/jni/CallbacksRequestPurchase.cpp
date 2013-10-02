@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbackSingleton.h"
 #include "JSON.h"
@@ -19,24 +20,24 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestPurchase::OnSuccess(std::string jsonData)
+void CallbacksRequestPurchase::OnSuccess(const std::string& jsonData)
 {
 	//char buffer[1024];
 	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
 	//LOGI(buffer);
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestPurchase::OnSuccess");
+	Application::m_ui.SetMessage("CallbacksRequestPurchase::OnSuccess");
 }
 
-void CallbacksRequestPurchase::OnFailure(int errorCode, std::string errorMessage)
+void CallbacksRequestPurchase::OnFailure(int errorCode, const std::string& errorMessage)
 {
 	//char buffer[256];
 	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	//LOGI(buffer);
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestPurchase::OnFailure");
+	Application::m_ui.SetMessage("CallbacksRequestPurchase::OnFailure");
 }
 
 void CallbacksRequestPurchase::OnCancel()
 {
 	//LOGI("OnCancel");
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestPurchase::OnCancel");
+	Application::m_ui.SetMessage("CallbacksRequestPurchase::OnCancel");
 }

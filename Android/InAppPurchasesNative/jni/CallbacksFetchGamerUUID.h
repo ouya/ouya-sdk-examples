@@ -7,9 +7,9 @@ class CallbacksFetchGamerUUID
 {
 public:
 
-	void OnSuccess(std::string gamerUUID);
+	void OnSuccess(const std::string& gamerUUID);
 
-	void OnFailure(int errorCode, std::string errorMessage);
+	void OnFailure(int errorCode, const std::string& errorMessage);
 
 	void OnCancel();
 };

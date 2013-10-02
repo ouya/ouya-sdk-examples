@@ -2,8 +2,6 @@
 #define __ENGINE_H
 
 #include "TextButton.h"
-#include "PluginOuya.h"
-#include "UI.h"
 
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
@@ -23,19 +21,14 @@
 class Engine
 {
 public:
-	Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya, UI* ui);
+	Engine(NvEGLUtil& egl);
 	~Engine();
 
 	bool isGameplayMode() { return mGameplayMode; }
 
 	void updateFrame(bool interactible, long deltaTime);
 
-	struct android_app* GetApp();
-
 protected:
-
-	PluginOuya* m_pluginOuya;
-	UI* m_ui;
 
 	void setGameplayMode(bool paused);
 
@@ -57,8 +50,6 @@ protected:
 
 	int handleInput(AInputEvent* event);
 	void handleCommand(int cmd);
-
-    struct android_app* mApp;
 
 	NvEGLUtil& mEgl;
 

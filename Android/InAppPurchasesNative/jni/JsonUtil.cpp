@@ -19,7 +19,7 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-std::string JsonUtil::ParseString(JSONObject item, std::wstring fieldName)
+std::string JsonUtil::ParseString(JSONObject item, const std::wstring& fieldName)
 {
 	if (item.find(fieldName) == item.end())
 	{
@@ -42,7 +42,7 @@ std::string JsonUtil::ParseString(JSONObject item, std::wstring fieldName)
 	return NULL;
 }
 
-int JsonUtil::ParseInt(JSONObject item, std::wstring fieldName)
+int JsonUtil::ParseInt(JSONObject item, const std::wstring& fieldName)
 {
 	if (item.find(fieldName) == item.end())
 	{
@@ -58,7 +58,7 @@ int JsonUtil::ParseInt(JSONObject item, std::wstring fieldName)
 	return 0;
 }
 
-float JsonUtil::ParseFloat(JSONObject item, std::wstring fieldName)
+float JsonUtil::ParseFloat(JSONObject item, const std::wstring& fieldName)
 {
 	if (item.find(fieldName) == item.end())
 	{

@@ -22,29 +22,27 @@ public:
 
 	PluginOuya();
 
-	void FindClass(const char* tag, JNIEnv* env, std::string className, jclass* jc);
+	void FindClass(const std::string& tag, JNIEnv* env, const std::string& className, jclass* jc);
 
-	void CacheClasses(const char* tag, JNIEnv* env);
+	void CacheClasses(const std::string& tag, JNIEnv* env);
 
 	void SetApp(struct android_app* app);
 
 	void Initialize();
 
-	void SetDeveloperId(std::string developerId);
+	void SetDeveloperId(const std::string& developerId);
 
 	void AsyncSetDeveloperId();
 
 	void AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
 
-	void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, std::vector<std::string> productIds);
+	void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds);
 
-	void AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, std::string purchasable);
+	void AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const std::string& purchasable);
 
 	void AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts);
 
 private:
-
-	struct android_app* m_app;
 
 	std::string m_developerId;
 

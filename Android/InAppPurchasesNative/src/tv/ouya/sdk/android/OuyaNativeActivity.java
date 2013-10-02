@@ -39,9 +39,6 @@ public class OuyaNativeActivity extends NativeActivity
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 
-		Log.i("CRAZY TOWN", "Invoke hookJNI()");
-		hookJNI();
-
 		initializeOUYA();
 	}
 
@@ -52,8 +49,6 @@ public class OuyaNativeActivity extends NativeActivity
 		// notify threads it's time to exit
 		OuyaNativeActivity.m_waitToExit = false;
 	}
-
-	public native void hookJNI();
 
 	static {
         System.loadLibrary("inapppurchasesnative");
@@ -113,7 +108,7 @@ public class OuyaNativeActivity extends NativeActivity
 								public void run()
 								{
 									Log.i(LOG_TAG, "NativeOuyaPlugin initializing...");
-									nativeOuyaPlugin.InitializeTest();
+									nativeOuyaPlugin.InitializeTest(); //rename NativeOuyaFacade
 								}
 							};
 

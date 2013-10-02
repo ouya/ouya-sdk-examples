@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "engine.h"
 
 #include <EGL/egl.h>
@@ -10,13 +11,9 @@
 #include <nv_bitfont/nv_bitfont.h>
 #include <nv_shader/nv_shader.h>
 
-Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya, UI* ui) :
+Engine::Engine(NvEGLUtil& egl) :
 	mEgl(egl)
 {
-    mApp = app;
-	m_pluginOuya = pluginOuya;
-	m_ui = ui;
-
 	mResizePending = false;
 
 	mGameplayMode = true;
@@ -25,31 +22,23 @@ Engine::Engine(NvEGLUtil& egl, struct android_app* app, PluginOuya* pluginOuya, 
 
     mTimeVal = 0.0;
 
-    app->userData = this;
-	app->onAppCmd = &Engine::handleCmdThunk;
-    app->onInputEvent = &Engine::handleInputThunk;
+    Application::m_app->userData = this;
+	Application::m_app->onAppCmd = &Engine::handleCmdThunk;
+    Application::m_app->onInputEvent = &Engine::handleInputThunk;
 
-	nv_shader_init(app->activity->assetManager);
-
-	m_pluginOuya->SetApp(app);
-	m_pluginOuya->SetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+	nv_shader_init(Application::m_app->activity->assetManager);
 }
 
 Engine::~Engine()
 {
-	m_ui->Destroy();
+	Application::m_ui.Destroy();
 
 	NVBFCleanup();
 }
 
-struct android_app* Engine::GetApp()
-{
-	return mApp;
-}
-
 bool Engine::initUI()
 {
-	m_ui->InitUI();	
+	Application::m_ui.InitUI();	
 
 	return true;
 }
@@ -77,7 +66,7 @@ bool Engine::checkWindowResized()
 
 bool Engine::resizeIfNeeded()
 {
-	if (m_ui->HasUIChanged())
+	if (Application::m_ui.HasUIChanged())
 	{
 	}
 	else if (!mResizePending)
@@ -91,7 +80,7 @@ bool Engine::resizeIfNeeded()
 
 	NVBFSetScreenRes(w, h);
 
-	m_ui->Resize(w, h);	
+	Application::m_ui.Resize(w, h);	
 
 	mResizePending = false;
 
@@ -106,7 +95,7 @@ bool Engine::renderFrame(bool allocateIfNeeded)
 	if (!initUI())
 	{
 		LOGW("Could not initialize UI - assets may be missing!");
-		ANativeActivity_finish(mApp->activity);
+		ANativeActivity_finish(Application::m_app->activity);
 		return false;
 	}
 
@@ -125,7 +114,7 @@ bool Engine::renderFrame(bool allocateIfNeeded)
 	// start rendering bitfont text overlaid here.
 	NVBFTextRenderPrep();
 
-	m_ui->Render();
+	Application::m_ui.Render();
 
 	// done rendering overlaid text.
 	NVBFTextRenderDone();
@@ -197,7 +186,7 @@ int Engine::handleInput(AInputEvent* event)
 		//sprintf(buffer, "%d", code);
 		//LOGI(buffer);
 
-		m_ui->HandleInput(code, action);
+		Application::m_ui.HandleInput(code, action);
 	}
 
     return 0;
@@ -213,7 +202,7 @@ void Engine::handleCommand(int cmd)
 		// first render with the new surface!
         case APP_CMD_INIT_WINDOW:
         case APP_CMD_WINDOW_RESIZED:
-			mEgl.setWindow(mApp->window);
+			mEgl.setWindow(Application::m_app->window);
 			requestForceRender();
         	break;
 
@@ -228,7 +217,7 @@ void Engine::handleCommand(int cmd)
 
         case APP_CMD_LOST_FOCUS:
 			LOGI("Focus Lost, hack, regaining focus...\r\n");
-			mApp->activity->callbacks->onWindowFocusChanged(mApp->activity, true);
+			Application::m_app->activity->callbacks->onWindowFocusChanged(Application::m_app->activity, true);
 			LOGI("Focus Lost, hack complete***\r\n");
 			requestForceRender();
 			break;

@@ -39,22 +39,12 @@ CallbackSingleton* CallbackSingleton::GetInstance()
 	return CallbackSingleton::m_instance;
 }
 
-void CallbackSingleton::Initialize(UI* ui)
-{
-	m_ui = ui;
-}
-
-UI* CallbackSingleton::GetUI()
-{
-	return m_ui;
-}
-
 extern "C"
 {
 	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
 	{
-		//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
-		
+		LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
+
 		std::string strGamerUUID = env->GetStringUTFChars(gamerUUID, NULL);
 
 		//char buffer[256];

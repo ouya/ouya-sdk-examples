@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "CallbacksRequestProducts.h"
 #include "CallbackSingleton.h"
 #include "JSON.h"
@@ -20,14 +21,14 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestProducts::OnSuccess(std::string jsonData)
+void CallbacksRequestProducts::OnSuccess(const std::string& jsonData)
 {
 	//char buffer[1024];
 	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
 	//LOGI(buffer);
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestProducts::OnSuccess");
+	Application::m_ui.SetMessage("CallbacksRequestProducts::OnSuccess");
 
-	CallbackSingleton::GetInstance()->GetUI()->ClearProducts();
+	Application::m_ui.ClearProducts();
 
 	//LOGI("Parsing JSON Data");
 
@@ -54,20 +55,20 @@ void CallbacksRequestProducts::OnSuccess(std::string jsonData)
 		Product newProduct;
 		newProduct.ParseJSON(data[i]);
 
-		CallbackSingleton::GetInstance()->GetUI()->AddProduct(newProduct);
+		Application::m_ui.AddProduct(newProduct);
 	}
 }
 
-void CallbacksRequestProducts::OnFailure(int errorCode, std::string errorMessage)
+void CallbacksRequestProducts::OnFailure(int errorCode, const std::string& errorMessage)
 {
 	//char buffer[256];
 	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	//LOGI(buffer);
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestProducts::OnFailure");
+	Application::m_ui.SetMessage("CallbacksRequestProducts::OnFailure");
 }
 
 void CallbacksRequestProducts::OnCancel()
 {
 	//LOGI("OnCancel");
-	CallbackSingleton::GetInstance()->GetUI()->SetMessage("CallbacksRequestProducts::OnCancel");
+	Application::m_ui.SetMessage("CallbacksRequestProducts::OnCancel");
 }

@@ -40,6 +40,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="jni\Application.cpp" />
     <ClCompile Include="jni\CallbacksFetchGamerUUID.cpp" />
     <ClCompile Include="jni\CallbackSingleton.cpp" />
     <ClCompile Include="jni\CallbacksRequestProducts.cpp" />
@@ -57,6 +58,7 @@
     <ClCompile Include="jni\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jni\Application.h" />
     <ClInclude Include="jni\CallbackSingleton.h" />
     <ClInclude Include="jni\CallbacksFetchGamerUUID.h" />
     <ClInclude Include="jni\CallbacksRequestProducts.h" />

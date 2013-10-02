@@ -8,15 +8,12 @@
 #include <nv_and_util/nv_native_app_glue.h>
 #include <nv_egl_util/nv_egl_util.h>
 
+#include "Application.h"
 #include "CallbackSingleton.h"
 #include "engine.h"
 #include "PluginOuya.h"
 
 Engine* g_engine = 0;
-PluginOuya g_pluginOuya;
-UI g_ui;
-JNIEnv* g_env = 0;
-JavaVM* g_jvm = 0;
 
 #define EXCEPTION_RETURN(env) \
 	if (env->ExceptionOccurred()) { \
@@ -24,60 +21,24 @@ JavaVM* g_jvm = 0;
 		env->ExceptionClear(); \
 	}
 
-// package tv.ouya.sdk.android;
-// public class OuyaNativeActivity extends NativeActivity
-//
-// looks for
-//
-// tv.ouya.sdk.android.OuyaNativeActivity.hookJNI
-//
-// Native method not found: tv.ouya.sdk.android.OuyaNativeActivity.hookJNI:()V
-//
-//
-//
-// No implementation found for native Ltv/ouya/sdk/android/OuyaNativeActivity;.hookJNI:()V
-//
-//
 extern "C"
 {
 	// JNI OnLoad
 	JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved)
 	{
 		LOGI("************JNI_OnLoad*************");
-
-		g_jvm = jvm;
-
-		if (jvm)
-		{
-			LOGI("JVM IS VALID");
-		}
-		else
-		{
-			LOGI("JVM IS INVALID");
-		}
+		LOGI("************JNI_OnLoad*************");
+		LOGI("************JNI_OnLoad*************");
+		LOGI("************JNI_OnLoad*************");
+		LOGI("************JNI_OnLoad*************");
+		LOGI("************JNI_OnLoad*************");
+		LOGI("************JNI_OnLoad*************");
 
 		JNIEnv* env;
 		jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-		//jvm->AttachCurrentThread(&env, NULL);
-
-		g_pluginOuya.CacheClasses("JNI_OnLoad", env);
-
-		//spawn thread? Check for access?
+		Application::m_pluginOuya.CacheClasses("JNI_OnLoad", env);
 
 		return JNI_VERSION_1_6;
-	}
-
-	JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI(JNIEnv* env, jobject thiz)
-	{
-		return;
-
-		/*
-
-		LOGI("***********Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI***********");
-
-		g_pluginOuya.CheckJava("Java_tv_ouya_sdk_android_OuyaNativeActivity_hookJNI", env);
-
-		*/
 	}
 }
 
@@ -88,25 +49,12 @@ extern "C"
  */
 void android_main(struct android_app* app)
 {
-	LOGI("**********android_main***********");
+	//LOGI("**********android_main***********");
+	Application::m_app = app;
 
-	g_pluginOuya.SetDeveloperId("34eec327-0040-4b01-ace8-23a94e3a8394");
-	g_pluginOuya.SetApp(app);
+	Application::m_pluginOuya.SetDeveloperId("34eec327-0040-4b01-ace8-23a94e3a8394");
 
-	//g_jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
-	//g_pluginOuya.CheckJava("android_main", app->appThreadEnv);
-
-	//JNIEnv* env;
-	//g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-	//g_jvm->AttachCurrentThread(&env, NULL);
-	//g_pluginOuya.CheckJava("android_main", env);	
-
-	//JavaVM* jvm;
-	//app->appThreadEnv->GetJavaVM(&jvm);
-	//jvm->AttachCurrentThread(&app->appThreadEnv, NULL);
-	g_ui.Initialize(&g_pluginOuya);
-	g_pluginOuya.Initialize();
-	CallbackSingleton::GetInstance()->Initialize(&g_ui);
+	Application::m_pluginOuya.Initialize();
 	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = new CallbacksFetchGamerUUID();
 	CallbackSingleton::GetInstance()->m_callbacksRequestProducts = new CallbacksRequestProducts();
 	CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = new CallbacksRequestPurchase();
@@ -124,9 +72,9 @@ void android_main(struct android_app* app)
         return;
     }
 
-    g_engine = new Engine(*egl, app, &g_pluginOuya, &g_ui);
+    g_engine = new Engine(*egl);
 
-	g_ui.SetEngine(g_engine);
+	Application::m_ui.SetEngine(g_engine);
 
 	long lastTime = egl->getSystemTime();
 
