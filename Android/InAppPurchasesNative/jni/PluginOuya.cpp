@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "CallbackSingleton.h"
 #include "PluginOuya.h"
 
 #include <android/log.h>
@@ -141,6 +142,8 @@ void PluginOuya::AsyncSetDeveloperId()
 
 void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
 {
+	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
+
 	Initialize();
 
 	//set the callback singleton here
@@ -166,6 +169,8 @@ void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetch
 
 void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds)
 {
+	CallbackSingleton::GetInstance()->m_callbacksRequestProducts = callbacksRequestProducts;
+
 	Initialize();
 
 	//LOGI("AsyncOuyaRequestProducts");
@@ -203,6 +208,8 @@ void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksReq
 
 void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const std::string& purchasable)
 {
+	CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = callbacksRequestPurchase;
+
 	Initialize();
 
 	//LOGI("AsyncOuyaRequestPurchase");
@@ -230,6 +237,8 @@ void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksReq
 
 void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts)
 {
+	CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = callbacksRequestReceipts;
+
 	Initialize();
 
 	//LOGI("AsyncOuyaRequestReceipts");

@@ -38,11 +38,6 @@ UI::UI()
 
 	m_selectedProduct = NULL;
 
-	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = &m_callbacksFetchGamerUUID;
-	CallbackSingleton::GetInstance()->m_callbacksRequestProducts = &m_callbacksRequestProducts;
-	CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = &m_callbacksRequestPurchase;
-	CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = &m_callbacksRequestReceipts;
-
 	m_uiChanged = false;
 }
 
