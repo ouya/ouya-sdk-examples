@@ -5,22 +5,17 @@
 #include "CallbacksRequestProducts.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
-#include "PluginOuya.h"
 #include "Product.h"
 #include "Receipt.h"
 #include "TextButton.h"
 
 #include <string>
 
-class Engine;
-
 class UI
 {
 public:
 	
 	UI();
-
-	void SetEngine(Engine* engine);
 
 	bool InitUI();
 
@@ -50,8 +45,6 @@ public:
 
 private:
 
-	Engine* m_engine;
-
 	std::vector<std::string> m_productIds;
 
 	std::vector<Product> m_pendingProducts;
@@ -78,10 +71,10 @@ private:
 
 	TextButton* m_selectedButton;
 
-	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
-	CallbacksRequestProducts* m_callbacksRequestProducts;
-	CallbacksRequestPurchase* m_callbacksRequestPurchase;
-	CallbacksRequestReceipts* m_callbacksRequestReceipts;
+	CallbacksFetchGamerUUID m_callbacksFetchGamerUUID;
+	CallbacksRequestProducts m_callbacksRequestProducts;
+	CallbacksRequestPurchase m_callbacksRequestPurchase;
+	CallbacksRequestReceipts m_callbacksRequestReceipts;
 
 	void SetupLabel(void** uiLabel, int font, int size, std::string text);
 	void DestroyLabel(void** uiLabel);

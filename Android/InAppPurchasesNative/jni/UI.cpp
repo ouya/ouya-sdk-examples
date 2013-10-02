@@ -1,6 +1,6 @@
 #include "Application.h"
+#include "CallbackSingleton.h"
 #include "ui.h"
-#include "engine.h"
 
 #include <algorithm>
 
@@ -36,16 +36,14 @@ UI::UI()
 	m_productIds.push_back("awesome_sauce");
 	m_productIds.push_back("__DECLINED__THIS_PURCHASE");
 
-	m_engine = NULL;
-
 	m_selectedProduct = NULL;
 
-	m_uiChanged = false;
-}
+	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = &m_callbacksFetchGamerUUID;
+	CallbackSingleton::GetInstance()->m_callbacksRequestProducts = &m_callbacksRequestProducts;
+	CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = &m_callbacksRequestPurchase;
+	CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = &m_callbacksRequestReceipts;
 
-void UI::SetEngine(Engine* engine)
-{
-	m_engine = engine;
+	m_uiChanged = false;
 }
 
 void UI::RenderThreadInitProducts()
@@ -396,12 +394,12 @@ void UI::HandleInput(int keyCode, int action)
 			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
 				SetMessage("Fetching gamer uuid...");
-				Application::m_pluginOuya.AsyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
+				Application::m_pluginOuya.AsyncOuyaFetchGamerUUID(&m_callbacksFetchGamerUUID);
 			}
 			if (m_selectedButton == &m_uiRequestProducts)
 			{
 				SetMessage("Requesting products...");
-				Application::m_pluginOuya.AsyncOuyaRequestProducts(m_callbacksRequestProducts, m_productIds);
+				Application::m_pluginOuya.AsyncOuyaRequestProducts(&m_callbacksRequestProducts, m_productIds);
 			}
 			if (m_selectedButton == &m_uiRequestPurchase)
 			{
@@ -419,14 +417,14 @@ void UI::HandleInput(int keyCode, int action)
 					else
 					{
 						SetMessage("Requesting purchase...");
-						Application::m_pluginOuya.AsyncOuyaRequestPurchase(m_callbacksRequestPurchase, product->Identifier);
+						Application::m_pluginOuya.AsyncOuyaRequestPurchase(&m_callbacksRequestPurchase, product->Identifier);
 					}
 				}
 			}
 			if (m_selectedButton == &m_uiRequestReceipts)
 			{
 				SetMessage("Requesting receipts...");
-				Application::m_pluginOuya.AsyncOuyaRequestReceipts(m_callbacksRequestReceipts);
+				Application::m_pluginOuya.AsyncOuyaRequestReceipts(&m_callbacksRequestReceipts);
 			}
 		}
 	}

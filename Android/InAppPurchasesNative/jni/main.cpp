@@ -13,8 +13,6 @@
 #include "engine.h"
 #include "PluginOuya.h"
 
-Engine* g_engine = 0;
-
 #define EXCEPTION_RETURN(env) \
 	if (env->ExceptionOccurred()) { \
 		env->ExceptionDescribe(); \
@@ -26,17 +24,11 @@ extern "C"
 	// JNI OnLoad
 	JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved)
 	{
-		LOGI("************JNI_OnLoad*************");
-		LOGI("************JNI_OnLoad*************");
-		LOGI("************JNI_OnLoad*************");
-		LOGI("************JNI_OnLoad*************");
-		LOGI("************JNI_OnLoad*************");
-		LOGI("************JNI_OnLoad*************");
-		LOGI("************JNI_OnLoad*************");
+		//LOGI("************JNI_OnLoad*************");
 
 		JNIEnv* env;
 		jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-		Application::m_pluginOuya.CacheClasses("JNI_OnLoad", env);
+		Application::m_pluginOuya.CacheClasses(env);
 
 		return JNI_VERSION_1_6;
 	}
@@ -55,11 +47,6 @@ void android_main(struct android_app* app)
 	Application::m_pluginOuya.SetDeveloperId("34eec327-0040-4b01-ace8-23a94e3a8394");
 
 	Application::m_pluginOuya.Initialize();
-	CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = new CallbacksFetchGamerUUID();
-	CallbackSingleton::GetInstance()->m_callbacksRequestProducts = new CallbacksRequestProducts();
-	CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = new CallbacksRequestPurchase();
-	CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = new CallbacksRequestReceipts();
-	
 
     // Make sure glue isn't stripped.
     app_dummy();
@@ -72,9 +59,7 @@ void android_main(struct android_app* app)
         return;
     }
 
-    g_engine = new Engine(*egl);
-
-	Application::m_ui.SetEngine(g_engine);
+    Engine engine = Engine(*egl);
 
 	long lastTime = egl->getSystemTime();
 
@@ -91,7 +76,7 @@ void android_main(struct android_app* app)
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
         while ((ident = ALooper_pollAll(((nv_app_status_focused(app) &&
-										  g_engine->isGameplayMode()) ? 1 : 250),
+										  engine.isGameplayMode()) ? 1 : 250),
         								NULL,
         								&events,
         								(void**)&source)) >= 0)
@@ -121,10 +106,8 @@ void android_main(struct android_app* app)
 
 		// Update the frame, which optionally updates time and animations
 		// and renders
-		g_engine->updateFrame(nv_app_status_interactable(app), deltaTime);
+		engine.updateFrame(nv_app_status_interactable(app), deltaTime);
     }
 
-	delete g_engine;
-	g_engine = NULL;
     delete egl;
 }

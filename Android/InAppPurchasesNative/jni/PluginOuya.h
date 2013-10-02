@@ -22,9 +22,9 @@ public:
 
 	PluginOuya();
 
-	void FindClass(const std::string& tag, JNIEnv* env, const std::string& className, jclass* jc);
+	void FindClass(JNIEnv* env, const std::string& className, jclass* jc);
 
-	void CacheClasses(const std::string& tag, JNIEnv* env);
+	void CacheClasses(JNIEnv* env);
 
 	void SetApp(struct android_app* app);
 

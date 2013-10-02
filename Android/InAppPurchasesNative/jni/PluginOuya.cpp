@@ -2,23 +2,29 @@
 #include "PluginOuya.h"
 
 #include <android/log.h>
-#include "engine.h"
 
 #include <string>
 #include <vector>
 
-#define LOG_TAG "PluginOuya"
+#define APP_NAME "inapppurchasesnative_PluginOuya"
+
+#define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
+											 APP_NAME, \
+											 __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,  \
+											 APP_NAME, \
+											 __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN,  \
+											 APP_NAME, \
+											 __VA_ARGS__))
 
 // If we cause an exception in JNI, we print the exception info to
 // the log, we clear the exception to avoid a pending-exception
 // crash, and we force the function to return.
-#define EXCEPTION_RETURN(tag, env) \
+#define EXCEPTION_RETURN(env) \
 	if (env->ExceptionOccurred()) { \
 		env->ExceptionDescribe(); \
 		env->ExceptionClear(); \
-		char buffer[256]; \
-		sprintf(buffer, "************Error occurred in %s", tag); \
-		LOGI(buffer); \
 		return; \
 	}
 
@@ -33,7 +39,7 @@ PluginOuya::PluginOuya()
 	jc_AsyncCppOuyaRequestReceipts = NULL;
 }
 
-void PluginOuya::FindClass(const std::string& tag, JNIEnv* env, const std::string& className, jclass* jc)
+void PluginOuya::FindClass(JNIEnv* env, const std::string& className, jclass* jc)
 {
 	//std::string buffer;
 	//buffer.append("Cache class: ");
@@ -49,22 +55,22 @@ void PluginOuya::FindClass(const std::string& tag, JNIEnv* env, const std::strin
 	//LOGI(buffer.c_str());
 }
 
-void PluginOuya::CacheClasses(const std::string& tag, JNIEnv* env)
+void PluginOuya::CacheClasses(JNIEnv* env)
 {
-	FindClass(tag, env, "tv/ouya/sdk/android/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
-	EXCEPTION_RETURN(tag.c_str(), env);
+	FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
+	EXCEPTION_RETURN(env);
 
-	FindClass(tag, env, "tv/ouya/sdk/android/AsyncCppOuyaFetchGamerUUID", &jc_AsyncCppOuyaFetchGamerUUID);
-	EXCEPTION_RETURN(tag.c_str(), env);
+	FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaFetchGamerUUID", &jc_AsyncCppOuyaFetchGamerUUID);
+	EXCEPTION_RETURN(env);
 
-	FindClass(tag, env, "tv/ouya/sdk/android/AsyncCppOuyaRequestProducts", &jc_AsyncCppOuyaRequestProducts);
-	EXCEPTION_RETURN(tag.c_str(), env);
+	FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaRequestProducts", &jc_AsyncCppOuyaRequestProducts);
+	EXCEPTION_RETURN(env);
 
-	FindClass(tag, env, "tv/ouya/sdk/android/AsyncCppOuyaRequestPurchase", &jc_AsyncCppOuyaRequestPurchase);
-	EXCEPTION_RETURN(tag.c_str(), env);
+	FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaRequestPurchase", &jc_AsyncCppOuyaRequestPurchase);
+	EXCEPTION_RETURN(env);
 
-	FindClass(tag, env, "tv/ouya/sdk/android/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
-	EXCEPTION_RETURN(tag.c_str(), env);
+	FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
+	EXCEPTION_RETURN(env);
 }
 
 void PluginOuya::Initialize()
@@ -108,27 +114,27 @@ void PluginOuya::AsyncSetDeveloperId()
 
 	//LOGI("Allocate DeveloperId String");
 	jstring developerIdString = env->NewStringUTF(m_developerId.c_str());
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("allocate the object");
 	jobject objSetDeveloperId = env->AllocObject(jc_AsyncCppOuyaSetDeveloperId); 
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("get the constructor");
 	jmethodID constructSetDeveloperId = env->GetMethodID(jc_AsyncCppOuyaSetDeveloperId, "<init>", "()V");
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("construct the object");
 	env->CallVoidMethod(objSetDeveloperId, constructSetDeveloperId);
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("get the invoke method");
 	jmethodID invokeSetDeveloperId = env->GetStaticMethodID(jc_AsyncCppOuyaSetDeveloperId, "invoke", "(Ljava/lang/String;)V");
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("execute the invoke method");
 	env->CallStaticVoidMethod(jc_AsyncCppOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	Initialized = true;
 }
@@ -151,11 +157,11 @@ void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetch
 
 	//LOGI("get the invoke method");
 	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaFetchGamerUUID, "invoke", "()V");
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("execute the invoke method");
 	env->CallStaticVoidMethod(jc_AsyncCppOuyaFetchGamerUUID, invokeMethod);
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 }
 
 void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds)
@@ -188,11 +194,11 @@ void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksReq
 
 	//LOGI("get the invoke method");
 	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestProducts, "invoke", "([Ljava/lang/String;)V");
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("execute the invoke method");
 	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestProducts, invokeMethod, products);
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 }
 
 void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const std::string& purchasable)
@@ -211,15 +217,15 @@ void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksReq
 
 	//LOGI("Allocate purchasable String");
 	jstring purchasableString = env->NewStringUTF(purchasable.c_str());
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("get the invoke method");
 	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestPurchase, "invoke", "(Ljava/lang/String;)V");
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("execute the invoke method");
 	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestPurchase, invokeMethod, purchasableString);
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 }
 
 void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts)
@@ -238,9 +244,9 @@ void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksReq
 
 	//LOGI("get the invoke method");
 	jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestReceipts, "invoke", "()V");
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 
 	//LOGI("execute the invoke method");
 	env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestReceipts, invokeMethod);
-	EXCEPTION_RETURN(LOG_TAG, env);
+	EXCEPTION_RETURN(env);
 }
