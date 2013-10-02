@@ -8,7 +8,7 @@ class Application
 {
 public:
 	static struct android_app* m_app;
-	static PluginOuya m_pluginOuya;
+	static OuyaSDK::PluginOuya m_pluginOuya;
 	static UI m_ui;
 };
 

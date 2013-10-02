@@ -19,65 +19,67 @@
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN,  \
 											 APP_NAME, \
 											 __VA_ARGS__))
-
-Receipt::Receipt()
+namespace OuyaSDK
 {
-	Currency = "";
-	Gamer = "";
-	GeneratedDate = "";
-	Identifier = "";
-	Uuid = "";
-	PurchaseDate = "";
-	LocalPrice = 0;
-	PriceInCents = 0;
-}
-
-Receipt::Receipt(const Receipt& copy)
-{
-	Currency = copy.Currency;
-	Gamer = copy.Gamer;
-	GeneratedDate = copy.GeneratedDate;
-	Identifier = copy.Identifier;
-	Uuid = copy.Uuid;
-	PurchaseDate = copy.PurchaseDate;
-	LocalPrice = copy.LocalPrice;
-	PriceInCents = copy.PriceInCents;
-}
-
-void Receipt::ParseJSON(JSONValue* json)
-{
-	if (!json)
+	Receipt::Receipt()
 	{
-		LOGI("Parsing JSON Failed: Invalid Argument");
-		return;
+		Currency = "";
+		Gamer = "";
+		GeneratedDate = "";
+		Identifier = "";
+		Uuid = "";
+		PurchaseDate = "";
+		LocalPrice = 0;
+		PriceInCents = 0;
 	}
 
-	if (!json->IsObject())
+	Receipt::Receipt(const Receipt& copy)
 	{
-		LOGI("Parsing JSON Failed: Not an object item");
-		return;
+		Currency = copy.Currency;
+		Gamer = copy.Gamer;
+		GeneratedDate = copy.GeneratedDate;
+		Identifier = copy.Identifier;
+		Uuid = copy.Uuid;
+		PurchaseDate = copy.PurchaseDate;
+		LocalPrice = copy.LocalPrice;
+		PriceInCents = copy.PriceInCents;
 	}
 
-	JSONObject item = json->AsObject();
+	void Receipt::ParseJSON(JSONValue* json)
+	{
+		if (!json)
+		{
+			LOGI("Parsing JSON Failed: Invalid Argument");
+			return;
+		}
 
-	Currency = JsonUtil::ParseString(item, L"currency");
-	Gamer = JsonUtil::ParseString(item, L"gamer");
-	GeneratedDate = JsonUtil::ParseString(item, L"generatedDate");
-	Identifier = JsonUtil::ParseString(item, L"identifier");
-	Uuid = JsonUtil::ParseString(item, L"uuid");
-	PurchaseDate = JsonUtil::ParseString(item, L"generatedDate");
-	LocalPrice = JsonUtil::ParseFloat(item, L"localPrice");
-	PriceInCents = JsonUtil::ParseInt(item, L"priceInCents");
+		if (!json->IsObject())
+		{
+			LOGI("Parsing JSON Failed: Not an object item");
+			return;
+		}
 
-	char buffer[1024];
-	sprintf(buffer, "currency=%s gamer=%s generatedDate=%s identifier=%s uuid=%s purchaseDate=%s localPrice=%.2f priceInCents=%d",
-		Currency.c_str(),
-		Gamer.c_str(),
-		GeneratedDate.c_str(),
-		Identifier.c_str(),
-		Uuid.c_str(),
-		PurchaseDate.c_str(),
-		LocalPrice,
-		PriceInCents);
-	LOGI(buffer);
+		JSONObject item = json->AsObject();
+
+		Currency = JsonUtil::ParseString(item, L"currency");
+		Gamer = JsonUtil::ParseString(item, L"gamer");
+		GeneratedDate = JsonUtil::ParseString(item, L"generatedDate");
+		Identifier = JsonUtil::ParseString(item, L"identifier");
+		Uuid = JsonUtil::ParseString(item, L"uuid");
+		PurchaseDate = JsonUtil::ParseString(item, L"generatedDate");
+		LocalPrice = JsonUtil::ParseFloat(item, L"localPrice");
+		PriceInCents = JsonUtil::ParseInt(item, L"priceInCents");
+
+		char buffer[1024];
+		sprintf(buffer, "currency=%s gamer=%s generatedDate=%s identifier=%s uuid=%s purchaseDate=%s localPrice=%.2f priceInCents=%d",
+			Currency.c_str(),
+			Gamer.c_str(),
+			GeneratedDate.c_str(),
+			Identifier.c_str(),
+			Uuid.c_str(),
+			PurchaseDate.c_str(),
+			LocalPrice,
+			PriceInCents);
+		LOGI(buffer);
+	}
 }

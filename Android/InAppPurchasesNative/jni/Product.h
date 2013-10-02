@@ -3,21 +3,24 @@
 
 #include "JSON.h"
 
-class Product
+namespace OuyaSDK
 {
-public:
-	std::string CurrencyCode;
-	std::string Identifier;
-	std::string Name;
-	int ProductVersionToBundle;
-	float LocalPrice;
-	int PriceInCents;
+	class Product
+	{
+	public:
+		std::string CurrencyCode;
+		std::string Identifier;
+		std::string Name;
+		int ProductVersionToBundle;
+		float LocalPrice;
+		int PriceInCents;
 
-	Product();
+		Product();
 
-	Product(const Product& copy);
+		Product(const Product& copy);
 
-	void ParseJSON(JSONValue* json);
-};
+		void ParseJSON(JSONValue* json);
+	};
+}
 
 #endif

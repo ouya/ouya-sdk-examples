@@ -3,23 +3,24 @@
 
 #include "UI.h"
 
-class CallbacksFetchGamerUUID;
-
-class CallbackSingleton
+namespace OuyaSDK
 {
-private:
-	static CallbackSingleton* m_instance;
+	class CallbackSingleton
+	{
+	private:
+		static CallbackSingleton* m_instance;
 
-	CallbackSingleton();
+		CallbackSingleton();
 
-public:
+	public:
 
-	static CallbackSingleton* GetInstance();
+		static CallbackSingleton* GetInstance();
 
-	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
-	CallbacksRequestProducts* m_callbacksRequestProducts;
-	CallbacksRequestPurchase* m_callbacksRequestPurchase;
-	CallbacksRequestReceipts* m_callbacksRequestReceipts;
+		CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+		CallbacksRequestProducts* m_callbacksRequestProducts;
+		CallbacksRequestPurchase* m_callbacksRequestPurchase;
+		CallbacksRequestReceipts* m_callbacksRequestReceipts;
+	};
 };
 
 #endif

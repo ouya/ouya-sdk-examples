@@ -39,18 +39,18 @@ public:
 
 	void ClearReceipts();
 
-	void AddProduct(Product product);
+	void AddProduct(OuyaSDK::Product product);
 
-	void AddReceipt(Receipt receipt);
+	void AddReceipt(OuyaSDK::Receipt receipt);
 
 private:
 
 	std::vector<std::string> m_productIds;
 
-	std::vector<Product> m_pendingProducts;
+	std::vector<OuyaSDK::Product> m_pendingProducts;
 	std::vector<TextButton*> m_products;
 
-	std::vector<Receipt> m_pendingReceipts;
+	std::vector<OuyaSDK::Receipt> m_pendingReceipts;
 	std::vector<TextButton*> m_receipts;
 
 	TextButton* m_selectedProduct;

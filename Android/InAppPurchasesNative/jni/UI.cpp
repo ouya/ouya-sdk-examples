@@ -54,7 +54,7 @@ void UI::RenderThreadInitProducts()
 			//LOGI(buffer);
 
 			TextButton* txtProduct = new TextButton();
-			Product* newProduct = new Product(m_pendingProducts[index]);
+			OuyaSDK::Product* newProduct = new OuyaSDK::Product(m_pendingProducts[index]);
 			txtProduct->DataContext = newProduct;
 
 			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
@@ -105,7 +105,7 @@ void UI::RenderThreadInitReceipts()
 			//LOGI(buffer);
 
 			TextButton* txtReceipt = new TextButton();
-			Receipt* newReceipt = new Receipt(m_pendingReceipts[index]);
+			OuyaSDK::Receipt* newReceipt = new OuyaSDK::Receipt(m_pendingReceipts[index]);
 			txtReceipt->DataContext = newReceipt;
 
 			//sprintf(buffer, "Setting up receipt ui %s", newReceipt->Identifier.c_str());
@@ -404,7 +404,7 @@ void UI::HandleInput(int keyCode, int action)
 				}
 				else
 				{
-					Product* product = (Product*)m_selectedProduct->DataContext;
+					OuyaSDK::Product* product = (OuyaSDK::Product*)m_selectedProduct->DataContext;
 					if (NULL == product)
 					{
 						SetMessage("No product selected.");
@@ -520,12 +520,12 @@ void UI::ClearReceipts()
 	m_receipts.clear();
 }
 
-void UI::AddProduct(Product product)
+void UI::AddProduct(OuyaSDK::Product product)
 {
 	m_pendingProducts.push_back(product);
 }
 
-void UI::AddReceipt(Receipt receipt)
+void UI::AddReceipt(OuyaSDK::Receipt receipt)
 {
 	m_pendingReceipts.push_back(receipt);
 }

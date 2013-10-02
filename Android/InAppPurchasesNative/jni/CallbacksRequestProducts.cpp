@@ -52,7 +52,7 @@ void CallbacksRequestProducts::OnSuccess(const std::string& jsonData)
 
 	for (unsigned int i = 0; i < data.size(); i++)
 	{
-		Product newProduct;
+		OuyaSDK::Product newProduct;
 		newProduct.ParseJSON(data[i]);
 
 		Application::m_ui.AddProduct(newProduct);

@@ -52,7 +52,7 @@ void CallbacksRequestReceipts::OnSuccess(const std::string& jsonData)
 
 	for (unsigned int i = 0; i < data.size(); i++)
 	{
-		Receipt newReceipt;
+		OuyaSDK::Receipt newReceipt;
 		newReceipt.ParseJSON(data[i]);
 
 		Application::m_ui.AddReceipt(newReceipt);

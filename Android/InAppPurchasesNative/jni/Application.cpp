@@ -1,5 +1,5 @@
 #include "Application.h"
 
 struct android_app* Application::m_app = NULL;
-PluginOuya Application::m_pluginOuya = PluginOuya();
+OuyaSDK::PluginOuya Application::m_pluginOuya = OuyaSDK::PluginOuya();
 UI Application::m_ui = UI();

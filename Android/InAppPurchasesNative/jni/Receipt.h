@@ -3,23 +3,26 @@
 
 #include "JSON.h"
 
-class Receipt
+namespace OuyaSDK
 {
-public:
-	std::string Currency;
-	std::string Gamer;
-	std::string GeneratedDate;
-	std::string Identifier;
-	std::string Uuid;
-	std::string PurchaseDate;
-	float LocalPrice;
-	int PriceInCents;
+	class Receipt
+	{
+	public:
+		std::string Currency;
+		std::string Gamer;
+		std::string GeneratedDate;
+		std::string Identifier;
+		std::string Uuid;
+		std::string PurchaseDate;
+		float LocalPrice;
+		int PriceInCents;
 
-	Receipt();
+		Receipt();
 
-	Receipt(const Receipt& copy);
+		Receipt(const Receipt& copy);
 
-	void ParseJSON(JSONValue* json);
-};
+		void ParseJSON(JSONValue* json);
+	};
+}
 
 #endif
