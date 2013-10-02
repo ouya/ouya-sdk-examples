@@ -18,8 +18,6 @@ namespace OuyaSDK
 	{
 	public:
 
-		bool Initialized;
-
 		PluginOuya();
 
 		void FindClass(JNIEnv* env, const std::string& className, jclass* jc);
@@ -28,11 +26,7 @@ namespace OuyaSDK
 
 		void SetApp(struct android_app* app);
 
-		void Initialize();
-
-		void SetDeveloperId(const std::string& developerId);
-
-		void AsyncSetDeveloperId();
+		void AsyncSetDeveloperId(const std::string& developerId);
 
 		void AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
 
@@ -43,8 +37,6 @@ namespace OuyaSDK
 		void AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts);
 
 	private:
-
-		std::string m_developerId;
 
 		// cached references
 		jclass jc_AsyncCppOuyaSetDeveloperId;

@@ -33,8 +33,6 @@ namespace OuyaSDK
 {
 	PluginOuya::PluginOuya()
 	{
-		Initialized = false;
-		m_developerId = "";
 		jc_AsyncCppOuyaSetDeveloperId = NULL;
 		jc_AsyncCppOuyaFetchGamerUUID = NULL;
 		jc_AsyncCppOuyaRequestProducts = NULL;
@@ -76,27 +74,8 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::Initialize()
+	void PluginOuya::AsyncSetDeveloperId(const std::string& developerId)
 	{
-		if (!Initialized)
-		{
-			AsyncSetDeveloperId();
-			//LOGI("plugin_ouya is initialized");
-		}
-	}
-
-	void PluginOuya::SetDeveloperId(const std::string& developerId)
-	{
-		m_developerId = developerId;
-	}
-
-	void PluginOuya::AsyncSetDeveloperId()
-	{
-		if (Initialized)
-		{
-			return;
-		}
-
 		if (!jc_AsyncCppOuyaSetDeveloperId)
 		{
 			LOGI("jc_AsyncOuyaSetDeveloperId is not initialized");
@@ -116,7 +95,7 @@ namespace OuyaSDK
 		//LOGI(buffer.c_str());
 
 		//LOGI("Allocate DeveloperId String");
-		jstring developerIdString = env->NewStringUTF(m_developerId.c_str());
+		jstring developerIdString = env->NewStringUTF(developerId.c_str());
 		EXCEPTION_RETURN(env);
 
 		//LOGI("allocate the object");
@@ -138,15 +117,11 @@ namespace OuyaSDK
 		//LOGI("execute the invoke method");
 		env->CallStaticVoidMethod(jc_AsyncCppOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
 		EXCEPTION_RETURN(env);
-
-		Initialized = true;
 	}
 
 	void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
 	{
 		CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
-
-		Initialize();
 
 		//set the callback singleton here
 
@@ -172,8 +147,6 @@ namespace OuyaSDK
 	void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds)
 	{
 		CallbackSingleton::GetInstance()->m_callbacksRequestProducts = callbacksRequestProducts;
-
-		Initialize();
 
 		//LOGI("AsyncOuyaRequestProducts");
 
@@ -212,8 +185,6 @@ namespace OuyaSDK
 	{
 		CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = callbacksRequestPurchase;
 
-		Initialize();
-
 		//LOGI("AsyncOuyaRequestPurchase");
 
 		JNIEnv* env = Application::m_app->appThreadEnv;
@@ -240,8 +211,6 @@ namespace OuyaSDK
 	void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts)
 	{
 		CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = callbacksRequestReceipts;
-
-		Initialize();
 
 		//LOGI("AsyncOuyaRequestReceipts");
 

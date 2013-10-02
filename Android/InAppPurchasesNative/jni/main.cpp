@@ -44,9 +44,7 @@ void android_main(struct android_app* app)
 	//LOGI("**********android_main***********");
 	Application::m_app = app;
 
-	Application::m_pluginOuya.SetDeveloperId("34eec327-0040-4b01-ace8-23a94e3a8394");
-
-	Application::m_pluginOuya.Initialize();
+	Application::m_pluginOuya.AsyncSetDeveloperId("34eec327-0040-4b01-ace8-23a94e3a8394");
 
     // Make sure glue isn't stripped.
     app_dummy();
