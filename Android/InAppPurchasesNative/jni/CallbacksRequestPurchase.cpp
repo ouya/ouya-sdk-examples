@@ -20,12 +20,16 @@
 											 APP_NAME, \
 											 __VA_ARGS__))
 
-void CallbacksRequestPurchase::OnSuccess(const std::string& jsonData)
+void CallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
 {
 	//char buffer[1024];
-	//sprintf(buffer, "OnSuccess:  %s\r\n", jsonData.c_str());
+	//sprintf(buffer, "OnSuccess:  %s\r\n", product.Name.c_str());
 	//LOGI(buffer);
-	Application::m_ui.SetMessage("CallbacksRequestPurchase::OnSuccess");
+
+	std::string message = "CallbacksRequestPurchase::OnSuccess: ";
+	message.append(product.Identifier);
+
+	Application::m_ui.SetMessage(message);
 }
 
 void CallbacksRequestPurchase::OnFailure(int errorCode, const std::string& errorMessage)

@@ -171,18 +171,39 @@ namespace OuyaSDK
 
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
+			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
 		
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
 			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
+
+			// Parse example data
+			JSONValue* value = JSON::Parse(strJsonData.c_str());
+
+			if (value == NULL)
+			{
+				LOGI("Parsing JSON Failed");
+				return;
+			}
+
+			if (!value->IsObject())
+			{
+				LOGI("Parsing JSON Failed: Not an object");
+				return;
+			}
+
+			// Retrieve the main object
+			JSONValue data = value->AsObject();
+
+			OuyaSDK::Product product;
+			product.ParseJSON(&data);
 		
 			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
 			if (callback)
 			{
-				callback->OnSuccess(strJsonData);
+				callback->OnSuccess(product);
 			}
 		}
 

@@ -23,8 +23,11 @@ std::string JsonUtil::ParseString(JSONObject item, const std::wstring& fieldName
 {
 	if (item.find(fieldName) == item.end())
 	{
-		LOGI("Parsing JSON Failed: Can't find field name");
-		return NULL;
+		std::string field( fieldName.begin(), fieldName.end() );
+		std::string error = "Parsing JSON Failed: Can't find field name: ";
+		error.append(field);
+		LOGI(error.c_str());
+		return "";
 	}
 	if (item[fieldName]->IsString())
 	{
@@ -39,7 +42,7 @@ std::string JsonUtil::ParseString(JSONObject item, const std::wstring& fieldName
 		return field;
 	}
 
-	return NULL;
+	return "";
 }
 
 int JsonUtil::ParseInt(JSONObject item, const std::wstring& fieldName)
