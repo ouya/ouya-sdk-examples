@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "CallbackSingleton.h"
+#include "Controller.h"
 #include "ui.h"
 
 #include <algorithm>
@@ -289,7 +290,7 @@ void UI::Render()
 void UI::HandleInput(int keyCode, int action)
 {
 	if (action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 82) //system button
+		keyCode == OuyaSDK::Controller::BUTTON_MENU)
 	{
 		if (m_selectedButton &&
 			std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
@@ -308,7 +309,7 @@ void UI::HandleInput(int keyCode, int action)
 	}
 
 	else if (action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 21) //dpad left -- move hardcoded vals to a .h defines
+		keyCode == OuyaSDK::Controller::BUTTON_DPAD_LEFT)
 	{
 		if (m_selectedButton &&
 			m_selectedButton->Left)
@@ -322,7 +323,7 @@ void UI::HandleInput(int keyCode, int action)
 	}
 
 	else if (action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 22) //dpad right
+		keyCode == OuyaSDK::Controller::BUTTON_DPAD_RIGHT)
 	{
 		if (m_selectedButton &&
 			m_selectedButton->Right)
@@ -339,7 +340,7 @@ void UI::HandleInput(int keyCode, int action)
 	}
 
 	else if (action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 19) //dpad up
+		keyCode == OuyaSDK::Controller::BUTTON_DPAD_UP) //dpad up
 	{
 		if (m_selectedButton &&
 			m_selectedButton->Up)
@@ -360,7 +361,7 @@ void UI::HandleInput(int keyCode, int action)
 	}
 
 	else if (action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 20) //dpad down
+		keyCode == OuyaSDK::Controller::BUTTON_DPAD_DOWN)
 	{
 		if (m_selectedButton &&
 			m_selectedButton->Down)
@@ -381,7 +382,7 @@ void UI::HandleInput(int keyCode, int action)
 	}
 
 	else if(action == AMOTION_EVENT_ACTION_UP &&
-		keyCode == 23) //button O
+		keyCode == OuyaSDK::Controller::BUTTON_O)
 	{
 		if (m_selectedButton)
 		{

@@ -64,6 +64,7 @@
     <ClInclude Include="jni\CallbacksRequestProducts.h" />
     <ClInclude Include="jni\CallbacksRequestPurchase.h" />
     <ClInclude Include="jni\CallbacksRequestReceipts.h" />
+    <ClInclude Include="jni\Controller.h" />
     <ClInclude Include="jni\engine.h" />
     <ClInclude Include="jni\JSON.h" />
     <ClInclude Include="jni\JsonUtil.h" />
