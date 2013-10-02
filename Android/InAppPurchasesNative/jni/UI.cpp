@@ -500,6 +500,10 @@ void UI::ClearProducts()
 	for (int index = 0; index < m_products.size(); ++index)
 	{
 		m_products[index]->Destroy();
+		if (m_products[index]->DataContext)
+		{
+			delete m_products[index]->DataContext;
+		}
 		delete m_products[index];
 	}
 	m_products.clear();
@@ -515,6 +519,10 @@ void UI::ClearReceipts()
 	for (int index = 0; index < m_receipts.size(); ++index)
 	{
 		m_receipts[index]->Destroy();
+		if (m_receipts[index]->DataContext)
+		{
+			delete m_receipts[index]->DataContext;
+		}
 		delete m_receipts[index];
 	}
 	m_receipts.clear();
