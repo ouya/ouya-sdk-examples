@@ -34,10 +34,12 @@
     <None Include="libs\gson-2.2.2.jar" />
     <None Include="libs\ouya-sdk.jar" />
     <None Include="project.properties" />
-    <None Include="res\drawable\icon.png" />
+    <None Include="res\drawable-xhdpi\ouya_icon.png" />
+    <None Include="res\drawable\app_icon.png" />
     <None Include="res\values\strings.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Tegra-Android\Debug\bin\res\drawable\app_icon.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jni\Application.cpp" />
