@@ -1,0 +1,44 @@
+include:
+
+#include <s3eTypes.h>
+
+#define	OuyaController_MAX_CONTROLLERS 	4
+
+#define	OuyaController_AXIS_LS_X  		0
+#define	OuyaController_AXIS_LS_Y 		1	
+#define	OuyaController_AXIS_RS_X 		11
+#define	OuyaController_AXIS_RS_Y 		14
+#define	OuyaController_AXIS_L2 			17
+#define	OuyaController_AXIS_R2 			18
+	
+#define	OuyaController_BUTTON_DPAD_UP 	19
+#define	OuyaController_BUTTON_DPAD_DOWN 20
+#define	OuyaController_BUTTON_DPAD_LEFT 21
+#define	OuyaController_BUTTON_DPAD_RIGHT 22
+	
+#define	OuyaController_BUTTON_MENU 		82
+
+#define	OuyaController_BUTTON_O 		96
+#define	OuyaController_BUTTON_A 		97	
+#define	OuyaController_BUTTON_U 		99
+#define	OuyaController_BUTTON_Y 		100
+	
+#define	OuyaController_BUTTON_L1 		102
+#define	OuyaController_BUTTON_R1 		103
+#define	OuyaController_BUTTON_L2 		104
+#define	OuyaController_BUTTON_R2 		105
+#define	OuyaController_BUTTON_R3 		107
+#define	OuyaController_BUTTON_L3 		106	
+
+
+functions:
+
+void OuyaController_startOfFrame() run_on_os_thread
+bool OuyaController_selectControllerByPlayer(int playerNum) false run_on_os_thread
+bool OuyaController_selectControllerByDeviceID(int deviceID) false run_on_os_thread
+int  OuyaController_getAxisValue(int axis) 0 run_on_os_thread
+bool OuyaController_getButton(int button) false run_on_os_thread
+bool OuyaController_buttonPressedThisFrame(int button) false run_on_os_thread
+bool OuyaController_buttonReleasedThisFrame(int button) false run_on_os_thread
+bool OuyaController_buttonChangedThisFrame(int button) false run_on_os_thread
+int  OuyaController_getPlayerNum() 0 run_on_os_thread

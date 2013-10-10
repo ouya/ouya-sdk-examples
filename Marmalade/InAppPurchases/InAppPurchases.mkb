@@ -1,0 +1,19 @@
+files
+{
+	VirtualController.cpp
+	VirtualControllerSprite.h
+	VirtualControllerSprite.cpp
+}
+
+subprojects
+{
+	IwGx
+	iw2d
+	../MarmaladeODK/ODK
+}
+
+assets
+{
+	(data-ram/data-gles1)
+	"tiles.group.bin"
+}
