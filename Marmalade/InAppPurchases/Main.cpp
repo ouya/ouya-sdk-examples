@@ -73,6 +73,8 @@ int main()
 
 	while (!s3eDeviceCheckQuitRequest())
 	{
+		Application::m_ui.HandleInput(0, false);
+
 		render();
 
 		// Yield until unyield is called or a quit request is recieved
