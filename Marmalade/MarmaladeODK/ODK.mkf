@@ -15,24 +15,25 @@ includepath h
 
 files
 {
-    (h)
-    CallbacksFetchGamerUUID.h
-    CallbackSingleton.h
-    CallbacksRequestProducts.h
-    CallbacksRequestPurchase.h
-    CallbacksRequestReceipts.h
+	(h)
+	CallbacksFetchGamerUUID.h
+	CallbackSingleton.h
+	CallbacksRequestProducts.h
+	CallbacksRequestPurchase.h
+	CallbacksRequestReceipts.h
+	Controller.h
 	JSON.h
 	JsonUtil.h
 	JSONValue.h
-    ODK.h
-    PluginOuya.h
-    Product.h
-    Receipt.h
+	ODK.h
+	PluginOuya.h
+	Product.h
+	Receipt.h
 
-    ["interface"]
-    (interface)
-    ODK_interface.cpp
-    ODK.defines.txt
+	["interface"]
+	(interface)
+	ODK_interface.cpp
+	ODK.defines.txt
 }
 
 defines

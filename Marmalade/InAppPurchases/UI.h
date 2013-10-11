@@ -8,6 +8,7 @@
 #include "Product.h"
 #include "Receipt.h"
 #include "TextButton.h"
+#include "TextLabel.h"
 
 #include <string>
 
@@ -21,13 +22,11 @@ public:
 
 	void Destroy();
 
-	void Resize(int w, int h);
-
 	bool HasUIChanged();
 
 	void Render();
 
-	void HandleInput(int keyCode, int action);
+	void HandleInput(int keyCode, bool pressed);
 
 	void SetGamerUUID(const std::string& gamerUUID);
 
@@ -65,9 +64,9 @@ private:
 	TextButton m_uiRequestReceipts;
 	TextButton m_uiPause;
 	
-	std::string m_uiLabelFetch;
-	std::string m_uiLabelDirections;
-	std::string m_uiLabelMessage;
+	TextLabel m_uiLabelFetch;
+	TextLabel m_uiLabelDirections;
+	TextLabel m_uiLabelMessage;
 
 	TextButton* m_selectedButton;
 
@@ -75,8 +74,6 @@ private:
 	CallbacksRequestProducts m_callbacksRequestProducts;
 	CallbacksRequestPurchase m_callbacksRequestPurchase;
 	CallbacksRequestReceipts m_callbacksRequestReceipts;
-
-	void SetupLabel(std::string* uiLabel, int font, int size, std::string text);
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();

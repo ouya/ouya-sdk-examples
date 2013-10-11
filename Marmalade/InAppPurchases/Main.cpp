@@ -2,6 +2,7 @@
 #include "IwResManager.h"
 #include "Iw2D.h"
 #include "s3e.h"
+#include "IwDebug.h"
 
 #include "Application.h"
 
@@ -51,7 +52,7 @@ int main()
 {
 	if (!ODKAvailable())
 	{
-		// not running on OUYA
+		IwTrace(ODK, "Not running on OUYA, exit!");
 		return 0;
 	}
 
@@ -109,7 +110,9 @@ static int32 ButtonEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
-	//sprintf(g_debugButtonEvent, "ButtonEventHandler: Key event detected. key=%d", keyPressed);
+	char buffer[256];
+	sprintf(buffer, "ButtonEventHandler: Key event detected. key=%d", keyPressed);
+	IwTrace(ODK, buffer.c_str());
 
 	render();
 
@@ -129,7 +132,11 @@ static int32 KeyEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
-	//sprintf(g_debugKeyEvent, "KeyEventHandler: Key event detected. key=%d pressed=%s", keyPressed, (*pkeyPressed).m_Pressed ? "true" : "false");	
+	char buffer[256];
+	sprintf(buffer, "KeyEventHandler: Key event detected. key=%d pressed=%s", keyPressed, (*pkeyPressed).m_Pressed ? "true" : "false");	
+	IwTrace(ODK, buffer.c_str());
+
+	Application::m_ui.HandleInput(keyPressed, (*pkeyPressed).m_Pressed);
 
 	render();
 
@@ -149,7 +156,9 @@ static int32 MotionEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
-	//sprintf(g_debugMotionEvent, "MotionEventHandler: Key event detected. key=%d", keyPressed);
+	char buffer[256];
+	sprintf(buffer, "MotionEventHandler: Key event detected. key=%d", keyPressed);
+	IwTrace(ODK, buffer.c_str());
 
 	render();
 
@@ -169,7 +178,9 @@ static int32 TouchEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
-	//sprintf(g_debugTouchEvent, "TouchEventHandler: Key event detected. key=%d", keyPressed);
+	char buffer[256];
+	sprintf(buffer, "TouchEventHandler: Key event detected. key=%d", keyPressed);
+	IwTrace(ODK, buffer.c_str());
 
 	render();
 
@@ -189,7 +200,9 @@ static int32 TouchMotionEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
-	//sprintf(g_debugTouchMotionEvent, "TouchMotionEventHandler: Key event detected. key=%d", keyPressed);
+	char buffer[256];
+	sprintf(buffer, "TouchMotionEventHandler: Key event detected. key=%d", keyPressed);
+	IwTrace(ODK, buffer.c_str());
 
 	render();
 

@@ -2,10 +2,11 @@ files
 {
 	Application.h
 	Application.cpp
-	Controller.h
 	Main.cpp
 	TextButton.h
 	TextButton.cpp
+	TextLabel.h
+	TextLabel.cpp
 	UI.h
 	UI.cpp
 }
