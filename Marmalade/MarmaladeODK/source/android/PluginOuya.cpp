@@ -169,7 +169,7 @@ namespace OuyaSDK
 		jobjectArray products = env->NewObjectArray(productIds.size(), classString, NULL);
 
 		//LOGI("populate items");
-		for (int i = 0; i < productIds.size(); ++i) {
+		for (unsigned int i = 0; i < productIds.size(); ++i) {
 			env->SetObjectArrayElement(products, i, env->NewStringUTF(productIds[i].c_str()));
 		}
 

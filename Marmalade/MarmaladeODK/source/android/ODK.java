@@ -32,7 +32,13 @@ public class ODK extends LoaderActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
-        Log.v(LOG_TAG, "ODK onCreate OK!" );
+		Log.i(LOG_TAG, "******************" );
+		Log.i(LOG_TAG, "******************" );
+		Log.i(LOG_TAG, "******************" );
+		Log.i(LOG_TAG, "******************" );
+		Log.i(LOG_TAG, "******************" );
+		Log.i(LOG_TAG, "******************" );
+        Log.i(LOG_TAG, "ODK onCreate OK!" );
         super.onCreate(savedInstanceState);
         m_Activity = this;
 		OuyaController.init(this);
@@ -42,6 +48,7 @@ public class ODK extends LoaderActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
+		Log.i(LOG_TAG, "ODK onKeyDown keyCode="+keyCode);
 		boolean handled = OuyaController.onKeyDown(keyCode, event);
 		return handled || super.onKeyDown(keyCode, event);
 	}
@@ -50,6 +57,7 @@ public class ODK extends LoaderActivity
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
+		Log.i(LOG_TAG, "ODK onKeyUp keyCode="+keyCode);
 		boolean handled = OuyaController.onKeyUp(keyCode, event);
 		return handled || super.onKeyUp(keyCode, event);
 	}
@@ -57,6 +65,7 @@ public class ODK extends LoaderActivity
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event)
 	{
+		Log.i(LOG_TAG, "ODK onGenericMotionEvent");
 		boolean handled = OuyaController.onGenericMotionEvent(event);
 		return handled || super.onGenericMotionEvent(event);
 	}

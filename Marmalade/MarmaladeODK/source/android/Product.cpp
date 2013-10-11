@@ -6,7 +6,7 @@
 #include <android/log.h>
 #include <stdio.h>
 
-#define APP_NAME "inapppurchasesnative_Product"
+#define APP_NAME "MarmaladeODK_Product"
 
 #define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
 											 APP_NAME, \

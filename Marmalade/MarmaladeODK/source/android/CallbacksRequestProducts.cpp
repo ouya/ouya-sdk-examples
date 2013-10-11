@@ -4,7 +4,7 @@
 #include <android/log.h>
 #include <stdio.h>
 
-#define APP_NAME "inapppurchasesnative_CallbacksRequestProducts"
+#define APP_NAME "MarmaladeODK_CallbacksRequestProducts"
 
 #define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
 											 APP_NAME, \
