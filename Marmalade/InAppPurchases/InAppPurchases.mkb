@@ -16,9 +16,3 @@ subprojects
 	iw2d
 	../MarmaladeODK/ODK
 }
-
-assets
-{
-	(data-ram/data-gles1)
-	"tiles.group.bin"
-}
