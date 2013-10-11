@@ -19,8 +19,6 @@ namespace OuyaSDK
 
 		Receipt();
 
-		Receipt(const Receipt& copy);
-
 		void ParseJSON(JSONValue* json);
 	};
 }

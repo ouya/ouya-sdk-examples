@@ -29,16 +29,6 @@ namespace OuyaSDK
 		PriceInCents = 0;
 	}
 
-	Product::Product(const Product& copy)
-	{
-		CurrencyCode = copy.CurrencyCode;
-		Identifier = copy.Identifier;
-		Name = copy.Name;
-		ProductVersionToBundle = copy.ProductVersionToBundle;
-		LocalPrice = copy.LocalPrice;
-		PriceInCents = copy.PriceInCents;
-	}
-
 	void Product::ParseJSON(JSONValue* json)
 	{
 		if (!json)

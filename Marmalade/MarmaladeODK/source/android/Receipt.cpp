@@ -31,18 +31,6 @@ namespace OuyaSDK
 		PriceInCents = 0;
 	}
 
-	Receipt::Receipt(const Receipt& copy)
-	{
-		Currency = copy.Currency;
-		Gamer = copy.Gamer;
-		GeneratedDate = copy.GeneratedDate;
-		Identifier = copy.Identifier;
-		Uuid = copy.Uuid;
-		PurchaseDate = copy.PurchaseDate;
-		LocalPrice = copy.LocalPrice;
-		PriceInCents = copy.PriceInCents;
-	}
-
 	void Receipt::ParseJSON(JSONValue* json)
 	{
 		if (!json)

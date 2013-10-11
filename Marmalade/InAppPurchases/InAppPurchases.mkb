@@ -1,8 +1,13 @@
 files
 {
-	VirtualController.cpp
-	VirtualControllerSprite.h
-	VirtualControllerSprite.cpp
+	Application.h
+	Application.cpp
+	Controller.h
+	Main.cpp
+	TextButton.h
+	TextButton.cpp
+	UI.h
+	UI.cpp
 }
 
 subprojects

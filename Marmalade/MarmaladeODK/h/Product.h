@@ -17,8 +17,6 @@ namespace OuyaSDK
 
 		Product();
 
-		Product(const Product& copy);
-
 		void ParseJSON(JSONValue* json);
 	};
 }
