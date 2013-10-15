@@ -177,12 +177,12 @@ bool UI::InitUI()
 	m_uiRequestReceipts.SetPosition(w*3/5, h/4);
 	m_uiPause.SetPosition(w/2, h/2);
 
-	for (int index = 0; index < m_products.size(); ++index)
+	for (unsigned int index = 0; index < m_products.size(); ++index)
 	{
 		m_products[index]->SetPosition(w*0.45f, h/3 + index * 25);
 	}
 
-	for (int index = 0; index < m_receipts.size(); ++index)
+	for (unsigned int index = 0; index < m_receipts.size(); ++index)
 	{
 		m_receipts[index]->SetPosition(w*0.55f, h/3 + index * 25);
 	}
@@ -245,7 +245,7 @@ void UI::HandleInput()
 	{
 		IwTrace(DEFAULT, ("Found controller"));
 
-		if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_MENU))
+		if (ButtonReleased(OuyaController_BUTTON_MENU))
 		{
 			if (m_selectedButton &&
 				std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
@@ -263,7 +263,7 @@ void UI::HandleInput()
 			//LOGI("Key event, hack complete***\r\n");
 		}
 
-		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_LEFT))
+		if (ButtonReleased(OuyaController_BUTTON_DPAD_LEFT))
 		{
 			if (m_selectedButton &&
 				m_selectedButton->Left)
@@ -276,7 +276,7 @@ void UI::HandleInput()
 			}
 		}
 
-		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_RIGHT))
+		if (ButtonReleased(OuyaController_BUTTON_DPAD_RIGHT))
 		{
 			if (m_selectedButton &&
 				m_selectedButton->Right)
@@ -292,7 +292,7 @@ void UI::HandleInput()
 			}
 		}
 
-		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_UP))
+		if (ButtonReleased(OuyaController_BUTTON_DPAD_UP))
 		{
 			if (m_selectedButton &&
 				m_selectedButton->Up)
@@ -312,7 +312,7 @@ void UI::HandleInput()
 			}
 		}
 
-		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_DOWN))
+		if (ButtonReleased(OuyaController_BUTTON_DPAD_DOWN))
 		{
 			if (m_selectedButton &&
 				m_selectedButton->Down)
@@ -332,7 +332,7 @@ void UI::HandleInput()
 			}
 		}
 
-		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_O))
+		if (ButtonReleased(OuyaController_BUTTON_O))
 		{
 			if (m_selectedButton)
 			{
@@ -489,4 +489,31 @@ void UI::AddProduct(OuyaSDK::Product product)
 void UI::AddReceipt(OuyaSDK::Receipt receipt)
 {
 	m_pendingReceipts.push_back(receipt);
+}
+
+bool UI::ButtonReleased(int keyCode)
+{
+	if (OuyaController_getButton(keyCode))
+	{
+		// not found
+		if (std::find(m_pressed.begin(), m_pressed.end(), keyCode) == m_pressed.end())
+		{
+			m_pressed.push_back(keyCode);
+		}
+		return false;
+	}
+	else
+	{
+		std::vector<int>::iterator lookup = std::find(m_pressed.begin(), m_pressed.end(), keyCode);
+		// found
+		if (lookup != m_pressed.end())
+		{
+			m_pressed.erase(lookup);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

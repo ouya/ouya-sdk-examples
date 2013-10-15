@@ -91,7 +91,7 @@ s3eBool ODKAvailable()
 
 void OuyaController_startOfFrame()
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[0] func: OuyaController_startOfFrame"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[0] func: OuyaController_startOfFrame"));
 
     if (!_extLoad())
         return;
@@ -111,7 +111,7 @@ void OuyaController_startOfFrame()
 
 bool OuyaController_selectControllerByPlayer(int playerNum)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[1] func: OuyaController_selectControllerByPlayer"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[1] func: OuyaController_selectControllerByPlayer"));
 
     if (!_extLoad())
         return false;
@@ -131,7 +131,7 @@ bool OuyaController_selectControllerByPlayer(int playerNum)
 
 bool OuyaController_selectControllerByDeviceID(int deviceID)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[2] func: OuyaController_selectControllerByDeviceID"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[2] func: OuyaController_selectControllerByDeviceID"));
 
     if (!_extLoad())
         return false;
@@ -151,7 +151,7 @@ bool OuyaController_selectControllerByDeviceID(int deviceID)
 
 int OuyaController_getAxisValue(int axis)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[3] func: OuyaController_getAxisValue"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[3] func: OuyaController_getAxisValue"));
 
     if (!_extLoad())
         return 0;
@@ -171,7 +171,7 @@ int OuyaController_getAxisValue(int axis)
 
 bool OuyaController_getButton(int button)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[4] func: OuyaController_getButton"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[4] func: OuyaController_getButton"));
 
     if (!_extLoad())
         return false;
@@ -191,7 +191,7 @@ bool OuyaController_getButton(int button)
 
 bool OuyaController_buttonPressedThisFrame(int button)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[5] func: OuyaController_buttonPressedThisFrame"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[5] func: OuyaController_buttonPressedThisFrame"));
 
     if (!_extLoad())
         return false;
@@ -211,7 +211,7 @@ bool OuyaController_buttonPressedThisFrame(int button)
 
 bool OuyaController_buttonReleasedThisFrame(int button)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[6] func: OuyaController_buttonReleasedThisFrame"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[6] func: OuyaController_buttonReleasedThisFrame"));
 
     if (!_extLoad())
         return false;
@@ -231,7 +231,7 @@ bool OuyaController_buttonReleasedThisFrame(int button)
 
 bool OuyaController_buttonChangedThisFrame(int button)
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[7] func: OuyaController_buttonChangedThisFrame"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[7] func: OuyaController_buttonChangedThisFrame"));
 
     if (!_extLoad())
         return false;
@@ -251,7 +251,7 @@ bool OuyaController_buttonChangedThisFrame(int button)
 
 int OuyaController_getPlayerNum()
 {
-    //IwTrace(ODK_VERBOSE, ("calling ODK[8] func: OuyaController_getPlayerNum"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[8] func: OuyaController_getPlayerNum"));
 
     if (!_extLoad())
         return 0;

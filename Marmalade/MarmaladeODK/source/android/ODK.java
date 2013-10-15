@@ -42,7 +42,7 @@ public class ODK extends LoaderActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		Log.i(LOG_TAG, "onKeyDown keyCode="+keyCode);
+		//Log.i(LOG_TAG, "onKeyDown keyCode="+keyCode);
 		boolean handled = OuyaController.onKeyDown(keyCode, event);
 		return handled || super.onKeyDown(keyCode, event);
 	}
@@ -51,7 +51,7 @@ public class ODK extends LoaderActivity
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
-		Log.i(LOG_TAG, "onKeyUp keyCode="+keyCode);
+		//Log.i(LOG_TAG, "onKeyUp keyCode="+keyCode);
 		boolean handled = OuyaController.onKeyUp(keyCode, event);
 		return handled || super.onKeyUp(keyCode, event);
 	}
@@ -59,7 +59,7 @@ public class ODK extends LoaderActivity
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event)
 	{
-		Log.i(LOG_TAG, "onGenericMotionEvent");
+		//Log.i(LOG_TAG, "onGenericMotionEvent");
 		boolean handled = OuyaController.onGenericMotionEvent(event);
 		return handled || super.onGenericMotionEvent(event);
 	}

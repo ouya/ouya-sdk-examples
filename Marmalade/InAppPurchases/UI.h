@@ -11,6 +11,7 @@
 #include "TextLabel.h"
 
 #include <string>
+#include <vector>
 
 class UI
 {
@@ -58,6 +59,8 @@ private:
 
 	bool m_uiChanged;
 
+	std::vector<int> m_pressed;
+
 	TextButton m_uiRequestGamerUUID;
 	TextButton m_uiRequestProducts;
 	TextButton m_uiRequestPurchase;
@@ -77,6 +80,8 @@ private:
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();
+
+	bool ButtonReleased(int keyCode);
 };
 
 #endif

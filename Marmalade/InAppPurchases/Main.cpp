@@ -16,7 +16,7 @@ static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
-const char* g_version = "Version: 003";
+const char* g_version = "Version: 011";
 
 
 void registerInput()
@@ -89,9 +89,6 @@ int main()
 		render();
 
 		// Yield until unyield is called or a quit request is recieved
-        //s3eDeviceYield(S3E_DEVICE_YIELD_FOREVER);
-		//s3eDeviceYield(S3E_DEVICE_YIELD_NO_CALLBACKS);
-		//s3eDeviceYieldUntilEvent(0);
 		s3eDeviceYield(0);
 	}
 
