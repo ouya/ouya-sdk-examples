@@ -237,13 +237,14 @@ void UI::Render()
 	}
 }
 
-void UI::HandleInput(int keyCode, bool pressed)
+void UI::HandleInput()
 {
-	if (OuyaController_selectControllerByPlayer(1))
-	{
-		IwTrace(ODK, "Found controller");
+	OuyaController_startOfFrame();
 
-		//if (keyCode == OuyaSDK::Controller::BUTTON_MENU)
+	if (OuyaController_selectControllerByPlayer(0))
+	{
+		IwTrace(DEFAULT, ("Found controller"));
+
 		if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_MENU))
 		{
 			if (m_selectedButton &&
@@ -262,7 +263,6 @@ void UI::HandleInput(int keyCode, bool pressed)
 			//LOGI("Key event, hack complete***\r\n");
 		}
 
-		//else if (keyCode == OuyaSDK::Controller::BUTTON_DPAD_LEFT)
 		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_LEFT))
 		{
 			if (m_selectedButton &&
@@ -276,7 +276,6 @@ void UI::HandleInput(int keyCode, bool pressed)
 			}
 		}
 
-		//else if (keyCode == OuyaSDK::Controller::BUTTON_DPAD_RIGHT)
 		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_RIGHT))
 		{
 			if (m_selectedButton &&
@@ -293,7 +292,6 @@ void UI::HandleInput(int keyCode, bool pressed)
 			}
 		}
 
-		//else if (keyCode == OuyaSDK::Controller::BUTTON_DPAD_UP) //dpad up
 		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_UP))
 		{
 			if (m_selectedButton &&
@@ -314,7 +312,6 @@ void UI::HandleInput(int keyCode, bool pressed)
 			}
 		}
 
-		//else if (keyCode == OuyaSDK::Controller::BUTTON_DPAD_DOWN)
 		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_DPAD_DOWN))
 		{
 			if (m_selectedButton &&
@@ -335,7 +332,6 @@ void UI::HandleInput(int keyCode, bool pressed)
 			}
 		}
 
-		//else if(keyCode == OuyaSDK::Controller::BUTTON_O)
 		else if (OuyaController_buttonReleasedThisFrame(OuyaController_BUTTON_O))
 		{
 			if (m_selectedButton)
@@ -380,7 +376,7 @@ void UI::HandleInput(int keyCode, bool pressed)
 	}
 	else
 	{
-		IwTrace(ODK, "Can't find controller");
+		IwTrace(DEFAULT, ("Can't find controller"));
 	}
 }
 

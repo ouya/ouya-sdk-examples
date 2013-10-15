@@ -23,7 +23,7 @@ import tv.ouya.console.api.OuyaController;
 
 public class ODK extends LoaderActivity
 {
-	private final String LOG_TAG = "ODK";
+	private final String LOG_TAG = "ODK100";
 
 	public static ODK 				m_Activity = null;
 	public static OuyaController	m_SelectedController = null;
@@ -32,13 +32,7 @@ public class ODK extends LoaderActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
-		Log.i(LOG_TAG, "******************" );
-		Log.i(LOG_TAG, "******************" );
-		Log.i(LOG_TAG, "******************" );
-		Log.i(LOG_TAG, "******************" );
-		Log.i(LOG_TAG, "******************" );
-		Log.i(LOG_TAG, "******************" );
-        Log.i(LOG_TAG, "ODK onCreate OK!" );
+        Log.i(LOG_TAG, "onCreate" );
         super.onCreate(savedInstanceState);
         m_Activity = this;
 		OuyaController.init(this);
@@ -73,14 +67,14 @@ public class ODK extends LoaderActivity
 
     public void OuyaController_startOfFrame()
     {
-		Log.i(LOG_TAG, "OuyaController_startOfFrame");
+		//Log.i(LOG_TAG, "OuyaController_startOfFrame");
         OuyaController.startOfFrame();
     }
 
 
     public boolean OuyaController_selectControllerByPlayer(int playerNum)
     {
-		Log.i(LOG_TAG, "OuyaController_selectControllerByPlayer playerNum="+playerNum);
+		//Log.i(LOG_TAG, "OuyaController_selectControllerByPlayer playerNum="+playerNum);
 		m_SelectedController = OuyaController.getControllerByPlayer(playerNum);
         return (m_SelectedController!=null);
     }
@@ -88,7 +82,7 @@ public class ODK extends LoaderActivity
 
     public boolean OuyaController_selectControllerByDeviceID(int deviceID)
     {
-		Log.i(LOG_TAG, "OuyaController_selectControllerByDeviceID deviceID="+deviceID);
+		//Log.i(LOG_TAG, "OuyaController_selectControllerByDeviceID deviceID="+deviceID);
         m_SelectedController = OuyaController.getControllerByDeviceId(deviceID);
         return (m_SelectedController!=null);
     }
@@ -96,7 +90,7 @@ public class ODK extends LoaderActivity
 
     public int OuyaController_getAxisValue(int axis)
     {
-		Log.i(LOG_TAG, "OuyaController_getAxisValue axis="+axis);
+		//Log.i(LOG_TAG, "OuyaController_getAxisValue axis="+axis);
 		if (m_SelectedController!=null)
 			return (int)(m_SelectedController.getAxisValue(axis)*256.0f);
 		else
@@ -106,7 +100,7 @@ public class ODK extends LoaderActivity
 
     public boolean OuyaController_getButton(int button)
     {
-		Log.i(LOG_TAG, "OuyaController_getButton button="+button);
+		//Log.i(LOG_TAG, "OuyaController_getButton button="+button);
         if (m_SelectedController!=null)
 			return m_SelectedController.getButton(button);
 		else
@@ -116,7 +110,7 @@ public class ODK extends LoaderActivity
 
     public boolean OuyaController_buttonPressedThisFrame(int button)
     {
-		Log.i(LOG_TAG, "OuyaController_buttonPressedThisFrame button="+button);
+		//Log.i(LOG_TAG, "OuyaController_buttonPressedThisFrame button="+button);
 		if (m_SelectedController!=null)
 			return m_SelectedController.buttonPressedThisFrame(button);
 		else
@@ -126,7 +120,7 @@ public class ODK extends LoaderActivity
 
     public boolean OuyaController_buttonReleasedThisFrame(int button)
     {
-		Log.i(LOG_TAG, "OuyaController_buttonReleasedThisFrame button="+button);
+		//Log.i(LOG_TAG, "OuyaController_buttonReleasedThisFrame button="+button);
         if (m_SelectedController!=null)
 			return m_SelectedController.buttonReleasedThisFrame(button);
 		else
@@ -136,7 +130,7 @@ public class ODK extends LoaderActivity
 
     public boolean OuyaController_buttonChangedThisFrame(int button)
     {
-		Log.i(LOG_TAG, "OuyaController_buttonChangedThisFrame button="+button);
+		//Log.i(LOG_TAG, "OuyaController_buttonChangedThisFrame button="+button);
         if (m_SelectedController!=null)
 			return m_SelectedController.buttonChangedThisFrame(button);
 		else
@@ -146,7 +140,7 @@ public class ODK extends LoaderActivity
 
     public int OuyaController_getPlayerNum()
     {
-		Log.i(LOG_TAG, "OuyaController_getPlayerNum");
+		//Log.i(LOG_TAG, "OuyaController_getPlayerNum");
 		if (m_SelectedController!=null)
 			return m_SelectedController.getPlayerNum();
 		else

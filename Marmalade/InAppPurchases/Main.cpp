@@ -9,11 +9,14 @@
 #include "ODK.h"
 //#include "PluginOuya.h"
 
+
 static int32 ButtonEventHandler(void* _systemData, void* userData);
 static int32 KeyEventHandler(void* _systemData, void* userData);
 static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
+
+const char* g_version = "Version: 003";
 
 
 void registerInput()
@@ -40,6 +43,8 @@ void render()
 {
 	IwGxClear();
 
+	IwGxPrintString(200, 200, g_version);
+
 	Application::m_ui.InitUI();
 
 	Application::m_ui.Render();
@@ -52,7 +57,7 @@ int main()
 {
 	if (!ODKAvailable())
 	{
-		IwTrace(ODK, "Not running on OUYA, exit!");
+		IwTrace(DEFAULT, ("Not running on OUYA, exit!"));
 		return 0;
 	}
 
@@ -71,14 +76,23 @@ int main()
     const int width = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
     const int height = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
 
+	for (int index = 0; index < 10; ++index)
+	{
+		IwTrace(DEFAULT, ("Entering Main loop..."));
+	}
+
 	while (!s3eDeviceCheckQuitRequest())
 	{
-		Application::m_ui.HandleInput(0, false);
+		//IwTrace(DEFAULT, ("Main loop while (!s3eDeviceCheckQuitRequest()"));
 
+		Application::m_ui.HandleInput();
 		render();
 
 		// Yield until unyield is called or a quit request is recieved
-        s3eDeviceYield(S3E_DEVICE_YIELD_FOREVER);
+        //s3eDeviceYield(S3E_DEVICE_YIELD_FOREVER);
+		//s3eDeviceYield(S3E_DEVICE_YIELD_NO_CALLBACKS);
+		//s3eDeviceYieldUntilEvent(0);
+		s3eDeviceYield(0);
 	}
 
 	Application::m_ui.Destroy();
@@ -114,8 +128,9 @@ static int32 ButtonEventHandler(void* systemData, void* userData)
 
 	char buffer[256];
 	sprintf(buffer, "ButtonEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(ODK, buffer.c_str());
+	IwTrace(ODK, (buffer));
 
+	Application::m_ui.HandleInput();
 	render();
 
     return 0;
@@ -134,12 +149,15 @@ static int32 KeyEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
+	/*
 	char buffer[256];
 	sprintf(buffer, "KeyEventHandler: Key event detected. key=%d pressed=%s", keyPressed, (*pkeyPressed).m_Pressed ? "true" : "false");	
-	IwTrace(ODK, buffer.c_str());
+	IwTrace(DEFAULT, (buffer));
+	*/
 
-	Application::m_ui.HandleInput(keyPressed, (*pkeyPressed).m_Pressed);
+	Application::m_ui.HandleInput();
 
+	Application::m_ui.HandleInput();
 	render();
 
     return 0;
@@ -160,8 +178,9 @@ static int32 MotionEventHandler(void* systemData, void* userData)
 
 	char buffer[256];
 	sprintf(buffer, "MotionEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(ODK, buffer.c_str());
+	IwTrace(DEFAULT, (buffer));
 
+	Application::m_ui.HandleInput();
 	render();
 
     return 0;
@@ -182,8 +201,9 @@ static int32 TouchEventHandler(void* systemData, void* userData)
 
 	char buffer[256];
 	sprintf(buffer, "TouchEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(ODK, buffer.c_str());
+	IwTrace(DEFAULT, (buffer));
 
+	Application::m_ui.HandleInput();
 	render();
 
     return 0;
@@ -204,8 +224,9 @@ static int32 TouchMotionEventHandler(void* systemData, void* userData)
 
 	char buffer[256];
 	sprintf(buffer, "TouchMotionEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(ODK, buffer.c_str());
+	IwTrace(DEFAULT, (buffer));
 
+	Application::m_ui.HandleInput();
 	render();
 
     return 0;

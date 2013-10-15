@@ -26,7 +26,7 @@ public:
 
 	void Render();
 
-	void HandleInput(int keyCode, bool pressed);
+	void HandleInput();
 
 	void SetGamerUUID(const std::string& gamerUUID);
 

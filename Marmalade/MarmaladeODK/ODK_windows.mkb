@@ -1,0 +1,14 @@
+#!/usr/bin/env mkb
+# Builder mkb file for the ODK extension on windows
+platform WIN32
+
+options
+{
+    dll
+    x86
+    output-name="lib/win32/ODK.dll"
+    output-name-debug="lib/win32/ODK_d.dll"
+}
+define S3E_BUILD_EXT
+
+subproject ODK_build
