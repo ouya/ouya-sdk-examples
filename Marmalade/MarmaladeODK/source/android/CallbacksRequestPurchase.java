@@ -26,22 +26,22 @@ public class CallbacksRequestPurchase {
 
 	public String m_purchasable = "";
 
-	public native void CallbacksRequestPurchaseOnSuccess(String jsonData);
-	public native void CallbacksRequestPurchaseOnFailure(int errorCode, String errorMessage);
-	public native void CallbacksRequestPurchaseOnCancel();
+	//public native void CallbacksRequestPurchaseOnSuccess(String jsonData);
+	//public native void CallbacksRequestPurchaseOnFailure(int errorCode, String errorMessage);
+	//public native void CallbacksRequestPurchaseOnCancel();
 
 	public void onSuccess(final String jsonData) {
 		Log.i("CallbacksRequestPurchase", "onSuccess jsonData=" + jsonData);
-		CallbacksRequestPurchaseOnSuccess(jsonData);
+		//CallbacksRequestPurchaseOnSuccess(jsonData);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
 		Log.i("CallbacksRequestPurchase", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
-		CallbacksRequestPurchaseOnFailure(errorCode, errorMessage);
+		//CallbacksRequestPurchaseOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
 		Log.i("CallbacksRequestPurchase", "onCancel");
-		CallbacksRequestPurchaseOnCancel();
+		//CallbacksRequestPurchaseOnCancel();
 	}
 }

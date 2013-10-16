@@ -24,22 +24,22 @@ public class CallbacksRequestProducts {
 
 	private final String LOG_TAG  = "CallbacksRequestProducts";
 
-	public native void CallbacksRequestProductsOnSuccess(String jsonData);
-	public native void CallbacksRequestProductsOnFailure(int errorCode, String errorMessage);
-	public native void CallbacksRequestProductsOnCancel();
+	//public native void CallbacksRequestProductsOnSuccess(String jsonData);
+	//public native void CallbacksRequestProductsOnFailure(int errorCode, String errorMessage);
+	//public native void CallbacksRequestProductsOnCancel();
 
 	public void onSuccess(final String jsonData) {
 		Log.i(LOG_TAG, "onSuccess jsonData=" + jsonData);
-		CallbacksRequestProductsOnSuccess(jsonData);
+		//CallbacksRequestProductsOnSuccess(jsonData);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
 		Log.i(LOG_TAG, "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
-		CallbacksRequestProductsOnFailure(errorCode, errorMessage);
+		//CallbacksRequestProductsOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
 		Log.i(LOG_TAG, "onCancel");
-		CallbacksRequestProductsOnCancel();
+		//CallbacksRequestProductsOnCancel();
 	}
 }

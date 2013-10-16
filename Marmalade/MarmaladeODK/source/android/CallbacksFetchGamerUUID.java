@@ -24,22 +24,22 @@ public class CallbacksFetchGamerUUID {
 
 	private final String LOG_TAG  = "CallbacksFetchGamerUUID";
 
-	public native void CallbacksFetchGamerUUIDOnSuccess(String gamerUUID);
-	public native void CallbacksFetchGamerUUIDOnFailure(int errorCode, String errorMessage);
-	public native void CallbacksFetchGamerUUIDOnCancel();
+	//public native void CallbacksFetchGamerUUIDOnSuccess(String gamerUUID);
+	//public native void CallbacksFetchGamerUUIDOnFailure(int errorCode, String errorMessage);
+	//public native void CallbacksFetchGamerUUIDOnCancel();
 
 	public void onSuccess(final String gamerUUID) {
 		Log.i(LOG_TAG, "onSuccess=" + gamerUUID);
-		CallbacksFetchGamerUUIDOnSuccess(gamerUUID);
+		//CallbacksFetchGamerUUIDOnSuccess(gamerUUID);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
 		Log.i(LOG_TAG, "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
-		CallbacksFetchGamerUUIDOnFailure(errorCode, errorMessage);
+		//CallbacksFetchGamerUUIDOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
 		Log.i(LOG_TAG, "onCancel");
-		CallbacksFetchGamerUUIDOnCancel();
+		//CallbacksFetchGamerUUIDOnCancel();
 	}
 }

@@ -1,7 +1,7 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
-//#include "PluginOuya.h"
+#include "PluginOuya.h"
 #include "UI.h"
 
 class Application

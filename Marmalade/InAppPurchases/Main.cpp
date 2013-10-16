@@ -15,9 +15,10 @@ static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
-const char* g_version = "Version: 014";
+const char* g_version = "Mamalade Version: 026";
 
 
+/*
 void registerInput()
 {
 	// Register pointer event handler
@@ -34,9 +35,8 @@ void registerInput()
 
 	// Register touch motion event handler
 	s3ePointerRegister(S3E_POINTER_TOUCH_MOTION_EVENT, &TouchMotionEventHandler, NULL);
-
-
 }
+*/
 
 void render()
 {
@@ -60,13 +60,15 @@ int main()
 		return 0;
 	}
 
+	//Application::m_pluginOuya.AsyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+
 	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 
 	IwGxInit();
 	IwGxSetColClear(0, 0, 0xff, 0xff);
 	IwResManagerInit();
 	Iw2DInit();
-	registerInput();
+	//registerInput();
 
     const int textWidth = s3eDebugGetInt(S3E_DEBUG_FONT_SIZE_WIDTH);
     const int textHeight = s3eDebugGetInt(S3E_DEBUG_FONT_SIZE_HEIGHT);
@@ -86,9 +88,7 @@ int main()
 		render();
 
 		// Yield until unyield is called or a quit request is recieved
-		s3eDeviceYield(500);
-
-		break;
+		s3eDeviceYield(0);
 	}
 
 	Application::m_ui.Destroy();
@@ -100,15 +100,6 @@ int main()
 }
 
 /*
- * Key event handler:
- * systemData contains a structure of type s3eKeyboardEvent which contains
- * information about the pressed key.
- * Note the generic makeup of the callback function, which always supplies
- * the parameters:
- * systemData - callback-specific system supplied data.
- * userData - data supplied by user at callback registration (in this case
- * NULL) and returns int32 as success staus.
- */
 static int32 ButtonEventHandler(void* systemData, void* userData)
 {
 	//sprintf(g_StatusString, "ButtonEventHandler");
@@ -223,3 +214,4 @@ static int32 TouchMotionEventHandler(void* systemData, void* userData)
 
     return 0;
 }
+*/

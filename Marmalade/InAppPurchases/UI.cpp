@@ -243,7 +243,7 @@ void UI::HandleInput()
 
 	if (OuyaController_selectControllerByPlayer(0))
 	{
-		IwTrace(DEFAULT, ("Found controller"));
+		//IwTrace(DEFAULT, ("Found controller"));
 
 		if (ButtonReleased(OuyaController_BUTTON_MENU))
 		{
@@ -340,6 +340,7 @@ void UI::HandleInput()
 				{
 					SetMessage("Fetching gamer uuid...");
 					//Application::m_pluginOuya.AsyncOuyaFetchGamerUUID(&m_callbacksFetchGamerUUID);
+					OuyaPlugin_asyncOuyaFetchGamerUUID(&m_callbacksFetchGamerUUID);
 				}
 				if (m_selectedButton == &m_uiRequestProducts)
 				{
