@@ -73,7 +73,7 @@ public class MarmaladeOuyaPlugin
 					//make facade accessible by activity
 					IOuyaActivity.SetMarmaladeOuyaFacade(marmaladeOuyaFacade);
 
-					//Log.i(TAG, "MarmaladeOuyaPlugin.Initialize: OuyaGameObject send SendIAPInitComplete");
+					Log.i(TAG, "MarmaladeOuyaPlugin.Initialize: Complete");
 				}
 			}
 		}

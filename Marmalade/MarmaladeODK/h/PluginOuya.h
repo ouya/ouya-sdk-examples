@@ -4,12 +4,14 @@
 #include <string>
 #include <vector>
 
-#include <jni.h>
-
+class _jclass;
 class CallbacksFetchGamerUUID;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
+
+typedef struct _JNIEnv JNIEnv;
+typedef _jclass* jclass;
 
 namespace OuyaSDK
 {

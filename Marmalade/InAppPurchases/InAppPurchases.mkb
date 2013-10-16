@@ -30,4 +30,5 @@ deployments
     # default version
     name=MarmaladeIAP
     caption="Marmalade IAP"    
+    android-external-jars='lib/android/gson-2.2.2.jar'
 }

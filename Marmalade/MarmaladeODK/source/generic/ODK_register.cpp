@@ -84,6 +84,12 @@ static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
     s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 1, developerId);
 }
 
+static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaFetchGamerUUID"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 1, callbacksFetchGamerUUID);
+}
+
 #define OuyaController_startOfFrame OuyaController_startOfFrame_wrap
 #define OuyaController_selectControllerByPlayer OuyaController_selectControllerByPlayer_wrap
 #define OuyaController_selectControllerByDeviceID OuyaController_selectControllerByDeviceID_wrap
@@ -94,13 +100,14 @@ static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
 #define OuyaController_buttonChangedThisFrame OuyaController_buttonChangedThisFrame_wrap
 #define OuyaController_getPlayerNum OuyaController_getPlayerNum_wrap
 #define OuyaPlugin_asyncSetDeveloperId OuyaPlugin_asyncSetDeveloperId_wrap
+#define OuyaPlugin_asyncOuyaFetchGamerUUID OuyaPlugin_asyncOuyaFetchGamerUUID_wrap
 
 #endif
 
 void ODKRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[10];
+    void* funcPtrs[11];
     funcPtrs[0] = (void*)OuyaController_startOfFrame;
     funcPtrs[1] = (void*)OuyaController_selectControllerByPlayer;
     funcPtrs[2] = (void*)OuyaController_selectControllerByDeviceID;
@@ -111,11 +118,12 @@ void ODKRegisterExt()
     funcPtrs[7] = (void*)OuyaController_buttonChangedThisFrame;
     funcPtrs[8] = (void*)OuyaController_getPlayerNum;
     funcPtrs[9] = (void*)OuyaPlugin_asyncSetDeveloperId;
+    funcPtrs[10] = (void*)OuyaPlugin_asyncOuyaFetchGamerUUID;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[10] = { 0 };
+    int flags[11] = { 0 };
 
     /*
      * Register the extension

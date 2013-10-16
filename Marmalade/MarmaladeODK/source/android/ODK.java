@@ -79,11 +79,6 @@ public class ODK extends LoaderActivity
 			e.printStackTrace();
 		}
 
-		Log.i(LOG_TAG, "Initialize controller...");
-
-		// Init the controller
-		OuyaController.init(context);
-
 		Log.i(LOG_TAG, "Initialize MarmaladeOuyaPlugin...");
 
 		// Initialize the Marmalade OUYA Plugin
@@ -244,5 +239,10 @@ public class ODK extends LoaderActivity
     public void OuyaPlugin_asyncSetDeveloperId(String developerId)
     {
 		Log.i(LOG_TAG, "OuyaPlugin_asyncSetDeveloperId developerId="+developerId);
+    }
+
+    static {
+		//System.loadLibrary("libODK");
+		//System.loadLibrary("libodk_d_ext");
     }
 }

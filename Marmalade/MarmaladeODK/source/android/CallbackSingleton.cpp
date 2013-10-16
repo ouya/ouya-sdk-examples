@@ -47,14 +47,14 @@ namespace OuyaSDK
 
 	extern "C"
 	{
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
 		{
-			LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
+			LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
 
 			std::string strGamerUUID = env->GetStringUTFChars(gamerUUID, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
@@ -64,14 +64,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure***********");
+			//LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
@@ -81,12 +81,12 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel***********");
+			//LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel: Returned to C");
+			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
@@ -96,14 +96,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
 
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
 
 			// Parse example data
@@ -141,14 +141,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
@@ -158,12 +158,12 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnCancel***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
@@ -173,14 +173,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
 
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
 
 			// Parse example data
@@ -211,14 +211,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
@@ -228,12 +228,12 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
@@ -243,14 +243,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
+			LOGI("***********Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
 
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
 
 			//LOGI("Parsing JSON Data");
@@ -290,14 +290,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
@@ -307,12 +307,12 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel***********");
+			//LOGI("***********Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_android_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
+			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;

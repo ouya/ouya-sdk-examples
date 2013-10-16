@@ -193,3 +193,9 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
 
     g_pluginOuya.AsyncSetDeveloperId(developerId);
 }
+
+void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
+{
+	IwTrace(ODK, ("OuyaPlugin_asyncOuyaFetchGamerUUID"));
+    g_pluginOuya.AsyncOuyaFetchGamerUUID(callbacksFetchGamerUUID);
+}

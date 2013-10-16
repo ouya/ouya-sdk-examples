@@ -2,6 +2,17 @@ include:
 
 #include <s3eTypes.h>
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "CallbacksFetchGamerUUID.h"
+#include "CallbacksRequestProducts.h"
+#include "CallbacksRequestPurchase.h"
+#include "CallbacksRequestReceipts.h"
+//#include "PluginOuya.h"
+#include "CallbackSingleton.h"
+
 #define	OuyaController_MAX_CONTROLLERS 	4
 
 #define	OuyaController_AXIS_LS_X  		0
@@ -44,3 +55,4 @@ bool OuyaController_buttonChangedThisFrame(int button) false run_on_os_thread
 int  OuyaController_getPlayerNum() 0 run_on_os_thread
 
 void OuyaPlugin_asyncSetDeveloperId(const char* developerId) false run_on_os_thread
+void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID) false run_on_os_thread

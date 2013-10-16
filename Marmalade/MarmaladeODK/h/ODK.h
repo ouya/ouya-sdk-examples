@@ -18,6 +18,17 @@
 
 #include <s3eTypes.h>
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "CallbacksFetchGamerUUID.h"
+#include "CallbacksRequestProducts.h"
+#include "CallbacksRequestPurchase.h"
+#include "CallbacksRequestReceipts.h"
+//#include "PluginOuya.h"
+#include "CallbackSingleton.h"
+
 #define	OuyaController_MAX_CONTROLLERS 	4
 
 #define	OuyaController_AXIS_LS_X  		0
@@ -73,6 +84,8 @@ bool OuyaController_buttonChangedThisFrame(int button);
 int OuyaController_getPlayerNum();
 
 void OuyaPlugin_asyncSetDeveloperId(const char* developerId);
+
+void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
 
 S3E_END_C_DECL
 
