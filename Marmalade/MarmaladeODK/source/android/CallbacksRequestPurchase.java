@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.sdk.android;
+package com.ODK;
 
 
 import android.util.Log;
@@ -23,7 +23,7 @@ import android.util.Log;
 public class CallbacksRequestPurchase {
 
 	private final String LOG_TAG  = "CallbacksRequestPurchase";
-	
+
 	public String m_purchasable = "";
 
 	public native void CallbacksRequestPurchaseOnSuccess(String jsonData);

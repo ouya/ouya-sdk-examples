@@ -29,6 +29,7 @@ typedef       bool(*OuyaController_buttonPressedThisFrame_t)(int button);
 typedef       bool(*OuyaController_buttonReleasedThisFrame_t)(int button);
 typedef       bool(*OuyaController_buttonChangedThisFrame_t)(int button);
 typedef        int(*OuyaController_getPlayerNum_t)();
+typedef       void(*OuyaPlugin_asyncSetDeveloperId_t)(const char* developerId);
 
 /**
  * struct that gets filled in by ODKRegister
@@ -44,6 +45,7 @@ typedef struct ODKFuncs
     OuyaController_buttonReleasedThisFrame_t m_OuyaController_buttonReleasedThisFrame;
     OuyaController_buttonChangedThisFrame_t m_OuyaController_buttonChangedThisFrame;
     OuyaController_getPlayerNum_t m_OuyaController_getPlayerNum;
+    OuyaPlugin_asyncSetDeveloperId_t m_OuyaPlugin_asyncSetDeveloperId;
 } ODKFuncs;
 
 static ODKFuncs g_Ext;
@@ -267,4 +269,24 @@ int OuyaController_getPlayerNum()
 #endif
 
     return ret;
+}
+
+void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[9] func: OuyaPlugin_asyncSetDeveloperId"));
+
+    if (!_extLoad())
+        return;
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    g_Ext.m_OuyaPlugin_asyncSetDeveloperId(developerId);
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return;
 }

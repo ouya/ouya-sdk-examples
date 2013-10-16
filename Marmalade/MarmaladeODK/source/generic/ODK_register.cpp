@@ -78,6 +78,12 @@ static int OuyaController_getPlayerNum_wrap()
     return (int)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_getPlayerNum, 0);
 }
 
+static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncSetDeveloperId"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 1, developerId);
+}
+
 #define OuyaController_startOfFrame OuyaController_startOfFrame_wrap
 #define OuyaController_selectControllerByPlayer OuyaController_selectControllerByPlayer_wrap
 #define OuyaController_selectControllerByDeviceID OuyaController_selectControllerByDeviceID_wrap
@@ -87,13 +93,14 @@ static int OuyaController_getPlayerNum_wrap()
 #define OuyaController_buttonReleasedThisFrame OuyaController_buttonReleasedThisFrame_wrap
 #define OuyaController_buttonChangedThisFrame OuyaController_buttonChangedThisFrame_wrap
 #define OuyaController_getPlayerNum OuyaController_getPlayerNum_wrap
+#define OuyaPlugin_asyncSetDeveloperId OuyaPlugin_asyncSetDeveloperId_wrap
 
 #endif
 
 void ODKRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[9];
+    void* funcPtrs[10];
     funcPtrs[0] = (void*)OuyaController_startOfFrame;
     funcPtrs[1] = (void*)OuyaController_selectControllerByPlayer;
     funcPtrs[2] = (void*)OuyaController_selectControllerByDeviceID;
@@ -103,11 +110,12 @@ void ODKRegisterExt()
     funcPtrs[6] = (void*)OuyaController_buttonReleasedThisFrame;
     funcPtrs[7] = (void*)OuyaController_buttonChangedThisFrame;
     funcPtrs[8] = (void*)OuyaController_getPlayerNum;
+    funcPtrs[9] = (void*)OuyaPlugin_asyncSetDeveloperId;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[9] = { 0 };
+    int flags[10] = { 0 };
 
     /*
      * Register the extension

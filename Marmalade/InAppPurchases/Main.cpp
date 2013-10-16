@@ -7,7 +7,6 @@
 #include "Application.h"
 
 #include "ODK.h"
-//#include "PluginOuya.h"
 
 
 static int32 ButtonEventHandler(void* _systemData, void* userData);
@@ -16,7 +15,7 @@ static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
-const char* g_version = "Version: 011";
+const char* g_version = "Version: 014";
 
 
 void registerInput()
@@ -61,9 +60,7 @@ int main()
 		return 0;
 	}
 
-	//Application::m_app = app;
-
-	//Application::m_pluginOuya.AsyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 
 	IwGxInit();
 	IwGxSetColClear(0, 0, 0xff, 0xff);
@@ -89,7 +86,9 @@ int main()
 		render();
 
 		// Yield until unyield is called or a quit request is recieved
-		s3eDeviceYield(0);
+		s3eDeviceYield(500);
+
+		break;
 	}
 
 	Application::m_ui.Destroy();
@@ -146,13 +145,9 @@ static int32 KeyEventHandler(void* systemData, void* userData)
     s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
     s3eKey keyPressed = (*pkeyPressed).m_Key;
 
-	/*
 	char buffer[256];
 	sprintf(buffer, "KeyEventHandler: Key event detected. key=%d pressed=%s", keyPressed, (*pkeyPressed).m_Pressed ? "true" : "false");	
 	IwTrace(DEFAULT, (buffer));
-	*/
-
-	Application::m_ui.HandleInput();
 
 	Application::m_ui.HandleInput();
 	render();

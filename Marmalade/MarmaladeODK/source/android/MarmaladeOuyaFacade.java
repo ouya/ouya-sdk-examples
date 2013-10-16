@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.sdk.android;
+package com.ODK;
 
 
 import android.accounts.AccountManager;

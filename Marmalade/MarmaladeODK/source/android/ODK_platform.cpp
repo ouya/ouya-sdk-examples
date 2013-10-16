@@ -32,10 +32,6 @@ s3eResult ODKInit_platform()
     // Get the environment from the pointer
     JNIEnv* env = s3eEdkJNIGetEnv();
 
-    // cache class references
-    g_pluginOuya.CacheClasses(env);
-
-
     jobject obj = NULL;
 	jfieldID field = NULL;
 
@@ -112,6 +108,9 @@ s3eResult ODKInit_platform()
     env->DeleteLocalRef(obj);
     env->DeleteGlobalRef(cls);
 
+    // cache class references
+    g_pluginOuya.CacheClasses(env);
+
     // Add any platform-specific initialisation code here
     return S3E_RESULT_SUCCESS;
 
@@ -184,4 +183,13 @@ int OuyaController_getPlayerNum_platform()
 {
     JNIEnv* env = s3eEdkJNIGetEnv();
     return (int)env->CallIntMethod(g_Obj, g_OuyaController_getPlayerNum);
+}
+
+void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
+{
+	std::string buffer = "OuyaPlugin_asyncSetDeveloperId developerId=";
+	buffer.append(developerId);
+	IwTrace(ODK, (buffer.c_str()));
+
+    g_pluginOuya.AsyncSetDeveloperId(developerId);
 }

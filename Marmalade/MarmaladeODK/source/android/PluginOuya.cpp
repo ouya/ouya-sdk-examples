@@ -60,19 +60,19 @@ namespace OuyaSDK
 
 	void PluginOuya::CacheClasses(JNIEnv* env)
 	{
-		FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
+		FindClass(env, "com/ODK/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaFetchGamerUUID", &jc_AsyncCppOuyaFetchGamerUUID);
+		FindClass(env, "com/ODK/AsyncCppOuyaFetchGamerUUID", &jc_AsyncCppOuyaFetchGamerUUID);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaRequestProducts", &jc_AsyncCppOuyaRequestProducts);
+		FindClass(env, "com/ODK/AsyncCppOuyaRequestProducts", &jc_AsyncCppOuyaRequestProducts);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaRequestPurchase", &jc_AsyncCppOuyaRequestPurchase);
+		FindClass(env, "com/ODK/AsyncCppOuyaRequestPurchase", &jc_AsyncCppOuyaRequestPurchase);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "tv/ouya/sdk/android/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
+		FindClass(env, "com/ODK/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
 		EXCEPTION_RETURN(env);
 	}
 

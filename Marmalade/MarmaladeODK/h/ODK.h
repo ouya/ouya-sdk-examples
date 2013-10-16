@@ -72,6 +72,8 @@ bool OuyaController_buttonChangedThisFrame(int button);
 
 int OuyaController_getPlayerNum();
 
+void OuyaPlugin_asyncSetDeveloperId(const char* developerId);
+
 S3E_END_C_DECL
 
 #endif /* !S3E_EXT_ODK_H */
