@@ -9,11 +9,11 @@ class CallbacksRequestPurchase
 {
 public:
 
-	void OnSuccess(const OuyaSDK::Product& product);
+	virtual void OnSuccess(const OuyaSDK::Product& product) = 0;
 
-	void OnFailure(int errorCode, const std::string& errorMessage);
+	virtual void OnFailure(int errorCode, const std::string& errorMessage) = 0;
 
-	void OnCancel();
+	virtual void OnCancel() = 0;
 };
 
 #endif

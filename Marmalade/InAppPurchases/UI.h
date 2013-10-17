@@ -1,10 +1,10 @@
 #ifndef __UI_H__
 #define __UI_H__
 
-#include "CallbacksFetchGamerUUID.h"
-#include "CallbacksRequestProducts.h"
-#include "CallbacksRequestPurchase.h"
-#include "CallbacksRequestReceipts.h"
+#include "ApplicationCallbacksFetchGamerUUID.h"
+#include "ApplicationCallbacksRequestProducts.h"
+#include "ApplicationCallbacksRequestPurchase.h"
+#include "ApplicationCallbacksRequestReceipts.h"
 #include "Product.h"
 #include "Receipt.h"
 #include "TextButton.h"
@@ -73,10 +73,10 @@ private:
 
 	TextButton* m_selectedButton;
 
-	CallbacksFetchGamerUUID m_callbacksFetchGamerUUID;
-	CallbacksRequestProducts m_callbacksRequestProducts;
-	CallbacksRequestPurchase m_callbacksRequestPurchase;
-	CallbacksRequestReceipts m_callbacksRequestReceipts;
+	ApplicationCallbacksFetchGamerUUID m_callbacksFetchGamerUUID;
+	ApplicationCallbacksRequestProducts m_callbacksRequestProducts;
+	ApplicationCallbacksRequestPurchase m_callbacksRequestPurchase;
+	ApplicationCallbacksRequestReceipts m_callbacksRequestReceipts;
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();

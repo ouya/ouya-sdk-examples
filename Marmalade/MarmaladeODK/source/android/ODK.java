@@ -29,7 +29,7 @@ import tv.ouya.console.api.OuyaController;
 
 public class ODK extends LoaderActivity
 {
-	private final String LOG_TAG = "ODK";
+	private static final String LOG_TAG = "ODK";
 
 	// stop the thread on exit
 	private static boolean m_waitToExit = true;
@@ -241,8 +241,13 @@ public class ODK extends LoaderActivity
 		Log.i(LOG_TAG, "OuyaPlugin_asyncSetDeveloperId developerId="+developerId);
     }
 
+	/*
     static {
-		//System.loadLibrary("libODK");
-		//System.loadLibrary("libodk_d_ext");
+
+		System.loadLibrary("marmaladeiap");
+
+		//System.loadLibrary("odk_ext");
+		System.loadLibrary("odk_d_ext");
     }
+    */
 }

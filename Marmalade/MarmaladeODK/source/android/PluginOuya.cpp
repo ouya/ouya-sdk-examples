@@ -74,6 +74,8 @@ namespace OuyaSDK
 
 		FindClass(env, "com/ODK/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
 		EXCEPTION_RETURN(env);
+
+		CallbackSingleton::GetInstance()->RegisterNativeMethods();
 	}
 
 	void PluginOuya::AsyncSetDeveloperId(const std::string& developerId)

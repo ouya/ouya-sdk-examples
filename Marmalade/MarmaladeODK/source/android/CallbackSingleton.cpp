@@ -4,6 +4,9 @@
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
 
+#include "s3eEdk.h"
+#include "s3eEdk_android.h"
+
 #include <android/log.h>
 #include <jni.h>
 #include <stdio.h>
@@ -47,6 +50,7 @@ namespace OuyaSDK
 
 	extern "C"
 	{
+		//com.ODK.CallbacksFetchGamerUUID.CallbacksFetchGamerUUIDOnSuccess
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
 		{
 			LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
@@ -320,6 +324,33 @@ namespace OuyaSDK
 			{
 				callback->OnCancel();
 			}
+		}
+	}
+
+	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string signature)
+	{
+		std::string msg = "Registering Native Method: methodName=";
+		msg.append(methodName);
+		msg.append(" signature=");
+		msg.append(signature);
+		LOGI(msg.c_str());
+	}
+
+	void CallbackSingleton::RegisterNativeMethods()
+	{
+		JNIEnv* env = s3eEdkJNIGetEnv();
+
+		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnSuccess", "(Ljava/lang/String;)V");
+
+		//Register the HelloNative method on the object
+		static const JNINativeMethod jnm = { "CallbacksFetchGamerUUIDOnSuccess", "(Ljava/lang/String;)V", (void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess };
+
+		// Find the class using the native
+		jclass CallerJavaClass = env->FindClass("com/ODK/CallbacksFetchGamerUUID");
+		if (env->RegisterNatives(CallerJavaClass, &jnm, 1))
+		{
+			LOGI("Could not register native method: CallbacksFetchGamerUUIDOnSuccess");
+			return;
 		}
 	}
 }

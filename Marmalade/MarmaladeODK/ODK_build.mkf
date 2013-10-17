@@ -56,11 +56,7 @@ if {{defined S3E_ANDROID}}
         (use_first_found, source/android, source/generic)
         ODK_platform.cpp
         #Add any android-specific files here
-		CallbacksFetchGamerUUID.cpp
 		CallbackSingleton.cpp
-		CallbacksRequestProducts.cpp
-		CallbacksRequestPurchase.cpp
-		CallbacksRequestReceipts.cpp
 		JSON.cpp
 		JsonUtil.cpp
 		JSONValue.cpp

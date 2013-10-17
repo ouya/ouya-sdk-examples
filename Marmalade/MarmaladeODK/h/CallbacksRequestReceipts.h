@@ -9,11 +9,11 @@ class CallbacksRequestReceipts
 {
 public:
 
-	void OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts);
+	virtual void OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts) = 0;
 
-	void OnFailure(int errorCode, const std::string& errorMessage);
+	virtual void OnFailure(int errorCode, const std::string& errorMessage) = 0;
 
-	void OnCancel();
+	virtual void OnCancel() = 0;
 };
 
 #endif

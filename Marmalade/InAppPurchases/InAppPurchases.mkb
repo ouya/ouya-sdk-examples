@@ -2,6 +2,14 @@ files
 {
 	Application.h
 	Application.cpp
+	ApplicationCallbacksFetchGamerUUID.h
+	ApplicationCallbacksFetchGamerUUID.cpp
+	ApplicationCallbacksRequestProducts.h
+	ApplicationCallbacksRequestProducts.cpp
+	ApplicationCallbacksRequestPurchase.h
+	ApplicationCallbacksRequestPurchase.cpp
+	ApplicationCallbacksRequestReceipts.h
+	ApplicationCallbacksRequestReceipts.cpp
 	Main.cpp
 	TextButton.h
 	TextButton.cpp

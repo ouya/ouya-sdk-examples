@@ -377,7 +377,7 @@ void UI::HandleInput()
 	}
 	else
 	{
-		IwTrace(DEFAULT, ("Can't find controller"));
+		//IwTrace(DEFAULT, ("Can't find controller"));
 	}
 }
 
