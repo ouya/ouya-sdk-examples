@@ -144,7 +144,7 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds)
+	void PluginOuya::AsyncOuyaRequestProducts(const std::vector<std::string>& productIds)
 	{
 		//LOGI("AsyncOuyaRequestProducts");
 
@@ -179,7 +179,7 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const std::string& purchasable)
+	void PluginOuya::AsyncOuyaRequestPurchase(const std::string& purchasable)
 	{
 		//LOGI("AsyncOuyaRequestPurchase");
 
@@ -204,7 +204,7 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts)
+	void PluginOuya::AsyncOuyaRequestReceipts()
 	{
 		//LOGI("AsyncOuyaRequestReceipts");
 

@@ -31,11 +31,11 @@ namespace OuyaSDK
 
 		void AsyncOuyaFetchGamerUUID();
 
-		void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds);
+		void AsyncOuyaRequestProducts(const std::vector<std::string>& productIds);
 
-		void AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const std::string& purchasable);
+		void AsyncOuyaRequestPurchase(const std::string& purchasable);
 
-		void AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts);
+		void AsyncOuyaRequestReceipts();
 
 	private:
 

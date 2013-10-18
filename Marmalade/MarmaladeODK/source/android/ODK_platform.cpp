@@ -215,6 +215,42 @@ void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback o
 	std::string msg = "OuyaPlugin_asyncOuyaRequestProducts: productsJson=";
 	msg.append(productsJson);
 	IwTrace(ODK, (msg.c_str()));
+
+	//convert JSON to product id array
+
+	// Parse example data
+	JSONValue* value = JSON::Parse(productsJson);
+
+	if (value == NULL)
+	{
+		IwTrace(ODK, ("Parsing JSON Failed"));
+		return;
+	}
+
+	if (!value->IsArray())
+	{
+		IwTrace(ODK, ("Parsing JSON Failed: Not an array"));
+		return;
+	}
+
+	// Retrieve the main object
+	JSONArray data = value->AsArray();
+
+	std::vector<std::string> productIds;
+
+	for (unsigned int i = 0; i < data.size(); i++)
+	{
+		if (data[i]->IsString())
+		{
+			const std::wstring wstr = data[i]->AsString();
+
+			std::string productId( wstr.begin(), wstr.end() );
+
+			productIds.push_back(productId);
+		}
+	}
+
+	g_pluginOuya.AsyncOuyaRequestProducts(productIds);
 }
 
 void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
@@ -224,9 +260,13 @@ void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eCallback on
 	std::string msg = "OuyaPlugin_asyncOuyaRequestPurchase: purchasable=";
 	msg.append(purchasable);
 	IwTrace(ODK, (msg.c_str()));
+
+	g_pluginOuya.AsyncOuyaRequestPurchase(purchasable);
 }
 
 void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
 	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestReceipts"));
+
+	g_pluginOuya.AsyncOuyaRequestReceipts();
 }
