@@ -29,7 +29,7 @@ namespace OuyaSDK
 
 		void AsyncSetDeveloperId(const std::string& developerId);
 
-		void AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
+		void AsyncOuyaFetchGamerUUID();
 
 		void AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds);
 

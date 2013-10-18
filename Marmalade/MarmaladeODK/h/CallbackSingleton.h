@@ -21,7 +21,6 @@ namespace OuyaSDK
 
 		void RegisterNativeMethods();
 
-		CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
 		CallbacksRequestProducts* m_callbacksRequestProducts;
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;

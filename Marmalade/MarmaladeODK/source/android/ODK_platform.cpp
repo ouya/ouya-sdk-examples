@@ -194,8 +194,17 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
     g_pluginOuya.AsyncSetDeveloperId(developerId);
 }
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback callbacksFetchGamerUUID)
 {
 	IwTrace(ODK, ("OuyaPlugin_asyncOuyaFetchGamerUUID"));
-    g_pluginOuya.AsyncOuyaFetchGamerUUID(callbacksFetchGamerUUID);
+
+	s3eEdkCallbacksRegister(
+	        S3E_EXT_ODK_HASH,
+	        S3E_ODK_CALLBACKS_MAX,
+	        event,
+	        callbacksFetchGamerUUID,
+	        NULL,
+        	S3E_FALSE);
+
+    g_pluginOuya.AsyncOuyaFetchGamerUUID();
 }

@@ -1,10 +1,6 @@
 #ifndef __UI_H__
 #define __UI_H__
 
-#include "ApplicationCallbacksFetchGamerUUID.h"
-#include "ApplicationCallbacksRequestProducts.h"
-#include "ApplicationCallbacksRequestPurchase.h"
-#include "ApplicationCallbacksRequestReceipts.h"
 #include "Product.h"
 #include "Receipt.h"
 #include "TextButton.h"
@@ -12,6 +8,11 @@
 
 #include <string>
 #include <vector>
+
+class CallbacksFetchGamerUUID;
+class CallbacksRequestProducts;
+class CallbacksRequestPurchase;
+class CallbacksRequestReceipts;
 
 class UI
 {
@@ -43,6 +44,8 @@ public:
 
 	void AddReceipt(OuyaSDK::Receipt receipt);
 
+	void RegisterCallbacks();
+
 private:
 
 	std::vector<std::string> m_productIds;
@@ -73,10 +76,10 @@ private:
 
 	TextButton* m_selectedButton;
 
-	ApplicationCallbacksFetchGamerUUID m_callbacksFetchGamerUUID;
-	ApplicationCallbacksRequestProducts m_callbacksRequestProducts;
-	ApplicationCallbacksRequestPurchase m_callbacksRequestPurchase;
-	ApplicationCallbacksRequestReceipts m_callbacksRequestReceipts;
+	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+	CallbacksRequestProducts* m_callbacksRequestProducts;
+	CallbacksRequestPurchase* m_callbacksRequestPurchase;
+	CallbacksRequestReceipts* m_callbacksRequestReceipts;
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();

@@ -84,10 +84,10 @@ static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
     s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 1, developerId);
 }
 
-static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
+static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eOdkFnCallbackType event, s3eCallback function)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaFetchGamerUUID"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 1, callbacksFetchGamerUUID);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 2, event, function);
 }
 
 #define OuyaController_startOfFrame OuyaController_startOfFrame_wrap

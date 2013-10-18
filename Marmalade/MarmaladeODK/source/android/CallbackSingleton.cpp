@@ -4,6 +4,7 @@
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
 
+#include "ODK_internal.h"
 #include "s3eEdk.h"
 #include "s3eEdk_android.h"
 
@@ -32,7 +33,6 @@ namespace OuyaSDK
 	{
 		CallbackSingleton::m_instance = this;
 
-		m_callbacksFetchGamerUUID = NULL;
 		m_callbacksRequestProducts = NULL;
 		m_callbacksRequestPurchase = NULL;
 		m_callbacksRequestReceipts = NULL;
@@ -61,11 +61,15 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
-			if (callback)
-			{
-				callback->OnSuccess(strGamerUUID);
-			}
+			//CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			//if (callback)
+			//{
+			//	callback->OnSuccess(strGamerUUID);
+			//}
+
+			LOGI("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");
+
+			s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
@@ -78,11 +82,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
-			if (callback)
-			{
-				callback->OnFailure(errorCode, strErrorMessage);
-			}
+			//CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			//if (callback)
+			//{
+			//	callback->OnFailure(errorCode, strErrorMessage);
+			//}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel(JNIEnv* env, jobject thiz)
@@ -93,11 +97,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel: Returned to C");
 			//LOGI(buffer);
 
-			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
-			if (callback)
-			{
-				callback->OnCancel();
-			}
+			//CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			//if (callback)
+			//{
+			//	callback->OnCancel();
+			//}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)

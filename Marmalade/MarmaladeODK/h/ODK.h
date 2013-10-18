@@ -26,8 +26,6 @@
 #include "CallbacksRequestProducts.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
-//#include "PluginOuya.h"
-#include "CallbackSingleton.h"
 
 #define	OuyaController_MAX_CONTROLLERS 	4
 
@@ -55,7 +53,23 @@
 #define	OuyaController_BUTTON_L2 		104
 #define	OuyaController_BUTTON_R2 		105
 #define	OuyaController_BUTTON_R3 		107
-#define	OuyaController_BUTTON_L3 		106
+#define	OuyaController_BUTTON_L3 		106	
+
+typedef enum s3eOdkFnCallbackType {
+	S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_FAILURE,
+	S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_CANCEL,    
+	S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_FAILURE,
+	S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_CANCEL,
+	S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_FAILURE,
+	S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_CANCEL,
+	S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_FAILURE,
+	S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_CANCEL,
+	S3E_ODK_CALLBACKS_MAX
+} s3eOdkFnCallbackType;
 // \cond HIDDEN_DEFINES
 S3E_BEGIN_C_DECL
 // \endcond
@@ -85,7 +99,7 @@ int OuyaController_getPlayerNum();
 
 void OuyaPlugin_asyncSetDeveloperId(const char* developerId);
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback function);
 
 S3E_END_C_DECL
 

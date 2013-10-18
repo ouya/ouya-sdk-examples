@@ -1,4 +1,8 @@
 #include "Application.h"
+#include "ApplicationCallbacksFetchGamerUUID.h"
+#include "ApplicationCallbacksRequestProducts.h"
+#include "ApplicationCallbacksRequestPurchase.h"
+#include "ApplicationCallbacksRequestReceipts.h"
 #include "CallbackSingleton.h"
 #include "Controller.h"
 #include "ODK.h"
@@ -15,21 +19,31 @@
 #include "s3e.h"
 #include "IwDebug.h"
 
-#define APP_NAME "inapppurchasenative-ui"
+/*
+S3E_API s3eResult s3eOdkRegister(s3eOdkFnCallbackType cbid, s3eCallback fn, void* userData)
+{
+}
+*/
 
-#define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
-											 APP_NAME, \
-											 __VA_ARGS__))
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,  \
-											 APP_NAME, \
-											 __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN,  \
-											 APP_NAME, \
-											 __VA_ARGS__))
+typedef struct s3eFetchGamerUuidSuccessEvent
+{
+	std::string m_data;
+} s3eFetchGamerUuidSuccessEvent;
+
+void FetchGamerUuidOnSuccess(s3eFetchGamerUuidSuccessEvent* event)
+{
+	IwTrace(DEFAULT, ("void FetchGamerUuidOnSuccess(s3eFetchGamerUuidSuccessEvent* event)"));
+	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnSuccess");
+}
 
 UI::UI()
 {
 	m_uiInitialized = false;
+
+	m_callbacksFetchGamerUUID = new ApplicationCallbacksFetchGamerUUID();
+	m_callbacksRequestProducts = new ApplicationCallbacksRequestProducts();
+	m_callbacksRequestPurchase = new ApplicationCallbacksRequestPurchase();
+	m_callbacksRequestReceipts = new ApplicationCallbacksRequestReceipts();
 
 	m_productIds.push_back("long_sword");
 	m_productIds.push_back("sharp_axe");
@@ -338,9 +352,10 @@ void UI::HandleInput()
 			{
 				if (m_selectedButton == &m_uiRequestGamerUUID)
 				{
+
 					SetMessage("Fetching gamer uuid...");
-					//Application::m_pluginOuya.AsyncOuyaFetchGamerUUID(&m_callbacksFetchGamerUUID);
-					OuyaPlugin_asyncOuyaFetchGamerUUID(&m_callbacksFetchGamerUUID);
+					//OuyaPlugin_asyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
+					OuyaPlugin_asyncOuyaFetchGamerUUID(S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, (s3eCallback)FetchGamerUuidOnSuccess);
 				}
 				if (m_selectedButton == &m_uiRequestProducts)
 				{
@@ -517,4 +532,9 @@ bool UI::ButtonReleased(int keyCode)
 			return false;
 		}
 	}
+}
+
+void UI::RegisterCallbacks()
+{
+	//s3eOdkRegister(S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, (s3eCallback)FetchGamerUuidOnSuccess, NULL);
 }

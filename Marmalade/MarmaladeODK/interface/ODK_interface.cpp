@@ -30,7 +30,7 @@ typedef       bool(*OuyaController_buttonReleasedThisFrame_t)(int button);
 typedef       bool(*OuyaController_buttonChangedThisFrame_t)(int button);
 typedef        int(*OuyaController_getPlayerNum_t)();
 typedef       void(*OuyaPlugin_asyncSetDeveloperId_t)(const char* developerId);
-typedef       void(*OuyaPlugin_asyncOuyaFetchGamerUUID_t)(CallbacksFetchGamerUUID* callbacksFetchGamerUUID);
+typedef       void(*OuyaPlugin_asyncOuyaFetchGamerUUID_t)(s3eOdkFnCallbackType event, s3eCallback function);
 
 /**
  * struct that gets filled in by ODKRegister
@@ -293,7 +293,7 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
     return;
 }
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback function)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[10] func: OuyaPlugin_asyncOuyaFetchGamerUUID"));
 
@@ -304,7 +304,7 @@ void OuyaPlugin_asyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchG
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncOuyaFetchGamerUUID(callbacksFetchGamerUUID);
+    g_Ext.m_OuyaPlugin_asyncOuyaFetchGamerUUID(event, function);
 
 #ifdef LOADER_CALL
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);

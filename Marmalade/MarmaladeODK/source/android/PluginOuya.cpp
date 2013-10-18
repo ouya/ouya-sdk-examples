@@ -123,12 +123,8 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaFetchGamerUUID(CallbacksFetchGamerUUID* callbacksFetchGamerUUID)
+	void PluginOuya::AsyncOuyaFetchGamerUUID()
 	{
-		CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
-
-		//set the callback singleton here
-
 		//LOGI("AsyncOuyaFetchGamerUUID");
 
 		JNIEnv* env = s3eEdkJNIGetEnv();
