@@ -78,12 +78,15 @@ namespace OuyaSDK
 
 			LOGI("Registering Callback: s3eEdkCallbacksRegister(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");
 
+			s3eFetchGamerUuidSuccessEvent event;
+			event.m_gamerUUID = strGamerUUID;
+
 			s3eEdkCallbacksRegister(
 					S3E_EXT_ODK_HASH,
 					S3E_ODK_CALLBACKS_MAX,
 					S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
 					OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess,
-					NULL,
+					&event,
 					S3E_FALSE);
 
 			LOGI("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");

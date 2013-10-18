@@ -44,7 +44,10 @@ public:
 
 	void AddReceipt(OuyaSDK::Receipt receipt);
 
-	void RegisterCallbacks();
+	ApplicationCallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+	ApplicationCallbacksRequestProducts* m_callbacksRequestProducts;
+	ApplicationCallbacksRequestPurchase* m_callbacksRequestPurchase;
+	ApplicationCallbacksRequestReceipts* m_callbacksRequestReceipts;
 
 private:
 
@@ -75,11 +78,6 @@ private:
 	TextLabel m_uiLabelMessage;
 
 	TextButton* m_selectedButton;
-
-	ApplicationCallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
-	ApplicationCallbacksRequestProducts* m_callbacksRequestProducts;
-	ApplicationCallbacksRequestPurchase* m_callbacksRequestPurchase;
-	ApplicationCallbacksRequestReceipts* m_callbacksRequestReceipts;
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();

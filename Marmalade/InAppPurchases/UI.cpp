@@ -19,31 +19,17 @@
 #include "s3e.h"
 #include "IwDebug.h"
 
-/*
-S3E_API s3eResult s3eOdkRegister(s3eOdkFnCallbackType cbid, s3eCallback fn, void* userData)
-{
-}
-*/
-
-typedef struct s3eFetchGamerUuidSuccessEvent
-{
-	std::string m_gamerUUID;
-} s3eFetchGamerUuidSuccessEvent;
-
-typedef struct s3eFetchGamerUuidFailureEvent
-{
-	int m_errorCode;
-	std::string m_errorMessage;
-} s3eFetchGamerUuidFailureEvent;
-
-typedef struct s3eFetchGamerUuidCancelEvent
-{
-} s3eFetchGamerUuidCancelEvent;
-
 void FetchGamerUuidOnSuccess(s3eFetchGamerUuidSuccessEvent* event)
 {
 	IwTrace(DEFAULT, ("void FetchGamerUuidOnSuccess(event)"));
-	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnSuccess");
+	if (event)
+	{
+		Application::m_ui.m_callbacksFetchGamerUUID->OnSuccess(event->m_gamerUUID);
+	}
+	else
+	{
+		Application::m_ui.m_callbacksFetchGamerUUID->OnFailure(-1, "Success event is null");
+	}
 }
 
 void FetchGamerUuidOnFailure(s3eFetchGamerUuidFailureEvent* event)
@@ -557,9 +543,4 @@ bool UI::ButtonReleased(int keyCode)
 			return false;
 		}
 	}
-}
-
-void UI::RegisterCallbacks()
-{
-	//s3eOdkRegister(S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, (s3eCallback)FetchGamerUuidOnSuccess, NULL);
 }

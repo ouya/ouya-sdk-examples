@@ -15,28 +15,8 @@ static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
-const char* g_version = "Mamalade Version: 043";
+const char* g_version = "Mamalade Version: 046";
 
-
-/*
-void registerInput()
-{
-	// Register pointer event handler
-    s3ePointerRegister(S3E_POINTER_BUTTON_EVENT, &ButtonEventHandler, NULL);
-
-    // Register keyboard event handler
-    s3eKeyboardRegister(S3E_KEYBOARD_KEY_EVENT, &KeyEventHandler, NULL);
-
-	// Register motion event handler
-	s3ePointerRegister(S3E_POINTER_MOTION_EVENT, &MotionEventHandler, NULL);
-
-	// Register touch event handler
-	s3ePointerRegister(S3E_POINTER_TOUCH_EVENT, &TouchEventHandler, NULL);
-
-	// Register touch motion event handler
-	s3ePointerRegister(S3E_POINTER_TOUCH_MOTION_EVENT, &TouchMotionEventHandler, NULL);
-}
-*/
 
 void render()
 {
@@ -64,13 +44,10 @@ int main()
 
 	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 
-	Application::m_ui.RegisterCallbacks();
-
 	IwGxInit();
 	IwGxSetColClear(0, 0, 0xff, 0xff);
 	IwResManagerInit();
 	Iw2DInit();
-	//registerInput();
 
     const int textWidth = s3eDebugGetInt(S3E_DEBUG_FONT_SIZE_WIDTH);
     const int textHeight = s3eDebugGetInt(S3E_DEBUG_FONT_SIZE_HEIGHT);
@@ -100,120 +77,3 @@ int main()
 	IwGxTerminate();
 	return 0;
 }
-
-/*
-static int32 ButtonEventHandler(void* systemData, void* userData)
-{
-	//sprintf(g_StatusString, "ButtonEventHandler");
-
-    // Wake up and take control from the OS
-    s3eDeviceUnYield();
-
-    s3ePointerUpdate();
-
-    // Read in the type of key that has been pressed
-    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
-    s3eKey keyPressed = (*pkeyPressed).m_Key;
-
-	char buffer[256];
-	sprintf(buffer, "ButtonEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(ODK, (buffer));
-
-	Application::m_ui.HandleInput();
-	render();
-
-    return 0;
-}
-
-static int32 KeyEventHandler(void* systemData, void* userData)
-{
-	//sprintf(g_StatusString, "KeyEventHandler");
-
-    // Wake up and take control from the OS
-    s3eDeviceUnYield();
-
-    s3ePointerUpdate();
-
-    // Read in the type of key that has been pressed
-    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
-    s3eKey keyPressed = (*pkeyPressed).m_Key;
-
-	char buffer[256];
-	sprintf(buffer, "KeyEventHandler: Key event detected. key=%d pressed=%s", keyPressed, (*pkeyPressed).m_Pressed ? "true" : "false");	
-	IwTrace(DEFAULT, (buffer));
-
-	Application::m_ui.HandleInput();
-	render();
-
-    return 0;
-}
-
-static int32 MotionEventHandler(void* systemData, void* userData)
-{
-	//sprintf(g_StatusString, "MotionEventHandler");
-
-	// Wake up and take control from the OS
-    s3eDeviceUnYield();
-
-    s3ePointerUpdate();
-
-    // Read in the type of key that has been pressed
-    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
-    s3eKey keyPressed = (*pkeyPressed).m_Key;
-
-	char buffer[256];
-	sprintf(buffer, "MotionEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(DEFAULT, (buffer));
-
-	Application::m_ui.HandleInput();
-	render();
-
-    return 0;
-}
-
-static int32 TouchEventHandler(void* systemData, void* userData)
-{
-	//sprintf(g_StatusString, "TouchEventHandler");
-
-	// Wake up and take control from the OS
-    s3eDeviceUnYield();
-
-    s3ePointerUpdate();
-
-    // Read in the type of key that has been pressed
-    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
-    s3eKey keyPressed = (*pkeyPressed).m_Key;
-
-	char buffer[256];
-	sprintf(buffer, "TouchEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(DEFAULT, (buffer));
-
-	Application::m_ui.HandleInput();
-	render();
-
-    return 0;
-}
-
-static int32 TouchMotionEventHandler(void* systemData, void* userData)
-{
-	//sprintf(g_StatusString, "TouchMotionEventHandler");
-
-	// Wake up and take control from the OS
-    s3eDeviceUnYield();
-
-    s3ePointerUpdate();
-
-    // Read in the type of key that has been pressed
-    s3eKeyboardEvent* pkeyPressed = (s3eKeyboardEvent*)systemData;
-    s3eKey keyPressed = (*pkeyPressed).m_Key;
-
-	char buffer[256];
-	sprintf(buffer, "TouchMotionEventHandler: Key event detected. key=%d", keyPressed);
-	IwTrace(DEFAULT, (buffer));
-
-	Application::m_ui.HandleInput();
-	render();
-
-    return 0;
-}
-*/
