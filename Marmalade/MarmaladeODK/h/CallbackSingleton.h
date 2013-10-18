@@ -14,6 +14,7 @@ namespace OuyaSDK
 		static CallbackSingleton* m_instance;
 
 		CallbackSingleton();
+		~CallbackSingleton();
 
 	public:
 
@@ -21,6 +22,7 @@ namespace OuyaSDK
 
 		void RegisterNativeMethods();
 
+		CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
 		CallbacksRequestProducts* m_callbacksRequestProducts;
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;

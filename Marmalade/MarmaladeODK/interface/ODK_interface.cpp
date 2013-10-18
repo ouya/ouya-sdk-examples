@@ -30,7 +30,10 @@ typedef       bool(*OuyaController_buttonReleasedThisFrame_t)(int button);
 typedef       bool(*OuyaController_buttonChangedThisFrame_t)(int button);
 typedef        int(*OuyaController_getPlayerNum_t)();
 typedef       void(*OuyaPlugin_asyncSetDeveloperId_t)(const char* developerId);
-typedef       void(*OuyaPlugin_asyncOuyaFetchGamerUUID_t)(s3eOdkFnCallbackType event, s3eCallback function);
+typedef       void(*OuyaPlugin_asyncOuyaFetchGamerUUID_t)(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaRequestProducts_t)(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaRequestPurchase_t)(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaRequestReceipts_t)(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
 /**
  * struct that gets filled in by ODKRegister
@@ -48,6 +51,9 @@ typedef struct ODKFuncs
     OuyaController_getPlayerNum_t m_OuyaController_getPlayerNum;
     OuyaPlugin_asyncSetDeveloperId_t m_OuyaPlugin_asyncSetDeveloperId;
     OuyaPlugin_asyncOuyaFetchGamerUUID_t m_OuyaPlugin_asyncOuyaFetchGamerUUID;
+    OuyaPlugin_asyncOuyaRequestProducts_t m_OuyaPlugin_asyncOuyaRequestProducts;
+    OuyaPlugin_asyncOuyaRequestPurchase_t m_OuyaPlugin_asyncOuyaRequestPurchase;
+    OuyaPlugin_asyncOuyaRequestReceipts_t m_OuyaPlugin_asyncOuyaRequestReceipts;
 } ODKFuncs;
 
 static ODKFuncs g_Ext;
@@ -293,7 +299,7 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
     return;
 }
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback function)
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[10] func: OuyaPlugin_asyncOuyaFetchGamerUUID"));
 
@@ -304,7 +310,67 @@ void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback 
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncOuyaFetchGamerUUID(event, function);
+    g_Ext.m_OuyaPlugin_asyncOuyaFetchGamerUUID(event, onSuccess, onFailure, onCancel);
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return;
+}
+
+void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[11] func: OuyaPlugin_asyncOuyaRequestProducts"));
+
+    if (!_extLoad())
+        return;
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    g_Ext.m_OuyaPlugin_asyncOuyaRequestProducts(products, length, event, onSuccess, onFailure, onCancel);
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return;
+}
+
+void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[12] func: OuyaPlugin_asyncOuyaRequestPurchase"));
+
+    if (!_extLoad())
+        return;
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    g_Ext.m_OuyaPlugin_asyncOuyaRequestPurchase(purchasable, event, onSuccess, onFailure, onCancel);
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return;
+}
+
+void OuyaPlugin_asyncOuyaRequestReceipts(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[13] func: OuyaPlugin_asyncOuyaRequestReceipts"));
+
+    if (!_extLoad())
+        return;
+
+#ifdef LOADER_CALL
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    g_Ext.m_OuyaPlugin_asyncOuyaRequestReceipts(event, onSuccess, onFailure, onCancel);
 
 #ifdef LOADER_CALL
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);

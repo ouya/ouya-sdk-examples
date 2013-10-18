@@ -7,6 +7,11 @@
  * be overwritten (unless --force is specified) and is intended to be modified.
  */
 #include "ODK_internal.h"
+#include "CallbacksFetchGamerUUID.h"
+#include "CallbackSingleton.h"
+#include "CallbacksRequestProducts.h"
+#include "CallbacksRequestPurchase.h"
+#include "CallbacksRequestReceipts.h"
 #include "PluginOuya.h"
 
 #include "s3eEdk.h"
@@ -194,17 +199,28 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
     g_pluginOuya.AsyncSetDeveloperId(developerId);
 }
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback callbacksFetchGamerUUID)
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
-	IwTrace(ODK, ("OuyaPlugin_asyncOuyaFetchGamerUUID"));
+	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaFetchGamerUUID"));
 
-	s3eEdkCallbacksRegister(
-	        S3E_EXT_ODK_HASH,
-	        S3E_ODK_CALLBACKS_MAX,
-	        event,
-	        callbacksFetchGamerUUID,
-	        NULL,
-        	S3E_FALSE);
+	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess = onSuccess;
+	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onFailure = onFailure;
+	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onCancel = onCancel;
 
     g_pluginOuya.AsyncOuyaFetchGamerUUID();
+}
+
+void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestProducts"));
+}
+
+void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestPurchase"));
+}
+
+void OuyaPlugin_asyncOuyaRequestReceipts(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestReceipts"));
 }

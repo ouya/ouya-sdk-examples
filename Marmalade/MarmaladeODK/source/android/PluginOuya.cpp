@@ -146,8 +146,6 @@ namespace OuyaSDK
 
 	void PluginOuya::AsyncOuyaRequestProducts(CallbacksRequestProducts* callbacksRequestProducts, const std::vector<std::string>& productIds)
 	{
-		CallbackSingleton::GetInstance()->m_callbacksRequestProducts = callbacksRequestProducts;
-
 		//LOGI("AsyncOuyaRequestProducts");
 
 		JNIEnv* env = s3eEdkJNIGetEnv();
@@ -183,8 +181,6 @@ namespace OuyaSDK
 
 	void PluginOuya::AsyncOuyaRequestPurchase(CallbacksRequestPurchase* callbacksRequestPurchase, const std::string& purchasable)
 	{
-		CallbackSingleton::GetInstance()->m_callbacksRequestPurchase = callbacksRequestPurchase;
-
 		//LOGI("AsyncOuyaRequestPurchase");
 
 		JNIEnv* env = s3eEdkJNIGetEnv();
@@ -210,8 +206,6 @@ namespace OuyaSDK
 
 	void PluginOuya::AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacksRequestReceipts)
 	{
-		CallbackSingleton::GetInstance()->m_callbacksRequestReceipts = callbacksRequestReceipts;
-
 		//LOGI("AsyncOuyaRequestReceipts");
 
 		JNIEnv* env = s3eEdkJNIGetEnv();

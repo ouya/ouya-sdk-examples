@@ -27,13 +27,35 @@ S3E_API s3eResult s3eOdkRegister(s3eOdkFnCallbackType cbid, s3eCallback fn, void
 
 typedef struct s3eFetchGamerUuidSuccessEvent
 {
-	std::string m_data;
+	std::string m_gamerUUID;
 } s3eFetchGamerUuidSuccessEvent;
+
+typedef struct s3eFetchGamerUuidFailureEvent
+{
+	int m_errorCode;
+	std::string m_errorMessage;
+} s3eFetchGamerUuidFailureEvent;
+
+typedef struct s3eFetchGamerUuidCancelEvent
+{
+} s3eFetchGamerUuidCancelEvent;
 
 void FetchGamerUuidOnSuccess(s3eFetchGamerUuidSuccessEvent* event)
 {
-	IwTrace(DEFAULT, ("void FetchGamerUuidOnSuccess(s3eFetchGamerUuidSuccessEvent* event)"));
+	IwTrace(DEFAULT, ("void FetchGamerUuidOnSuccess(event)"));
 	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnSuccess");
+}
+
+void FetchGamerUuidOnFailure(s3eFetchGamerUuidFailureEvent* event)
+{
+	IwTrace(DEFAULT, ("void FetchGamerUuidOnFailure(event)"));
+	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnFailure");
+}
+
+void FetchGamerUuidOnCancel(s3eFetchGamerUuidSuccessEvent* event)
+{
+	IwTrace(DEFAULT, ("void FetchGamerUuidOnCancel(event)"));
+	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnCancel");
 }
 
 UI::UI()
@@ -355,7 +377,10 @@ void UI::HandleInput()
 
 					SetMessage("Fetching gamer uuid...");
 					//OuyaPlugin_asyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
-					OuyaPlugin_asyncOuyaFetchGamerUUID(S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, (s3eCallback)FetchGamerUuidOnSuccess);
+					OuyaPlugin_asyncOuyaFetchGamerUUID(S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
+						(s3eCallback)FetchGamerUuidOnSuccess,
+						(s3eCallback)FetchGamerUuidOnFailure,
+						(s3eCallback)FetchGamerUuidOnCancel);
 				}
 				if (m_selectedButton == &m_uiRequestProducts)
 				{

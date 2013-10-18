@@ -22,11 +22,6 @@
 #include <string>
 #include <vector>
 
-#include "CallbacksFetchGamerUUID.h"
-#include "CallbacksRequestProducts.h"
-#include "CallbacksRequestPurchase.h"
-#include "CallbacksRequestReceipts.h"
-
 #define	OuyaController_MAX_CONTROLLERS 	4
 
 #define	OuyaController_AXIS_LS_X  		0
@@ -99,7 +94,13 @@ int OuyaController_getPlayerNum();
 
 void OuyaPlugin_asyncSetDeveloperId(const char* developerId);
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback function);
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+
+void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+
+void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+
+void OuyaPlugin_asyncOuyaRequestReceipts(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
 S3E_END_C_DECL
 

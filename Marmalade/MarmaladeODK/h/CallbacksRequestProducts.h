@@ -9,11 +9,11 @@ class CallbacksRequestProducts
 {
 public:
 
-	virtual void OnSuccess(const std::vector<OuyaSDK::Product>& products) = 0;
+	void OnSuccess(const std::vector<OuyaSDK::Product>& products);
 
-	virtual void OnFailure(int errorCode, const std::string& errorMessage) = 0;
+	void OnFailure(int errorCode, const std::string& errorMessage);
 
-	virtual void OnCancel() = 0;
+	void OnCancel();
 };
 
 #endif

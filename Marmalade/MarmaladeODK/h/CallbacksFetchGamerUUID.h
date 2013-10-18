@@ -1,17 +1,24 @@
 #ifndef __CALLBACKS_FETCH_GAMER_UUID_H__
 #define __CALLBACKS_FETCH_GAMER_UUID_H__
 
+#include "s3eEdk.h"
+#include "s3eEdk_android.h"
+
 #include <string>
 
 class CallbacksFetchGamerUUID
 {
 public:
 
-	virtual void OnSuccess(const std::string& gamerUUID) = 0;
+	void OnSuccess(const std::string& gamerUUID);
 
-	virtual void OnFailure(int errorCode, const std::string& errorMessage) = 0;
+	void OnFailure(int errorCode, const std::string& errorMessage);
 
-	virtual void OnCancel() = 0;
+	void OnCancel();
+
+	s3eCallback m_onSuccess;
+	s3eCallback m_onFailure;
+	s3eCallback m_onCancel;
 };
 
 #endif

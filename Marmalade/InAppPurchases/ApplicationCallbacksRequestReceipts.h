@@ -1,18 +1,20 @@
 #ifndef __APPLICATTON_CALLBACKS_REQUEST_RECEIPTS_H__
 #define __APPLICATTON_CALLBACKS_REQUEST_RECEIPTS_H__
 
-#include "CallbacksRequestReceipts.h"
 #include "Receipt.h"
 
-class ApplicationCallbacksRequestReceipts : public CallbacksRequestReceipts
+#include <string>
+#include <vector>
+
+class ApplicationCallbacksRequestReceipts
 {
 public:
 
-	virtual void OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts);
+	void OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts);
 
-	virtual void OnFailure(int errorCode, const std::string& errorMessage);
+	void OnFailure(int errorCode, const std::string& errorMessage);
 
-	virtual void OnCancel();
+	void OnCancel();
 };
 
 #endif

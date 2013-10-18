@@ -9,10 +9,10 @@
 #include <string>
 #include <vector>
 
-class CallbacksFetchGamerUUID;
-class CallbacksRequestProducts;
-class CallbacksRequestPurchase;
-class CallbacksRequestReceipts;
+class ApplicationCallbacksFetchGamerUUID;
+class ApplicationCallbacksRequestProducts;
+class ApplicationCallbacksRequestPurchase;
+class ApplicationCallbacksRequestReceipts;
 
 class UI
 {
@@ -76,10 +76,10 @@ private:
 
 	TextButton* m_selectedButton;
 
-	CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
-	CallbacksRequestProducts* m_callbacksRequestProducts;
-	CallbacksRequestPurchase* m_callbacksRequestPurchase;
-	CallbacksRequestReceipts* m_callbacksRequestReceipts;
+	ApplicationCallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+	ApplicationCallbacksRequestProducts* m_callbacksRequestProducts;
+	ApplicationCallbacksRequestPurchase* m_callbacksRequestPurchase;
+	ApplicationCallbacksRequestReceipts* m_callbacksRequestReceipts;
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();

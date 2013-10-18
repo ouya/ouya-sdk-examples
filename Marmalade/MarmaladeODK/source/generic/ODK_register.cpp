@@ -84,10 +84,28 @@ static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
     s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 1, developerId);
 }
 
-static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eOdkFnCallbackType event, s3eCallback function)
+static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaFetchGamerUUID"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 2, event, function);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 4, event, onSuccess, onFailure, onCancel);
+}
+
+static void OuyaPlugin_asyncOuyaRequestProducts_wrap(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestProducts"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestProducts, 6, products, length, event, onSuccess, onFailure, onCancel);
+}
+
+static void OuyaPlugin_asyncOuyaRequestPurchase_wrap(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestPurchase"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestPurchase, 5, purchasable, event, onSuccess, onFailure, onCancel);
+}
+
+static void OuyaPlugin_asyncOuyaRequestReceipts_wrap(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestReceipts"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestReceipts, 4, event, onSuccess, onFailure, onCancel);
 }
 
 #define OuyaController_startOfFrame OuyaController_startOfFrame_wrap
@@ -101,13 +119,16 @@ static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eOdkFnCallbackType event, 
 #define OuyaController_getPlayerNum OuyaController_getPlayerNum_wrap
 #define OuyaPlugin_asyncSetDeveloperId OuyaPlugin_asyncSetDeveloperId_wrap
 #define OuyaPlugin_asyncOuyaFetchGamerUUID OuyaPlugin_asyncOuyaFetchGamerUUID_wrap
+#define OuyaPlugin_asyncOuyaRequestProducts OuyaPlugin_asyncOuyaRequestProducts_wrap
+#define OuyaPlugin_asyncOuyaRequestPurchase OuyaPlugin_asyncOuyaRequestPurchase_wrap
+#define OuyaPlugin_asyncOuyaRequestReceipts OuyaPlugin_asyncOuyaRequestReceipts_wrap
 
 #endif
 
 void ODKRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[11];
+    void* funcPtrs[14];
     funcPtrs[0] = (void*)OuyaController_startOfFrame;
     funcPtrs[1] = (void*)OuyaController_selectControllerByPlayer;
     funcPtrs[2] = (void*)OuyaController_selectControllerByDeviceID;
@@ -119,11 +140,14 @@ void ODKRegisterExt()
     funcPtrs[8] = (void*)OuyaController_getPlayerNum;
     funcPtrs[9] = (void*)OuyaPlugin_asyncSetDeveloperId;
     funcPtrs[10] = (void*)OuyaPlugin_asyncOuyaFetchGamerUUID;
+    funcPtrs[11] = (void*)OuyaPlugin_asyncOuyaRequestProducts;
+    funcPtrs[12] = (void*)OuyaPlugin_asyncOuyaRequestPurchase;
+    funcPtrs[13] = (void*)OuyaPlugin_asyncOuyaRequestReceipts;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[11] = { 0 };
+    int flags[14] = { 0 };
 
     /*
      * Register the extension
