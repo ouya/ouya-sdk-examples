@@ -19,31 +19,6 @@
 #include "s3e.h"
 #include "IwDebug.h"
 
-void FetchGamerUuidOnSuccess(s3eFetchGamerUuidSuccessEvent* event)
-{
-	IwTrace(DEFAULT, ("void FetchGamerUuidOnSuccess(event)"));
-	if (event)
-	{
-		Application::m_ui.m_callbacksFetchGamerUUID->OnSuccess(event->m_gamerUUID);
-	}
-	else
-	{
-		Application::m_ui.m_callbacksFetchGamerUUID->OnFailure(-1, "Success event is null");
-	}
-}
-
-void FetchGamerUuidOnFailure(s3eFetchGamerUuidFailureEvent* event)
-{
-	IwTrace(DEFAULT, ("void FetchGamerUuidOnFailure(event)"));
-	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnFailure");
-}
-
-void FetchGamerUuidOnCancel(s3eFetchGamerUuidSuccessEvent* event)
-{
-	IwTrace(DEFAULT, ("void FetchGamerUuidOnCancel(event)"));
-	Application::m_ui.SetMessage("Hit Callback FetchGamerUuidOnCancel");
-}
-
 UI::UI()
 {
 	m_uiInitialized = false;
@@ -362,16 +337,44 @@ void UI::HandleInput()
 				{
 
 					SetMessage("Fetching gamer uuid...");
-					//OuyaPlugin_asyncOuyaFetchGamerUUID(m_callbacksFetchGamerUUID);
-					OuyaPlugin_asyncOuyaFetchGamerUUID(S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
-						(s3eCallback)FetchGamerUuidOnSuccess,
-						(s3eCallback)FetchGamerUuidOnFailure,
-						(s3eCallback)FetchGamerUuidOnCancel);
+					OuyaPlugin_asyncOuyaFetchGamerUUID(
+						Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
 				}
 				if (m_selectedButton == &m_uiRequestProducts)
 				{
 					SetMessage("Requesting products...");
 					//Application::m_pluginOuya.AsyncOuyaRequestProducts(&m_callbacksRequestProducts, m_productIds);
+					
+					// prepare json
+					std::string productsJson = "[";
+
+					int index = 0;
+					for (std::vector<std::string>::iterator iter = m_productIds.begin(); iter != m_productIds.end(); ++iter)
+					{
+						std::string productId = *iter;
+						if (index == 0)
+						{
+							productsJson.append("\"");
+						}
+						else
+						{
+							productsJson.append(", \"");
+						}
+						productsJson.append(productId);
+						productsJson.append("\"");
+						++index;
+					}
+
+					productsJson.append("]");
+
+					IwTrace(DEFAULT, (productsJson.c_str()));
+
+					OuyaPlugin_asyncOuyaRequestProducts(productsJson.c_str(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
 				}
 				if (m_selectedButton == &m_uiRequestPurchase)
 				{
@@ -390,6 +393,11 @@ void UI::HandleInput()
 						{
 							SetMessage("Requesting purchase...");
 							//Application::m_pluginOuya.AsyncOuyaRequestPurchase(&m_callbacksRequestPurchase, product->Identifier);
+
+							OuyaPlugin_asyncOuyaRequestPurchase(product->Identifier.c_str(),
+								Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
+								Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
+								Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
 						}
 					}
 				}
@@ -397,6 +405,10 @@ void UI::HandleInput()
 				{
 					SetMessage("Requesting receipts...");
 					//Application::m_pluginOuya.AsyncOuyaRequestReceipts(&m_callbacksRequestReceipts);
+					OuyaPlugin_asyncOuyaRequestReceipts(
+						Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
+						Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
 				}
 			}
 		}

@@ -3,9 +3,17 @@
 
 #include <string>
 
+class s3eFetchGamerUuidSuccessEvent;
+
 class ApplicationCallbacksFetchGamerUUID
 {
 public:
+	
+	s3eCallback GetSuccessEvent();
+
+	s3eCallback GetFailureEvent();
+
+	s3eCallback GetCancelEvent();
 
 	void OnSuccess(const std::string& gamerUUID);
 
