@@ -6,7 +6,6 @@
 #include "s3eEdk_android.h"
 #include "IwDebug.h"
 
-#include <android/log.h>
 #include <stdio.h>
 
 void CallbacksFetchGamerUUID::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
@@ -49,8 +48,6 @@ void CallbacksFetchGamerUUID::OnSuccess(const std::string& gamerUUID)
 	//char buffer[256];
 	//sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
 	//IwTrace(ODK, (buffer));
-
-	//IwTrace(ODK, ("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
 
 	s3eFetchGamerUuidSuccessEvent event;
 	sprintf(event.m_gamerUUID, "%s", gamerUUID.c_str());

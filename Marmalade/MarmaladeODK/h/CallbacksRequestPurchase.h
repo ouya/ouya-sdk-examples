@@ -44,6 +44,8 @@ private:
 	s3eRequestPurchaseSuccessEvent m_dataRequestPurchaseSuccessEvent;
 	s3eRequestPurchaseFailureEvent m_dataRequestPurchaseFailureEvent;
 	s3eRequestPurchaseCancelEvent m_dataRequestPurchaseCancelEvent;
+
+	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
 };
 
 #endif

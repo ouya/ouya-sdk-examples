@@ -1,20 +1,47 @@
 #include "CallbacksRequestPurchase.h"
 #include "CallbackSingleton.h"
 
-#include <android/log.h>
+#include "ODK_internal.h"
+#include "s3eEdk.h"
+#include "s3eEdk_android.h"
+#include "IwDebug.h"
+
 #include <stdio.h>
 
-#define APP_NAME "MarmaladeODK_CallbacksRequestPurchase"
+void CallbacksRequestPurchase::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
+{
+	if (*savedCallback)
+	{
+		//IwTrace(ODK, ("Unregistering Callback"));
 
-#define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG,  \
-											 APP_NAME, \
-											 __VA_ARGS__))
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,  \
-											 APP_NAME, \
-											 __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN,  \
-											 APP_NAME, \
-											 __VA_ARGS__))
+		s3eEdkCallbacksUnRegister(
+				S3E_EXT_ODK_HASH,
+				S3E_ODK_CALLBACKS_MAX,
+				callbackType,
+				*savedCallback,
+				NULL);
+		*savedCallback = NULL;
+	}
+
+	*savedCallback = callback;
+
+	//IwTrace(ODK, ("Registering Callback"));
+
+	s3eEdkCallbacksRegister(
+			S3E_EXT_ODK_HASH,
+			S3E_ODK_CALLBACKS_MAX,
+			callbackType,
+			*savedCallback,
+			NULL,
+			S3E_FALSE);
+}
+
+void CallbacksRequestPurchase::RegisterCallbacks(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+	RegisterCallback(onSuccess, &m_onSuccess, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_SUCCESS);
+	RegisterCallback(onFailure, &m_onFailure, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_FAILURE);
+	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_CANCEL);
+}
 
 void CallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
 {

@@ -44,6 +44,8 @@ private:
 	s3eRequestReceiptsSuccessEvent m_dataRequestReceiptsSuccessEvent;
 	s3eRequestReceiptsFailureEvent m_dataRequestReceiptsFailureEvent;
 	s3eRequestReceiptsCancelEvent m_dataRequestReceiptsCancelEvent;
+
+	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
 };
 
 #endif
