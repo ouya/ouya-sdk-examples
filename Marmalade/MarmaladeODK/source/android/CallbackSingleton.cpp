@@ -79,7 +79,7 @@ namespace OuyaSDK
 			LOGI("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");
 
 			s3eFetchGamerUuidSuccessEvent event;
-			event.m_gamerUUID = strGamerUUID.c_str();
+			sprintf(event.m_gamerUUID, "%s", strGamerUUID.c_str());
 
 			s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, &event);
 		}

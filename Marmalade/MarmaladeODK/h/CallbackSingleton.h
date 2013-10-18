@@ -10,7 +10,7 @@ class CallbacksRequestReceipts;
 
 typedef struct s3eFetchGamerUuidSuccessEvent
 {
-	const char* m_gamerUUID;
+	char m_gamerUUID[256];
 } s3eFetchGamerUuidSuccessEvent;
 
 typedef struct s3eFetchGamerUuidFailureEvent
