@@ -10,9 +10,9 @@ void ApplicationCallbacksFetchGamerUUID::OnSuccess(const std::string& gamerUUID)
 {
 	IwTrace(DEFAULT, ("OnSuccess"));
 
-	//char buffer[256];
-	//sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
-	//IwTrace(DEFAULT, ("OnSuccess"));
+	char buffer[256];
+	sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
+	IwTrace(DEFAULT, (buffer));
 
 	Application::m_ui.SetMessage("ApplicationCallbacksFetchGamerUUID::OnSuccess");
 	Application::m_ui.SetGamerUUID(gamerUUID);

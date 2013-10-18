@@ -203,9 +203,32 @@ void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback 
 {
 	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaFetchGamerUUID"));
 
+	if (OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess)
+	{
+		IwTrace(ODK, ("Unregistering Callback: s3eEdkCallbacksRegister(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
+
+		s3eEdkCallbacksUnRegister(
+				S3E_EXT_ODK_HASH,
+				S3E_ODK_CALLBACKS_MAX,
+				S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
+				OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess,
+			NULL);
+		OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess = NULL;
+	}
+
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess = onSuccess;
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onFailure = onFailure;
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onCancel = onCancel;
+
+	IwTrace(ODK, ("Registering Callback: s3eEdkCallbacksRegister(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
+
+	s3eEdkCallbacksRegister(
+			S3E_EXT_ODK_HASH,
+			S3E_ODK_CALLBACKS_MAX,
+			S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
+			OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess,
+			NULL,
+			S3E_FALSE);
 
     g_pluginOuya.AsyncOuyaFetchGamerUUID();
 }

@@ -76,22 +76,12 @@ namespace OuyaSDK
 			//	callback->OnSuccess(strGamerUUID);
 			//}
 
-			LOGI("Registering Callback: s3eEdkCallbacksRegister(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");
-
-			s3eFetchGamerUuidSuccessEvent event;
-			event.m_gamerUUID = strGamerUUID;
-
-			s3eEdkCallbacksRegister(
-					S3E_EXT_ODK_HASH,
-					S3E_ODK_CALLBACKS_MAX,
-					S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
-					OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->m_onSuccess,
-					&event,
-					S3E_FALSE);
-
 			LOGI("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");
 
-			s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);
+			s3eFetchGamerUuidSuccessEvent event;
+			event.m_gamerUUID = strGamerUUID.c_str();
+
+			s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, &event);
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
