@@ -13,7 +13,7 @@ void CallbacksFetchGamerUUID::RegisterCallback(s3eCallback callback, s3eCallback
 {
 	if (*savedCallback)
 	{
-		IwTrace(ODK, ("Unregistering Callback"));
+		//IwTrace(ODK, ("Unregistering Callback"));
 
 		s3eEdkCallbacksUnRegister(
 				S3E_EXT_ODK_HASH,
@@ -26,7 +26,7 @@ void CallbacksFetchGamerUUID::RegisterCallback(s3eCallback callback, s3eCallback
 
 	*savedCallback = callback;
 
-	IwTrace(ODK, ("Registering Callback"));
+	//IwTrace(ODK, ("Registering Callback"));
 
 	s3eEdkCallbacksRegister(
 			S3E_EXT_ODK_HASH,
@@ -46,18 +46,18 @@ void CallbacksFetchGamerUUID::RegisterCallbacks(s3eCallback onSuccess, s3eCallba
 
 void CallbacksFetchGamerUUID::OnSuccess(const std::string& gamerUUID)
 {
-	char buffer[256];
-	sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
-	IwTrace(ODK, (buffer));
+	//char buffer[256];
+	//sprintf(buffer, "OnSuccess:  %s", gamerUUID.c_str());
+	//IwTrace(ODK, (buffer));
 
-	IwTrace(ODK, ("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
+	//IwTrace(ODK, ("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
 
 	s3eFetchGamerUuidSuccessEvent event;
 	sprintf(event.m_gamerUUID, "%s", gamerUUID.c_str());
 
-	std::string msg = "Sending event.m_gamerUUID=";
-	msg.append(event.m_gamerUUID);
-	IwTrace(ODK, (msg.c_str()));
+	//std::string msg = "Sending event.m_gamerUUID=";
+	//msg.append(event.m_gamerUUID);
+	//IwTrace(ODK, (msg.c_str()));
 
 	m_dataFetchGamerUuidSuccessEvent = event; //don't send a temp pointer
 	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, &m_dataFetchGamerUuidSuccessEvent);
@@ -69,12 +69,20 @@ void CallbacksFetchGamerUUID::OnFailure(int errorCode, const std::string& errorM
 	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	IwTrace(ODK, (buffer));
 
-	//Application::m_ui.SetMessage("CallbacksFetchGamerUUID::OnFailure");
+	s3eFetchGamerUuidFailureEvent event;
+	event.m_errorCode = errorCode;
+	sprintf(event.m_errorMessage, "%s", errorMessage.c_str());
+
+	m_dataFetchGamerUuidFailureEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_FAILURE, &m_dataFetchGamerUuidFailureEvent);
 }
 
 void CallbacksFetchGamerUUID::OnCancel()
 {
 	IwTrace(ODK, ("OnCancel"));
 
-	//Application::m_ui.SetMessage("CallbacksFetchGamerUUID::OnCancel");
+	s3eFetchGamerUuidCancelEvent event;
+
+	m_dataFetchGamerUuidCancelEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_CANCEL, &m_dataFetchGamerUuidCancelEvent);
 }
