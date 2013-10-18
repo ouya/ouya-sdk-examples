@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ApplicationCallbacksFetchGamerUUID.h"
+#include "CallbacksFetchGamerUUID.h"
 #include "CallbackSingleton.h"
 
 #include "IwDebug.h"

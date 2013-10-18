@@ -57,11 +57,6 @@ namespace OuyaSDK
 		return CallbackSingleton::m_instance;
 	}
 
-	//event data sent to callbacks can't be temporary
-	s3eFetchGamerUuidSuccessEvent g_dataFetchGamerUuidSuccessEvent;
-	s3eFetchGamerUuidFailureEvent g_dataFetchGamerUuidFailureEvent;
-	s3eFetchGamerUuidCancelEvent g_dataFetchGamerUuidCancelEvent;
-
 	extern "C"
 	{
 		//com.ODK.CallbacksFetchGamerUUID.CallbacksFetchGamerUUIDOnSuccess
@@ -75,23 +70,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			//CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
-			//if (callback)
-			//{
-			//	callback->OnSuccess(strGamerUUID);
-			//}
-
-			LOGI("Invoking Callback: s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);");
-
-			s3eFetchGamerUuidSuccessEvent event;
-			sprintf(event.m_gamerUUID, "%s", strGamerUUID.c_str());
-
-			std::string msg = "Sending event.m_gamerUUID=";
-			msg.append(event.m_gamerUUID);
-			LOGI(msg.c_str());
-
-			g_dataFetchGamerUuidSuccessEvent = event; //don't send a temp pointer
-			s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, &g_dataFetchGamerUuidSuccessEvent);
+			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			if (callback)
+			{
+				callback->OnSuccess(strGamerUUID);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
