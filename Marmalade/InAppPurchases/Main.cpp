@@ -15,7 +15,7 @@ static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
-const char* g_version = "Mamalade Version: 061";
+const char* g_version = "Mamalade Version: 062";
 
 
 void render()
@@ -39,8 +39,6 @@ int main()
 		IwTrace(DEFAULT, ("Not running on OUYA, exit!"));
 		return 0;
 	}
-
-	//Application::m_pluginOuya.AsyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 
 	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 

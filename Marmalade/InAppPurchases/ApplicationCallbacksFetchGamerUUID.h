@@ -3,8 +3,6 @@
 
 #include <string>
 
-class s3eFetchGamerUuidSuccessEvent;
-
 class ApplicationCallbacksFetchGamerUUID
 {
 public:

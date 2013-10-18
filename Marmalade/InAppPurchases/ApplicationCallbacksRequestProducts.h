@@ -10,6 +10,12 @@ class ApplicationCallbacksRequestProducts
 {
 public:
 
+	s3eCallback GetSuccessEvent();
+
+	s3eCallback GetFailureEvent();
+
+	s3eCallback GetCancelEvent();
+
 	void OnSuccess(const std::vector<OuyaSDK::Product>& products);
 
 	void OnFailure(int errorCode, const std::string& errorMessage);

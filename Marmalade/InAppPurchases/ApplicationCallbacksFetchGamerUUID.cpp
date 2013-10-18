@@ -33,7 +33,7 @@ void FetchGamerUuidOnFailure(s3eFetchGamerUuidFailureEvent* event)
 	}
 }
 
-void FetchGamerUuidOnCancel(s3eFetchGamerUuidSuccessEvent* event)
+void FetchGamerUuidOnCancel(s3eFetchGamerUuidCancelEvent* event)
 {
 	//IwTrace(DEFAULT, ("void FetchGamerUuidOnCancel(event)"));
 	if (event)

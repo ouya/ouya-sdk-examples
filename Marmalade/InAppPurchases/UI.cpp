@@ -345,8 +345,7 @@ void UI::HandleInput()
 				if (m_selectedButton == &m_uiRequestProducts)
 				{
 					SetMessage("Requesting products...");
-					//Application::m_pluginOuya.AsyncOuyaRequestProducts(&m_callbacksRequestProducts, m_productIds);
-					
+				
 					// prepare json
 					std::string productsJson = "[";
 
@@ -372,9 +371,9 @@ void UI::HandleInput()
 					IwTrace(DEFAULT, (productsJson.c_str()));
 
 					OuyaPlugin_asyncOuyaRequestProducts(productsJson.c_str(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
+						Application::m_ui.m_callbacksRequestProducts->GetSuccessEvent(),
+						Application::m_ui.m_callbacksRequestProducts->GetFailureEvent(),
+						Application::m_ui.m_callbacksRequestProducts->GetCancelEvent());
 				}
 				if (m_selectedButton == &m_uiRequestPurchase)
 				{
@@ -392,23 +391,20 @@ void UI::HandleInput()
 						else
 						{
 							SetMessage("Requesting purchase...");
-							//Application::m_pluginOuya.AsyncOuyaRequestPurchase(&m_callbacksRequestPurchase, product->Identifier);
-
 							OuyaPlugin_asyncOuyaRequestPurchase(product->Identifier.c_str(),
-								Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
-								Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
-								Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
+								Application::m_ui.m_callbacksRequestPurchase->GetSuccessEvent(),
+								Application::m_ui.m_callbacksRequestPurchase->GetFailureEvent(),
+								Application::m_ui.m_callbacksRequestPurchase->GetCancelEvent());
 						}
 					}
 				}
 				if (m_selectedButton == &m_uiRequestReceipts)
 				{
 					SetMessage("Requesting receipts...");
-					//Application::m_pluginOuya.AsyncOuyaRequestReceipts(&m_callbacksRequestReceipts);
 					OuyaPlugin_asyncOuyaRequestReceipts(
-						Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
+						Application::m_ui.m_callbacksRequestReceipts->GetSuccessEvent(),
+						Application::m_ui.m_callbacksRequestReceipts->GetFailureEvent(),
+						Application::m_ui.m_callbacksRequestReceipts->GetCancelEvent());
 				}
 			}
 		}
