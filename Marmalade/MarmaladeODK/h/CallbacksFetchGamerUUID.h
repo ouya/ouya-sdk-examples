@@ -42,6 +42,8 @@ private:
 	s3eFetchGamerUuidSuccessEvent m_dataFetchGamerUuidSuccessEvent;
 	s3eFetchGamerUuidFailureEvent m_dataFetchGamerUuidFailureEvent;
 	s3eFetchGamerUuidCancelEvent m_dataFetchGamerUuidCancelEvent;
+
+	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
 };
 
 #endif

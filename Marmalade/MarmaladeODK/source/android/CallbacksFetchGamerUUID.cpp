@@ -9,34 +9,39 @@
 #include <android/log.h>
 #include <stdio.h>
 
-void CallbacksFetchGamerUUID::RegisterCallbacks(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void CallbacksFetchGamerUUID::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
 {
-	if (m_onSuccess)
+	if (*savedCallback)
 	{
-		IwTrace(ODK, ("Unregistering Callback: s3eEdkCallbacksRegister(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
+		IwTrace(ODK, ("Unregistering Callback"));
 
 		s3eEdkCallbacksUnRegister(
 				S3E_EXT_ODK_HASH,
 				S3E_ODK_CALLBACKS_MAX,
-				S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
-				m_onSuccess,
+				callbackType,
+				*savedCallback,
 				NULL);
-		m_onSuccess = NULL;
+		*savedCallback = NULL;
 	}
 
-	m_onSuccess = onSuccess;
-	m_onFailure = onFailure;
-	m_onCancel = onCancel;
+	*savedCallback = callback;
 
-	IwTrace(ODK, ("Registering Callback: s3eEdkCallbacksRegister(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);"));
+	IwTrace(ODK, ("Registering Callback"));
 
 	s3eEdkCallbacksRegister(
 			S3E_EXT_ODK_HASH,
 			S3E_ODK_CALLBACKS_MAX,
-			S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
-			m_onSuccess,
+			callbackType,
+			*savedCallback,
 			NULL,
 			S3E_FALSE);
+}
+
+void CallbacksFetchGamerUUID::RegisterCallbacks(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+{
+	RegisterCallback(onSuccess, &m_onSuccess, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS);
+	RegisterCallback(onFailure, &m_onFailure, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_FAILURE);
+	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_CANCEL);
 }
 
 void CallbacksFetchGamerUUID::OnSuccess(const std::string& gamerUUID)
