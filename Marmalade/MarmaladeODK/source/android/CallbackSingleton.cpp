@@ -81,6 +81,10 @@ namespace OuyaSDK
 			s3eFetchGamerUuidSuccessEvent event;
 			sprintf(event.m_gamerUUID, "%s", strGamerUUID.c_str());
 
+			std::string msg = "Sending event.m_gamerUUID=";
+			msg.append(event.m_gamerUUID);
+			LOGI(msg.c_str());
+
 			s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS, &event);
 		}
 

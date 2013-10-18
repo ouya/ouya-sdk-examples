@@ -16,7 +16,7 @@ typedef struct s3eFetchGamerUuidSuccessEvent
 typedef struct s3eFetchGamerUuidFailureEvent
 {
 	int m_errorCode;
-	std::string m_errorMessage;
+	char m_errorMessage[1024];
 } s3eFetchGamerUuidFailureEvent;
 
 typedef struct s3eFetchGamerUuidCancelEvent

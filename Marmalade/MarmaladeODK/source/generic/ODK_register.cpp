@@ -84,28 +84,28 @@ static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
     s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 1, developerId);
 }
 
-static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaFetchGamerUUID"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 4, event, onSuccess, onFailure, onCancel);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 3, onSuccess, onFailure, onCancel);
 }
 
-static void OuyaPlugin_asyncOuyaRequestProducts_wrap(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+static void OuyaPlugin_asyncOuyaRequestProducts_wrap(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestProducts"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestProducts, 6, products, length, event, onSuccess, onFailure, onCancel);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestProducts, 4, productsJson, onSuccess, onFailure, onCancel);
 }
 
-static void OuyaPlugin_asyncOuyaRequestPurchase_wrap(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+static void OuyaPlugin_asyncOuyaRequestPurchase_wrap(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestPurchase"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestPurchase, 5, purchasable, event, onSuccess, onFailure, onCancel);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestPurchase, 4, purchasable, onSuccess, onFailure, onCancel);
 }
 
-static void OuyaPlugin_asyncOuyaRequestReceipts_wrap(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+static void OuyaPlugin_asyncOuyaRequestReceipts_wrap(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestReceipts"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestReceipts, 4, event, onSuccess, onFailure, onCancel);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestReceipts, 3, onSuccess, onFailure, onCancel);
 }
 
 #define OuyaController_startOfFrame OuyaController_startOfFrame_wrap

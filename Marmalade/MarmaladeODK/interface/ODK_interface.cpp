@@ -30,10 +30,10 @@ typedef       bool(*OuyaController_buttonReleasedThisFrame_t)(int button);
 typedef       bool(*OuyaController_buttonChangedThisFrame_t)(int button);
 typedef        int(*OuyaController_getPlayerNum_t)();
 typedef       void(*OuyaPlugin_asyncSetDeveloperId_t)(const char* developerId);
-typedef       void(*OuyaPlugin_asyncOuyaFetchGamerUUID_t)(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
-typedef       void(*OuyaPlugin_asyncOuyaRequestProducts_t)(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
-typedef       void(*OuyaPlugin_asyncOuyaRequestPurchase_t)(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
-typedef       void(*OuyaPlugin_asyncOuyaRequestReceipts_t)(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaFetchGamerUUID_t)(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaRequestProducts_t)(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaRequestPurchase_t)(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+typedef       void(*OuyaPlugin_asyncOuyaRequestReceipts_t)(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
 /**
  * struct that gets filled in by ODKRegister
@@ -299,7 +299,7 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
     return;
 }
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[10] func: OuyaPlugin_asyncOuyaFetchGamerUUID"));
 
@@ -310,7 +310,7 @@ void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback 
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncOuyaFetchGamerUUID(event, onSuccess, onFailure, onCancel);
+    g_Ext.m_OuyaPlugin_asyncOuyaFetchGamerUUID(onSuccess, onFailure, onCancel);
 
 #ifdef LOADER_CALL
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
@@ -319,7 +319,7 @@ void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback 
     return;
 }
 
-void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[11] func: OuyaPlugin_asyncOuyaRequestProducts"));
 
@@ -330,7 +330,7 @@ void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eO
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncOuyaRequestProducts(products, length, event, onSuccess, onFailure, onCancel);
+    g_Ext.m_OuyaPlugin_asyncOuyaRequestProducts(productsJson, onSuccess, onFailure, onCancel);
 
 #ifdef LOADER_CALL
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
@@ -339,7 +339,7 @@ void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eO
     return;
 }
 
-void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[12] func: OuyaPlugin_asyncOuyaRequestPurchase"));
 
@@ -350,7 +350,7 @@ void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallba
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncOuyaRequestPurchase(purchasable, event, onSuccess, onFailure, onCancel);
+    g_Ext.m_OuyaPlugin_asyncOuyaRequestPurchase(purchasable, onSuccess, onFailure, onCancel);
 
 #ifdef LOADER_CALL
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
@@ -359,7 +359,7 @@ void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallba
     return;
 }
 
-void OuyaPlugin_asyncOuyaRequestReceipts(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[13] func: OuyaPlugin_asyncOuyaRequestReceipts"));
 
@@ -370,7 +370,7 @@ void OuyaPlugin_asyncOuyaRequestReceipts(s3eOdkFnCallbackType event, s3eCallback
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncOuyaRequestReceipts(event, onSuccess, onFailure, onCancel);
+    g_Ext.m_OuyaPlugin_asyncOuyaRequestReceipts(onSuccess, onFailure, onCancel);
 
 #ifdef LOADER_CALL
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);

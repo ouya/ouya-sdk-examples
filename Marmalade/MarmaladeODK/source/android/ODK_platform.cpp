@@ -199,7 +199,7 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
     g_pluginOuya.AsyncSetDeveloperId(developerId);
 }
 
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
 	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaFetchGamerUUID"));
 
@@ -233,17 +233,25 @@ void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eOdkFnCallbackType event, s3eCallback 
     g_pluginOuya.AsyncOuyaFetchGamerUUID();
 }
 
-void OuyaPlugin_asyncOuyaRequestProducts(const char** products, int length, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
 	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestProducts"));
+
+	std::string msg = "OuyaPlugin_asyncOuyaRequestProducts: productsJson=";
+	msg.append(productsJson);
+	IwTrace(ODK, (msg.c_str()));
 }
 
-void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
 	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestPurchase"));
+
+	std::string msg = "OuyaPlugin_asyncOuyaRequestPurchase: purchasable=";
+	msg.append(purchasable);
+	IwTrace(ODK, (msg.c_str()));
 }
 
-void OuyaPlugin_asyncOuyaRequestReceipts(s3eOdkFnCallbackType event, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
+void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
 	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestReceipts"));
 }
