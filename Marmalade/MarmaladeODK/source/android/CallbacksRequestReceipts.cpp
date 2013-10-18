@@ -45,27 +45,35 @@ void CallbacksRequestReceipts::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 
 void CallbacksRequestReceipts::OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts)
 {
-	//LOGI("OnSuccess);
-	//Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
+	IwTrace(ODK, ("OnSuccess"));
 
-	//Application::m_ui.ClearReceipts();
+	s3eRequestReceiptsSuccessEvent event;
+	event.m_receipts = receipts;
 
-	//for (int index = 0; index < receipts.size(); ++index)
-	//{
-	//	Application::m_ui.AddReceipt(receipts[index]);
-	//}
+	m_dataRequestReceiptsSuccessEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_SUCCESS, &m_dataRequestReceiptsSuccessEvent);
 }
 
 void CallbacksRequestReceipts::OnFailure(int errorCode, const std::string& errorMessage)
 {
-	//char buffer[256];
-	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
-	//LOGI(buffer);
-	//Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
+	char buffer[256];
+	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
+	IwTrace(ODK, (buffer));
+
+	s3eRequestReceiptsFailureEvent event;
+	event.m_errorCode = errorCode;
+	sprintf(event.m_errorMessage, "%s", errorMessage.c_str());
+
+	m_dataRequestReceiptsFailureEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_FAILURE, &m_dataRequestReceiptsFailureEvent);
 }
 
 void CallbacksRequestReceipts::OnCancel()
 {
-	//LOGI("OnCancel");
-	//Application::m_ui.SetMessage("CallbacksRequestReceipts::OnSuccess");
+	IwTrace(ODK, ("OnCancel"));
+
+	s3eRequestReceiptsCancelEvent event;
+
+	m_dataRequestReceiptsCancelEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_CANCEL, &m_dataRequestReceiptsCancelEvent);
 }

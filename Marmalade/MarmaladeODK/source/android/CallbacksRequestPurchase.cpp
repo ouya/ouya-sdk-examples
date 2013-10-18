@@ -45,26 +45,35 @@ void CallbacksRequestPurchase::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 
 void CallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
 {
-	//char buffer[1024];
-	//sprintf(buffer, "OnSuccess:  %s\r\n", product.Name.c_str());
-	//LOGI(buffer);
+	IwTrace(ODK, ("OnSuccess"));
 
-	//std::string message = "CallbacksRequestPurchase::OnSuccess: ";
-	//message.append(product.Identifier);
+	s3eRequestPurchaseSuccessEvent event;
+	event.m_product = product;
 
-	//Application::m_ui.SetMessage(message);
+	m_dataRequestPurchaseSuccessEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_SUCCESS, &m_dataRequestPurchaseSuccessEvent);
 }
 
 void CallbacksRequestPurchase::OnFailure(int errorCode, const std::string& errorMessage)
 {
-	//char buffer[256];
-	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
-	//LOGI(buffer);
-	//Application::m_ui.SetMessage("CallbacksRequestPurchase::OnFailure");
+	char buffer[256];
+	sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
+	IwTrace(ODK, (buffer));
+
+	s3eRequestPurchaseFailureEvent event;
+	event.m_errorCode = errorCode;
+	sprintf(event.m_errorMessage, "%s", errorMessage.c_str());
+
+	m_dataRequestPurchaseFailureEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_FAILURE, &m_dataRequestPurchaseFailureEvent);
 }
 
 void CallbacksRequestPurchase::OnCancel()
 {
-	//LOGI("OnCancel");
-	//Application::m_ui.SetMessage("CallbacksRequestPurchase::OnCancel");
+	IwTrace(ODK, ("OnCancel"));
+
+	s3eRequestPurchaseCancelEvent event;
+
+	m_dataRequestPurchaseCancelEvent = event; //don't send a temp pointer
+	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_CANCEL, &m_dataRequestPurchaseCancelEvent);
 }
