@@ -240,14 +240,4 @@ public class ODK extends LoaderActivity
     {
 		Log.i(LOG_TAG, "OuyaPlugin_asyncSetDeveloperId developerId="+developerId);
     }
-
-	/*
-    static {
-
-		System.loadLibrary("marmaladeiap");
-
-		//System.loadLibrary("odk_ext");
-		System.loadLibrary("odk_d_ext");
-    }
-    */
 }
