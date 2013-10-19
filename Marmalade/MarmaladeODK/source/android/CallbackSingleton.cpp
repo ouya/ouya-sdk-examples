@@ -87,11 +87,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			//CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
-			//if (callback)
-			//{
-			//	callback->OnFailure(errorCode, strErrorMessage);
-			//}
+			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			if (callback)
+			{
+				callback->OnFailure(errorCode, strErrorMessage);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel(JNIEnv* env, jobject thiz)
@@ -102,11 +102,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel: Returned to C");
 			//LOGI(buffer);
 
-			//CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
-			//if (callback)
-			//{
-			//	callback->OnCancel();
-			//}
+			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			if (callback)
+			{
+				callback->OnCancel();
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
@@ -147,11 +147,11 @@ namespace OuyaSDK
 				products.push_back(newProduct);
 			}
 
-			//CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
-			//if (callback)
-			//{
-			//	callback->OnSuccess(products);
-			//}
+			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
+			if (callback)
+			{
+				callback->OnSuccess(products);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
@@ -164,11 +164,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			//CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
-			//if (callback)
-			//{
-			//	callback->OnFailure(errorCode, strErrorMessage);
-			//}
+			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
+			if (callback)
+			{
+				callback->OnFailure(errorCode, strErrorMessage);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
@@ -179,11 +179,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
 			//LOGI(buffer);
 
-			//CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
-			//if (callback)
-			//{
-			//	callback->OnCancel();
-			//}
+			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
+			if (callback)
+			{
+				callback->OnCancel();
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
@@ -217,11 +217,11 @@ namespace OuyaSDK
 			OuyaSDK::Product product;
 			product.ParseJSON(&data);
 
-			//CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
-			//if (callback)
-			//{
-			//	callback->OnSuccess(product);
-			//}
+			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
+			if (callback)
+			{
+				callback->OnSuccess(product);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
@@ -234,11 +234,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			//CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
-			//if (callback)
-			//{
-			//	callback->OnFailure(errorCode, strErrorMessage);
-			//}
+			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
+			if (callback)
+			{
+				callback->OnFailure(errorCode, strErrorMessage);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
@@ -249,11 +249,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
 			//LOGI(buffer);
 
-			//CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
-			//if (callback)
-			//{
-			//	callback->OnCancel();
-			//}
+			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
+			if (callback)
+			{
+				callback->OnCancel();
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
@@ -296,11 +296,11 @@ namespace OuyaSDK
 				receipts.push_back(newReceipt);
 			}
 
-			//CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
-			//if (callback)
-			//{
-			//	callback->OnSuccess(receipts);
-			//}
+			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+			if (callback)
+			{
+				callback->OnSuccess(receipts);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
@@ -313,11 +313,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			//CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
-			//if (callback)
-			//{
-			//	callback->OnFailure(errorCode, strErrorMessage);
-			//}
+			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+			if (callback)
+			{
+				callback->OnFailure(errorCode, strErrorMessage);
+			}
 		}
 
 		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
@@ -328,11 +328,11 @@ namespace OuyaSDK
 			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
 			//LOGI(buffer);
 
-			//CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
-			//if (callback)
-			//{
-			//	callback->OnCancel();
-			//}
+			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+			if (callback)
+			{
+				callback->OnCancel();
+			}
 		}
 	}
 
