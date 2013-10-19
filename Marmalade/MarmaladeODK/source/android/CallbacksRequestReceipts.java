@@ -24,26 +24,25 @@ public class CallbacksRequestReceipts {
 
 	private final String LOG_TAG  = "CallbacksRequestReceipts";
 
-	//public native void CallbacksRequestReceiptsOnSuccess(String jsonData);
-	//public native void CallbacksRequestReceiptsOnFailure(int errorCode, String errorMessage);
-	//public native void CallbacksRequestReceiptsOnCancel();
+	public native void CallbacksRequestReceiptsOnSuccess(String jsonData);
+	public native void CallbacksRequestReceiptsOnFailure(int errorCode, String errorMessage);
+	public native void CallbacksRequestReceiptsOnCancel();
 
 	public void onSuccess(final String jsonData) {
 
 		Log.i("CallbacksRequestReceipts", "onSuccess jsonData=" + jsonData);
-		//CallbacksRequestReceiptsOnSuccess(jsonData);
+		CallbacksRequestReceiptsOnSuccess(jsonData);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
 
 		Log.i("CallbacksRequestReceipts", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
-		//CallbacksRequestReceiptsOnFailure(errorCode, errorMessage);
+		CallbacksRequestReceiptsOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
 
 		Log.i("CallbacksRequestReceipts", "onCancel");
-		//CallbacksRequestReceiptsOnCancel();
+		CallbacksRequestReceiptsOnCancel();
 	}
-
 }
