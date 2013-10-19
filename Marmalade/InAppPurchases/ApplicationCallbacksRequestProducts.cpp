@@ -1,7 +1,9 @@
 #include "Application.h"
 #include "ApplicationCallbacksRequestProducts.h"
+#include "ApplicationProduct.h"
 #include "CallbackSingleton.h"
 #include "CallbacksRequestProducts.h"
+#include "Product.h"
 
 #include "IwDebug.h"
 
@@ -9,13 +11,19 @@
 
 void RequestProductsOnSuccess(s3eRequestProductsSuccessEvent* event)
 {
-	//IwTrace(DEFAULT, ("void RequestProductsOnSuccess(event)"));
+	IwTrace(DEFAULT, ("void RequestProductsOnSuccess(event)"));
 	if (event)
 	{
-		std::vector<OuyaSDK::Product> products;
+		std::vector<ApplicationProduct> products;
 		for (int index = 0; index < event->m_productLength; ++index)
 		{
-			products.push_back(event->m_products[index]);
+			OuyaSDK::ExtensionProduct eProduct = event->m_products[index];
+			ApplicationProduct product;
+			product.Init();
+			product.Copy(eProduct);
+			products.push_back(product);
+
+			IwTrace(DEFAULT, (product.Name.c_str()));
 		}
 		Application::m_ui.m_callbacksRequestProducts->OnSuccess(products);
 	}
@@ -66,7 +74,7 @@ s3eCallback ApplicationCallbacksRequestProducts::GetCancelEvent()
 	return (s3eCallback)RequestProductsOnCancel;
 }
 
-void ApplicationCallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& products)
+void ApplicationCallbacksRequestProducts::OnSuccess(const std::vector<ApplicationProduct>& products)
 {
 	//IwTrace(DEFAULT, ("OnSuccess"));
 	

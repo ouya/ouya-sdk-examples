@@ -10,6 +10,8 @@ files
 	ApplicationCallbacksRequestPurchase.cpp
 	ApplicationCallbacksRequestReceipts.h
 	ApplicationCallbacksRequestReceipts.cpp
+	ApplicationProduct.h
+	ApplicationProduct.cpp
 	Main.cpp
 	TextButton.h
 	TextButton.cpp

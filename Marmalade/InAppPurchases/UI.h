@@ -1,7 +1,7 @@
 #ifndef __UI_H__
 #define __UI_H__
 
-#include "Product.h"
+#include "ApplicationProduct.h"
 #include "Receipt.h"
 #include "TextButton.h"
 #include "TextLabel.h"
@@ -40,7 +40,7 @@ public:
 
 	void ClearReceipts();
 
-	void AddProduct(OuyaSDK::Product product);
+	void AddProduct(ApplicationProduct product);
 
 	void AddReceipt(OuyaSDK::Receipt receipt);
 
@@ -53,7 +53,7 @@ private:
 
 	std::vector<std::string> m_productIds;
 
-	std::vector<OuyaSDK::Product> m_pendingProducts;
+	std::vector<ApplicationProduct> m_pendingProducts;
 	std::vector<TextButton*> m_products;
 
 	std::vector<OuyaSDK::Receipt> m_pendingReceipts;

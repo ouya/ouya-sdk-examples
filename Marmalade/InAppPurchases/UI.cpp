@@ -6,7 +6,7 @@
 #include "CallbackSingleton.h"
 #include "Controller.h"
 #include "ODK.h"
-#include "Product.h"
+#include "ApplicationProduct.h"
 #include "Receipt.h"
 #include "UI.h"
 
@@ -52,7 +52,7 @@ void UI::RenderThreadInitProducts()
 			//LOGI(buffer);
 
 			TextButton* txtProduct = new TextButton();
-			OuyaSDK::Product* newProduct = new OuyaSDK::Product(m_pendingProducts[index]);
+			ApplicationProduct* newProduct = new ApplicationProduct(m_pendingProducts[index]);
 			txtProduct->DataContext = newProduct;
 
 			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
@@ -516,7 +516,7 @@ void UI::ClearReceipts()
 	m_receipts.clear();
 }
 
-void UI::AddProduct(OuyaSDK::Product product)
+void UI::AddProduct(ApplicationProduct product)
 {
 	m_pendingProducts.push_back(product);
 }

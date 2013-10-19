@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-OuyaSDK::Product* CallbacksRequestProducts::m_products = NULL;
+OuyaSDK::ExtensionProduct* CallbacksRequestProducts::m_products = NULL;
 
 void CallbacksRequestProducts::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
 {
@@ -45,6 +45,13 @@ void CallbacksRequestProducts::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_CANCEL);
 }
 
+void CopyString(std::string source, char** destination)
+{
+	const char* str = source.c_str();
+	*destination = new char[strlen(str)];
+	sprintf(*destination, "%s", str);
+}
+
 void CallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& products)
 {
 	IwTrace(ODK, ("OnSuccess"));
@@ -59,11 +66,20 @@ void CallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& pr
 	if (products.size() > 0)
 	{
 		IwTrace(ODK, ("Allocating products"));
-		m_products = new OuyaSDK::Product[products.size()];
+		m_products = new OuyaSDK::ExtensionProduct[products.size()];
 		IwTrace(ODK, ("Copying products"));
 		for (unsigned int index = 0; index < products.size(); ++index)
 		{
-			m_products[index] = products[index];
+			OuyaSDK::Product product = products[index];
+			OuyaSDK::ExtensionProduct eProduct;
+			eProduct.Init();
+			CopyString(product.CurrencyCode, &eProduct.CurrencyCode);
+			CopyString(product.Identifier, &eProduct.Identifier);
+			CopyString(product.Name, &eProduct.Name);
+			eProduct.ProductVersionToBundle = product.ProductVersionToBundle;
+			eProduct.LocalPrice = product.LocalPrice;
+			eProduct.PriceInCents = product.PriceInCents;
+			m_products[index] = eProduct;
 		}
 	}
 	else

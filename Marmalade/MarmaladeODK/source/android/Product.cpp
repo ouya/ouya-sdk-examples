@@ -19,7 +19,17 @@
 											 __VA_ARGS__))
 namespace OuyaSDK
 {
-	Product::Product()
+	void ExtensionProduct::Init()
+	{
+		CurrencyCode = NULL;
+		Identifier = NULL;
+		Name = NULL;
+		ProductVersionToBundle = 0;
+		LocalPrice = 0;
+		PriceInCents = 0;
+	}
+
+	void Product::Init()
 	{
 		CurrencyCode = "";
 		Identifier = "";
@@ -31,6 +41,8 @@ namespace OuyaSDK
 
 	void Product::ParseJSON(JSONValue* json)
 	{
+		Init();
+
 		if (!json)
 		{
 			LOGI("Parsing JSON Failed: Invalid Argument");
@@ -53,7 +65,7 @@ namespace OuyaSDK
 		PriceInCents = JsonUtil::ParseInt(item, L"priceInCents");
 
 		char buffer[1024];
-		sprintf(buffer, "currencyCode=%s identifier=%s productVersionToBundle=%d localPrice=%.2f priceInCents=%d",
+		sprintf(buffer, "currencyCode=%s identifier=%s name=%s productVersionToBundle=%d localPrice=%.2f priceInCents=%d",
 			CurrencyCode.c_str(),
 			Identifier.c_str(),
 			Name.c_str(),

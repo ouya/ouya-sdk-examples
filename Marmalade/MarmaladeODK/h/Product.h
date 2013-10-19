@@ -15,9 +15,23 @@ namespace OuyaSDK
 		float LocalPrice;
 		int PriceInCents;
 
-		Product();
+		void Init();
 
 		void ParseJSON(JSONValue* json);
+	};
+
+	// for passing product from extension to application
+	class ExtensionProduct
+	{
+	public:
+		char* CurrencyCode;
+		char* Identifier;
+		char* Name;
+		int ProductVersionToBundle;
+		float LocalPrice;
+		int PriceInCents;
+
+		void Init();
 	};
 }
 
