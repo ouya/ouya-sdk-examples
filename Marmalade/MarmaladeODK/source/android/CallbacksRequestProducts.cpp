@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 
+OuyaSDK::Product* CallbacksRequestProducts::m_products = NULL;
+
 void CallbacksRequestProducts::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
 {
 	if (*savedCallback)
@@ -47,8 +49,33 @@ void CallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& pr
 {
 	IwTrace(ODK, ("OnSuccess"));
 
+	if (m_products)
+	{
+		IwTrace(ODK, ("Cleaning old products"));
+		delete [] m_products;
+		m_products = NULL;
+	}
+
+	if (products.size() > 0)
+	{
+		IwTrace(ODK, ("Allocating products"));
+		m_products = new OuyaSDK::Product[products.size()];
+		IwTrace(ODK, ("Copying products"));
+		for (unsigned int index = 0; index < products.size(); ++index)
+		{
+			m_products[index] = products[index];
+		}
+	}
+	else
+	{
+		IwTrace(ODK, ("No products to copy"));
+	}
+
 	s3eRequestProductsSuccessEvent event;
-	event.m_products = products;
+	event.m_products = m_products;
+	event.m_productLength = products.size();
+
+	IwTrace(ODK, ("Invoking callback"));
 
 	m_dataRequestProductsSuccessEvent = event; //don't send a temp pointer
 	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_SUCCESS, &m_dataRequestProductsSuccessEvent);

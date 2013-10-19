@@ -9,7 +9,8 @@
 
 typedef struct s3eRequestProductsSuccessEvent
 {
-	std::vector<OuyaSDK::Product> m_products;
+	OuyaSDK::Product* m_products;
+	int m_productLength;
 } s3eRequestProductsSuccessEvent;
 
 typedef struct s3eRequestProductsFailureEvent
@@ -46,6 +47,9 @@ private:
 	s3eRequestProductsCancelEvent m_dataRequestProductsCancelEvent;
 
 	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
+
+	//cache the product array
+	static OuyaSDK::Product* m_products;
 };
 
 #endif

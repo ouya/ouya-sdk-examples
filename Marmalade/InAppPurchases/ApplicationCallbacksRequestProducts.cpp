@@ -12,7 +12,12 @@ void RequestProductsOnSuccess(s3eRequestProductsSuccessEvent* event)
 	//IwTrace(DEFAULT, ("void RequestProductsOnSuccess(event)"));
 	if (event)
 	{
-		Application::m_ui.m_callbacksRequestProducts->OnSuccess(event->m_products);
+		std::vector<OuyaSDK::Product> products;
+		for (int index = 0; index < event->m_productLength; ++index)
+		{
+			products.push_back(event->m_products[index]);
+		}
+		Application::m_ui.m_callbacksRequestProducts->OnSuccess(products);
 	}
 	else
 	{
