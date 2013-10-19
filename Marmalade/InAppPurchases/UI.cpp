@@ -87,6 +87,14 @@ void UI::RenderThreadInitProducts()
 		m_uiChanged = true;
 
 		m_pendingProducts.clear();
+
+		const int w = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
+		const int h = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
+
+		for (unsigned int index = 0; index < m_products.size(); ++index)
+		{
+			m_products[index]->SetPosition(w*0.45f, h/3 + index * 25);
+		}
 	}
 }
 
@@ -121,6 +129,14 @@ void UI::RenderThreadInitReceipts()
 		m_uiChanged = true;
 
 		m_pendingReceipts.clear();
+
+		const int w = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
+		const int h = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
+
+		for (unsigned int index = 0; index < m_receipts.size(); ++index)
+		{
+			m_receipts[index]->SetPosition(w*0.55f, h/3 + index * 25);
+		}
 	}
 }
 
@@ -173,16 +189,6 @@ bool UI::InitUI()
 	m_uiRequestPurchase.SetPosition(w*2/5, h/4);
 	m_uiRequestReceipts.SetPosition(w*3/5, h/4);
 	m_uiPause.SetPosition(w/2, h/2);
-
-	for (unsigned int index = 0; index < m_products.size(); ++index)
-	{
-		m_products[index]->SetPosition(w*0.45f, h/3 + index * 25);
-	}
-
-	for (unsigned int index = 0; index < m_receipts.size(); ++index)
-	{
-		m_receipts[index]->SetPosition(w*0.55f, h/3 + index * 25);
-	}
 
 	m_uiInitialized = true;
 
