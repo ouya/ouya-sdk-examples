@@ -1,7 +1,7 @@
 #ifndef __APPLICATTON_CALLBACKS_REQUEST_RECEIPTS_H__
 #define __APPLICATTON_CALLBACKS_REQUEST_RECEIPTS_H__
 
-#include "Receipt.h"
+#include "ApplicationReceipt.h"
 
 #include <string>
 #include <vector>
@@ -16,7 +16,7 @@ public:
 
 	s3eCallback GetCancelEvent();
 
-	void OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts);
+	void OnSuccess(const std::vector<ApplicationReceipt>& receipts);
 
 	void OnFailure(int errorCode, const std::string& errorMessage);
 

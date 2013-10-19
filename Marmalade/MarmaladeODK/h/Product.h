@@ -20,7 +20,7 @@ namespace OuyaSDK
 		void ParseJSON(JSONValue* json);
 	};
 
-	// for passing product from extension to application
+	// for passing object from extension to application
 	class ExtensionProduct
 	{
 	public:

@@ -103,7 +103,7 @@ void UI::RenderThreadInitReceipts()
 			//LOGI(buffer);
 
 			TextButton* txtReceipt = new TextButton();
-			OuyaSDK::Receipt* newReceipt = new OuyaSDK::Receipt(m_pendingReceipts[index]);
+			ApplicationReceipt* newReceipt = new ApplicationReceipt(m_pendingReceipts[index]);
 			txtReceipt->DataContext = newReceipt;
 
 			//sprintf(buffer, "Setting up receipt ui %s", newReceipt->Identifier.c_str());
@@ -521,7 +521,7 @@ void UI::AddProduct(ApplicationProduct product)
 	m_pendingProducts.push_back(product);
 }
 
-void UI::AddReceipt(OuyaSDK::Receipt receipt)
+void UI::AddReceipt(ApplicationReceipt receipt)
 {
 	m_pendingReceipts.push_back(receipt);
 }

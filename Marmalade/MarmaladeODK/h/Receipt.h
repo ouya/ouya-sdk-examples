@@ -17,9 +17,25 @@ namespace OuyaSDK
 		float LocalPrice;
 		int PriceInCents;
 
-		Receipt();
+		void Init();
 
 		void ParseJSON(JSONValue* json);
+	};
+
+	// for passing object from extension to application
+	class ExtensionReceipt
+	{
+	public:
+		char* Currency;
+		char* Gamer;
+		char* GeneratedDate;
+		char* Identifier;
+		char* Uuid;
+		char* PurchaseDate;
+		float LocalPrice;
+		int PriceInCents;
+
+		void Init();
 	};
 }
 

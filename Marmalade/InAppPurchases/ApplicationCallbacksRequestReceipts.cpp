@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ApplicationCallbacksRequestReceipts.h"
+#include "ApplicationReceipt.h"
 #include "CallbacksRequestReceipts.h"
 
 #include "IwDebug.h"
@@ -11,7 +12,18 @@ void RequestReceiptsOnSuccess(s3eRequestReceiptsSuccessEvent* event)
 	//IwTrace(DEFAULT, ("void RequestReceiptsOnSuccess(event)"));
 	if (event)
 	{
-		Application::m_ui.m_callbacksRequestReceipts->OnSuccess(event->m_receipts);
+		std::vector<ApplicationReceipt> receipts;
+		for (int index = 0; index < event->m_receiptsLength; ++index)
+		{
+			OuyaSDK::ExtensionReceipt eReceipt = event->m_receipts[index];
+			ApplicationReceipt receipt;
+			receipt.Init();
+			receipt.Copy(eReceipt);
+			receipts.push_back(receipt);
+
+			IwTrace(DEFAULT, (receipt.Identifier.c_str()));
+		}
+		Application::m_ui.m_callbacksRequestReceipts->OnSuccess(receipts);
 	}
 	else
 	{
@@ -60,7 +72,7 @@ s3eCallback ApplicationCallbacksRequestReceipts::GetCancelEvent()
 	return (s3eCallback)RequestReceiptsOnCancel;
 }
 
-void ApplicationCallbacksRequestReceipts::OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts)
+void ApplicationCallbacksRequestReceipts::OnSuccess(const std::vector<ApplicationReceipt>& receipts)
 {
 	//IwTrace(DEFAULT, ("OnSuccess"));
 	

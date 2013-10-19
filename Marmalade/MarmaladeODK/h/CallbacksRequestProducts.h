@@ -10,7 +10,7 @@
 typedef struct s3eRequestProductsSuccessEvent
 {
 	OuyaSDK::ExtensionProduct* m_products;
-	int m_productLength;
+	int m_productsLength;
 } s3eRequestProductsSuccessEvent;
 
 typedef struct s3eRequestProductsFailureEvent

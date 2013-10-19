@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 
+OuyaSDK::ExtensionReceipt* CallbacksRequestReceipts::m_receipts = NULL;
+
 void CallbacksRequestReceipts::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
 {
 	if (*savedCallback)
@@ -43,12 +45,48 @@ void CallbacksRequestReceipts::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_CANCEL);
 }
 
+void CopyStringReceipt(std::string source, char** destination)
+{
+	const char* str = source.c_str();
+	*destination = new char[strlen(str)];
+	sprintf(*destination, "%s", str);
+}
+
 void CallbacksRequestReceipts::OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts)
 {
 	IwTrace(ODK, ("OnSuccess"));
 
+	if (receipts.size() > 0)
+	{
+		IwTrace(ODK, ("Allocating receipts"));
+		m_receipts = new OuyaSDK::ExtensionReceipt[receipts.size()];
+		IwTrace(ODK, ("Copying receipts"));
+		for (unsigned int index = 0; index < receipts.size(); ++index)
+		{
+			OuyaSDK::Receipt receipt = receipts[index];
+			OuyaSDK::ExtensionReceipt eReceipt;
+			eReceipt.Init();
+			CopyStringReceipt(receipt.Currency, &eReceipt.Currency);
+			CopyStringReceipt(receipt.Gamer, &eReceipt.Gamer);
+			CopyStringReceipt(receipt.GeneratedDate, &eReceipt.GeneratedDate);
+			CopyStringReceipt(receipt.Identifier, &eReceipt.Identifier);
+			CopyStringReceipt(receipt.Uuid, &eReceipt.Uuid);
+			CopyStringReceipt(receipt.PurchaseDate, &eReceipt.PurchaseDate);
+			eReceipt.LocalPrice = receipt.LocalPrice;
+			eReceipt.PriceInCents = receipt.PriceInCents;
+			m_receipts[index] = eReceipt;
+		}
+	}
+	else
+	{
+		IwTrace(ODK, ("No products to copy"));
+	}
+
 	s3eRequestReceiptsSuccessEvent event;
-	event.m_receipts = receipts;
+	event.m_receipts = m_receipts;
+	event.m_receiptsLength = receipts.size();
+
+	IwTrace(ODK, ("Invoking callback"));
 
 	m_dataRequestReceiptsSuccessEvent = event; //don't send a temp pointer
 	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_SUCCESS, &m_dataRequestReceiptsSuccessEvent);

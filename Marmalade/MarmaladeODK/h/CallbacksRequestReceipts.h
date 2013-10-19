@@ -9,7 +9,8 @@
 
 typedef struct s3eRequestReceiptsSuccessEvent
 {
-	std::vector<OuyaSDK::Receipt> m_receipts;
+	OuyaSDK::ExtensionReceipt* m_receipts;
+	int m_receiptsLength;
 } s3eRequestReceiptsSuccessEvent;
 
 typedef struct s3eRequestReceiptsFailureEvent
@@ -46,6 +47,9 @@ private:
 	s3eRequestReceiptsCancelEvent m_dataRequestReceiptsCancelEvent;
 
 	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
+
+	//cache the receipt array
+	static OuyaSDK::ExtensionReceipt* m_receipts;
 };
 
 #endif

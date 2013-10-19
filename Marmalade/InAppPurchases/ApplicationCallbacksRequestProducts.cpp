@@ -11,11 +11,11 @@
 
 void RequestProductsOnSuccess(s3eRequestProductsSuccessEvent* event)
 {
-	IwTrace(DEFAULT, ("void RequestProductsOnSuccess(event)"));
+	//IwTrace(DEFAULT, ("void RequestProductsOnSuccess(event)"));
 	if (event)
 	{
 		std::vector<ApplicationProduct> products;
-		for (int index = 0; index < event->m_productLength; ++index)
+		for (int index = 0; index < event->m_productsLength; ++index)
 		{
 			OuyaSDK::ExtensionProduct eProduct = event->m_products[index];
 			ApplicationProduct product;

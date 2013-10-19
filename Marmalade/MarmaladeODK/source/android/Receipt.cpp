@@ -19,7 +19,19 @@
 											 __VA_ARGS__))
 namespace OuyaSDK
 {
-	Receipt::Receipt()
+	void ExtensionReceipt::Init()
+	{
+		Currency = NULL;
+		Gamer = NULL;
+		GeneratedDate = NULL;
+		Identifier = NULL;
+		Uuid = NULL;
+		PurchaseDate = NULL;
+		LocalPrice = 0;
+		PriceInCents = 0;
+	}
+
+	void Receipt::Init()
 	{
 		Currency = "";
 		Gamer = "";

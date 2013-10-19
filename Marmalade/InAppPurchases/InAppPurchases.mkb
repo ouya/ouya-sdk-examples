@@ -12,6 +12,8 @@ files
 	ApplicationCallbacksRequestReceipts.cpp
 	ApplicationProduct.h
 	ApplicationProduct.cpp
+	ApplicationReceipt.h
+	ApplicationReceipt.cpp
 	Main.cpp
 	TextButton.h
 	TextButton.cpp

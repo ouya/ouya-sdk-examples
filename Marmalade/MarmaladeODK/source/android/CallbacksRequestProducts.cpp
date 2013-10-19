@@ -45,7 +45,7 @@ void CallbacksRequestProducts::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_CANCEL);
 }
 
-void CopyString(std::string source, char** destination)
+void CopyStringProduct(std::string source, char** destination)
 {
 	const char* str = source.c_str();
 	*destination = new char[strlen(str)];
@@ -54,28 +54,28 @@ void CopyString(std::string source, char** destination)
 
 void CallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& products)
 {
-	IwTrace(ODK, ("OnSuccess"));
+	//IwTrace(ODK, ("OnSuccess"));
 
 	if (m_products)
 	{
-		IwTrace(ODK, ("Cleaning old products"));
+		//IwTrace(ODK, ("Cleaning old products"));
 		delete [] m_products;
 		m_products = NULL;
 	}
 
 	if (products.size() > 0)
 	{
-		IwTrace(ODK, ("Allocating products"));
+		//IwTrace(ODK, ("Allocating products"));
 		m_products = new OuyaSDK::ExtensionProduct[products.size()];
-		IwTrace(ODK, ("Copying products"));
+		//IwTrace(ODK, ("Copying products"));
 		for (unsigned int index = 0; index < products.size(); ++index)
 		{
 			OuyaSDK::Product product = products[index];
 			OuyaSDK::ExtensionProduct eProduct;
 			eProduct.Init();
-			CopyString(product.CurrencyCode, &eProduct.CurrencyCode);
-			CopyString(product.Identifier, &eProduct.Identifier);
-			CopyString(product.Name, &eProduct.Name);
+			CopyStringProduct(product.CurrencyCode, &eProduct.CurrencyCode);
+			CopyStringProduct(product.Identifier, &eProduct.Identifier);
+			CopyStringProduct(product.Name, &eProduct.Name);
 			eProduct.ProductVersionToBundle = product.ProductVersionToBundle;
 			eProduct.LocalPrice = product.LocalPrice;
 			eProduct.PriceInCents = product.PriceInCents;
@@ -89,7 +89,7 @@ void CallbacksRequestProducts::OnSuccess(const std::vector<OuyaSDK::Product>& pr
 
 	s3eRequestProductsSuccessEvent event;
 	event.m_products = m_products;
-	event.m_productLength = products.size();
+	event.m_productsLength = products.size();
 
 	IwTrace(ODK, ("Invoking callback"));
 

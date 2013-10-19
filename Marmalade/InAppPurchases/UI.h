@@ -2,7 +2,7 @@
 #define __UI_H__
 
 #include "ApplicationProduct.h"
-#include "Receipt.h"
+#include "ApplicationReceipt.h"
 #include "TextButton.h"
 #include "TextLabel.h"
 
@@ -42,7 +42,7 @@ public:
 
 	void AddProduct(ApplicationProduct product);
 
-	void AddReceipt(OuyaSDK::Receipt receipt);
+	void AddReceipt(ApplicationReceipt receipt);
 
 	ApplicationCallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
 	ApplicationCallbacksRequestProducts* m_callbacksRequestProducts;
@@ -56,7 +56,7 @@ private:
 	std::vector<ApplicationProduct> m_pendingProducts;
 	std::vector<TextButton*> m_products;
 
-	std::vector<OuyaSDK::Receipt> m_pendingReceipts;
+	std::vector<ApplicationReceipt> m_pendingReceipts;
 	std::vector<TextButton*> m_receipts;
 
 	TextButton* m_selectedProduct;
