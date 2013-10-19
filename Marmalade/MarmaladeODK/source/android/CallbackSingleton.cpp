@@ -336,30 +336,49 @@ namespace OuyaSDK
 		}
 	}
 
-	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string signature)
+	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string className, std::string signature, void* method, JNINativeMethod* savedNativeMethod)
 	{
-		std::string msg = "Registering Native Method: methodName=";
+		std::string msg = "Registering Native Method: ";
 		msg.append(methodName);
+		msg.append(" className=");
+		msg.append(className);
 		msg.append(" signature=");
 		msg.append(signature);
 		LOGI(msg.c_str());
+
+		//Register the Native method on the object
+		*savedNativeMethod = { methodName.c_str(), signature.c_str(), method};
+
+		// Find the class using the native
+		jclass CallerJavaClass = env->FindClass(className.c_str());
+		if (env->RegisterNatives(CallerJavaClass, savedNativeMethod, 1))
+		{
+			std::string error = "Could not register native method: ";
+			error.append(methodName);
+			LOGI(error.c_str());
+			return;
+		}
 	}
+
+	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnSuccess;
+	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnFailure;
+	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnCancel;
 
 	void CallbackSingleton::RegisterNativeMethods()
 	{
 		JNIEnv* env = s3eEdkJNIGetEnv();
 
-		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnSuccess", "(Ljava/lang/String;)V");
+		//
+		// Register Native Callbacks for FetchGamerUuid
+		//
 
-		//Register the HelloNative method on the object
-		static const JNINativeMethod jnm = { "CallbacksFetchGamerUUIDOnSuccess", "(Ljava/lang/String;)V", (void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess };
+		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnSuccess", "com/ODK/CallbacksFetchGamerUUID", "(Ljava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess, &g_nativeCallbacksFetchGamerUUIDOnSuccess);
 
-		// Find the class using the native
-		jclass CallerJavaClass = env->FindClass("com/ODK/CallbacksFetchGamerUUID");
-		if (env->RegisterNatives(CallerJavaClass, &jnm, 1))
-		{
-			LOGI("Could not register native method: CallbacksFetchGamerUUIDOnSuccess");
-			return;
-		}
+		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnFailure", "com/ODK/CallbacksFetchGamerUUID", "(ILjava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure, &g_nativeCallbacksFetchGamerUUIDOnFailure);
+
+		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnCancel", "com/ODK/CallbacksFetchGamerUUID", "()V",
+			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel, &g_nativeCallbacksFetchGamerUUIDOnCancel);
 	}
 }
