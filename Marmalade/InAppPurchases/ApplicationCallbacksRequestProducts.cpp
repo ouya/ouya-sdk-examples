@@ -81,7 +81,10 @@ void ApplicationCallbacksRequestProducts::OnFailure(int errorCode, const std::st
 	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	//IwTrace(DEFAULT, (buffer));
 	
-	Application::m_ui.SetMessage("ApplicationCallbacksRequestProducts::OnFailure");
+	std::string msg = "ApplicationCallbacksRequestProducts::OnFailure";
+	msg.append(" errorMessage=");
+	msg.append(errorMessage);
+	Application::m_ui.SetMessage(msg);
 }
 
 void ApplicationCallbacksRequestProducts::OnCancel()

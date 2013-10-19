@@ -80,12 +80,15 @@ void ApplicationCallbacksRequestReceipts::OnFailure(int errorCode, const std::st
 	//sprintf(buffer, "OnFailure errorCode=%d errorMessage=%s", errorCode, errorMessage.c_str());
 	//IwTrace(DEFAULT, (buffer));
 	
-	Application::m_ui.SetMessage("ApplicationCallbacksRequestReceipts::OnSuccess");
+	std::string msg = "ApplicationCallbacksRequestReceipts::OnFailure";
+	msg.append(" errorMessage=");
+	msg.append(errorMessage);
+	Application::m_ui.SetMessage(msg);
 }
 
 void ApplicationCallbacksRequestReceipts::OnCancel()
 {
 	//IwTrace(DEFAULT, ("OnCancel"));
 	
-	Application::m_ui.SetMessage("ApplicationCallbacksRequestReceipts::OnSuccess");
+	Application::m_ui.SetMessage("ApplicationCallbacksRequestReceipts::OnCancel");
 }
