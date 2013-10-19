@@ -360,16 +360,44 @@ namespace OuyaSDK
 		}
 	}
 
+	//
+	// Native Callbacks for FetchGamerUUID
+	//
+
 	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnSuccess;
 	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnFailure;
 	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnCancel;
+
+	//
+	// Native Callbacks for RequestProducts
+	//
+
+	JNINativeMethod g_nativeCallbacksRequestProductsOnSuccess;
+	JNINativeMethod g_nativeCallbacksRequestProductsOnFailure;
+	JNINativeMethod g_nativeCallbacksRequestProductsOnCancel;
+
+	//
+	// Native Callbacks for RequestPurchase
+	//
+
+	JNINativeMethod g_nativeCallbacksRequestPurchaseOnSuccess;
+	JNINativeMethod g_nativeCallbacksRequestPurchaseOnFailure;
+	JNINativeMethod g_nativeCallbacksRequestPurchaseOnCancel;
+
+	//
+	// Native Callbacks for RequestReceipts
+	//
+
+	JNINativeMethod g_nativeCallbacksRequestReceiptsOnSuccess;
+	JNINativeMethod g_nativeCallbacksRequestReceiptsOnFailure;
+	JNINativeMethod g_nativeCallbacksRequestReceiptsOnCancel;
 
 	void CallbackSingleton::RegisterNativeMethods()
 	{
 		JNIEnv* env = s3eEdkJNIGetEnv();
 
 		//
-		// Register Native Callbacks for FetchGamerUuid
+		// Register Native Callbacks for FetchGamerUUID
 		//
 
 		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnSuccess", "com/ODK/CallbacksFetchGamerUUID", "(Ljava/lang/String;)V",
@@ -380,5 +408,44 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnCancel", "com/ODK/CallbacksFetchGamerUUID", "()V",
 			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel, &g_nativeCallbacksFetchGamerUUIDOnCancel);
+
+		//
+		// Register Native Callbacks for RequestProducts
+		//
+
+		RegisterNativeMethod(env, "CallbacksRequestProductsOnSuccess", "com/ODK/CallbacksRequestProducts", "(Ljava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess, &g_nativeCallbacksRequestProductsOnSuccess);
+
+		RegisterNativeMethod(env, "CallbacksRequestProductsOnFailure", "com/ODK/CallbacksRequestProducts", "(ILjava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure, &g_nativeCallbacksRequestProductsOnFailure);
+
+		RegisterNativeMethod(env, "CallbacksRequestProductsOnCancel", "com/ODK/CallbacksRequestProducts", "()V",
+			(void*)&Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel, &g_nativeCallbacksRequestProductsOnCancel);
+
+		//
+		// Register Native Callbacks for RequestPurchase
+		//
+
+		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnSuccess", "com/ODK/CallbacksRequestPurchase", "(Ljava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess, &g_nativeCallbacksRequestPurchaseOnSuccess);
+
+		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnFailure", "com/ODK/CallbacksRequestPurchase", "(ILjava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure, &g_nativeCallbacksRequestPurchaseOnFailure);
+
+		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnCancel", "com/ODK/CallbacksRequestPurchase", "()V",
+			(void*)&Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel, &g_nativeCallbacksRequestPurchaseOnCancel);
+
+		//
+		// Register Native Callbacks for RequestReceipts
+		//
+
+		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnSuccess", "com/ODK/CallbacksRequestReceipts", "(Ljava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess, &g_nativeCallbacksRequestReceiptsOnSuccess);
+
+		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnFailure", "com/ODK/CallbacksRequestReceipts", "(ILjava/lang/String;)V",
+			(void*)&Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure, &g_nativeCallbacksRequestReceiptsOnFailure);
+
+		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnCancel", "com/ODK/CallbacksRequestReceipts", "()V",
+			(void*)&Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel, &g_nativeCallbacksRequestReceiptsOnCancel);
 	}
 }
