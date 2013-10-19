@@ -43,4 +43,5 @@ deployments
     name=MarmaladeIAP
     caption="Marmalade IAP"    
     android-external-jars='lib/android/gson-2.2.2.jar'
+    android-pkgname=tv.ouya.sdk.marmalade.inapppurchases
 }
