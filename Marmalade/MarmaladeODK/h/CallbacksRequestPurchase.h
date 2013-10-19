@@ -9,7 +9,7 @@
 
 typedef struct s3eRequestPurchaseSuccessEvent
 {
-	OuyaSDK::Product m_product;
+	OuyaSDK::ExtensionProduct m_product;
 } s3eRequestPurchaseSuccessEvent;
 
 typedef struct s3eRequestPurchaseFailureEvent
@@ -46,6 +46,9 @@ private:
 	s3eRequestPurchaseCancelEvent m_dataRequestPurchaseCancelEvent;
 
 	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
+
+	//cache the product object
+	static OuyaSDK::ExtensionProduct m_product;
 };
 
 #endif

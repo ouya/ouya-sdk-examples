@@ -15,7 +15,7 @@ static int32 MotionEventHandler(void* _systemData, void* userData);
 static int32 TouchEventHandler(void* _systemData, void* userData);
 static int32 TouchMotionEventHandler(void* _systemData, void* userData);
 
-const char* g_version = "Mamalade Version: 071";
+const char* g_version = "Mamalade Version: 072";
 
 
 void render()

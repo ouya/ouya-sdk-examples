@@ -11,7 +11,12 @@ void RequestPurchaseOnSuccess(s3eRequestPurchaseSuccessEvent* event)
 	//IwTrace(DEFAULT, ("void RequestPurchaseOnSuccess(event)"));
 	if (event)
 	{
-		Application::m_ui.m_callbacksRequestPurchase->OnSuccess(event->m_product);
+		OuyaSDK::ExtensionProduct eProduct = event->m_product;
+		ApplicationProduct product;
+		product.Init();
+		product.Copy(eProduct);
+
+		Application::m_ui.m_callbacksRequestPurchase->OnSuccess(product);
 	}
 	else
 	{
@@ -60,7 +65,7 @@ s3eCallback ApplicationCallbacksRequestPurchase::GetCancelEvent()
 	return (s3eCallback)RequestPurchaseOnCancel;
 }
 
-void ApplicationCallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
+void ApplicationCallbacksRequestPurchase::OnSuccess(const ApplicationProduct& product)
 {
 	IwTrace(DEFAULT, ("OnSuccess"));
 

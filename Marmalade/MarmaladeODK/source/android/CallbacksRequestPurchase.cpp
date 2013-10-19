@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 
+OuyaSDK::ExtensionProduct CallbacksRequestPurchase::m_product = OuyaSDK::ExtensionProduct();
+
 void CallbacksRequestPurchase::RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType)
 {
 	if (*savedCallback)
@@ -43,12 +45,29 @@ void CallbacksRequestPurchase::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_CANCEL);
 }
 
+void CopyStringProduct2(std::string source, char** destination)
+{
+	const char* str = source.c_str();
+	*destination = new char[strlen(str)];
+	sprintf(*destination, "%s", str);
+}
+
 void CallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
 {
 	IwTrace(ODK, ("OnSuccess"));
 
+	OuyaSDK::ExtensionProduct eProduct;
+	eProduct.Init();
+	CopyStringProduct2(product.CurrencyCode, &eProduct.CurrencyCode);
+	CopyStringProduct2(product.Identifier, &eProduct.Identifier);
+	CopyStringProduct2(product.Name, &eProduct.Name);
+	eProduct.ProductVersionToBundle = product.ProductVersionToBundle;
+	eProduct.LocalPrice = product.LocalPrice;
+	eProduct.PriceInCents = product.PriceInCents;
+	m_product = eProduct;
+
 	s3eRequestPurchaseSuccessEvent event;
-	event.m_product = product;
+	event.m_product = m_product;
 
 	m_dataRequestPurchaseSuccessEvent = event; //don't send a temp pointer
 	s3eEdkCallbacksEnqueue(S3E_EXT_ODK_HASH, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_SUCCESS, &m_dataRequestPurchaseSuccessEvent);

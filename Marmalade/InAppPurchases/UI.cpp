@@ -93,7 +93,7 @@ void UI::RenderThreadInitProducts()
 
 		for (unsigned int index = 0; index < m_products.size(); ++index)
 		{
-			m_products[index]->SetPosition(w*0.45f, h/3 + index * 25);
+			m_products[index]->SetPosition(w*0.3f, h/3 + index * 25);
 		}
 	}
 }
@@ -135,7 +135,7 @@ void UI::RenderThreadInitReceipts()
 
 		for (unsigned int index = 0; index < m_receipts.size(); ++index)
 		{
-			m_receipts[index]->SetPosition(w*0.55f, h/3 + index * 25);
+			m_receipts[index]->SetPosition(w*0.7f, h/3 + index * 25);
 		}
 	}
 }

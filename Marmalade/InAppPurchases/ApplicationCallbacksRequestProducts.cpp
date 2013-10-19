@@ -23,7 +23,7 @@ void RequestProductsOnSuccess(s3eRequestProductsSuccessEvent* event)
 			product.Copy(eProduct);
 			products.push_back(product);
 
-			IwTrace(DEFAULT, (product.Name.c_str()));
+			//IwTrace(DEFAULT, (product.Name.c_str()));
 		}
 		Application::m_ui.m_callbacksRequestProducts->OnSuccess(products);
 	}
