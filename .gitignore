@@ -37,3 +37,8 @@ Corona/InAppPurchasesPlugin/android/gen
 Corona/OuyaCoronaPlugin/android-plugin/bin
 Corona/OuyaCoronaPlugin/android-plugin/assets
 Corona/OuyaCoronaPlugin/android-plugin/gen
+Marmalade/InAppPurchases/build_inapppurchases_vc11/
+Marmalade/MarmaladeODK/build_odk_android_java/
+Marmalade/MarmaladeODK/build_odk_android_linux_scons_arm/
+Marmalade/MarmaladeODK/lib/
+Marmalade/MarmaladeODK/obj/

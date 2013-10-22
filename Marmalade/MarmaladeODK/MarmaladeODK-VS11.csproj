@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{e94c19b9-3437-42b8-9ae7-05118706b2f6}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>MarmaladeODK</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>.</OutputPath>
+	<DefineConstants>DEBUG;TRACE;</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+    <OutputPath>.</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+     <None Include="!ShowSignatures.cmd" />
+     <None Include="interface\ODK_interface.cpp" />
+     <None Include="source\android\CallbacksFetchGamerUUID.cpp" />
+     <None Include="source\android\CallbackSingleton.cpp" />
+     <None Include="source\android\CallbacksRequestProducts.cpp" />
+     <None Include="source\android\CallbacksRequestPurchase.cpp" />
+     <None Include="source\android\CallbacksRequestReceipts.cpp" />
+     <None Include="source\android\JSON.cpp" />
+     <None Include="source\android\JsonUtil.cpp" />
+     <None Include="source\android\JSONValue.cpp" />
+     <None Include="source\android\ODK_platform.cpp" />
+     <None Include="source\android\PluginOuya.cpp" />
+     <None Include="source\android\Product.cpp" />
+     <None Include="source\android\Receipt.cpp" />
+     <None Include="source\generic\ODK.cpp" />
+     <None Include="source\generic\ODK_register.cpp" />
+     <None Include="source\windows\ODK_platform.cpp" />
+     <None Include="h\CallbacksFetchGamerUUID.h" />
+     <None Include="h\CallbackSingleton.h" />
+     <None Include="h\CallbacksRequestProducts.h" />
+     <None Include="h\CallbacksRequestPurchase.h" />
+     <None Include="h\CallbacksRequestReceipts.h" />
+     <None Include="h\Controller.h" />
+     <None Include="h\JSON.h" />
+     <None Include="h\JsonUtil.h" />
+     <None Include="h\JSONValue.h" />
+     <None Include="h\ODK.h" />
+     <None Include="h\PluginOuya.h" />
+     <None Include="h\Product.h" />
+     <None Include="h\Receipt.h" />
+     <None Include="source\h\ODK_autodefs.h" />
+     <None Include="source\h\ODK_internal.h" />
+     <None Include="ODK_android.mkb" />
+     <None Include="ODK_android_java.mkb" />
+     <None Include="ODK_windows.mkb" />
+     <None Include="ODK.mkf" />
+     <None Include="ODK_build.mkf" />
+     <None Include="source\android\AsyncCppOuyaFetchGamerUUID.java" />
+     <None Include="source\android\AsyncCppOuyaRequestProducts.java" />
+     <None Include="source\android\AsyncCppOuyaRequestPurchase.java" />
+     <None Include="source\android\AsyncCppOuyaRequestReceipts.java" />
+     <None Include="source\android\AsyncCppOuyaSetDeveloperId.java" />
+     <None Include="source\android\CallbacksFetchGamerUUID.java" />
+     <None Include="source\android\CallbacksRequestProducts.java" />
+     <None Include="source\android\CallbacksRequestPurchase.java" />
+     <None Include="source\android\CallbacksRequestReceipts.java" />
+     <None Include="source\android\IOuyaActivity.java" />
+     <None Include="source\android\MarmaladeOuyaFacade.java" />
+     <None Include="source\android\MarmaladeOuyaPlugin.java" />
+     <None Include="source\android\ODK.java" />
+     <None Include="ODK.s4e" />
+     <None Include="LICENSE.txt" />
+     <None Include="ReadMe.txt" />
+     <None Include="interface\ODK.defines.txt" />
+
+
+
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
