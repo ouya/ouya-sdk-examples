@@ -1,6 +1,6 @@
 files
 {
-	VirtualController.cpp
+	Main.cpp
 	VirtualControllerSprite.h
 	VirtualControllerSprite.cpp
 }
@@ -9,6 +9,7 @@ subprojects
 {
 	IwGx
 	iw2d
+	../MarmaladeODK/ODK
 }
 
 assets

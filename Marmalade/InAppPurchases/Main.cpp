@@ -25,12 +25,6 @@
 #include "ODK.h"
 
 
-static int32 ButtonEventHandler(void* _systemData, void* userData);
-static int32 KeyEventHandler(void* _systemData, void* userData);
-static int32 MotionEventHandler(void* _systemData, void* userData);
-static int32 TouchEventHandler(void* _systemData, void* userData);
-static int32 TouchMotionEventHandler(void* _systemData, void* userData);
-
 const char* g_version = "Mamalade Version: 072";
 
 
@@ -80,7 +74,7 @@ int main()
 		Application::m_ui.HandleInput();
 		render();
 
-		// Yield until unyield is called or a quit request is recieved
+		// keep polling for input, don't kill the CPU
 		s3eDeviceYield(0);
 	}
 

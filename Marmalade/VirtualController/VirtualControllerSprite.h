@@ -5,6 +5,10 @@
 #include "IwResManager.h"
 #include "Iw2D.h"
 
+#include <map>
+#include <string>
+#include <vector>
+
 // Scale axis graphics but this amount
 #define AXIS_SCALER 4.0f;
 
@@ -16,7 +20,7 @@ class VirtualControllerSprite
 public:	
 
     // The controller index
-    //PlayerIndex Index = PlayerIndex.One;
+    int PlayerIndex;
 
     // The position of the sprite
     CIwFVec2 Position;
@@ -40,29 +44,20 @@ public:
     CIw2DImage* RightStickActive;
     CIw2DImage* RightStickInactive;
 
+	// axis values
+	std::map<int, float> m_axisValues;
+
 	// pressed state
-	bool PressedButtonA;
-    bool PressedButtonO;
-    bool PressedButtonU;
-    bool PressedButtonY;
-    bool PressedDpadDown;
-    bool PressedDpadLeft;
-    bool PressedDpadRight;
-    bool PressedDpadUp;
-    bool PressedLeftBumper;
-    bool PressedLeftTrigger;
-    bool PressedLeftStick;
-    bool PressedRightBumper;
-    bool PressedRightTrigger;
-    bool PressedRightStick;
+	std::vector<int> m_pressed;
 
 	// Name of the device
-	char* DeviceName;
+	std::string DeviceName;
 
 	VirtualControllerSprite();
 
     // Set the texture references        
     void Initialize(
+		int playerIndex,
         CIw2DImage* buttonA,
         CIw2DImage* controller,
         CIw2DImage* dpadDown,
@@ -81,13 +76,25 @@ public:
         CIw2DImage* buttonU,
         CIw2DImage* buttonY);
 
+	// Check for input
+	void HandleInput();
+
 	// Render the controller
 	void Render();
 
 private:
 
+	bool HandleAxis(int axis);
+	bool HandleButtonPressed(int button);
+
+	float GetAxis(int axis);
+	bool ButtonPressed(int button);
+
 	// Render an image with error checking
 	void Render(CIw2DImage* image);
+
+	// Render with an offset
+	void Render(CIw2DImage* image, const CIwFVec2& offset);
 
 };
 

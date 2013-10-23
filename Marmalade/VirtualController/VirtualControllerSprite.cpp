@@ -1,8 +1,18 @@
 #include "VirtualControllerSprite.h"
 
+#include "ODK.h"
+
+#include <math.h>
+
+#define AXIS_SCALER 4.0f
+
+#define DEADZONE 0.25f
+
 VirtualControllerSprite::VirtualControllerSprite()
 {
 	DeviceName = "Unknown";
+
+	PlayerIndex = -1;
 
     ButtonA = NULL;
     ButtonO = NULL;
@@ -21,24 +31,10 @@ VirtualControllerSprite::VirtualControllerSprite()
     RightTrigger = NULL;
     RightStickActive = NULL;
     RightStickInactive = NULL;
-
-	PressedButtonA = false;
-	PressedButtonO = false;
-	PressedButtonU = false;
-	PressedButtonY = false;
-	PressedDpadDown = false;
-	PressedDpadLeft = false;
-	PressedDpadRight = false;
-	PressedDpadUp = false;
-	PressedLeftBumper = false;
-	PressedLeftTrigger = false;
-	PressedLeftStick = false;
-	PressedRightBumper = false;
-	PressedRightTrigger = false;
-	PressedRightStick = false;
 }
 
 void VirtualControllerSprite::Initialize(
+	int playerIndex,
 	CIw2DImage* buttonA,
 	CIw2DImage* controller,
 	CIw2DImage* dpadDown,
@@ -59,6 +55,8 @@ void VirtualControllerSprite::Initialize(
 {
 	DeviceName = "Unknown";
 
+	PlayerIndex = playerIndex;
+
     ButtonA = buttonA;
     ButtonO = buttonO;
     ButtonU = buttonU;
@@ -78,91 +76,199 @@ void VirtualControllerSprite::Initialize(
     RightStickInactive = rightStickInactive;
 }
 
+bool VirtualControllerSprite::HandleAxis(int axis)
+{
+	float val = OuyaController_getAxisValue(axis) / 256.0f;
+	m_axisValues[axis] = val;
+	return val;
+}
+
+float VirtualControllerSprite::GetAxis(int axis)
+{
+	float val = OuyaController_getAxisValue(axis);
+
+	std::map<int, float>::iterator iter = m_axisValues.find(axis);
+	if (iter == m_axisValues.end())
+	{
+		return 0;
+	}
+	else
+	{
+		return m_axisValues[axis];
+	}
+}
+
+bool VirtualControllerSprite::HandleButtonPressed(int button)
+{
+	if (OuyaController_getButton(button))
+	{
+		// not found
+		if (std::find(m_pressed.begin(), m_pressed.end(), button) == m_pressed.end())
+		{
+			m_pressed.push_back(button);
+		}
+		return true;
+	}
+	else
+	{
+		std::vector<int>::iterator lookup = std::find(m_pressed.begin(), m_pressed.end(), button);
+		// found
+		if (lookup != m_pressed.end())
+		{
+			m_pressed.erase(lookup);
+		}
+		
+		return false;
+	}
+}
+
+bool VirtualControllerSprite::ButtonPressed(int button)
+{
+	// not found
+	if (std::find(m_pressed.begin(), m_pressed.end(), button) == m_pressed.end())
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+void VirtualControllerSprite::HandleInput()
+{
+	HandleAxis(OuyaController_AXIS_LS_X);
+	HandleAxis(OuyaController_AXIS_LS_Y);
+	HandleAxis(OuyaController_AXIS_RS_X);
+	HandleAxis(OuyaController_AXIS_RS_Y);
+	HandleAxis(OuyaController_AXIS_L2);
+	HandleAxis(OuyaController_AXIS_R2);
+	
+	HandleButtonPressed(OuyaController_BUTTON_DPAD_UP);
+	HandleButtonPressed(OuyaController_BUTTON_DPAD_DOWN);
+	HandleButtonPressed(OuyaController_BUTTON_DPAD_LEFT);
+	HandleButtonPressed(OuyaController_BUTTON_DPAD_RIGHT);
+	
+	//HandleButtonPressed(OuyaController_BUTTON_MENU);
+
+	HandleButtonPressed(OuyaController_BUTTON_O);
+	HandleButtonPressed(OuyaController_BUTTON_A);
+	HandleButtonPressed(OuyaController_BUTTON_U);
+	HandleButtonPressed(OuyaController_BUTTON_Y);
+	
+	HandleButtonPressed(OuyaController_BUTTON_L1);
+	HandleButtonPressed(OuyaController_BUTTON_R1);
+	HandleButtonPressed(OuyaController_BUTTON_L2);
+	HandleButtonPressed(OuyaController_BUTTON_R2);
+	HandleButtonPressed(OuyaController_BUTTON_R3);
+	HandleButtonPressed(OuyaController_BUTTON_L3);
+}
+
 void VirtualControllerSprite::Render()
 {
 	Render(Controller);
 
-	if (PressedButtonA)
+	if (ButtonPressed(OuyaController_BUTTON_A))
 	{
 		Render(ButtonA);
 	}
 
-	if (PressedButtonO)
+	if (ButtonPressed(OuyaController_BUTTON_O))
 	{
 		Render(ButtonO);
 	}
 
-    if (PressedButtonU)
+    if (ButtonPressed(OuyaController_BUTTON_U))
 	{
 		Render(ButtonU);
 	}
 
-	if (PressedButtonY)
+	if (ButtonPressed(OuyaController_BUTTON_Y))
 	{
 		Render(ButtonY);
 	}
 
-	if (PressedDpadDown)
+	if (ButtonPressed(OuyaController_BUTTON_DPAD_DOWN))
 	{
 		Render(DpadDown);
 	}
 
-    if (PressedDpadLeft)
+    if (ButtonPressed(OuyaController_BUTTON_DPAD_LEFT))
 	{
 		Render(DpadLeft);
 	}
 
-	if (PressedDpadRight)
+	if (ButtonPressed(OuyaController_BUTTON_DPAD_RIGHT))
 	{
 		Render(DpadRight);
 	}
 
-    if (PressedDpadUp)
+    if (ButtonPressed(OuyaController_BUTTON_DPAD_UP))
 	{
 		Render(DpadUp);
 	}	
 	
-	if (PressedLeftBumper)
+	if (ButtonPressed(OuyaController_BUTTON_L1))
 	{
 		Render(LeftBumper);
 	}
 
-	if (PressedLeftTrigger)
+	if (fabs(GetAxis(OuyaController_AXIS_L2)) > DEADZONE)
 	{
 		Render(LeftTrigger);
 	}
 
-    if (PressedLeftStick)
+	//rotate input by N degrees to match image
+    float degrees = 135;
+    float radians = degrees / 180.0f * 3.14f;
+    float valCos = cosf(radians);
+    float valSin = sinf(radians);
+
+	CIwFVec2 input;
+	input.x = GetAxis(OuyaController_AXIS_LS_X);
+	input.y = GetAxis(OuyaController_AXIS_LS_Y);
+
+	CIwFVec2 pos;
+	pos.x = AXIS_SCALER * input.x * valCos - input.y * valSin;
+	pos.y = AXIS_SCALER * input.x * valSin + input.y * valCos;
+
+    if (ButtonPressed(OuyaController_BUTTON_L3))
 	{
-		Render(LeftStickActive);
+		Render(LeftStickActive, pos);
 	}
 	else
 	{
-		Render(LeftStickInactive);
+		Render(LeftStickInactive, pos);
 	}
 
-	if (PressedRightBumper)
+	if (ButtonPressed(OuyaController_BUTTON_R1))
 	{
 		Render(RightBumper);
 	}
 
-	if (PressedRightTrigger)
+	if (abs(GetAxis(OuyaController_AXIS_R2)) > DEADZONE)
 	{
 		Render(RightTrigger);
 	}
 
-	if (PressedRightStick)
+	input.x = GetAxis(OuyaController_AXIS_RS_X);
+	input.y = GetAxis(OuyaController_AXIS_RS_Y);
+
+	pos.x = AXIS_SCALER * input.x * valCos - input.y * valSin;
+	pos.y = AXIS_SCALER * input.x * valSin + input.y * valCos;
+
+	if (ButtonPressed(OuyaController_BUTTON_R3))
 	{
-		Render(RightStickActive);
+		Render(RightStickActive, pos);
 	}
 	else
 	{
-		Render(RightStickInactive);
+		Render(RightStickInactive, pos);
 	}    
 
-	if (DeviceName)
+	if (DeviceName.c_str())
 	{
-		IwGxPrintString(Position.x + 150, Position.y + 315, DeviceName);
+		IwGxPrintString(Position.x + 150, Position.y + 315, DeviceName.c_str());
 	}
 }
 
@@ -171,5 +277,13 @@ void VirtualControllerSprite::Render(CIw2DImage* image)
 	if (image)
 	{
 		Iw2DDrawImage(image, Position, CIwFVec2(image->GetWidth(), image->GetHeight()));
+	}
+}
+
+void VirtualControllerSprite::Render(CIw2DImage* image, const CIwFVec2& offset)
+{
+	if (image)
+	{
+		Iw2DDrawImage(image, Position + offset, CIwFVec2(image->GetWidth(), image->GetHeight()));
 	}
 }
