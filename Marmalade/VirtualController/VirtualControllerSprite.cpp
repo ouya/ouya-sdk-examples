@@ -85,8 +85,6 @@ bool VirtualControllerSprite::HandleAxis(int axis)
 
 float VirtualControllerSprite::GetAxis(int axis)
 {
-	float val = OuyaController_getAxisValue(axis);
-
 	std::map<int, float>::iterator iter = m_axisValues.find(axis);
 	if (iter == m_axisValues.end())
 	{
@@ -224,13 +222,12 @@ void VirtualControllerSprite::Render()
     float valCos = cosf(radians);
     float valSin = sinf(radians);
 
-	CIwFVec2 input;
-	input.x = GetAxis(OuyaController_AXIS_LS_X);
-	input.y = GetAxis(OuyaController_AXIS_LS_Y);
+	float x = GetAxis(OuyaController_AXIS_LS_X);
+	float y = GetAxis(OuyaController_AXIS_LS_Y);
 
 	CIwFVec2 pos;
-	pos.x = AXIS_SCALER * input.x * valCos - input.y * valSin;
-	pos.y = AXIS_SCALER * input.x * valSin + input.y * valCos;
+	pos.x = AXIS_SCALER * x * valCos - y * valSin;
+	pos.y = AXIS_SCALER * x * valSin + y * valCos;
 
     if (ButtonPressed(OuyaController_BUTTON_L3))
 	{
@@ -251,11 +248,11 @@ void VirtualControllerSprite::Render()
 		Render(RightTrigger);
 	}
 
-	input.x = GetAxis(OuyaController_AXIS_RS_X);
-	input.y = GetAxis(OuyaController_AXIS_RS_Y);
+	x = GetAxis(OuyaController_AXIS_RS_X);
+	y = GetAxis(OuyaController_AXIS_RS_Y);
 
-	pos.x = AXIS_SCALER * input.x * valCos - input.y * valSin;
-	pos.y = AXIS_SCALER * input.x * valSin + input.y * valCos;
+	pos.x = AXIS_SCALER * x * valCos - y * valSin;
+	pos.y = AXIS_SCALER * x * valSin + y * valCos;
 
 	if (ButtonPressed(OuyaController_BUTTON_R3))
 	{

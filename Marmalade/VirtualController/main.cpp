@@ -23,7 +23,7 @@
 #include "ODK.h"
 
 
-const char* g_version = "Mamalade Version: 003";
+const char* g_version = "Mamalade Version: 005";
 
 //the controller instances
 VirtualControllerSprite m_controllers[OuyaController_MAX_CONTROLLERS];
