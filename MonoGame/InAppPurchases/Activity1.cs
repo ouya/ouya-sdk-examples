@@ -32,18 +32,8 @@ namespace InAppPurchases
             SetContentView(g.Window);
             g.Run();
 
-            byte[] applicationKey = null;
-            using (var stream = Resources.OpenRawResource(Resource.Raw.key))
-            {
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    applicationKey = ms.ToArray();
-                }
-            }
-
             PurchaseFacade = OuyaFacade.Instance;
-            PurchaseFacade.Init(this, DEVELOPER_ID, applicationKey);
+            PurchaseFacade.Init(this, DEVELOPER_ID);
         }
     }
 }

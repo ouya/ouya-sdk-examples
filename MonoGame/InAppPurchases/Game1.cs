@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Ouya.Console.Api;
-using Ouya.Csharp;
 
 namespace InAppPurchases
 {
@@ -31,16 +30,6 @@ namespace InAppPurchases
         private Task<bool> TaskRequestPurchase = null;
         private Task<string> TaskRequestGamer = null;
         private Task<IList<Receipt>> TaskRequestReceipts = null;
-
-        /// <summary>
-        /// For purchases all transactions need a unique id
-        /// </summary>
-        private string m_uniquePurchaseId = string.Empty;
-
-        void ClearPurchaseId()
-        {
-            m_uniquePurchaseId = string.Empty;
-        }
 
         public Game1()
         {
@@ -103,7 +92,7 @@ namespace InAppPurchases
                                                       };
 
                 m_focusManager.SelectedProductIndex = 0;
-                TaskRequestProducts = Activity1.PurchaseFacade.RequestProductList(purchasables);
+                TaskRequestProducts = Activity1.PurchaseFacade.RequestProductListAsync(purchasables);
             }
 
             else if (clickEventArgs.Button == BtnPurchase)
@@ -112,23 +101,20 @@ namespace InAppPurchases
                     m_focusManager.SelectedProductIndex < TaskRequestProducts.Result.Count)
                 {
                     Product product = TaskRequestProducts.Result[m_focusManager.SelectedProductIndex];
-                    if (string.IsNullOrEmpty(m_uniquePurchaseId))
-                    {
-                        m_uniquePurchaseId = Guid.NewGuid().ToString().ToLower();
-                    }
-                    TaskRequestPurchase = Activity1.PurchaseFacade.RequestPurchase(product, m_uniquePurchaseId);
+                    TaskRequestPurchase = Activity1.PurchaseFacade.RequestPurchaseAsync(product);
                 }
             }
 
             else if (clickEventArgs.Button == BtnGetReceipts)
             {
                 m_focusManager.SelectedReceiptIndex = 0;
-                TaskRequestReceipts = Activity1.PurchaseFacade.RequestReceipts();
+                TaskRequestReceipts = Activity1.PurchaseFacade.RequestReceiptsAsync();
             }
 
             else if (clickEventArgs.Button == BtnGetUUID)
             {
-                TaskRequestGamer = Activity1.PurchaseFacade.RequestGamerUuid();
+                m_debugText = "Requesting Gamer UUID...";
+                TaskRequestGamer = Activity1.PurchaseFacade.RequestGamerUuidAsync();
             }
 
             else if (clickEventArgs.Button == BtnPause)
@@ -260,7 +246,6 @@ namespace InAppPurchases
                     m_debugText = string.Format("Request Purchase has exception. {0}", exception);
                     TaskRequestPurchase.Dispose();
                     TaskRequestPurchase = null;
-                    ClearPurchaseId();
                 }
             }
 
@@ -320,10 +305,17 @@ namespace InAppPurchases
                 if (null != TaskRequestReceipts &&
                     null == TaskRequestReceipts.Exception &&
                     !TaskRequestReceipts.IsCanceled &&
-                    TaskRequestReceipts.IsCompleted &&
-                    null != TaskRequestReceipts.Result)
+                    TaskRequestReceipts.IsCompleted)
                 {
-                    m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
+                    if (null == TaskRequestReceipts.Result)
+                    {
+                        m_debugText = "TaskRequestReceipts.Result == null";
+                    }
+                    else
+                    {
+                        m_debugText = string.Format("Found {0} receipts", TaskRequestReceipts.Result.Count);
+                        m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
+                    }
                 }
             }
             else if (m_focusManager.SelectedButton == BtnGetUUID)
@@ -358,7 +350,6 @@ namespace InAppPurchases
                         if (TaskRequestPurchase.IsCanceled)
                         {
                             m_debugText = "Request Purchase has cancelled.";
-                            ClearPurchaseId(); //clear the purchase id
                         }
                         else if (TaskRequestPurchase.IsCompleted)
                         {
@@ -370,7 +361,6 @@ namespace InAppPurchases
                             {
                                 m_debugText = "Request Purchase has completed with failure.";
                             }
-                            ClearPurchaseId(); //clear the purchase id
                         }
                     }
                 }
