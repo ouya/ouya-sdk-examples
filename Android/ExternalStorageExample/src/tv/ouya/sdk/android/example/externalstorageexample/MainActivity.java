@@ -87,12 +87,13 @@ public class MainActivity extends Activity {
 				File file = GetExternalStorageDirectory();
 				if (file.exists())
 				{
-					File newFile = new File(file.getAbsolutePath() + File.separatorChar + DATA_FILE);
+					File newFile = new File(file.getAbsolutePath() + File.separatorChar + GetRelativeDataFilePath());
+					new File(newFile.getParent()).mkdirs();
 					if (!newFile.exists()) {
 						try {
 							newFile.createNewFile();
 						} catch (IOException e) {
-							UpdateResultCreateFile("Could not create file: " + DATA_FILE + " " + e.toString());
+							UpdateResultCreateFile("Could not create file: " + GetRelativeDataFilePath() + " " + e.toString());
 							return;
 						}					
 					}
@@ -105,9 +106,9 @@ public class MainActivity extends Activity {
 						bw.write(contents);
 						bw.close();
 						fw.close();
-						UpdateResultCreateFile("Wrote data file: " + DATA_FILE + " contents: " + contents);
+						UpdateResultCreateFile("Wrote data file: " + GetRelativeDataFilePath() + " contents: " + contents);
 					} catch (IOException e) {
-						UpdateResultCreateFile("Could not write file: " + DATA_FILE + " " + e.toString());
+						UpdateResultCreateFile("Could not write file: " + GetRelativeDataFilePath() + " " + e.toString());
 						return;
 					}
 				}
@@ -126,7 +127,8 @@ public class MainActivity extends Activity {
 				File file = GetExternalStorageDirectory();
 				if (file.exists())
 				{
-					File newFile = new File(file.getAbsolutePath() + File.separatorChar + DATA_FILE);
+					File newFile = new File(file.getAbsolutePath() + File.separatorChar + GetRelativeDataFilePath());
+					new File(newFile.getParent()).mkdirs();
 					if (newFile.exists()) {
 						FileReader fr;
 						try {
@@ -135,13 +137,13 @@ public class MainActivity extends Activity {
 							String contents = br.readLine();
 							br.close();
 							fr.close();
-							UpdateResultReadFile("Read data file: " + DATA_FILE + " contents: " + contents);
+							UpdateResultReadFile("Read data file: " + GetRelativeDataFilePath() + " contents: " + contents);
 						} catch (IOException e) {
-							UpdateResultReadFile("Could not read file: " + DATA_FILE + " " + e.toString());
+							UpdateResultReadFile("Could not read file: " + GetRelativeDataFilePath() + " " + e.toString());
 							return;
 						}
 					} else {
-						UpdateResultReadFile("Data file does not exist: " + DATA_FILE);
+						UpdateResultReadFile("Data file does not exist: " + GetRelativeDataFilePath());
 					}
 				}
 				else
@@ -159,12 +161,13 @@ public class MainActivity extends Activity {
 				File file = GetExternalStorageDirectory();
 				if (file.exists())
 				{
-					File newFile = new File(file.getAbsolutePath() + File.separatorChar + DATA_FILE);
+					File newFile = new File(file.getAbsolutePath() + File.separatorChar + GetRelativeDataFilePath());
+					new File(newFile.getParent()).mkdirs();
 					if (newFile.exists()) {
 						newFile.delete();
-						UpdateResultDeleteFile("Data file deleted: " + DATA_FILE);
+						UpdateResultDeleteFile("Data file deleted: " + GetRelativeDataFilePath());
 					} else {
-						UpdateResultDeleteFile("Data file does not exist: " + DATA_FILE);
+						UpdateResultDeleteFile("Data file does not exist: " + GetRelativeDataFilePath());
 					}
 				}
 				else
@@ -173,6 +176,11 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+	}
+	
+	private String GetRelativeDataFilePath() {
+		String packageName = getApplicationContext().getPackageName();
+		return "Android" + File.separatorChar + "data" + File.separatorChar + packageName + File.separatorChar + DATA_FILE;
 	}
 	
 	private File GetExternalStorageDirectory() {
