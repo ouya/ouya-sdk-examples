@@ -46,6 +46,60 @@
 	        android:layout_height="wrap_content"
 	        android:text=""/>    
 	    </LinearLayout>
+	    
+	    <LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:orientation="horizontal" >    
+	    <Button
+	        android:id="@+id/btnCreateFile"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""/>    
+	    <TextView
+	        android:id="@+id/txtCreateFile"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""/>    
+	    </LinearLayout>
+	    
+	    <LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:orientation="horizontal" >    
+	    <Button
+	        android:id="@+id/btnReadFile"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""/>    
+	    <TextView
+	        android:id="@+id/txtReadFile"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""/>    
+	    </LinearLayout>
+	    
+	    <LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:orientation="horizontal" >    
+	    <Button
+	        android:id="@+id/btnDeleteFile"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""/>    
+	    <TextView
+	        android:id="@+id/txtDeleteFile"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""/>    
+	    </LinearLayout>
     
     </LinearLayout>
 

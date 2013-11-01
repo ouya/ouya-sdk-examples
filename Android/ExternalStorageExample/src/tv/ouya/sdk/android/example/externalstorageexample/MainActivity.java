@@ -1,6 +1,11 @@
 package tv.ouya.sdk.android.example.externalstorageexample;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -19,6 +24,17 @@ public class MainActivity extends Activity {
 	
 	private Button m_btnGetExternalStoragePublicDirectory = null;
 	private TextView m_txtGetExternalStoragePublicDirectory = null;
+	
+	private Button m_btnCreateFile = null;
+	private TextView m_txtCreateFile = null;
+	
+	private Button m_btnReadFile = null;
+	private TextView m_txtReadFile = null;
+	
+	private Button m_btnDeleteFile = null;
+	private TextView m_txtDeleteFile = null;
+	
+	private final String DATA_FILE = "ExternalStorageExample.txt";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +46,15 @@ public class MainActivity extends Activity {
 		
 		m_btnGetExternalStoragePublicDirectory = (Button)findViewById(R.id.btnGetExternalStoragePublicDirectory);
 		m_txtGetExternalStoragePublicDirectory = (TextView)findViewById(R.id.txtGetExternalStoragePublicDirectory);
+		
+		m_btnCreateFile = (Button)findViewById(R.id.btnCreateFile);
+		m_txtCreateFile = (TextView)findViewById(R.id.txtCreateFile);
+		
+		m_btnReadFile = (Button)findViewById(R.id.btnReadFile);
+		m_txtReadFile = (TextView)findViewById(R.id.txtReadFile);
+		
+		m_btnDeleteFile = (Button)findViewById(R.id.btnDeleteFile);
+		m_txtDeleteFile = (TextView)findViewById(R.id.txtDeleteFile);
 	}
 
 	@Override
@@ -41,12 +66,7 @@ public class MainActivity extends Activity {
 		m_btnGetExternalStorageApp.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				File file = Environment.getExternalStorageDirectory();
-				if (null == file) {
-					UpdateResultGetExternalStorageApp("file is null");					
-				} else {
-					UpdateResultGetExternalStorageApp("file: "+ file.getAbsolutePath());
-				}
+				GetExternalStorageDirectory();
 			}
 		});
 		
@@ -55,22 +75,144 @@ public class MainActivity extends Activity {
 		m_btnGetExternalStoragePublicDirectory.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				File file = Environment.getExternalStoragePublicDirectory("");
-				if (null == file) {
-					UpdateResultGetExternalStoragePublicDirectory("file is null");					
-				} else {
-					UpdateResultGetExternalStoragePublicDirectory("file: "+ file.getAbsolutePath());
+				GetExternalStoragePublicDirectory("");
+			}
+		});
+		
+		m_btnCreateFile.setText("Create file on App storage device");
+		UpdateResultCreateFile("<-- hit the button");		
+		m_btnCreateFile.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				File file = GetExternalStorageDirectory();
+				if (file.exists())
+				{
+					File newFile = new File(file.getAbsolutePath() + File.separatorChar + DATA_FILE);
+					if (!newFile.exists()) {
+						try {
+							newFile.createNewFile();
+						} catch (IOException e) {
+							UpdateResultCreateFile("Could not create file: " + DATA_FILE + " " + e.toString());
+							return;
+						}					
+					}
+					
+					FileWriter fw;
+					try {
+						fw = new FileWriter(newFile.getAbsoluteFile());						
+						BufferedWriter bw = new BufferedWriter(fw);
+						String contents = "Hello External Storage!";
+						bw.write(contents);
+						bw.close();
+						fw.close();
+						UpdateResultCreateFile("Wrote data file: " + DATA_FILE + " contents: " + contents);
+					} catch (IOException e) {
+						UpdateResultCreateFile("Could not write file: " + DATA_FILE + " " + e.toString());
+						return;
+					}
+				}
+				else
+				{
+					UpdateResultCreateFile("GetExternalStorageDirectory File does not exist");
+				}
+			}
+		});
+		
+		m_btnReadFile.setText("Read file on App storage device");
+		UpdateResultReadFile("<-- hit the button");		
+		m_btnReadFile.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				File file = GetExternalStorageDirectory();
+				if (file.exists())
+				{
+					File newFile = new File(file.getAbsolutePath() + File.separatorChar + DATA_FILE);
+					if (newFile.exists()) {
+						FileReader fr;
+						try {
+							fr = new FileReader(newFile.getAbsoluteFile());						
+							BufferedReader br = new BufferedReader(fr);
+							String contents = br.readLine();
+							br.close();
+							fr.close();
+							UpdateResultReadFile("Read data file: " + DATA_FILE + " contents: " + contents);
+						} catch (IOException e) {
+							UpdateResultReadFile("Could not read file: " + DATA_FILE + " " + e.toString());
+							return;
+						}
+					} else {
+						UpdateResultReadFile("Data file does not exist: " + DATA_FILE);
+					}
+				}
+				else
+				{
+					UpdateResultReadFile("GetExternalStorageDirectory File does not exist");
+				}
+			}
+		});
+		
+		m_btnDeleteFile.setText("Delete file on App storage device");
+		UpdateResultDeleteFile("<-- hit the button");		
+		m_btnDeleteFile.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				File file = GetExternalStorageDirectory();
+				if (file.exists())
+				{
+					File newFile = new File(file.getAbsolutePath() + File.separatorChar + DATA_FILE);
+					if (newFile.exists()) {
+						newFile.delete();
+						UpdateResultDeleteFile("Data file deleted: " + DATA_FILE);
+					} else {
+						UpdateResultDeleteFile("Data file does not exist: " + DATA_FILE);
+					}
+				}
+				else
+				{
+					UpdateResultDeleteFile("GetExternalStorageDirectory File does not exist");
 				}
 			}
 		});
 	}
 	
+	private File GetExternalStorageDirectory() {
+		File file = Environment.getExternalStorageDirectory();
+		if (null == file) {
+			UpdateResultGetExternalStorageApp("file is null");					
+		} else {
+			UpdateResultGetExternalStorageApp("file: "+ file.getAbsolutePath());
+		}
+		return file;
+	}
+	
+	private File GetExternalStoragePublicDirectory(String type) {
+		File file = Environment.getExternalStoragePublicDirectory(type);
+		if (null == file) {
+			UpdateResultGetExternalStoragePublicDirectory("file is null");					
+		} else {
+			UpdateResultGetExternalStoragePublicDirectory("file: "+ file.getAbsolutePath());
+		}
+		return file;
+	}
+	
 	private void UpdateResultGetExternalStorageApp(String result) {
-		m_txtGetExternalStorageApp.setText("result: " + result);
+		m_txtGetExternalStorageApp.setText("result: " + result);		
 	}
 	
 	private void UpdateResultGetExternalStoragePublicDirectory(String result) {
 		m_txtGetExternalStoragePublicDirectory.setText("result: " + result);
+	}
+	
+	private void UpdateResultCreateFile(String result) {
+		m_txtCreateFile.setText("result: " + result);
+	}
+	
+	private void UpdateResultReadFile(String result) {
+		m_txtReadFile.setText("result: " + result);
+	}
+	
+	private void UpdateResultDeleteFile(String result) {
+		m_txtDeleteFile.setText("result: " + result);
 	}
 
 }
