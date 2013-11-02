@@ -179,7 +179,8 @@ public class MainActivity extends Activity {
 	}
 	
 	private String GetRelativeDataFilePath() {
-		String packageName = getApplicationContext().getPackageName();
+		Context context = getApplicationContext();
+		String packageName = context.getPackageName();
 		return "Android" + File.separatorChar + "data" + File.separatorChar + packageName + File.separatorChar + DATA_FILE;
 	}
 	

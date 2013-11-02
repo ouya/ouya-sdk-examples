@@ -30,6 +30,16 @@
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 
+// If we cause an exception in JNI, we print the exception info to
+// the log, we clear the exception to avoid a pending-exception
+// crash, and we force the function to return.
+#define EXCEPTION_RETURN(env) \
+        if (env->ExceptionOccurred()) { \
+                env->ExceptionDescribe(); \
+                env->ExceptionClear(); \
+                return; \
+        }
+
 /**
  * Our saved state data.
  */
@@ -224,8 +234,10 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     }
 }
 
+jclass jc_context = NULL;
 jclass jc_environment = NULL;
 jclass jc_file = NULL;
+jclass jc_nativeActivity = NULL;
 
 /**
  * This is the main entry point of a native application that is using
@@ -255,34 +267,99 @@ void android_main(struct android_app* state) {
 
 	LOGI("Finding environment class...");
 	jc_environment = myNewEnv->FindClass("android/os/Environment");
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Found environment class");
 
 	LOGI("Find environment.getExternalStorageDirectory method...");
 	jmethodID invokeGetExternalStorageDirectory = myNewEnv->GetStaticMethodID(jc_environment, "getExternalStorageDirectory", "()Ljava/io/File;");
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Found environment.getExternalStorageDirectory method");
 
 	LOGI("Find environment.getExternalStoragePublicDirectory method...");
 	jmethodID getExternalStoragePublicDirectory = myNewEnv->GetStaticMethodID(jc_environment, "getExternalStoragePublicDirectory", "(Ljava/lang/String;)Ljava/io/File;");
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Found environment.getExternalStoragePublicDirectory method");
 
 	LOGI("Invoke environment.getExternalStorageDirectory method...");
 	jobject fileObj = myNewEnv->CallStaticObjectMethod(jc_environment, invokeGetExternalStorageDirectory);
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Invoked environment.getExternalStorageDirectory method");
 
 	LOGI("Finding file class...");
 	jc_file = myNewEnv->FindClass("java/io/File");
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Found File class");
 
 	LOGI("Find file.getAbsolutePath method...");
 	jmethodID invokeGetAbsolutePath = myNewEnv->GetMethodID(jc_file, "getAbsolutePath", "()Ljava/lang/String;");
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Found fine.getAbsolutePath method");
 
 	LOGI("Invoke file.getAbsolutePath method...");
 	jstring pathObj = (jstring)myNewEnv->CallObjectMethod(fileObj, invokeGetAbsolutePath);
+	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Invoked fine.getAbsolutePath method");
 
 	std::string strPath = myNewEnv->GetStringUTFChars(pathObj, NULL);
-	LOGI(strPath.c_str());
+	EXCEPTION_RETURN(myNewEnv);
+	
+	std::string msg = "Environment.getExternalStorageDirectory result: ";
+	msg.append(strPath.c_str());
+	LOGI(msg.c_str());
+
+	LOGI("Finding NativeActivity class...");
+	jc_nativeActivity = myNewEnv->FindClass("android/app/NativeActivity");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found NativeActivity class");
+
+	LOGI("Find NativeActivity.getApplicationContext method...");
+	jmethodID invokeGetApplicationContext = myNewEnv->GetMethodID(jc_nativeActivity, "getApplicationContext", "()Landroid/content/Context;");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found NativeActivity.getApplicationContext method");
+
+	LOGI("Invoke NativeActivity.getApplicationContext method...");
+	jobject contextObj = myNewEnv->CallObjectMethod(state->activity->clazz, invokeGetApplicationContext);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Invoked NativeActivity.getApplicationContext method");
+
+	LOGI("Finding Context class...");
+	jc_context = myNewEnv->FindClass("android/content/Context");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found Context class");
+
+	LOGI("Find Context.getPackageName method...");
+	jmethodID invokeGetPackageName = myNewEnv->GetMethodID(jc_context, "getPackageName", "()Ljava/lang/String;");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found Context.getPackageName method");
+
+	LOGI("Invoke Context.getPackageName method...");
+	jstring packageObj = (jstring)myNewEnv->CallObjectMethod(contextObj, invokeGetPackageName);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Invoked Context.getPackageName method");
+
+	std::string strPackage = myNewEnv->GetStringUTFChars(packageObj, NULL);
+	EXCEPTION_RETURN(myNewEnv);
+
+	msg = "Context.getPackageName result: ";
+	msg.append(strPackage.c_str());
+	LOGI(msg.c_str());
+
+	std::string fileSeparatorChar = "/";
+	std::string relativeExternalStoragePath = "Android";
+	relativeExternalStoragePath.append(fileSeparatorChar);
+	relativeExternalStoragePath.append("data");
+	relativeExternalStoragePath.append(fileSeparatorChar);
+	relativeExternalStoragePath.append(strPackage);
+
+	std::string absolutionPath = strPath;
+	absolutionPath.append(fileSeparatorChar);
+	absolutionPath.append(relativeExternalStoragePath);
+	absolutionPath.append(fileSeparatorChar);
+	absolutionPath.append("ExternalNativeStorageExample.txt");
+
+	msg = "External Storage IO base folder: ";
+	msg.append(absolutionPath.c_str());
+	LOGI(msg.c_str());
 
     // Prepare to monitor accelerometer
     engine.sensorManager = ASensorManager_getInstance();
