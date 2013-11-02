@@ -351,6 +351,11 @@ void android_main(struct android_app* state) {
 	relativeExternalStoragePath.append(fileSeparatorChar);
 	relativeExternalStoragePath.append(strPackage);
 
+	std::string absolutionParentPath = strPath;
+	absolutionParentPath.append(fileSeparatorChar);
+	absolutionParentPath.append(relativeExternalStoragePath);
+	absolutionParentPath.append(fileSeparatorChar);
+
 	std::string absolutionPath = strPath;
 	absolutionPath.append(fileSeparatorChar);
 	absolutionPath.append(relativeExternalStoragePath);
@@ -360,6 +365,25 @@ void android_main(struct android_app* state) {
 	msg = "External Storage IO base folder: ";
 	msg.append(absolutionPath.c_str());
 	LOGI(msg.c_str());
+
+	//std::mkdir(absolutionParentPath.c_str());
+
+	LOGI("Writing to external storage...");
+	FILE* fileWrite = fopen(absolutionPath.c_str(), "w");
+	if (fileWrite)
+	{
+		std::string content = "Hello External Storage!";
+		fprintf(fileWrite, content.c_str());
+		LOGI(content.c_str());
+		fclose(fileWrite);
+		LOGI("Wrote to external storage");
+	}
+	else
+	{
+		msg = "Failed to open file, does the path exist? ";
+		msg.append(absolutionPath.c_str());
+		LOGI(msg.c_str());
+	}
 
     // Prepare to monitor accelerometer
     engine.sensorManager = ASensorManager_getInstance();
