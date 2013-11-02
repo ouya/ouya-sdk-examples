@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="jni">
+      <UniqueIdentifier>cc393ed8-adb3-45ed-9434-981e32322d20</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>ba76e8b0-a656-4789-a153-9ef39cb2ce20</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\values">
+      <UniqueIdentifier>78fd2390-f502-4ab3-ab3e-12c0328692a6</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya">
+      <UniqueIdentifier>{7c3ab2f8-adf8-4e5e-882e-19489cdfcebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya\Public">
+      <UniqueIdentifier>{ed144301-2bb8-4fb1-afb4-5b433be98cb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya\Public\ouya-sdk-examples">
+      <UniqueIdentifier>{568df9d6-cf38-42e1-aa38-ee2e1dc283b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya\Public\ouya-sdk-examples\Android">
+      <UniqueIdentifier>{a18bbfc7-bea7-4c47-b647-428f5073fb40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya\Public\ouya-sdk-examples\Android\ExternalStorageExampleNative">
+      <UniqueIdentifier>{44658ff3-0401-4c8d-8434-5aa1fee299d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya\Public\ouya-sdk-examples\Android\ExternalStorageExampleNative\ExternalStorageExampleNative">
+      <UniqueIdentifier>{d135be03-6c3a-40e5-91bd-53a7cd4e8a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ouya\Public\ouya-sdk-examples\Android\ExternalStorageExampleNative\ExternalStorageExampleNative\native_app_glue">
+      <UniqueIdentifier>{7e8b27d8-b2a7-45f6-990f-876c0e76a6a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml" />
+    <None Include="build.xml" />
+    <None Include="local.properties" />
+    <None Include="proguard.cfg" />
+    <None Include="project.properties" />
+    <None Include="res\values\strings.xml">
+      <Filter>res\values</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="native_app_glue\android_native_app_glue.c">
+      <Filter>Ouya\Public\ouya-sdk-examples\Android\ExternalStorageExampleNative\ExternalStorageExampleNative\native_app_glue</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\main.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="native_app_glue\android_native_app_glue.h">
+      <Filter>Ouya\Public\ouya-sdk-examples\Android\ExternalStorageExampleNative\ExternalStorageExampleNative\native_app_glue</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
