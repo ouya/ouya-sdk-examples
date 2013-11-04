@@ -265,6 +265,8 @@ void android_main(struct android_app* state) {
 	args.group = NULL; // you might want to assign the java thread to a ThreadGroup
 	state->activity->vm->AttachCurrentThread(&myNewEnv, &args);
 
+	std::string msg;
+
 	LOGI("Finding environment class...");
 	jc_environment = myNewEnv->FindClass("android/os/Environment");
 	EXCEPTION_RETURN(myNewEnv);
@@ -290,6 +292,46 @@ void android_main(struct android_app* state) {
 	EXCEPTION_RETURN(myNewEnv);
 	LOGI("Found File class");
 
+	LOGI("Find File.separatorChar field id...");
+	jfieldID f_separatorChar = myNewEnv->GetStaticFieldID(jc_file, "separatorChar", "C");
+	LOGI("Found File.separatorChar fieldid ");
+
+	LOGI("Find File.separatorChar field...");
+	jchar c_separatorChar = myNewEnv->GetStaticCharField(jc_file, f_separatorChar);
+	LOGI("Found File.separatorChar field");
+
+	char fileSeparatorChar = c_separatorChar;
+	EXCEPTION_RETURN(myNewEnv);
+
+	msg = "File.separatorChar: ";
+	msg.append(&fileSeparatorChar);
+	LOGI(msg.c_str());
+
+	/*
+	//convert utf16 to char
+	msg = fileSeparatorChar;
+	fileSeparatorChar = msg.c_str()[0];
+
+	msg = "File.separatorChar: ";
+	msg.append(&fileSeparatorChar);
+	LOGI(msg.c_str());
+	*/
+
+	LOGI("Find file.File(String) constructor...");
+	jmethodID constructFile = myNewEnv->GetMethodID(jc_file, "<init>", "(Ljava/lang/String;)V");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found file.File(String) constructor");
+
+	LOGI("Find file.delete method...");
+	jmethodID invokeDelete = myNewEnv->GetMethodID(jc_file, "delete", "()Z");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found fine.delete method");
+
+	LOGI("Find file.mkdirs method...");
+	jmethodID invokeMkdirs = myNewEnv->GetMethodID(jc_file, "mkdirs", "()Z");
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Found fine.mkdirs method");
+
 	LOGI("Find file.getAbsolutePath method...");
 	jmethodID invokeGetAbsolutePath = myNewEnv->GetMethodID(jc_file, "getAbsolutePath", "()Ljava/lang/String;");
 	EXCEPTION_RETURN(myNewEnv);
@@ -303,7 +345,7 @@ void android_main(struct android_app* state) {
 	std::string strPath = myNewEnv->GetStringUTFChars(pathObj, NULL);
 	EXCEPTION_RETURN(myNewEnv);
 	
-	std::string msg = "Environment.getExternalStorageDirectory result: ";
+	msg = "Environment.getExternalStorageDirectory result: ";
 	msg.append(strPath.c_str());
 	LOGI(msg.c_str());
 
@@ -344,32 +386,51 @@ void android_main(struct android_app* state) {
 	msg.append(strPackage.c_str());
 	LOGI(msg.c_str());
 
-	std::string fileSeparatorChar = "/";
 	std::string relativeExternalStoragePath = "Android";
-	relativeExternalStoragePath.append(fileSeparatorChar);
+	relativeExternalStoragePath.append(&fileSeparatorChar);
 	relativeExternalStoragePath.append("data");
-	relativeExternalStoragePath.append(fileSeparatorChar);
+	relativeExternalStoragePath.append(&fileSeparatorChar);
 	relativeExternalStoragePath.append(strPackage);
 
-	std::string absolutionParentPath = strPath;
-	absolutionParentPath.append(fileSeparatorChar);
-	absolutionParentPath.append(relativeExternalStoragePath);
-	absolutionParentPath.append(fileSeparatorChar);
+	std::string absoluteParentPath = strPath;
+	absoluteParentPath.append(&fileSeparatorChar);
+	absoluteParentPath.append(relativeExternalStoragePath);
+	absoluteParentPath.append(&fileSeparatorChar);
 
-	std::string absolutionPath = strPath;
-	absolutionPath.append(fileSeparatorChar);
-	absolutionPath.append(relativeExternalStoragePath);
-	absolutionPath.append(fileSeparatorChar);
-	absolutionPath.append("ExternalNativeStorageExample.txt");
+	LOGI("Allocating parent path string...");
+	jstring parentPathString = myNewEnv->NewStringUTF(absoluteParentPath.c_str());
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Allocated parent path string");
+	
+	LOGI("Allocating parent File object...");
+	jobject objFileParent = myNewEnv->AllocObject(jc_file);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Allocated parent File object");
+
+	LOGI("Invoke File(string) constructor...");
+	myNewEnv->CallObjectMethod(objFileParent, constructFile, parentPathString);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Invoked File(string) constructor");
+
+	LOGI("Invoke File.mkdirs method...");
+	myNewEnv->CallObjectMethod(objFileParent, invokeMkdirs);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Invoked File.mkdirs method");
+
+	std::string absolutePath = strPath;
+	absolutePath.append(&fileSeparatorChar);
+	absolutePath.append(relativeExternalStoragePath);
+	absolutePath.append(&fileSeparatorChar);
+	absolutePath.append("ExternalNativeStorageExample.txt");
 
 	msg = "External Storage IO base folder: ";
-	msg.append(absolutionPath.c_str());
+	msg.append(absolutePath.c_str());
 	LOGI(msg.c_str());
 
 	//std::mkdir(absolutionParentPath.c_str());
 
 	LOGI("Writing to external storage...");
-	FILE* fileWrite = fopen(absolutionPath.c_str(), "w");
+	FILE* fileWrite = fopen(absolutePath.c_str(), "w");
 	if (fileWrite)
 	{
 		std::string content = "Hello External Storage!";
@@ -380,10 +441,53 @@ void android_main(struct android_app* state) {
 	}
 	else
 	{
-		msg = "Failed to open file, does the path exist? ";
-		msg.append(absolutionPath.c_str());
+		msg = "Failed to open file for write, does the path exist? ";
+		msg.append(absolutePath.c_str());
 		LOGI(msg.c_str());
 	}
+
+	LOGI("Reading from external storage...");
+	FILE* fileRead = fopen(absolutePath.c_str(), "r");
+	if (fileRead)
+	{
+		char buffer[256];
+		std::string content;
+		while (fgets(buffer, 256, fileRead) != NULL)
+		{
+			content.append(&buffer[0]);
+		}
+		LOGI(content.c_str());
+		fclose(fileRead);
+		LOGI("Read from external storage");
+	}
+	else
+	{
+		msg = "Failed to open file for read, does the path exist? ";
+		msg.append(absolutePath.c_str());
+		LOGI(msg.c_str());
+	}
+
+	LOGI("Allocating path string...");
+	jstring pathString = myNewEnv->NewStringUTF(absolutePath.c_str());
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Allocated path string");
+	
+	LOGI("Allocating File object...");
+	jobject objFile = myNewEnv->AllocObject(jc_file);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Allocated File object");
+
+	LOGI("Invoke File(string) constructor...");
+	myNewEnv->CallObjectMethod(objFile, constructFile, pathString);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Invoked File(string) constructor");
+
+	LOGI("Deleting from external storage...");
+	LOGI("Invoke File.delete method...");
+	myNewEnv->CallObjectMethod(objFile, invokeDelete);
+	EXCEPTION_RETURN(myNewEnv);
+	LOGI("Invoked File.delete method");
+	LOGI("Deleted from external storage...");
 
     // Prepare to monitor accelerometer
     engine.sensorManager = ASensorManager_getInstance();
