@@ -39,6 +39,16 @@ public class MonoGameOuyaPlugin
 
 	public MonoGameOuyaPlugin() {
 	}
+	
+	public static void SetActivity(Activity activity) {
+		IOuyaActivity.SetActivity(activity);
+	}
+	
+	public static void SetApplicationKey(byte[] applicationKey) {
+		IOuyaActivity.SetApplicationKey(applicationKey);
+		
+		OuyaMonoGameActivity.initializeOUYA();
+	}
 
 	// most of the java functions that are called, need the ouya facade initialized
 	public static void Initialize()

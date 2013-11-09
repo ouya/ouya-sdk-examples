@@ -25,8 +25,9 @@ public class AsyncCppOuyaSetDeveloperId {
 	static final String LOG_TAG = "AsyncCppOuyaSetDeveloperId";
 
 	public static void invoke(String developerId) {
+		Log.i(LOG_TAG, "Java: " + LOG_TAG + "(" + developerId + ");");
+		
 		try {
-			Log.i(LOG_TAG, "Java: " + LOG_TAG + "(" + developerId + ");");
 			MonoGameOuyaPlugin.setDeveloperId(developerId);
 		}
 		catch (Exception ex) {

@@ -16,10 +16,16 @@
 
 package tv.ouya.sdk.monogame;
 
+import android.util.Log;
+
 
 public class AsyncCppOuyaRequestPurchase {
+	
+	static final String LOG_TAG = "AsyncCppOuyaRequestPurchase";
 
 	public static void invoke(String purchasable) {
+		
+		Log.i(LOG_TAG, "invoke");
 
 		CallbacksRequestPurchase callbacks = new CallbacksRequestPurchase();
 

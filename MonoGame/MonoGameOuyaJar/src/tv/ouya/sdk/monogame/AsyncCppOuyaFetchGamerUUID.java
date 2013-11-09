@@ -16,10 +16,16 @@
 
 package tv.ouya.sdk.monogame;
 
+import android.util.Log;
+
 
 public class AsyncCppOuyaFetchGamerUUID {
+	
+	static final String LOG_TAG = "AsyncCppOuyaFetchGamerUUID";
 
 	public static void invoke() {
+		
+		Log.i(LOG_TAG, "invoke");
 
 		CallbacksFetchGamerUUID callbacks = new CallbacksFetchGamerUUID();
 

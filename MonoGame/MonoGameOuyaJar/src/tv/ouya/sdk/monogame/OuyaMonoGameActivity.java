@@ -17,19 +17,23 @@
 package tv.ouya.sdk.monogame;
 
 
+import android.R;
+import android.app.Activity;
 import android.app.NativeActivity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
+
 import tv.ouya.console.api.OuyaController;
 
 
 public class OuyaMonoGameActivity extends NativeActivity
 {
-	private final String LOG_TAG = "OuyaNativeActivity";
+	private static final String LOG_TAG = "OuyaNativeActivity";
 
 	// stop the thread on exit
 	private static boolean m_waitToExit = true;
@@ -38,6 +42,9 @@ public class OuyaMonoGameActivity extends NativeActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		//make activity accessible to statically
+		IOuyaActivity.SetActivity(this);
 
 		initializeOUYA();
 	}
@@ -54,41 +61,50 @@ public class OuyaMonoGameActivity extends NativeActivity
         //System.loadLibrary("inapppurchasesnative");
     }
 
-	private void initializeOUYA() {
+	public static void initializeOUYA() {
+		
+		final Activity activity = IOuyaActivity.GetActivity();
+		
+		if (null == activity) {
+			Log.i(LOG_TAG, "Activity is null...");
+			return;
+		}
 
 		Log.i(LOG_TAG, "Initializing OUYA...");
+		
 
 		Log.i(LOG_TAG, "Get application context...");
-		Context context = getApplicationContext();
+		Context context = activity.getApplicationContext();
 
+		/*
 		Log.i(LOG_TAG, "Load signing key...");
 		// load the application key from assets
 		try {
-			AssetManager assetManager = context.getAssets();
-			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
-			byte[] applicationKey = new byte[inputStream.available()];
-			inputStream.read(applicationKey);
-			inputStream.close();
+			int resId = context.getResources().getIdentifier("key", "raw", context.getPackageName());
+			InputStream inputStream = activity.getResources().openRawResource(resId);
+            byte[] applicationKey = new byte[inputStream.available()];
+            inputStream.read(applicationKey);
+            inputStream.close();
 			IOuyaActivity.SetApplicationKey(applicationKey);
 
 			Log.i(LOG_TAG, "***Loaded signing key*********");
 		} catch (IOException e) {
+			Log.i(LOG_TAG, "***Failed to load signing key*********");
 			e.printStackTrace();
 		}
-
+		*/
+		
 		Log.i(LOG_TAG, "Initialize controller...");
 
 		// Init the controller
 		OuyaController.init(context);
+
 
 		Log.i(LOG_TAG, "Initialize MonoGameOuyaPlugin...");
 
 		// Initialize the MonoGame OUYA Plugin
 		MonoGameOuyaPlugin monoGameOuyaPlugin = new MonoGameOuyaPlugin();
 		IOuyaActivity.SetMonoGameOuyaPlugin(monoGameOuyaPlugin);
-
-		//make activity accessible to statically
-		IOuyaActivity.SetActivity(this);
 
 		Log.i(LOG_TAG, "Spawn wait thread...");
 
@@ -112,7 +128,7 @@ public class OuyaMonoGameActivity extends NativeActivity
 								}
 							};
 
-							runOnUiThread(runnable);
+							activity.runOnUiThread(runnable);
 
 							break;
 						}

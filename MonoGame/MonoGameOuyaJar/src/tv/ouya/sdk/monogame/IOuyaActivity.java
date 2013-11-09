@@ -18,18 +18,17 @@ package tv.ouya.sdk.monogame;
 
 
 import android.app.Activity;
-import android.app.NativeActivity;
 import android.os.Bundle;
 
 public class IOuyaActivity
 {
 	// save reference to the activity
-	protected static NativeActivity m_activity = null;
-	public static NativeActivity GetActivity()
+	protected static Activity m_activity = null;
+	public static Activity GetActivity()
 	{
 		return m_activity;
 	}
-	public static void SetActivity(NativeActivity activity)
+	public static void SetActivity(Activity activity)
 	{
 		m_activity = activity;
 	}
