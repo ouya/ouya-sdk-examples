@@ -1,0 +1,221 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 3
+  m_Component:
+  - 4: {fileID: 400000}
+  - 114: {fileID: 11400000}
+  m_Layer: 8
+  m_Name: SciFi Atlas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!1002 &100001
+EditorExtensionImpl:
+  serializedVersion: 6
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!1002 &400001
+EditorExtensionImpl:
+  serializedVersion: 6
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d0c51bb0b6e93049af5e88f93826e3b, type: 1}
+  m_Name: 
+  material: {fileID: 2100000, guid: d650d98b3c4028a4a8b7225c1a6482f8, type: 2}
+  sprites:
+  - name: Dark
+    outer:
+      serializedVersion: 2
+      x: 1
+      y: 476
+      width: 15
+      height: 15
+    inner:
+      serializedVersion: 2
+      x: 5
+      y: 480
+      width: 7
+      height: 7
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Button
+    outer:
+      serializedVersion: 2
+      x: 18
+      y: 477
+      width: 13
+      height: 13
+    inner:
+      serializedVersion: 2
+      x: 22
+      y: 481
+      width: 5
+      height: 5
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Highlight
+    outer:
+      serializedVersion: 2
+      x: 20
+      y: 494
+      width: 17
+      height: 15
+    inner:
+      serializedVersion: 2
+      x: 23
+      y: 497
+      width: 11
+      height: 9
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Light
+    outer:
+      serializedVersion: 2
+      x: 1
+      y: 493
+      width: 18
+      height: 18
+    inner:
+      serializedVersion: 2
+      x: 3
+      y: 495
+      width: 14
+      height: 14
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: X
+    outer:
+      serializedVersion: 2
+      x: 32
+      y: 210
+      width: 22
+      height: 20
+    inner:
+      serializedVersion: 2
+      x: 32
+      y: 210
+      width: 22
+      height: 20
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Honeycomb
+    outer:
+      serializedVersion: 2
+      x: 256
+      y: 256
+      width: 112
+      height: 88
+    inner:
+      serializedVersion: 2
+      x: 257
+      y: 257
+      width: 110
+      height: 86
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Font - Normal
+    outer:
+      serializedVersion: 2
+      x: 256
+      y: 0
+      width: 256
+      height: 256
+    inner:
+      serializedVersion: 2
+      x: 256
+      y: 0
+      width: 256
+      height: 256
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Font - Header
+    outer:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 256
+      height: 512
+    inner:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 256
+      height: 512
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: NGUI
+    outer:
+      serializedVersion: 2
+      x: 257
+      y: 437
+      width: 255
+      height: 76
+    inner:
+      serializedVersion: 2
+      x: 257
+      y: 437
+      width: 255
+      height: 76
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  mCoordinates: 0
+  mPixelSize: 1
+  mReplacement: {fileID: 0}
+--- !u!1002 &11400001
+EditorExtensionImpl:
+  serializedVersion: 6
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 100000}
+  m_IsPrefabParent: 1
+  m_IsExploded: 1
+--- !u!1002 &100100001
+EditorExtensionImpl:
+  serializedVersion: 6

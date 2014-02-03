@@ -1,0 +1,323 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 3
+  m_Component:
+  - 4: {fileID: 400000}
+  - 114: {fileID: 11400000}
+  m_Layer: 0
+  m_Name: Wooden Atlas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!1002 &100001
+EditorExtensionImpl:
+  serializedVersion: 6
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!1002 &400001
+EditorExtensionImpl:
+  serializedVersion: 6
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d0c51bb0b6e93049af5e88f93826e3b, type: 1}
+  m_Name: 
+  material: {fileID: 2100000, guid: ec268c3ea1baceb4abb2168daed86f68, type: 2}
+  sprites:
+  - name: Wooden Background
+    outer:
+      serializedVersion: 2
+      x: 0
+      y: 257
+      width: 255
+      height: 255
+    inner:
+      serializedVersion: 2
+      x: 1
+      y: 258
+      width: 253
+      height: 253
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Glow - Inner
+    outer:
+      serializedVersion: 2
+      x: 320
+      y: 272
+      width: 29
+      height: 29
+    inner:
+      serializedVersion: 2
+      x: 321
+      y: 273
+      width: 27
+      height: 27
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Glow - Outer
+    outer:
+      serializedVersion: 2
+      x: 127
+      y: 13
+      width: 60
+      height: 60
+    inner:
+      serializedVersion: 2
+      x: 153
+      y: 39
+      width: 8
+      height: 8
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: NGUI
+    outer:
+      serializedVersion: 2
+      x: 0
+      y: 180
+      width: 255
+      height: 76
+    inner:
+      serializedVersion: 2
+      x: 0
+      y: 180
+      width: 255
+      height: 76
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Highlight - Thin
+    outer:
+      serializedVersion: 2
+      x: 379
+      y: 279
+      width: 22
+      height: 22
+    inner:
+      serializedVersion: 2
+      x: 385
+      y: 285
+      width: 10
+      height: 10
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Highlight - Shadowed
+    outer:
+      serializedVersion: 2
+      x: 350
+      y: 273
+      width: 28
+      height: 28
+    inner:
+      serializedVersion: 2
+      x: 359
+      y: 282
+      width: 10
+      height: 10
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Button
+    outer:
+      serializedVersion: 2
+      x: 379
+      y: 261
+      width: 17
+      height: 17
+    inner:
+      serializedVersion: 2
+      x: 384
+      y: 266
+      width: 7
+      height: 7
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Screw
+    outer:
+      serializedVersion: 2
+      x: 289
+      y: 272
+      width: 30
+      height: 29
+    inner:
+      serializedVersion: 2
+      x: 289
+      y: 272
+      width: 30
+      height: 29
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: .0344827585
+    paddingBottom: .0344827585
+  - name: Arimo20
+    outer:
+      serializedVersion: 2
+      x: 256
+      y: 396
+      width: 255
+      height: 116
+    inner:
+      serializedVersion: 2
+      x: 256
+      y: 396
+      width: 255
+      height: 116
+    paddingLeft: 0
+    paddingRight: .00392156886
+    paddingTop: 0
+    paddingBottom: 1.20689654
+  - name: Row Outline
+    outer:
+      serializedVersion: 2
+      x: 256
+      y: 264
+      width: 5
+      height: 5
+    inner:
+      serializedVersion: 2
+      x: 258
+      y: 266
+      width: 1
+      height: 2
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Arimo14
+    outer:
+      serializedVersion: 2
+      x: 0
+      y: 53
+      width: 126
+      height: 126
+    inner:
+      serializedVersion: 2
+      x: 0
+      y: 53
+      width: 126
+      height: 126
+    paddingLeft: 0
+    paddingRight: .00793650839
+    paddingTop: 0
+    paddingBottom: .00793650839
+  - name: Arimo18
+    outer:
+      serializedVersion: 2
+      x: 256
+      y: 302
+      width: 254
+      height: 93
+    inner:
+      serializedVersion: 2
+      x: 256
+      y: 302
+      width: 254
+      height: 93
+    paddingLeft: 0
+    paddingRight: .00393700786
+    paddingTop: 0
+    paddingBottom: .365591407
+  - name: Flag-FR
+    outer:
+      serializedVersion: 2
+      x: 127
+      y: 127
+      width: 80
+      height: 52
+    inner:
+      serializedVersion: 2
+      x: 127
+      y: 127
+      width: 80
+      height: 52
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: .365384609
+    paddingBottom: .173076928
+  - name: Flag-US
+    outer:
+      serializedVersion: 2
+      x: 127
+      y: 74
+      width: 80
+      height: 52
+    inner:
+      serializedVersion: 2
+      x: 127
+      y: 74
+      width: 80
+      height: 52
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: .365384609
+    paddingBottom: .173076928
+  - name: Checkmark
+    outer:
+      serializedVersion: 2
+      x: 256
+      y: 270
+      width: 32
+      height: 31
+    inner:
+      serializedVersion: 2
+      x: 256
+      y: 270
+      width: 32
+      height: 31
+    paddingLeft: .03125
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: .161290318
+  mCoordinates: 0
+  mPixelSize: 1
+  mReplacement: {fileID: 0}
+--- !u!1002 &11400001
+EditorExtensionImpl:
+  serializedVersion: 6
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 100000}
+  m_IsPrefabParent: 1
+  m_IsExploded: 1
+--- !u!1002 &100100001
+EditorExtensionImpl:
+  serializedVersion: 6
