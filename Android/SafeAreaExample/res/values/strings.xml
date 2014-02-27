@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SafeAreaExample</string>
+    <string name="action_settings">Settings</string>
+    <string name="safe_area_slider">Use the slider to adjust the safe area</string>
+    <string name="safe_area_button">Toggle the safe area overlay</string>
+
+</resources>
