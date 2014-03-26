@@ -11,6 +11,12 @@
         android:gravity="center"
         android:orientation="vertical"
         android:layout_gravity="center">
+        
+         <TextView
+	        android:id="@+id/txtSystem"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="System:" />
 
         <LinearLayout
             android:layout_width="fill_parent"

@@ -15,6 +15,7 @@ public class MainActivity extends OuyaActivity {
 	
 	private static final Float AXIS_SCALER = 4f;
 	
+	private TextView txtSystem = null;
 	private TextView txtController = null;
 	//private ImageView imgController = null;
 	private ImageView imgButtonA = null;
@@ -40,6 +41,7 @@ public class MainActivity extends OuyaActivity {
 		setContentView(R.layout.activity_main);
 		super.onCreate(savedInstanceState); //initialize after layout has been loaded
 		
+		txtSystem = (TextView)findViewById(R.id.txtSystem);
 		txtController = (TextView)findViewById(R.id.txtController);
 		//imgController = (ImageView)findViewById(R.id.imgController);
 		imgButtonA = (ImageView)findViewById(R.id.imgButtonA);
@@ -61,6 +63,12 @@ public class MainActivity extends OuyaActivity {
 		
 		OuyaController.init(this);
         OuyaController.showCursor(false); //hide mouse
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		txtSystem.setText("System: " + android.os.Build.MODEL);
 	}
 
 	@Override
