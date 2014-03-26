@@ -220,10 +220,80 @@ public class OuyaActivity extends Activity {
 					}				
 				}
 				
-			} else {
-				lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
-			    lsY = motionEvent.getAxisValue(OuyaController.AXIS_LS_Y);
-			}
+	    	} else if (motionEvent.getDevice().getName().equals("Microsoft X-Box 360 pad")) {
+				lsX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+				lsY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+				//Log.i(TAG, "dispatchGenericMotionEvent x="+lsX);
+				//Log.i(TAG, "dispatchGenericMotionEvent y="+lsY);			
+				if (lsX == -1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_LEFT));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
+					}
+				} else if (lsX == 1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_RIGHT));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
+					}
+				} else if (lsX == 0f)  {
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
+					}
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
+					}				
+				}
+				if (lsY == -1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_UP, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_UP));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
+					}
+				} else if (lsY == 1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_DOWN));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
+					}
+				} else if (lsY == 0f)  {
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
+					}
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
+					}				
+				}
+	    	}
 	    }
 		
 		///*
