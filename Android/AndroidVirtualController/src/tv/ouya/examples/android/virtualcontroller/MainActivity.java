@@ -17,6 +17,8 @@ public class MainActivity extends Activity {
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
+	private static final Float AXIS_SCALER = 4f;
+	
 	private TextView txtController = null;
 	//private ImageView imgController = null;
 	private ImageView imgButtonA = null;
@@ -215,18 +217,23 @@ public class MainActivity extends Activity {
 	    float l2 = motionEvent.getAxisValue(OuyaController.AXIS_L2);
 	    float r2 = motionEvent.getAxisValue(OuyaController.AXIS_R2);
 	    
+	    //rotate input by N degrees to match image
+        float degrees = 135;
+        float radians = degrees / 180f * 3.14f;
+        float cos = (float)Math.cos(radians);
+        float sin = (float)Math.sin(radians);
 	    
-	    imgLeftStick.setX(lsX * 4);
-	    imgLeftThumb.setX(lsX * 4);
+	    imgLeftStick.setX(AXIS_SCALER * (lsX * cos - lsY * sin));
+	    imgLeftThumb.setY(AXIS_SCALER * (lsX * cos - lsY * sin));
 	    
-	    imgLeftStick.setY(lsY * 4);
-	    imgLeftThumb.setY(lsY * 4);
+	    imgLeftStick.setY(AXIS_SCALER * (lsX * sin + lsY * cos));
+	    imgLeftThumb.setY(AXIS_SCALER * (lsX * sin + lsY * cos));
 	    
-	    imgRightStick.setX(rsX * 4);
-	    imgRightThumb.setX(rsX * 4);
+	    imgRightStick.setX(AXIS_SCALER * (rsX * cos - rsY * sin));
+	    imgRightThumb.setX(AXIS_SCALER * (rsX * cos - rsY * sin));
 	    
-	    imgRightStick.setY(rsY * 4);
-	    imgRightThumb.setY(rsY * 4);
+	    imgRightStick.setY(AXIS_SCALER * (rsX * sin + rsY * cos));
+	    imgRightThumb.setY(AXIS_SCALER * (rsX * sin + rsY * cos));
 		
 		//Log.i(TAG, "Unrecognized GenericMotionEvent="+motionEvent.getAction());
 	    
