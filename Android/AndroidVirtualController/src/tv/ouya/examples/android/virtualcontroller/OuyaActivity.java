@@ -37,39 +37,113 @@ public class OuyaActivity extends Activity {
 	    float r2 = motionEvent.getAxisValue(OuyaController.AXIS_R2);
 	    
 	    if (android.os.Build.MODEL.equals("Nexus 10")) {
-	    	
-	    	int pointerCount = motionEvent.getPointerCount();
-	    	PointerProperties[] pointerProperties = new PointerProperties[1];
-	    	pointerProperties[0] = new PointerProperties();
-	    	PointerCoords[] pointerCoords = new PointerCoords[1];
-	    	pointerCoords[0] = new PointerCoords();
-	    	if (pointerCount > 0) {
-	    		motionEvent.getPointerProperties(0, pointerProperties[0]);
-	    		motionEvent.getPointerCoords(0, pointerCoords[0]);
-	    		pointerCoords[0].setAxisValue(OuyaController.AXIS_L2, rsX);
-	    		pointerCoords[0].setAxisValue(OuyaController.AXIS_R2, rsY);
-	    		pointerCoords[0].setAxisValue(OuyaController.AXIS_RS_X, motionEvent.getAxisValue(MotionEvent.AXIS_RX));
-	    		pointerCoords[0].setAxisValue(OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(MotionEvent.AXIS_RY));
-
-		    	long downTime = motionEvent.getDownTime();
-		    	long eventTime = motionEvent.getEventTime();
-		    	int action = motionEvent.getAction();
-		    	int metaState = motionEvent.getMetaState();
-		    	int buttonState = motionEvent.getButtonState();
-		    	float xPrecision = 1;
-		    	float yPrecision = 1;
-		    	int deviceId = motionEvent.getDeviceId();
-		    	int edgeFlags = motionEvent.getEdgeFlags();
-		    	int source = motionEvent.getSource();
-		    	int flags = motionEvent.getFlags();
-		    	
-		    	motionEvent = MotionEvent.obtain(downTime, eventTime, action,
-		    			pointerCount, pointerProperties, pointerCoords,
-		    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
-		    			source, flags);
-		    	super.dispatchGenericMotionEvent(motionEvent);
-		    	motionEvent.recycle();
-		    	return true;
+	    	if (motionEvent.getDevice().getName().equals("Broadcom Bluetooth HID")) { //OUYA Controller	    	
+		    	int pointerCount = motionEvent.getPointerCount();
+		    	PointerProperties[] pointerProperties = new PointerProperties[1];
+		    	pointerProperties[0] = new PointerProperties();
+		    	PointerCoords[] pointerCoords = new PointerCoords[1];
+		    	pointerCoords[0] = new PointerCoords();
+		    	if (pointerCount > 0) {
+		    		motionEvent.getPointerProperties(0, pointerProperties[0]);
+		    		motionEvent.getPointerCoords(0, pointerCoords[0]);
+		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_L2, rsX);
+		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_R2, rsY);
+		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_RS_X, motionEvent.getAxisValue(MotionEvent.AXIS_RX));
+		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(MotionEvent.AXIS_RY));
+	
+			    	long downTime = motionEvent.getDownTime();
+			    	long eventTime = motionEvent.getEventTime();
+			    	int action = motionEvent.getAction();
+			    	int metaState = motionEvent.getMetaState();
+			    	int buttonState = motionEvent.getButtonState();
+			    	float xPrecision = 1;
+			    	float yPrecision = 1;
+			    	int deviceId = motionEvent.getDeviceId();
+			    	int edgeFlags = motionEvent.getEdgeFlags();
+			    	int source = motionEvent.getSource();
+			    	int flags = motionEvent.getFlags();
+			    	
+			    	motionEvent = MotionEvent.obtain(downTime, eventTime, action,
+			    			pointerCount, pointerProperties, pointerCoords,
+			    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
+			    			source, flags);
+			    	super.dispatchGenericMotionEvent(motionEvent);
+			    	motionEvent.recycle();
+			    	return true;
+		    	}
+	    	} else if (motionEvent.getDevice().getName().equals("Microsoft X-Box 360 pad")) {
+				lsX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+				lsY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+				//Log.i(TAG, "dispatchGenericMotionEvent x="+lsX);
+				//Log.i(TAG, "dispatchGenericMotionEvent y="+lsY);			
+				if (lsX == -1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_LEFT));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
+					}
+				} else if (lsX == 1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_RIGHT));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
+					}
+				} else if (lsX == 0f)  {
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
+					}
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
+					}				
+				}
+				if (lsY == -1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_UP, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_UP));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
+					}
+				} else if (lsY == 1f) {
+					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) ||
+						!mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {					
+						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, true);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_DOWN));
+					}				
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
+					}
+				} else if (lsY == 0f)  {
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
+					}
+					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
+						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
+						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
+					}				
+				}
 	    	}
 	    } else if (android.os.Build.MODEL.equals("OUYA Console")) {
 			if (motionEvent.getDevice().getName().equals("GameStick Controller")) {			
@@ -219,44 +293,73 @@ public class OuyaActivity extends Activity {
 		Log.i(TAG, "dispatchKeyEvent="+keyCode);
 		
 		if (android.os.Build.MODEL.equals("Nexus 10")) {
-			switch (keyCode) {
-			case 96:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_O));
-				return true;
-			case 97:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_U));
-				return true;
-			case 98:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_Y));
-				return true;
-			case 99:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_A));
-				return true;
-			case 100:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L1));
-				return true;
-			case 101:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R1));
-				return true;
-			case 102:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L3));
-				return true;
-			case 103:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R3));
-				return true;
-			case 104:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_UP));
-				return true;
-			case 105:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_DOWN));
-				return true;
-			case 108:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_RIGHT));
-				return true;
-			case 109:
-				super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_LEFT));
-				return true;
-			}
+			if (keyEvent.getDevice().getName().equals("GameStick Controller")) {
+				switch (keyCode) {
+				case 96:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_O));
+					return true;
+				case 97:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_U));
+					return true;
+				case 98:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_Y));
+					return true;
+				case 99:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_A));
+					return true;
+				case 100:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L1));
+					return true;
+				case 101:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R1));
+					return true;
+				case 102:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L3));
+					return true;
+				case 103:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R3));
+					return true;
+				case 104:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_UP));
+					return true;
+				case 105:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_DOWN));
+					return true;
+				case 108:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_RIGHT));
+					return true;
+				case 109:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_LEFT));
+					return true;
+				}
+			} else if (keyEvent.getDevice().getName().equals("Microsoft X-Box 360 pad")) {
+				switch (keyCode) {
+				case 96:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_O));
+					return true;
+				case 97:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_A));
+					return true;
+				case 99:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_U));
+					return true;
+				case 100:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_Y));
+					return true;
+				case 102:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L1));
+					return true;
+				case 103:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R1));
+					return true;
+				case 106:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L3));
+					return true;
+				case 107:
+					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R3));
+					return true;
+				}
+	    	}
 	    } else if (android.os.Build.MODEL.equals("OUYA Console")) {
 	        if (keyCode == OuyaController.BUTTON_L1 ||
 	            keyCode == OuyaController.BUTTON_R1||
