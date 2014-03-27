@@ -4,6 +4,19 @@
             "alias": ["Nexus 10"],
             "controller": [{
                 "alias": ["Broadcom Bluetooth HID"],
+                "axis_remap": [{
+                    "source_axis": 11,
+                    "destination_axis": 17
+                }, {
+                    "source_axis": 14,
+                    "destination_axis": 18
+                }, {
+                    "source_axis": 12,
+                    "destination_axis": 11
+                }, {
+                    "source_axis": 13,
+                    "destination_axis": 14
+                }],
                 "button": [{
                     "source_keycode": 96,
                     "destination_keycode": "BUTTON_O"

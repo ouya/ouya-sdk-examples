@@ -33,6 +33,11 @@ public class MappingParser {
 		public int mDestinationKeyCode = 0;
 		public Vector<Integer> mExcludeSource = new Vector<Integer>();
 	}
+	protected class AxisRemap
+	{
+		public int mSourceAxis = 0;
+		public int mDestinationAxis = 0;
+	}
 	protected class ButtonIsAxis
 	{
 		public int mSourceAxis = 0;
@@ -42,6 +47,7 @@ public class MappingParser {
 	private class Controller
 	{
 		public Vector<String> mAlias = new Vector<String>();
+		public Vector<AxisRemap> mAxisRemap = new Vector<AxisRemap>();
 		public HashMap<Integer, Button> mButton = new HashMap<Integer, Button>();
 		public Vector<ButtonIsAxis> mButtonIsAxis = new Vector<ButtonIsAxis>();
 	}
@@ -81,6 +87,17 @@ public class MappingParser {
 			return null;
 		}
 		return controller.mButton.get(keyCode);
+	}
+	public Vector<AxisRemap> getAxisRemap(String deviceName, String controllerName) {
+		Device device = getDevice(deviceName);
+		if (null == device) {
+			return null;
+		}
+		Controller controller = getController(device, controllerName);
+		if (null == controller) {
+			return null;
+		}
+		return controller.mAxisRemap;
 	}
 	public Vector<ButtonIsAxis> getButtonIsAxis(String deviceName, String controllerName) {
 		Device device = getDevice(deviceName);
@@ -163,6 +180,23 @@ public class MappingParser {
 						Log.i(TAG, "controller alias="+strController);
 						mappingController.mAlias.add(strController);
 						mappingDevice.mController.put(strController, mappingController);
+					}
+					if (objController.has("axis_remap")) {
+						JSONArray axis = objController.getJSONArray("axis_remap");
+						//Log.i(TAG, "axisRemap="+axis.toString());
+						for (int axisId=0; axisId < axis.length(); ++axisId) {
+							
+							AxisRemap mappingAxis = new AxisRemap();
+							
+							JSONObject objAxis = axis.getJSONObject(axisId);
+							//Log.i(TAG, "objAxis="+objAxis);
+							mappingAxis.mSourceAxis = objAxis.getInt("source_axis");
+							//Log.i(TAG, "SourceAxis="+mappingAxis.mSourceAxis);
+							mappingAxis.mDestinationAxis = objAxis.getInt("destination_axis");
+							//Log.i(TAG, "destinationAxis="+mappingAxis.mDestinationAxis);
+							
+							mappingController.mAxisRemap.add(mappingAxis);
+						}
 					}
 					if (objController.has("button_is_axis")) {
 						JSONArray button = objController.getJSONArray("button_is_axis");

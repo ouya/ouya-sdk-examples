@@ -3,12 +3,7 @@ package tv.ouya.examples.android.virtualcontroller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -22,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
 import tv.ouya.console.api.OuyaController;
+import tv.ouya.examples.android.virtualcontroller.MappingParser.AxisRemap;
 import tv.ouya.examples.android.virtualcontroller.MappingParser.ButtonIsAxis;
 
 public class OuyaActivity extends Activity {
@@ -60,12 +56,6 @@ public class OuyaActivity extends Activity {
 
 	@Override
 	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {		
-		float lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
-	    float lsY = motionEvent.getAxisValue(OuyaController.AXIS_LS_Y);
-	    float rsX = motionEvent.getAxisValue(OuyaController.AXIS_RS_X);
-	    float rsY = motionEvent.getAxisValue(OuyaController.AXIS_RS_Y);
-	    float l2 = motionEvent.getAxisValue(OuyaController.AXIS_L2);
-	    float r2 = motionEvent.getAxisValue(OuyaController.AXIS_R2);
 	    
 	    Vector<ButtonIsAxis> buttons =
 				mParser.getButtonIsAxis(android.os.Build.MODEL, motionEvent.getDevice().getName());
@@ -89,46 +79,57 @@ public class OuyaActivity extends Activity {
 				}
 			}
 		}
+		
+	    Vector<AxisRemap> axises =
+	    	mParser.getAxisRemap(android.os.Build.MODEL, motionEvent.getDevice().getName());
 	    
-	    if (android.os.Build.MODEL.equals("Nexus 10")) {
-	    	if (motionEvent.getDevice().getName().equals("Broadcom Bluetooth HID")) { //OUYA Controller	    	
-		    	int pointerCount = motionEvent.getPointerCount();
-		    	PointerProperties[] pointerProperties = new PointerProperties[1];
-		    	pointerProperties[0] = new PointerProperties();
-		    	PointerCoords[] pointerCoords = new PointerCoords[1];
-		    	pointerCoords[0] = new PointerCoords();
-		    	if (pointerCount > 0) {
-		    		motionEvent.getPointerProperties(0, pointerProperties[0]);
-		    		motionEvent.getPointerCoords(0, pointerCoords[0]);
-		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_L2, rsX);
-		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_R2, rsY);
-		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_RS_X, motionEvent.getAxisValue(MotionEvent.AXIS_RX));
-		    		pointerCoords[0].setAxisValue(OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(MotionEvent.AXIS_RY));
-	
-			    	long downTime = motionEvent.getDownTime();
-			    	long eventTime = motionEvent.getEventTime();
-			    	int action = motionEvent.getAction();
-			    	int metaState = motionEvent.getMetaState();
-			    	int buttonState = motionEvent.getButtonState();
-			    	float xPrecision = 1;
-			    	float yPrecision = 1;
-			    	int deviceId = motionEvent.getDeviceId();
-			    	int edgeFlags = motionEvent.getEdgeFlags();
-			    	int source = motionEvent.getSource();
-			    	int flags = motionEvent.getFlags();
-			    	
-			    	motionEvent = MotionEvent.obtain(downTime, eventTime, action,
-			    			pointerCount, pointerProperties, pointerCoords,
-			    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
-			    			source, flags);
-			    	super.dispatchGenericMotionEvent(motionEvent);
-			    	motionEvent.recycle();
-			    	return true;
-		    	}
-	    	}
+	    int pointerCount = motionEvent.getPointerCount();
+	    if (pointerCount > 0 &&
+	    	axises.size() > 0) {
+	    	
+	    	PointerProperties[] pointerProperties = new PointerProperties[1];
+	    	pointerProperties[0] = new PointerProperties();
+	    	PointerCoords[] pointerCoords = new PointerCoords[1];
+	    	pointerCoords[0] = new PointerCoords();
+	    	
+    		motionEvent.getPointerProperties(0, pointerProperties[0]);
+    		motionEvent.getPointerCoords(0, pointerCoords[0]);
+    		
+		    for (int i = 0; i < axises.size(); ++i) {
+		    	AxisRemap axis = axises.get(i);		    	
+	    		pointerCoords[0].setAxisValue(axis.mDestinationAxis, motionEvent.getAxisValue(axis.mSourceAxis));		    	
+		    }
+		    
+		    long downTime = motionEvent.getDownTime();
+	    	long eventTime = motionEvent.getEventTime();
+	    	int action = motionEvent.getAction();
+	    	int metaState = motionEvent.getMetaState();
+	    	int buttonState = motionEvent.getButtonState();
+	    	float xPrecision = 1;
+	    	float yPrecision = 1;
+	    	int deviceId = motionEvent.getDeviceId();
+	    	int edgeFlags = motionEvent.getEdgeFlags();
+	    	int source = motionEvent.getSource();
+	    	int flags = motionEvent.getFlags();
+	    	
+	    	motionEvent = MotionEvent.obtain(downTime, eventTime, action,
+	    			pointerCount, pointerProperties, pointerCoords,
+	    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
+	    			source, flags);
+	    	super.dispatchGenericMotionEvent(motionEvent);
+	    	motionEvent.recycle();
+	    	return true;
 	    }
 		
 		///*
+	    
+	    float lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
+	    float lsY = motionEvent.getAxisValue(OuyaController.AXIS_LS_Y);
+	    float rsX = motionEvent.getAxisValue(OuyaController.AXIS_RS_X);
+	    float rsY = motionEvent.getAxisValue(OuyaController.AXIS_RS_Y);
+	    float l2 = motionEvent.getAxisValue(OuyaController.AXIS_L2);
+	    float r2 = motionEvent.getAxisValue(OuyaController.AXIS_R2);
+	    
 		Log.i(TAG, "dispatchGenericMotionEvent lsX="+lsX);
 		Log.i(TAG, "dispatchGenericMotionEvent lsY="+lsY);
 		Log.i(TAG, "dispatchGenericMotionEvent rsX="+rsX);
