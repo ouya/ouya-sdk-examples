@@ -80,7 +80,7 @@ public class OuyaActivity extends Activity {
 						for (int buttonId=0; buttonId < button.length(); ++buttonId) {
 							JSONObject objButton = button.getJSONObject(buttonId);
 							//Log.i(TAG, "objButton="+objButton);
-							String sourceKeycode = objButton.getString("source_keycode"); 
+							int sourceKeycode = objButton.getInt("source_keycode"); 
 							//Log.i(TAG, "sourceKeycode="+sourceKeycode);
 							String destination_keycode = objButton.getString("destination_keycode"); 
 							//Log.i(TAG, "destination_keycode="+destination_keycode);							
