@@ -126,6 +126,23 @@
                 }]
             }, {
                 "alias": ["Microsoft X-Box 360 pad"],
+                "button_is_axis": [{
+                    "source_axis": 16,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_axis": 16,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_axis": 15,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_axis": 15,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }],
                 "button": [{
                     "source_keycode": 96,
                     "destination_keycode": "BUTTON_O"

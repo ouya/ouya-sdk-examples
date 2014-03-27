@@ -33,10 +33,17 @@ public class MappingParser {
 		public int mDestinationKeyCode = 0;
 		public Vector<Integer> mExcludeSource = new Vector<Integer>();
 	}
+	protected class ButtonIsAxis
+	{
+		public int mSourceAxis = 0;
+		public float mActionDown = 0;
+		public int mDestinationKeyCode = 0;
+	}
 	private class Controller
 	{
 		public Vector<String> mAlias = new Vector<String>();
-		public HashMap<Integer, Button> mButton = new HashMap<Integer, Button>();					
+		public HashMap<Integer, Button> mButton = new HashMap<Integer, Button>();
+		public Vector<ButtonIsAxis> mButtonIsAxis = new Vector<ButtonIsAxis>();
 	}
 	private class Device
 	{		
@@ -74,6 +81,47 @@ public class MappingParser {
 			return null;
 		}
 		return controller.mButton.get(keyCode);
+	}
+	public Vector<ButtonIsAxis> getButtonIsAxis(String deviceName, String controllerName) {
+		Device device = getDevice(deviceName);
+		if (null == device) {
+			return null;
+		}
+		Controller controller = getController(device, controllerName);
+		if (null == controller) {
+			return null;
+		}
+		return controller.mButtonIsAxis;
+	}
+	
+	private int getKeyCode(String name) {
+		if (name.equals("BUTTON_O")) {
+			return OuyaController.BUTTON_O;
+		} else if (name.equals("BUTTON_U")) {
+			return OuyaController.BUTTON_U;
+		} else if (name.equals("BUTTON_Y")) {
+			return OuyaController.BUTTON_Y;
+		} else if (name.equals("BUTTON_A")) {
+			return OuyaController.BUTTON_A;
+		} else if (name.equals("BUTTON_L1")) {
+			return OuyaController.BUTTON_L1;
+		} else if (name.equals("BUTTON_R1")) {
+			return OuyaController.BUTTON_R1;
+		} else if (name.equals("BUTTON_L3")) {
+			return OuyaController.BUTTON_L3;
+		} else if (name.equals("BUTTON_R3")) {
+			return OuyaController.BUTTON_R3;
+		} else if (name.equals("BUTTON_DPAD_UP")) {
+			return OuyaController.BUTTON_DPAD_UP;
+		} else if (name.equals("BUTTON_DPAD_DOWN")) {
+			return OuyaController.BUTTON_DPAD_DOWN;
+		} else if (name.equals("BUTTON_DPAD_RIGHT")) {
+			return OuyaController.BUTTON_DPAD_RIGHT;
+		} else if (name.equals("BUTTON_DPAD_LEFT")) {
+			return OuyaController.BUTTON_DPAD_LEFT;
+		} else {
+			return 0;
+		}
 	}
 	
 	public void parse(String jsonData) {
@@ -116,6 +164,26 @@ public class MappingParser {
 						mappingController.mAlias.add(strController);
 						mappingDevice.mController.put(strController, mappingController);
 					}
+					if (objController.has("button_is_axis")) {
+						JSONArray button = objController.getJSONArray("button_is_axis");
+						//Log.i(TAG, "buttonIsAxis="+button.toString());
+						for (int buttonId=0; buttonId < button.length(); ++buttonId) {
+							
+							ButtonIsAxis mappingButton = new ButtonIsAxis();
+							
+							JSONObject objButton = button.getJSONObject(buttonId);
+							//Log.i(TAG, "objButton="+objButton);
+							mappingButton.mSourceAxis = objButton.getInt("source_axis");
+							//Log.i(TAG, "sourceAxis="+sourceAxis);
+							mappingButton.mActionDown = (float)objButton.getDouble("action_down");
+							//Log.i(TAG, "actionDown="+actionDown);
+							String destinationKeyCode = objButton.getString("destination_keycode"); 
+							//Log.i(TAG, "destinationKeyCode="+destinationKeyCode);
+							mappingButton.mDestinationKeyCode = getKeyCode(destinationKeyCode);
+							
+							mappingController.mButtonIsAxis.add(mappingButton);
+						}
+					}
 					if (objController.has("button")) {
 						JSONArray button = objController.getJSONArray("button");
 						//Log.i(TAG, "buttons="+button.toString());
@@ -125,50 +193,24 @@ public class MappingParser {
 							
 							JSONObject objButton = button.getJSONObject(buttonId);
 							//Log.i(TAG, "objButton="+objButton);
-							int sourceKeycode = objButton.getInt("source_keycode"); 
-							//Log.i(TAG, "sourceKeycode="+sourceKeycode);
+							mappingButton.mSourceKeyCode = objButton.getInt("source_keycode"); 
+							//Log.i(TAG, "sourceKeycode="+mappingButton.mSourceKeyCode);
 							String destination_keycode = objButton.getString("destination_keycode"); 
 							//Log.i(TAG, "destination_keycode="+destination_keycode);							
-							Log.i(TAG, "sourceKeycode="+sourceKeycode+" destination_keycode="+destination_keycode);
+							//Log.i(TAG, "sourceKeycode="+mappingButton.mSourceKeyCode+" destination_keycode="+destination_keycode);
 							
 							if (objButton.has("exclude_source")) {
 								JSONArray excludeSource = objButton.getJSONArray("exclude_source");
 								for (int excludeId=0; excludeId < excludeSource.length(); ++excludeId) {
 									int source = excludeSource.getInt(excludeId);
 									mappingButton.mExcludeSource.add(source);
-									Log.i(TAG, "exclude_source="+source);									
+									//Log.i(TAG, "exclude_source="+source);									
 								}
 							}
+
+							mappingButton.mDestinationKeyCode = getKeyCode(destination_keycode);
 							
-							mappingButton.mSourceKeyCode = sourceKeycode;
-							//mappingButton.mDestinationKeyCode = destination_keycode;
-							if (destination_keycode.equals("BUTTON_O")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_O;
-							} else if (destination_keycode.equals("BUTTON_U")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_U;
-							} else if (destination_keycode.equals("BUTTON_Y")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_Y;
-							} else if (destination_keycode.equals("BUTTON_A")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_A;
-							} else if (destination_keycode.equals("BUTTON_L1")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_L1;
-							} else if (destination_keycode.equals("BUTTON_R1")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_R1;
-							} else if (destination_keycode.equals("BUTTON_L3")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_L3;
-							} else if (destination_keycode.equals("BUTTON_R3")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_R3;
-							} else if (destination_keycode.equals("BUTTON_DPAD_UP")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_DPAD_UP;
-							} else if (destination_keycode.equals("BUTTON_DPAD_DOWN")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_DPAD_DOWN;
-							} else if (destination_keycode.equals("BUTTON_DPAD_RIGHT")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_DPAD_RIGHT;
-							} else if (destination_keycode.equals("BUTTON_DPAD_LEFT")) {
-								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_DPAD_LEFT;
-							}
-							
-							mappingController.mButton.put(sourceKeycode, mappingButton);
+							mappingController.mButton.put(mappingButton.mSourceKeyCode, mappingButton);
 						}
 					}
 				}
