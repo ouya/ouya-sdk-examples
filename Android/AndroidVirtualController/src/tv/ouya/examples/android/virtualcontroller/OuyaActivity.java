@@ -402,18 +402,6 @@ public class OuyaActivity extends Activity {
 		/*
 		if (android.os.Build.MODEL.equals("OUYA Console")) {
 	    	
-	        if (keyCode == OuyaController.BUTTON_L1 ||
-	            keyCode == OuyaController.BUTTON_R1||
-	            keyCode == OuyaController.BUTTON_O ||
-	            keyCode == OuyaController.BUTTON_U ||
-	            keyCode == OuyaController.BUTTON_Y ||
-	            keyCode == OuyaController.BUTTON_A ||
-	            keyCode == OuyaController.BUTTON_L3 ||
-	            keyCode == OuyaController.BUTTON_R3) {
-	            super.dispatchKeyEvent(keyEvent);
-	            return true;
-	        }
-	
 	        int source = keyEvent.getSource();
 	        if (keyCode == OuyaController.BUTTON_DPAD_UP ||
 	        	keyCode == OuyaController.BUTTON_DPAD_DOWN ||

@@ -79,37 +79,37 @@
                     "source_keycode": 96,
                     "destination_keycode": "BUTTON_O"
                 }, {
-                    "source_keycode": 97,
+                    "source_keycode": 99,
                     "destination_keycode": "BUTTON_U"
                 }, {
-                    "source_keycode": 98,
+                    "source_keycode": 100,
                     "destination_keycode": "BUTTON_Y"
                 }, {
-                    "source_keycode": 99,
+                    "source_keycode": 97,
                     "destination_keycode": "BUTTON_A"
                 }, {
-                    "source_keycode": 100,
+                    "source_keycode": 102,
                     "destination_keycode": "BUTTON_L1"
                 }, {
-                    "source_keycode": 101,
+                    "source_keycode": 103,
                     "destination_keycode": "BUTTON_R1"
                 }, {
-                    "source_keycode": 102,
+                    "source_keycode": 106,
                     "destination_keycode": "BUTTON_L3"
                 }, {
-                    "source_keycode": 103,
+                    "source_keycode": 107,
                     "destination_keycode": "BUTTON_R3"
                 }, {
-                    "source_keycode": 104,
+                    "source_keycode": 0,
                     "destination_keycode": "BUTTON_DPAD_UP"
                 }, {
-                    "source_keycode": 105,
+                    "source_keycode": 0,
                     "destination_keycode": "BUTTON_DPAD_DOWN"
                 }, {
-                    "source_keycode": 108,
+                    "source_keycode": 0,
                     "destination_keycode": "BUTTON_DPAD_RIGHT"
                 }, {
-                    "source_keycode": 109,
+                    "source_keycode": 0,
                     "destination_keycode": "BUTTON_DPAD_LEFT"
                 }]
             }, {
