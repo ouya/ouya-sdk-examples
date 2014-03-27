@@ -3,6 +3,8 @@ package tv.ouya.examples.android.virtualcontroller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +25,11 @@ import tv.ouya.console.api.OuyaController;
 
 public class OuyaActivity extends Activity {
 	
-	private static final String TAG = OuyaActivity.class.getSimpleName();
+	private static final String TAG = OuyaActivity.class.getSimpleName();	
 	
 	private HashMap<Integer, Boolean> mLastValue = new HashMap<Integer, Boolean>();
+	
+	private MappingParser mParser = new MappingParser();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,59 +52,7 @@ public class OuyaActivity extends Activity {
 			Log.e(TAG, "Failed to load input configuration");
 		}
 		
-		//Log.i(TAG, "JSON: " + json);
-		
-		try {
-			JSONObject jObject = new JSONObject(json);
-			Log.i(TAG, "Loaded input json");
-			
-			JSONArray map = jObject.getJSONArray("map");
-			for (int deviceId=0; deviceId < map.length(); ++deviceId) {
-				JSONObject objDevice = map.getJSONObject(deviceId);
-				//Log.i(TAG, "device="+objDevice.toString());
-				JSONObject device = objDevice.getJSONObject("device");
-				JSONArray deviceAlias = device.getJSONArray("alias");
-				//Log.i(TAG, "alias="+alias.toString());
-				for (int aliasId=0; aliasId < deviceAlias.length(); ++aliasId) {
-					Log.i(TAG, "device alias="+deviceAlias.getString(aliasId));					
-				}
-				JSONArray controller = device.getJSONArray("controller");
-				//Log.i(TAG, "controller="+controller.toString());
-				for (int controllerId=0; controllerId < controller.length(); ++controllerId) {
-					JSONObject objController = controller.getJSONObject(controllerId);
-					//Log.i(TAG, "objController="+objController.toString());
-					JSONArray controllerAlias = objController.getJSONArray("alias");
-					//Log.i(TAG, "controllerAlias="+controllerAlias.toString());
-					for (int aliasId=0; aliasId < controllerAlias.length(); ++aliasId) {
-						Log.i(TAG, "controller alias="+controllerAlias.getString(aliasId));					
-					}
-					if (objController.has("button")) {
-						JSONArray button = objController.getJSONArray("button");
-						//Log.i(TAG, "buttons="+button.toString());
-						for (int buttonId=0; buttonId < button.length(); ++buttonId) {
-							JSONObject objButton = button.getJSONObject(buttonId);
-							//Log.i(TAG, "objButton="+objButton);
-							int sourceKeycode = objButton.getInt("source_keycode"); 
-							//Log.i(TAG, "sourceKeycode="+sourceKeycode);
-							String destination_keycode = objButton.getString("destination_keycode"); 
-							//Log.i(TAG, "destination_keycode="+destination_keycode);							
-							Log.i(TAG, "sourceKeycode="+sourceKeycode+" destination_keycode="+destination_keycode);
-						}
-					}
-				}
-				/*
-				if (objController.has("button")) {
-					JSONObject objButton = objController.getJSONObject("button");
-					Log.i(TAG, "objButton="+objButton.toString());
-				}
-				*/
-				
-				Log.i(TAG, "**********");
-			}
-		} catch (JSONException e) {
-			Log.e(TAG, "Failed to load input json");
-			e.printStackTrace();
-		}
+		mParser.parse(json);
 	
 		takeKeyEvents(true);
 	}
@@ -441,75 +393,15 @@ public class OuyaActivity extends Activity {
 		int keyCode = keyEvent.getKeyCode();
 		Log.i(TAG, "dispatchKeyEvent="+keyCode);
 		
-		if (android.os.Build.MODEL.equals("Nexus 10")) {
-			if (keyEvent.getDevice().getName().equals("GameStick Controller")) {
-				switch (keyCode) {
-				case 96:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_O));
-					return true;
-				case 97:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_U));
-					return true;
-				case 98:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_Y));
-					return true;
-				case 99:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_A));
-					return true;
-				case 100:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L1));
-					return true;
-				case 101:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R1));
-					return true;
-				case 102:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L3));
-					return true;
-				case 103:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R3));
-					return true;
-				case 104:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_UP));
-					return true;
-				case 105:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_DOWN));
-					return true;
-				case 108:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_RIGHT));
-					return true;
-				case 109:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_DPAD_LEFT));
-					return true;
-				}
-			} else if (keyEvent.getDevice().getName().equals("Microsoft X-Box 360 pad")) {
-				switch (keyCode) {
-				case 96:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_O));
-					return true;
-				case 97:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_A));
-					return true;
-				case 99:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_U));
-					return true;
-				case 100:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_Y));
-					return true;
-				case 102:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L1));
-					return true;
-				case 103:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R1));
-					return true;
-				case 106:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_L3));
-					return true;
-				case 107:
-					super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), OuyaController.BUTTON_R3));
-					return true;
-				}
-	    	}
-	    } else if (android.os.Build.MODEL.equals("OUYA Console")) {
+		int destinationKeyCode =
+				mParser.getButton(android.os.Build.MODEL, keyEvent.getDevice().getName(), keyCode);
+		//Log.i(TAG, "destinationKeyCode="+destinationKeyCode);
+		
+		super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), destinationKeyCode));
+		
+		/*
+		if (android.os.Build.MODEL.equals("OUYA Console")) {
+	    	
 	        if (keyCode == OuyaController.BUTTON_L1 ||
 	            keyCode == OuyaController.BUTTON_R1||
 	            keyCode == OuyaController.BUTTON_O ||
@@ -533,6 +425,7 @@ public class OuyaActivity extends Activity {
 	            }
 	        }
 	    }
+	    */
 		
         return true;
 	}	
