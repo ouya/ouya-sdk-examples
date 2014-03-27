@@ -58,8 +58,7 @@ public class OuyaActivity extends Activity {
 	}
 
 	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		
+	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {		
 		float lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
 	    float lsY = motionEvent.getAxisValue(OuyaController.AXIS_LS_Y);
 	    float rsX = motionEvent.getAxisValue(OuyaController.AXIS_RS_X);
@@ -391,30 +390,20 @@ public class OuyaActivity extends Activity {
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		int keyCode = keyEvent.getKeyCode();
+		int source = keyEvent.getSource();
 		Log.i(TAG, "dispatchKeyEvent="+keyCode);
 		
-		int destinationKeyCode =
+		MappingParser.Button button =
 				mParser.getButton(android.os.Build.MODEL, keyEvent.getDevice().getName(), keyCode);
-		//Log.i(TAG, "destinationKeyCode="+destinationKeyCode);
-		
-		super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), destinationKeyCode));
-		
-		/*
-		if (android.os.Build.MODEL.equals("OUYA Console")) {
-	    	
-	        int source = keyEvent.getSource();
-	        if (keyCode == OuyaController.BUTTON_DPAD_UP ||
-	        	keyCode == OuyaController.BUTTON_DPAD_DOWN ||
-	            keyCode == OuyaController.BUTTON_DPAD_LEFT ||
-	            keyCode == OuyaController.BUTTON_DPAD_RIGHT) {
-	            if (source != InputDevice.SOURCE_JOYSTICK) {
-	            	super.dispatchKeyEvent(keyEvent);
-	                return true;
-	            }
-	        }
-	    }
-	    */
-		
+		if (null == button) {
+			return true;
+		}
+
+		if (button.mExcludeSource.contains(source)) {
+			return true;
+		}
+		//Log.i(TAG, "destinationKeyCode="+button.mDestinationKeyCode);
+		super.dispatchKeyEvent(new KeyEvent(keyEvent.getAction(), button.mDestinationKeyCode));
         return true;
 	}	
 	

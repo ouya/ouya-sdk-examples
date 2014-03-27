@@ -100,17 +100,29 @@
                     "source_keycode": 107,
                     "destination_keycode": "BUTTON_R3"
                 }, {
-                    "source_keycode": 0,
-                    "destination_keycode": "BUTTON_DPAD_UP"
+                    "source_keycode": 19,
+                    "destination_keycode": "BUTTON_DPAD_UP",
+                    "exclude_source": [
+                        16777232
+                    ]
                 }, {
-                    "source_keycode": 0,
-                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                    "source_keycode": 20,
+                    "destination_keycode": "BUTTON_DPAD_DOWN",
+                    "exclude_source": [
+                        16777232
+                    ]
                 }, {
-                    "source_keycode": 0,
-                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                    "source_keycode": 22,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT",
+                    "exclude_source": [
+                        16777232
+                    ]
                 }, {
-                    "source_keycode": 0,
-                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                    "source_keycode": 21,
+                    "destination_keycode": "BUTTON_DPAD_LEFT",
+                    "exclude_source": [
+                        16777232
+                    ]
                 }]
             }, {
                 "alias": ["Microsoft X-Box 360 pad"],

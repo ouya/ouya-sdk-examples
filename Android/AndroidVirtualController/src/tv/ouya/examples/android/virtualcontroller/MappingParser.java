@@ -27,10 +27,11 @@ public class MappingParser {
 	
 	private static final String TAG = MappingParser.class.getSimpleName();
 	
-	private class Button
+	protected class Button
 	{
 		public int mSourceKeyCode = 0;
 		public int mDestinationKeyCode = 0;
+		public Vector<Integer> mExcludeSource = new Vector<Integer>();
 	}
 	private class Controller
 	{
@@ -60,23 +61,19 @@ public class MappingParser {
 		}
 		return device.mController.get(controllerName);
 	}
-	public int getButton(String deviceName, String controllerName, int keyCode) {
+	public Button getButton(String deviceName, String controllerName, int keyCode) {
 		Device device = getDevice(deviceName);
 		if (null == device) {
-			return 0;
+			return null;
 		}
 		Controller controller = getController(device, controllerName);
 		if (null == controller) {
-			return 0;
+			return null;
 		}
 		if (!controller.mButton.containsKey(keyCode)) {
-			return 0;
+			return null;
 		}
-		Button button = controller.mButton.get(keyCode);
-		if (null == button) {
-			return 0;
-		}
-		return button.mDestinationKeyCode;
+		return controller.mButton.get(keyCode);
 	}
 	
 	public void parse(String jsonData) {
@@ -134,6 +131,15 @@ public class MappingParser {
 							//Log.i(TAG, "destination_keycode="+destination_keycode);							
 							Log.i(TAG, "sourceKeycode="+sourceKeycode+" destination_keycode="+destination_keycode);
 							
+							if (objButton.has("exclude_source")) {
+								JSONArray excludeSource = objButton.getJSONArray("exclude_source");
+								for (int excludeId=0; excludeId < excludeSource.length(); ++excludeId) {
+									int source = excludeSource.getInt(excludeId);
+									mappingButton.mExcludeSource.add(source);
+									Log.i(TAG, "exclude_source="+source);									
+								}
+							}
+							
 							mappingButton.mSourceKeyCode = sourceKeycode;
 							//mappingButton.mDestinationKeyCode = destination_keycode;
 							if (destination_keycode.equals("BUTTON_O")) {
@@ -161,6 +167,7 @@ public class MappingParser {
 							} else if (destination_keycode.equals("BUTTON_DPAD_LEFT")) {
 								mappingButton.mDestinationKeyCode = OuyaController.BUTTON_DPAD_LEFT;
 							}
+							
 							mappingController.mButton.put(sourceKeycode, mappingButton);
 						}
 					}
