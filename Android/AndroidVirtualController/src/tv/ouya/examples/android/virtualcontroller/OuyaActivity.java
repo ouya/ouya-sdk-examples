@@ -67,6 +67,29 @@ public class OuyaActivity extends Activity {
 	    float l2 = motionEvent.getAxisValue(OuyaController.AXIS_L2);
 	    float r2 = motionEvent.getAxisValue(OuyaController.AXIS_R2);
 	    
+	    Vector<ButtonIsAxis> buttons =
+				mParser.getButtonIsAxis(android.os.Build.MODEL, motionEvent.getDevice().getName());
+		
+		for (int i = 0; i < buttons.size(); ++i) {
+			ButtonIsAxis button = buttons.get(i);	    			
+			float axis = motionEvent.getAxisValue(button.mSourceAxis);
+			if (axis == button.mActionDown) {
+				if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
+					!mLastValue.get(button.mDestinationKeyCode)) {					
+					mLastValue.put(button.mDestinationKeyCode, true);
+					//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
+					super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, button.mDestinationKeyCode));
+				}
+			} else {
+				if (mLastValue.containsKey(button.mDestinationKeyCode) &&
+					mLastValue.get(button.mDestinationKeyCode)) {					
+					mLastValue.put(button.mDestinationKeyCode, false);
+					//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
+					super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, button.mDestinationKeyCode));
+				}
+			}
+		}
+	    
 	    if (android.os.Build.MODEL.equals("Nexus 10")) {
 	    	if (motionEvent.getDevice().getName().equals("Broadcom Bluetooth HID")) { //OUYA Controller	    	
 		    	int pointerCount = motionEvent.getPointerCount();
@@ -102,179 +125,6 @@ public class OuyaActivity extends Activity {
 			    	motionEvent.recycle();
 			    	return true;
 		    	}
-	    	} else if (motionEvent.getDevice().getName().equals("Microsoft X-Box 360 pad")) {
-				lsX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
-				lsY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
-				//Log.i(TAG, "dispatchGenericMotionEvent x="+lsX);
-				//Log.i(TAG, "dispatchGenericMotionEvent y="+lsY);			
-				if (lsX == -1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_LEFT));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
-					}
-				} else if (lsX == 1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_RIGHT));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
-					}
-				} else if (lsX == 0f)  {
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
-					}
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
-					}				
-				}
-				if (lsY == -1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_UP, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_UP));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
-					}
-				} else if (lsY == 1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_DOWN));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
-					}
-				} else if (lsY == 0f)  {
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
-					}
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
-					}				
-				}
-	    	}
-	    } else if (android.os.Build.MODEL.equals("OUYA Console")) {
-			if (motionEvent.getDevice().getName().equals("GameStick Controller")) {			
-				lsX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
-				lsY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
-				//Log.i(TAG, "dispatchGenericMotionEvent x="+lsX);
-				//Log.i(TAG, "dispatchGenericMotionEvent y="+lsY);			
-				if (lsX == -1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_LEFT));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
-					}
-				} else if (lsX == 1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_RIGHT));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
-					}
-				} else if (lsX == 0f)  {
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_LEFT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_LEFT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_LEFT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_LEFT));
-					}
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_RIGHT) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_RIGHT)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_RIGHT, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_RIGHT));
-					}				
-				}
-				if (lsY == -1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_UP, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_UP));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
-					}
-				} else if (lsY == 1f) {
-					if (!mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) ||
-						!mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {					
-						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, true);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, OuyaController.BUTTON_DPAD_DOWN));
-					}				
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
-					}
-				} else if (lsY == 0f)  {
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_UP) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_UP)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_UP, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_UP));
-					}
-					if (mLastValue.containsKey(OuyaController.BUTTON_DPAD_DOWN) &&
-						mLastValue.get(OuyaController.BUTTON_DPAD_DOWN)) {
-						mLastValue.put(OuyaController.BUTTON_DPAD_DOWN, false);
-						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, OuyaController.BUTTON_DPAD_DOWN));
-					}				
-				}
-				
-	    	} else if (motionEvent.getDevice().getName().equals("Microsoft X-Box 360 pad")) {
-	    		
-	    		Vector<ButtonIsAxis> buttons =
-	    				mParser.getButtonIsAxis(android.os.Build.MODEL, motionEvent.getDevice().getName());
-	    		
-	    		for (int i = 0; i < buttons.size(); ++i) {
-	    			ButtonIsAxis button = buttons.get(i);	    			
-	    			float axis = motionEvent.getAxisValue(button.mSourceAxis);
-	    			if (axis == button.mActionDown) {
-	    				if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
-    						!mLastValue.get(button.mDestinationKeyCode)) {					
-    						mLastValue.put(button.mDestinationKeyCode, true);
-    						//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
-    						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, button.mDestinationKeyCode));
-    					}
-	    			} else {
-	    				if (mLastValue.containsKey(button.mDestinationKeyCode) &&
-    						mLastValue.get(button.mDestinationKeyCode)) {					
-    						mLastValue.put(button.mDestinationKeyCode, false);
-    						//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
-    						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, button.mDestinationKeyCode));
-    					}
-	    			}
-	    		}
 	    	}
 	    }
 		
