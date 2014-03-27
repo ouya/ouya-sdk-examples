@@ -17,6 +17,7 @@ public class MainActivity extends OuyaActivity {
 	
 	private TextView txtSystem = null;
 	private TextView txtController = null;
+	private TextView txtKeyCode = null;
 	//private ImageView imgController = null;
 	private ImageView imgButtonA = null;
 	private ImageView imgDpadDown = null;
@@ -43,6 +44,7 @@ public class MainActivity extends OuyaActivity {
 		
 		txtSystem = (TextView)findViewById(R.id.txtSystem);
 		txtController = (TextView)findViewById(R.id.txtController);
+		txtKeyCode = (TextView)findViewById(R.id.txtKeyCode);
 		//imgController = (ImageView)findViewById(R.id.imgController);
 		imgButtonA = (ImageView)findViewById(R.id.imgButtonA);
 		imgDpadDown = (ImageView)findViewById(R.id.imgDpadDown);
@@ -69,6 +71,14 @@ public class MainActivity extends OuyaActivity {
 	protected void onStart() {
 		super.onStart();
 		txtSystem.setText("System: " + android.os.Build.MODEL);
+	}
+	
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		if (null != txtKeyCode) {
+			txtKeyCode.setText("dispatchKeyEvent: " + keyEvent.getDevice().getName() + " " + "KeyCode: " + keyEvent.getKeyCode());
+		}
+		return super.dispatchKeyEvent(keyEvent);
 	}
 
 	@Override
@@ -119,7 +129,11 @@ public class MainActivity extends OuyaActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		txtController.setText(keyEvent.getDevice().getName());
+		//txtController.setText(keyEvent.getDevice().getName());
+		
+		if (null != txtController) {
+			txtController.setText("onKeyDown: " + keyEvent.getDevice().getName() + " " + "KeyCode: " + keyEvent.getKeyCode());
+		}
 		
 		//Log.i(TAG, "KeyDown="+keyCode);
 		
@@ -173,7 +187,11 @@ public class MainActivity extends OuyaActivity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
 		
-		txtController.setText(keyEvent.getDevice().getName());
+		//txtController.setText(keyEvent.getDevice().getName());
+		
+		if (null != txtController) {
+			txtController.setText("onKeyUp: " + keyEvent.getDevice().getName() + " " + "KeyCode: " + keyEvent.getKeyCode());
+		}
 		
 		//Log.i(TAG, "KeyUp="+keyCode);
 		
