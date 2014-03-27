@@ -40,7 +40,7 @@ public class MappingParser {
 	private class Device
 	{		
 		public Vector<String> mAlias = new Vector<String>();
-		public Controller mController = new Controller();
+		public HashMap<String, Controller> mController = new HashMap<String, Controller>();
 	}
 	
 	private HashMap<String, Device> mDevice = new HashMap<String, Device>();	
@@ -55,10 +55,10 @@ public class MappingParser {
 		if (null == device) {
 			return null;
 		}
-		if (!device.mController.mAlias.contains(controllerName)) {
+		if (!device.mController.containsKey(controllerName)) {
 			return null;
 		}
-		return device.mController;
+		return device.mController.get(controllerName);
 	}
 	public int getButton(String deviceName, String controllerName, int keyCode) {
 		Device device = getDevice(deviceName);
@@ -107,7 +107,7 @@ public class MappingParser {
 				//Log.i(TAG, "controller="+controller.toString());
 				for (int controllerId=0; controllerId < controller.length(); ++controllerId) {
 					
-					Controller mappingController = mappingDevice.mController;
+					Controller mappingController = new Controller();
 					
 					JSONObject objController = controller.getJSONObject(controllerId);
 					//Log.i(TAG, "objController="+objController.toString());
@@ -117,6 +117,7 @@ public class MappingParser {
 						String strController = controllerAlias.getString(aliasId);
 						Log.i(TAG, "controller alias="+strController);
 						mappingController.mAlias.add(strController);
+						mappingDevice.mController.put(strController, mappingController);
 					}
 					if (objController.has("button")) {
 						JSONArray button = objController.getJSONArray("button");
