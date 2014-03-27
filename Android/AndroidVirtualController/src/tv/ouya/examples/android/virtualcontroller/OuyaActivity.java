@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
@@ -55,70 +54,80 @@ public class OuyaActivity extends Activity {
 	}
 
 	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {		
+	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		
+		/*
+		if (true) {
+			return true;
+		}
+		*/
 	    
 	    Vector<ButtonIsAxis> buttons =
 				mParser.getButtonIsAxis(android.os.Build.MODEL, motionEvent.getDevice().getName());
-		
-		for (int i = 0; i < buttons.size(); ++i) {
-			ButtonIsAxis button = buttons.get(i);	    			
-			float axis = motionEvent.getAxisValue(button.mSourceAxis);
-			if (axis == button.mActionDown) {
-				if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
-					!mLastValue.get(button.mDestinationKeyCode)) {					
-					mLastValue.put(button.mDestinationKeyCode, true);
-					//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
-					super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, button.mDestinationKeyCode));
-				}
-			} else {
-				if (mLastValue.containsKey(button.mDestinationKeyCode) &&
-					mLastValue.get(button.mDestinationKeyCode)) {					
-					mLastValue.put(button.mDestinationKeyCode, false);
-					//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
-					super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, button.mDestinationKeyCode));
+	    
+	    if (null != buttons) {		
+			for (int i = 0; i < buttons.size(); ++i) {
+				ButtonIsAxis button = buttons.get(i);	    			
+				float axis = motionEvent.getAxisValue(button.mSourceAxis);
+				if (axis == button.mActionDown) {
+					if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
+						!mLastValue.get(button.mDestinationKeyCode)) {					
+						mLastValue.put(button.mDestinationKeyCode, true);
+						//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, button.mDestinationKeyCode));
+					}
+				} else {
+					if (mLastValue.containsKey(button.mDestinationKeyCode) &&
+						mLastValue.get(button.mDestinationKeyCode)) {					
+						mLastValue.put(button.mDestinationKeyCode, false);
+						//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
+						super.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, button.mDestinationKeyCode));
+					}
 				}
 			}
-		}
+	    }
 		
 	    Vector<AxisRemap> axises =
 	    	mParser.getAxisRemap(android.os.Build.MODEL, motionEvent.getDevice().getName());
 	    
-	    int pointerCount = motionEvent.getPointerCount();
-	    if (pointerCount > 0 &&
-	    	axises.size() > 0) {
-	    	
-	    	PointerProperties[] pointerProperties = new PointerProperties[1];
-	    	pointerProperties[0] = new PointerProperties();
-	    	PointerCoords[] pointerCoords = new PointerCoords[1];
-	    	pointerCoords[0] = new PointerCoords();
-	    	
-    		motionEvent.getPointerProperties(0, pointerProperties[0]);
-    		motionEvent.getPointerCoords(0, pointerCoords[0]);
-    		
-		    for (int i = 0; i < axises.size(); ++i) {
-		    	AxisRemap axis = axises.get(i);		    	
-	    		pointerCoords[0].setAxisValue(axis.mDestinationAxis, motionEvent.getAxisValue(axis.mSourceAxis));		    	
+	    if (null != axises) {	    
+		    int pointerCount = motionEvent.getPointerCount();
+		    if (pointerCount > 0 &&
+		    	axises.size() > 0) {
+		    	
+		    	PointerProperties[] pointerProperties = new PointerProperties[1];
+		    	pointerProperties[0] = new PointerProperties();
+		    	PointerCoords[] pointerCoords = new PointerCoords[1];
+		    	pointerCoords[0] = new PointerCoords();
+		    	
+	    		motionEvent.getPointerProperties(0, pointerProperties[0]);
+	    		motionEvent.getPointerCoords(0, pointerCoords[0]);
+	    		
+			    for (int i = 0; i < axises.size(); ++i) {
+			    	AxisRemap axis = axises.get(i);		    	
+		    		pointerCoords[0].setAxisValue(axis.mDestinationAxis, motionEvent.getAxisValue(axis.mSourceAxis));		    	
+			    }
+			    
+			    long downTime = motionEvent.getDownTime();
+		    	long eventTime = motionEvent.getEventTime();
+		    	int action = motionEvent.getAction();
+		    	int metaState = motionEvent.getMetaState();
+		    	int buttonState = motionEvent.getButtonState();
+		    	float xPrecision = 1;
+		    	float yPrecision = 1;
+		    	int deviceId = motionEvent.getDeviceId();
+		    	int edgeFlags = motionEvent.getEdgeFlags();
+		    	int source = motionEvent.getSource();
+		    	int flags = motionEvent.getFlags();
+		    	
+		    	motionEvent = MotionEvent.obtain(downTime, eventTime, action,
+		    			pointerCount, pointerProperties, pointerCoords,
+		    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
+		    			source, flags);
+		    	super.dispatchGenericMotionEvent(motionEvent);
+		    	motionEvent.recycle();
+		    	return true;
 		    }
-		    
-		    long downTime = motionEvent.getDownTime();
-	    	long eventTime = motionEvent.getEventTime();
-	    	int action = motionEvent.getAction();
-	    	int metaState = motionEvent.getMetaState();
-	    	int buttonState = motionEvent.getButtonState();
-	    	float xPrecision = 1;
-	    	float yPrecision = 1;
-	    	int deviceId = motionEvent.getDeviceId();
-	    	int edgeFlags = motionEvent.getEdgeFlags();
-	    	int source = motionEvent.getSource();
-	    	int flags = motionEvent.getFlags();
-	    	
-	    	motionEvent = MotionEvent.obtain(downTime, eventTime, action,
-	    			pointerCount, pointerProperties, pointerCoords,
-	    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
-	    			source, flags);
-	    	super.dispatchGenericMotionEvent(motionEvent);
-	    	motionEvent.recycle();
-	    	return true;
 	    }
 		
 		///*
@@ -194,7 +203,13 @@ public class OuyaActivity extends Activity {
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		int keyCode = keyEvent.getKeyCode();
 		int source = keyEvent.getSource();
-		Log.i(TAG, "dispatchKeyEvent="+keyCode);
+		Log.i(TAG, android.os.Build.MODEL + " : dispatchKeyEvent="+keyCode);
+		
+		/*
+		if (true) {
+			return true;
+		}
+		*/
 		
 		MappingParser.Button button =
 				mParser.getButton(android.os.Build.MODEL, keyEvent.getDevice().getName(), keyCode);

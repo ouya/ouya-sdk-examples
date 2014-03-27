@@ -237,14 +237,6 @@ public class MainActivity extends OuyaActivity {
 			return true;
 		}
 		
-		// TODO Auto-generated method stub
-		//return super.onKeyUp(keyCode, keyEvent);
-		
-		Log.i(TAG, "Unrecognized KeyUp="+keyCode);
-		
 		return true;
-	}
-
-	
-	
+	}	
 }

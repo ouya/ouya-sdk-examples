@@ -1,6 +1,63 @@
 {
     "map": [{
         "device": {
+            "alias": ["KFTHWI"],
+            "controller": [{
+                "alias": ["Broadcom Bluetooth HID"],
+                "axis_remap": [{
+                    "source_axis": 11,
+                    "destination_axis": 17
+                }, {
+                    "source_axis": 14,
+                    "destination_axis": 18
+                }, {
+                    "source_axis": 12,
+                    "destination_axis": 11
+                }, {
+                    "source_axis": 13,
+                    "destination_axis": 14
+                }],
+                "button": [{
+                    "source_keycode": 96,
+                    "destination_keycode": "BUTTON_O"
+                }, {
+                    "source_keycode": 97,
+                    "destination_keycode": "BUTTON_U"
+                }, {
+                    "source_keycode": 98,
+                    "destination_keycode": "BUTTON_Y"
+                }, {
+                    "source_keycode": 99,
+                    "destination_keycode": "BUTTON_A"
+                }, {
+                    "source_keycode": 100,
+                    "destination_keycode": "BUTTON_L1"
+                }, {
+                    "source_keycode": 101,
+                    "destination_keycode": "BUTTON_R1"
+                }, {
+                    "source_keycode": 102,
+                    "destination_keycode": "BUTTON_L3"
+                }, {
+                    "source_keycode": 103,
+                    "destination_keycode": "BUTTON_R3"
+                }, {
+                    "source_keycode": 104,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_keycode": 105,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_keycode": 108,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_keycode": 109,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }]
+            }]
+        }
+    }, {
+        "device": {
             "alias": ["Nexus 10"],
             "controller": [{
                 "alias": ["Broadcom Bluetooth HID"],
