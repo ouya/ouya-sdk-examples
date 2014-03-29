@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.NativeActivity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -19,9 +20,9 @@ import tv.ouya.console.api.OuyaController;
 import tv.ouya.examples.android.virtualcontroller.MappingParser.AxisRemap;
 import tv.ouya.examples.android.virtualcontroller.MappingParser.ButtonIsAxis;
 
-public class OuyaActivity extends Activity {
+public class OuyaNativeActivity extends NativeActivity {
 	
-	private static final String TAG = OuyaActivity.class.getSimpleName();	
+	private static final String TAG = OuyaNativeActivity.class.getSimpleName();	
 	
 	private HashMap<Integer, Boolean> mLastValue = new HashMap<Integer, Boolean>();
 	
