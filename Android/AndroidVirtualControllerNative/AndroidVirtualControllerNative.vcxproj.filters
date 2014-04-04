@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="jni">
+      <UniqueIdentifier>c3ac2c06-aa7d-4644-9666-cf2c1762f1a6</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>17d4eeb0-c857-41dd-bc48-cbf4debb9df0</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\values">
+      <UniqueIdentifier>2fb7d762-29a1-432d-b8cb-d43652b10952</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml" />
+    <None Include="build.xml" />
+    <None Include="local.properties" />
+    <None Include="proguard.cfg" />
+    <None Include="project.properties" />
+    <None Include="res\values\strings.xml">
+      <Filter>res\values</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\main.c">
+      <Filter>jni</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
