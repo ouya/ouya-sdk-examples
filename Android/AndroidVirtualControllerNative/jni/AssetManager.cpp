@@ -57,17 +57,19 @@ namespace android_content_res_AssetManager
 	{
 		if (_instance)
 		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
 			_env->DeleteLocalRef(_instance);
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroyed Object");
 		}
 	}
 
-	java_lang_String::String* AssetManager::list(const java_lang_String::String& path) const
+	std::vector<std::string> AssetManager::list(const java_lang_String::String& path) const
 	{
+		std::vector<std::string> retVal;
+
 		if (!_env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return 0;
+			return retVal;
 		}
 
 		jstring arg1 = path.GetInstance();
@@ -79,8 +81,22 @@ namespace android_content_res_AssetManager
 		else
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to list path");
+			return retVal;
 		}
 
-		return 0;
+		jsize const length = _env->GetArrayLength((jarray)result);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "List returned %d items", length);
+
+		for (jsize index(0); index < length; ++index)
+		{
+			jstring element = (jstring)_env->GetObjectArrayElement((jobjectArray)result, index);
+			const char* nativeString = _env->GetStringUTFChars(element, 0);
+			//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, nativeString);
+			std::string entry = nativeString;
+			retVal.push_back(entry);
+			_env->ReleaseStringUTFChars(element, nativeString);
+		}
+
+		return retVal;
 	}
 }

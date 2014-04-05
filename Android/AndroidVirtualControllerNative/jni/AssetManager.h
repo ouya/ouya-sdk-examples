@@ -1,7 +1,11 @@
 #ifndef __ASSET_MANAGER_H__
 #define __ASSET_MANAGER_H__
 
+#include <string>
+#include <vector>
+
 #include "String.h"
+#include "String_Array.h"
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;
@@ -18,7 +22,7 @@ namespace android_content_res_AssetManager
 		AssetManager(const AssetManager& assetManager);
 		~AssetManager();
 		static int InitJNI(JNIEnv* env);
-		java_lang_String::String* list(const java_lang_String::String& path) const;
+		std::vector<std::string> list(const java_lang_String::String& path) const;
 	private:
 		static JNIEnv* _env;
 		static jclass _jcAssetManager;

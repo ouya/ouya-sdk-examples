@@ -137,7 +137,11 @@ void Test(jobject objActivity)
 	AssetManager am = context.getAssets();
 
 	String path = String("");
-	String* files = am.list(path);
+	std::vector<std::string> files = am.list(path);
+	for (int index = 0; index < files.size(); ++index)
+	{
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, files[index].c_str());
+	}
 }
 
 /**

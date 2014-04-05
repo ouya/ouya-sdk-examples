@@ -63,8 +63,8 @@ namespace java_lang_String
 	{
 		if (_instance)
 		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
 			_env->DeleteLocalRef(_instance);
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroyed Object");
 		}
 	}
 
