@@ -30,6 +30,7 @@
 #include "AssetManager.h"
 #include "BitmapFactory.h"
 #include "Context.h"
+#include "String.h"
 
 #define LOG_TAG "VirtualControllerNative"
 
@@ -41,6 +42,7 @@ using namespace android_app_Activity;
 using namespace android_content_Context;
 using namespace android_content_res_AssetManager;
 using namespace android_graphics_BitmapFactory;
+using namespace java_lang_String;
 
 /**
  * Our saved state data.
@@ -117,6 +119,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == String::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	return JNI_VERSION_1_6;
 }
 
@@ -128,6 +135,9 @@ void Test(jobject objActivity)
 	Activity activity = Activity(objActivity);
 	Context context = activity.getApplicationContext();
 	AssetManager am = context.getAssets();
+
+	String path = String("");
+	String* files = am.list(path);
 }
 
 /**
