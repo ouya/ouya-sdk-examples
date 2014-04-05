@@ -28,6 +28,7 @@
 
 #include "Activity.h"
 #include "AssetManager.h"
+#include "Bitmap.h"
 #include "BitmapFactory.h"
 #include "Context.h"
 #include "InputStream.h"
@@ -42,6 +43,7 @@
 using namespace android_app_Activity;
 using namespace android_content_Context;
 using namespace android_content_res_AssetManager;
+using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace java_io_InputStream;
 using namespace java_lang_String;
@@ -111,6 +113,16 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == Bitmap::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == BitmapFactory::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == BitmapFactory::Options::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -152,6 +164,7 @@ void Test(jobject objActivity)
 
 	String strController = String("controller.png");
 	InputStream stream = am.open(strController);
+	Bitmap bitmap = BitmapFactory::decodeStream(stream, 0, options);
 	stream.close();
 }
 

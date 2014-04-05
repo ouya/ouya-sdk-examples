@@ -45,6 +45,7 @@
   <ItemGroup>
     <ClCompile Include="jni\Activity.cpp" />
     <ClCompile Include="jni\AssetManager.cpp" />
+    <ClCompile Include="jni\Bitmap.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
     <ClCompile Include="jni\Context.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
@@ -55,6 +56,7 @@
   <ItemGroup>
     <ClInclude Include="jni\Activity.h" />
     <ClInclude Include="jni\AssetManager.h" />
+    <ClInclude Include="jni\Bitmap.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\InputStream.h" />

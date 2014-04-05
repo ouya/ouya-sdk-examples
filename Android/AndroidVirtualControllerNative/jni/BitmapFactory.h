@@ -1,6 +1,10 @@
 #ifndef __BITMAP_FACTORY_H__
 #define __BITMAP_FACTORY_H__
 
+#include "Bitmap.h"
+#include "BitmapFactory.h"
+#include "InputStream.h"
+
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;
 
@@ -22,6 +26,7 @@ namespace android_graphics_BitmapFactory
 			static int InitJNI(JNIEnv* env);
 			bool get_inScaled();
 			void set_inScaled(bool inScaled);
+			jobject GetInstance();
 		private:
 			static JNIEnv* _env;
 			static jclass _jcOptions;
@@ -29,6 +34,11 @@ namespace android_graphics_BitmapFactory
 			static jfieldID _jbInScaled;
 			jobject _instance;
 		};
+		static android_graphics_Bitmap::Bitmap decodeStream(java_io_InputStream::InputStream stream, int rect, Options options);
+	private:
+		static JNIEnv* _env;
+		static jclass _jcBitmapFactory;
+		static jmethodID _mDecodeStream;
 	};
 }
 
