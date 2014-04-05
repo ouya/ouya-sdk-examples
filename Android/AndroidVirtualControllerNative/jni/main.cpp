@@ -26,7 +26,10 @@
 #include <android/log.h>
 #include "../native_app_glue/android_native_app_glue.h"
 
+#include "Activity.h"
+#include "AssetManager.h"
 #include "BitmapFactory.h"
+#include "Context.h"
 
 #define LOG_TAG "VirtualControllerNative"
 
@@ -34,6 +37,9 @@
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__))
 
+using namespace android_app_Activity;
+using namespace android_content_Context;
+using namespace android_content_res_AssetManager;
 using namespace android_graphics_BitmapFactory;
 
 /**
@@ -91,12 +97,37 @@ jint RegisterClasses(ANativeActivity* activity)
 		LOGI("Found activity class");
 	}
 
+	if (JNI_ERR == Activity::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == AssetManager::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == BitmapFactory::Options::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == Context::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	return JNI_VERSION_1_6;
+}
+
+void Test(jobject objActivity)
+{
+	BitmapFactory::Options options = BitmapFactory::Options();
+	options.set_inScaled(false); // No pre-scaling
+	bool result = options.get_inScaled();
+	Activity activity = Activity(objActivity);
+	Context context = activity.getApplicationContext();
+	//AssetManager am = context.getAssets();
 }
 
 /**
@@ -109,9 +140,7 @@ static int engine_init_display(struct engine* engine) {
 		return JNI_ERR;
 	}
 
-	BitmapFactory::Options options = BitmapFactory::Options();
-	options.set_inScaled(false); // No pre-scaling
-	bool result = options.get_inScaled();
+	Test(engine->app->activity->clazz);
 
     /*
      * Here specify the attributes of the desired configuration.

@@ -17,6 +17,7 @@ namespace android_graphics_BitmapFactory
 		{
 		public:
 			Options();
+			Options(const Options& options);
 			~Options();
 			static int InitJNI(JNIEnv* env);
 			bool get_inScaled();
@@ -26,7 +27,7 @@ namespace android_graphics_BitmapFactory
 			static jclass _jcOptions;
 			static jmethodID _mOptionsConstruct;
 			static jfieldID _jbInScaled;
-			static jobject _instance;
+			jobject _instance;
 		};
 	};
 }

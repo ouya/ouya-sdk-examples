@@ -19,6 +19,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidManifest.xml" />
+    <None Include="assets\a.png" />
+    <None Include="assets\controller.png" />
+    <None Include="assets\dpad_down.png" />
+    <None Include="assets\dpad_left.png" />
+    <None Include="assets\dpad_right.png" />
+    <None Include="assets\dpad_up.png" />
+    <None Include="assets\lb.png" />
+    <None Include="assets\lt.png" />
+    <None Include="assets\l_stick.png" />
+    <None Include="assets\o.png" />
+    <None Include="assets\rb.png" />
+    <None Include="assets\rt.png" />
+    <None Include="assets\r_stick.png" />
+    <None Include="assets\thumbl.png" />
+    <None Include="assets\thumbr.png" />
+    <None Include="assets\u.png" />
+    <None Include="assets\y.png" />
     <None Include="build.xml" />
     <None Include="local.properties" />
     <None Include="proguard.cfg" />
@@ -26,12 +43,18 @@
     <None Include="res\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="jni\Activity.cpp" />
+    <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
+    <ClCompile Include="jni\Context.cpp" />
     <ClCompile Include="jni\main.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jni\Activity.h" />
+    <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
+    <ClInclude Include="jni\Context.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

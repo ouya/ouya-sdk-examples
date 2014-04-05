@@ -11,16 +11,9 @@ namespace android_graphics_BitmapFactory
 	jclass BitmapFactory::Options::_jcOptions = 0;
 	jmethodID BitmapFactory::Options::_mOptionsConstruct = 0;
 	jfieldID BitmapFactory::Options::_jbInScaled = 0;
-	jobject BitmapFactory::Options::_instance = 0;
 
 	int BitmapFactory::Options::InitJNI(JNIEnv* env)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-
 		const char* strOptionsClass = "android/graphics/BitmapFactory$Options";
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strOptionsClass);
 		_jcOptions = env->FindClass(strOptionsClass);
@@ -83,6 +76,11 @@ namespace android_graphics_BitmapFactory
 		}
 
 		_env->CallVoidMethod(_instance, _mOptionsConstruct);
+	}
+
+	BitmapFactory::Options::Options(const Options& options)
+	{
+		_instance = options._instance;
 	}
 
 	BitmapFactory::Options::~Options()
