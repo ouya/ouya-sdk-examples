@@ -15,12 +15,6 @@ namespace android_content_Context
 
 	int Context::InitJNI(JNIEnv* env)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-
 		const char* strContextClass = "android/content/Context";
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strContextClass);
 		_jcContext = env->FindClass(strContextClass);
@@ -34,15 +28,27 @@ namespace android_content_Context
 			return JNI_ERR;
 		}
 
-		const char* strActivityGetApplicationContext = "getApplicationContext";
-		_mGetApplicationContext = env->GetMethodID(_jcContext, strActivityGetApplicationContext, "()Landroid/content/Context;");
+		const char* strContextGetApplicationContext = "getApplicationContext";
+		_mGetApplicationContext = env->GetMethodID(_jcContext, strContextGetApplicationContext, "()Landroid/content/Context;");
 		if (_mGetApplicationContext)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strActivityGetApplicationContext);
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextGetApplicationContext);
 		}
 		else
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strActivityGetApplicationContext);
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetApplicationContext);
+			return JNI_ERR;
+		}
+
+		const char* strContextGetAssets = "getAssets";
+		_mGetAssets = env->GetMethodID(_jcContext, strContextGetAssets, "()Landroid/content/res/AssetManager;");
+		if (_mGetAssets)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextGetAssets);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetAssets);
 			return JNI_ERR;
 		}
 
@@ -63,7 +69,11 @@ namespace android_content_Context
 
 	Context::~Context()
 	{
-		_instance = 0;
+		if (_instance)
+		{
+			_env->DeleteLocalRef(_instance);
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroyed Object");
+		}
 	}
 
 	Context Context::getApplicationContext()

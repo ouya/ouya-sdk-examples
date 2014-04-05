@@ -12,12 +12,6 @@ namespace android_content_res_AssetManager
 
 	int AssetManager::InitJNI(JNIEnv* env)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-
 		const char* strAssetManagerClass = "android/content/res/AssetManager";
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strAssetManagerClass);
 		_jcAssetManager = env->FindClass(strAssetManagerClass);
@@ -48,6 +42,10 @@ namespace android_content_res_AssetManager
 
 	AssetManager::~AssetManager()
 	{
-		_instance = 0;
+		if (_instance)
+		{
+			_env->DeleteLocalRef(_instance);
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroyed Object");
+		}
 	}
 }

@@ -18,9 +18,11 @@ namespace android_app_Activity
 		Activity(const Activity& activity);
 		~Activity();
 		static int InitJNI(JNIEnv* env);
+		android_content_Context::Context getApplicationContext();
 	private:
 		static JNIEnv* _env;
 		static jclass _jcActivity;
+		static jmethodID _mGetApplicationContext;
 	};
 }
 

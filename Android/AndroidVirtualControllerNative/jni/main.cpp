@@ -127,7 +127,7 @@ void Test(jobject objActivity)
 	bool result = options.get_inScaled();
 	Activity activity = Activity(objActivity);
 	Context context = activity.getApplicationContext();
-	//AssetManager am = context.getAssets();
+	AssetManager am = context.getAssets();
 }
 
 /**
