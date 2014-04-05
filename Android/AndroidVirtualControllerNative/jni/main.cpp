@@ -30,6 +30,7 @@
 #include "AssetManager.h"
 #include "BitmapFactory.h"
 #include "Context.h"
+#include "InputStream.h"
 #include "String.h"
 
 #define LOG_TAG "VirtualControllerNative"
@@ -42,6 +43,7 @@ using namespace android_app_Activity;
 using namespace android_content_Context;
 using namespace android_content_res_AssetManager;
 using namespace android_graphics_BitmapFactory;
+using namespace java_io_InputStream;
 using namespace java_lang_String;
 
 /**
@@ -119,6 +121,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == InputStream::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == String::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -142,6 +149,10 @@ void Test(jobject objActivity)
 	{
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, files[index].c_str());
 	}
+
+	String strController = String("controller.png");
+	InputStream stream = am.open(strController);
+	stream.close();
 }
 
 /**

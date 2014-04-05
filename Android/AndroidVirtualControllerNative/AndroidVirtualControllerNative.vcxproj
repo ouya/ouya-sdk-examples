@@ -47,6 +47,7 @@
     <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
     <ClCompile Include="jni\Context.cpp" />
+    <ClCompile Include="jni\InputStream.cpp" />
     <ClCompile Include="jni\main.cpp" />
     <ClCompile Include="jni\String.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
@@ -56,6 +57,7 @@
     <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
     <ClInclude Include="jni\Context.h" />
+    <ClInclude Include="jni\InputStream.h" />
     <ClInclude Include="jni\String.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>

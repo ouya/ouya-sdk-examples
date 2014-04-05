@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "InputStream.h"
 #include "String.h"
-#include "String_Array.h"
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;
@@ -22,11 +22,13 @@ namespace android_content_res_AssetManager
 		AssetManager(const AssetManager& assetManager);
 		~AssetManager();
 		static int InitJNI(JNIEnv* env);
-		std::vector<std::string> list(const java_lang_String::String& path) const;
+		std::vector<std::string> list(const java_lang_String::String& path);
+		java_io_InputStream::InputStream open(const java_lang_String::String& path);
 	private:
 		static JNIEnv* _env;
 		static jclass _jcAssetManager;
 		static jmethodID _mList;
+		static jmethodID _mOpen;
 		jobject _instance;
 	};
 }

@@ -10,6 +10,7 @@ namespace android_content_res_AssetManager
 	JNIEnv* AssetManager::_env = 0;
 	jclass AssetManager::_jcAssetManager = 0;
 	jmethodID AssetManager::_mList = 0;
+	jmethodID AssetManager::_mOpen = 0;
 
 	int AssetManager::InitJNI(JNIEnv* env)
 	{
@@ -38,6 +39,18 @@ namespace android_content_res_AssetManager
 			return JNI_ERR;
 		}
 
+		const char* strAssetManagerOpen = "open";
+		_mOpen = env->GetMethodID(_jcAssetManager, strAssetManagerOpen, "(Ljava/lang/String;)Ljava/io/InputStream;");
+		if (_mOpen)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strAssetManagerOpen);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strAssetManagerOpen);
+			return JNI_ERR;
+		}
+
 		_env = env;
 
 		return JNI_OK;
@@ -62,7 +75,7 @@ namespace android_content_res_AssetManager
 		}
 	}
 
-	std::vector<std::string> AssetManager::list(const java_lang_String::String& path) const
+	std::vector<std::string> AssetManager::list(const java_lang_String::String& path)
 	{
 		std::vector<std::string> retVal;
 
@@ -98,5 +111,28 @@ namespace android_content_res_AssetManager
 		}
 
 		return retVal;
+	}
+
+	java_io_InputStream::InputStream AssetManager::open(const java_lang_String::String& path)
+	{
+		if (!_env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return java_io_InputStream::InputStream(0);
+		}
+
+		jstring arg1 = path.GetInstance();
+		jobject result = _env->CallObjectMethod(_instance, _mOpen, arg1);
+		if (result)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on open path");
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to open path");
+			return java_io_InputStream::InputStream(0);
+		}
+
+		return result;
 	}
 }
