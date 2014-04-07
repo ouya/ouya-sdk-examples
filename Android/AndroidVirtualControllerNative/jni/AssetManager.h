@@ -19,11 +19,10 @@ namespace android_content_res_AssetManager
 	{
 	public:
 		AssetManager(jobject assetManager);
-		AssetManager(const AssetManager& assetManager);
-		~AssetManager();
 		static int InitJNI(JNIEnv* env);
+		jobject GetInstance();
 		std::vector<std::string> list(const java_lang_String::String& path);
-		java_io_InputStream::InputStream open(const java_lang_String::String& path);
+		int open(java_io_InputStream::InputStream& retVal, const java_lang_String::String& path);
 	private:
 		static JNIEnv* _env;
 		static jclass _jcAssetManager;

@@ -61,18 +61,9 @@ namespace android_content_res_AssetManager
 		_instance = assetManager;
 	}
 
-	AssetManager::AssetManager(const AssetManager& assetManager)
+	jobject AssetManager::GetInstance()
 	{
-		_instance = assetManager._instance;
-	}
-
-	AssetManager::~AssetManager()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
-		}
+		return _instance;
 	}
 
 	std::vector<std::string> AssetManager::list(const java_lang_String::String& path)
@@ -113,12 +104,12 @@ namespace android_content_res_AssetManager
 		return retVal;
 	}
 
-	java_io_InputStream::InputStream AssetManager::open(const java_lang_String::String& path)
+	int AssetManager::open(java_io_InputStream::InputStream& retVal, const java_lang_String::String& path)
 	{
 		if (!_env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return java_io_InputStream::InputStream(0);
+			return JNI_ERR;
 		}
 
 		jstring arg1 = path.GetInstance();
@@ -126,13 +117,13 @@ namespace android_content_res_AssetManager
 		if (result)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on open path");
+			retVal.SetInstance(result);
+			return JNI_OK;
 		}
 		else
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to open path");
-			return java_io_InputStream::InputStream(0);
+			return JNI_ERR;
 		}
-
-		return result;
 	}
 }

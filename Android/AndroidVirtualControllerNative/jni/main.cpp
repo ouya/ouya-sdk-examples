@@ -163,7 +163,8 @@ void Test(jobject objActivity)
 	}
 
 	String strController = String("controller.png");
-	InputStream stream = am.open(strController);
+	InputStream stream;
+	am.open(stream, strController);
 	Bitmap bitmap = BitmapFactory::decodeStream(stream, 0, options);
 	stream.close();
 }

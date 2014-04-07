@@ -13,8 +13,6 @@ namespace android_graphics_Bitmap
 	{
 	public:
 		Bitmap(jobject bitmap);
-		Bitmap(const Bitmap& copy);
-		~Bitmap();
 		static int InitJNI(JNIEnv* env);
 		jobject GetInstance() const;
 	private:

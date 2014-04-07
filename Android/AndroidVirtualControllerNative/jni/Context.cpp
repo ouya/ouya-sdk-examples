@@ -62,20 +62,6 @@ namespace android_content_Context
 		_instance = context;
 	}
 
-	Context::Context(const Context& context)
-	{
-		_instance = context._instance;
-	}
-
-	Context::~Context()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
-		}
-	}
-
 	Context Context::getApplicationContext()
 	{
 		if (!_env)

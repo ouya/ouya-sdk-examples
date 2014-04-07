@@ -15,8 +15,6 @@ namespace android_content_Context
 	{
 	public:
 		Context(jobject context);
-		Context(const Context& context);
-		~Context();
 		static int InitJNI(JNIEnv* env);
 		Context getApplicationContext();
 		android_content_res_AssetManager::AssetManager getAssets();

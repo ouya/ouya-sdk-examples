@@ -41,20 +41,6 @@ namespace android_graphics_Bitmap
 		_instance = bitmap;
 	}
 
-	Bitmap::Bitmap(const Bitmap& copy)
-	{
-		_instance = copy._instance;
-	}
-
-	Bitmap::~Bitmap()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
-		}
-	}
-
 	jobject Bitmap::GetInstance() const
 	{
 		return _instance;

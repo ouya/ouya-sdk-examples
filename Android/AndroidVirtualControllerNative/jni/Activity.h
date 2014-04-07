@@ -15,8 +15,6 @@ namespace android_app_Activity
 	{
 	public:
 		Activity(jobject activity);
-		Activity(const Activity& activity);
-		~Activity();
 		static int InitJNI(JNIEnv* env);
 		android_content_Context::Context getApplicationContext();
 	private:

@@ -55,21 +55,6 @@ namespace android_app_Activity
 		_instance = activity;
 	}
 
-	Activity::Activity(const Activity& activity) :
-		Context::Context(activity)
-	{
-		_instance = activity._instance;
-	}
-
-	Activity::~Activity()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
-		}
-	}
-
 	android_content_Context::Context Activity::getApplicationContext()
 	{
 		if (!_env)

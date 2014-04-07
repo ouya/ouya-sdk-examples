@@ -21,12 +21,11 @@ namespace android_graphics_BitmapFactory
 		{
 		public:
 			Options();
-			Options(const Options& options);
-			~Options();
 			static int InitJNI(JNIEnv* env);
 			bool get_inScaled();
 			void set_inScaled(bool inScaled);
 			jobject GetInstance();
+			void SetInstance(const jobject& options);
 		private:
 			static JNIEnv* _env;
 			static jclass _jcOptions;

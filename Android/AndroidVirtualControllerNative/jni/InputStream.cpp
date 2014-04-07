@@ -49,28 +49,24 @@ namespace java_io_InputStream
 		return JNI_OK;
 	}
 
-	InputStream::InputStream(jobject inputStream)
+	InputStream::InputStream()
+	{
+		_instance = 0;
+	}
+
+	InputStream::InputStream(const jobject& inputStream)
 	{
 		_instance = inputStream;
 	}
 
-	InputStream::InputStream(const InputStream& copy)
-	{
-		_instance = copy._instance;
-	}
-
-	InputStream::~InputStream()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
-		}
-	}
-
-	jobject InputStream::GetInstance() const
+	jobject InputStream::GetInstance()
 	{
 		return _instance;
+	}
+
+	void InputStream::SetInstance(jobject inputStream)
+	{
+		_instance = inputStream;
 	}
 
 	void InputStream::close()

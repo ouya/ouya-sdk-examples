@@ -12,11 +12,11 @@ namespace java_io_InputStream
 	class InputStream
 	{
 	public:
-		InputStream(jobject inputStream);
-		InputStream(const InputStream& copy);
-		~InputStream();
+		InputStream();
+		InputStream(const jobject& inputStream);
 		static int InitJNI(JNIEnv* env);
-		jobject GetInstance() const;
+		jobject GetInstance();
+		void SetInstance(jobject inputStream);
 		void close();
 	private:
 		static JNIEnv* _env;

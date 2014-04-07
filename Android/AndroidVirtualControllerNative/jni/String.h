@@ -13,9 +13,7 @@ namespace java_lang_String
 	{
 	public:
 		String(jstring objString);
-		String(const String& copy);
 		String(const char* val);
-		~String();
 		static int InitJNI(JNIEnv* env);
 		jstring GetInstance() const;
 	private:

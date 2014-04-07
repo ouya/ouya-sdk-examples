@@ -139,20 +139,6 @@ namespace android_graphics_BitmapFactory
 		_env->CallVoidMethod(_instance, _mOptionsConstruct);
 	}
 
-	BitmapFactory::Options::Options(const Options& options)
-	{
-		_instance = options._instance;
-	}
-
-	BitmapFactory::Options::~Options()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
-		}
-	}
-
 	bool BitmapFactory::Options::get_inScaled()
 	{
 		if (!_instance)
@@ -194,5 +180,10 @@ namespace android_graphics_BitmapFactory
 	jobject BitmapFactory::Options::GetInstance()
 	{
 		return _instance;
+	}
+
+	void BitmapFactory::Options::SetInstance(const jobject& options)
+	{
+		_instance = options;
 	}
 }

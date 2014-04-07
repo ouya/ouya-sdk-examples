@@ -41,11 +41,6 @@ namespace java_lang_String
 		_instance = objString;
 	}
 
-	String::String(const String& copy)
-	{
-		_instance = copy._instance;
-	}
-
 	String::String(const char* bytes)
 	{
 		if (_instance)
@@ -56,15 +51,6 @@ namespace java_lang_String
 		if (bytes)
 		{
 			_instance = _env->NewStringUTF(bytes);
-		}
-	}
-
-	String::~String()
-	{
-		if (_instance)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Destroy Object");
-			_env->DeleteLocalRef(_instance);
 		}
 	}
 
