@@ -87,10 +87,16 @@
       <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AndroidSystemLibs>c;m;log;gcc;android;EGL;GLESv1_CM</AndroidSystemLibs>
+      <AndroidSystemLibs>c;m;log;gcc;android;EGL;GLESv1_CM;jnigraphics</AndroidSystemLibs>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
     <AntBuild>
       <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <NativeLibDirectories>
+      </NativeLibDirectories>
+      <NativeLibDependencies>
+      </NativeLibDependencies>
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">

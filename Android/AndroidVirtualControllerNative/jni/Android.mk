@@ -25,10 +25,7 @@ LOCAL_SRC_FILES := Activity.cpp AssetManager.cpp Bitmap.cpp \
 BitmapFactory.cpp Context.cpp InputStream.cpp String.cpp \
 main.cpp
 
-LOCAL_LDLIBS := -lEGL -lGLESv2 -llog -landroid -lGLESv1_CM
+LOCAL_LDLIBS := -lc -lm -llog -lgcc -landroid -lEGL -lGLESv1_CM -ljnigraphics
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
-
-LOCAL_LDFLAGS += -ljnigraphics
-
 
 include $(BUILD_SHARED_LIBRARY)

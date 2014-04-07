@@ -158,11 +158,18 @@ void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::O
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%dx%d", texturePath, width, height);
 
 	AndroidBitmapInfo info = AndroidBitmapInfo();
-	//AndroidBitmap_getInfo(env, bitmap.GetInstance(), &info);
+	AndroidBitmap_getInfo(env, bitmap.GetInstance(), &info);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.width=%d", info.width);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.height=%d", info.height);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.stride=%d", info.stride);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.format=%d", info.format);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.flags=%d", info.flags);
 }
 
-void Test(JNIEnv* env, jobject objActivity)
+void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
 {
+	vm->AttachCurrentThread(&env, NULL);
+
 	BitmapFactory::Options options = BitmapFactory::Options();
 	options.set_inScaled(false); // No pre-scaling
 	bool result = options.get_inScaled();
@@ -213,7 +220,7 @@ static int engine_init_display(struct engine* engine) {
 		return JNI_ERR;
 	}
 
-	Test(engine->app->activity->env, engine->app->activity->clazz);
+	Test(engine->app->activity->vm, engine->app->activity->env, engine->app->activity->clazz);
 
     /*
      * Here specify the attributes of the desired configuration.
