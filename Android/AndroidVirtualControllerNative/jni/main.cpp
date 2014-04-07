@@ -22,8 +22,9 @@
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 
-#include <android/sensor.h>
+#include <android/bitmap.h>
 #include <android/log.h>
+#include <android/sensor.h>
 #include "../native_app_glue/android_native_app_glue.h"
 
 #include "Activity.h"
@@ -146,7 +147,7 @@ jint RegisterClasses(ANativeActivity* activity)
 	return JNI_VERSION_1_6;
 }
 
-void LoadTexture(AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath)
+void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath)
 {
 	String strController = String(texturePath);
 	InputStream stream = assetManager.open(strController);
@@ -155,9 +156,12 @@ void LoadTexture(AssetManager& assetManager, const BitmapFactory::Options& optio
 	int width = bitmap.getWidth();
 	int height = bitmap.getHeight();
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%dx%d", texturePath, width, height);
+
+	AndroidBitmapInfo info = AndroidBitmapInfo();
+	//AndroidBitmap_getInfo(env, bitmap.GetInstance(), &info);
 }
 
-void Test(jobject objActivity)
+void Test(JNIEnv* env, jobject objActivity)
 {
 	BitmapFactory::Options options = BitmapFactory::Options();
 	options.set_inScaled(false); // No pre-scaling
@@ -180,23 +184,23 @@ void Test(jobject objActivity)
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
 
-	LoadTexture(assetManager, options, "a.png");
-	LoadTexture(assetManager, options, "controller.png");
-	LoadTexture(assetManager, options, "dpad_down.png");
-	LoadTexture(assetManager, options, "dpad_left.png");
-	LoadTexture(assetManager, options, "dpad_right.png");
-	LoadTexture(assetManager, options, "dpad_up.png");
-	LoadTexture(assetManager, options, "lb.png");
-	LoadTexture(assetManager, options, "lt.png");
-	LoadTexture(assetManager, options, "l_stick.png");
-	LoadTexture(assetManager, options, "o.png");
-	LoadTexture(assetManager, options, "rb.png");
-	LoadTexture(assetManager, options, "rt.png");
-	LoadTexture(assetManager, options, "r_stick.png");
-	LoadTexture(assetManager, options, "thumbl.png");
-	LoadTexture(assetManager, options, "thumbr.png");
-	LoadTexture(assetManager, options, "u.png");
-	LoadTexture(assetManager, options, "y.png");
+	LoadTexture(env, assetManager, options, "a.png");
+	LoadTexture(env, assetManager, options, "controller.png");
+	LoadTexture(env, assetManager, options, "dpad_down.png");
+	LoadTexture(env, assetManager, options, "dpad_left.png");
+	LoadTexture(env, assetManager, options, "dpad_right.png");
+	LoadTexture(env, assetManager, options, "dpad_up.png");
+	LoadTexture(env, assetManager, options, "lb.png");
+	LoadTexture(env, assetManager, options, "lt.png");
+	LoadTexture(env, assetManager, options, "l_stick.png");
+	LoadTexture(env, assetManager, options, "o.png");
+	LoadTexture(env, assetManager, options, "rb.png");
+	LoadTexture(env, assetManager, options, "rt.png");
+	LoadTexture(env, assetManager, options, "r_stick.png");
+	LoadTexture(env, assetManager, options, "thumbl.png");
+	LoadTexture(env, assetManager, options, "thumbr.png");
+	LoadTexture(env, assetManager, options, "u.png");
+	LoadTexture(env, assetManager, options, "y.png");
 }
 
 /**
@@ -209,7 +213,7 @@ static int engine_init_display(struct engine* engine) {
 		return JNI_ERR;
 	}
 
-	Test(engine->app->activity->clazz);
+	Test(engine->app->activity->env, engine->app->activity->clazz);
 
     /*
      * Here specify the attributes of the desired configuration.
