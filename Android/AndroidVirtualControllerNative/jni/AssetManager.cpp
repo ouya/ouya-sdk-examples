@@ -104,12 +104,13 @@ namespace android_content_res_AssetManager
 		return retVal;
 	}
 
-	int AssetManager::open(java_io_InputStream::InputStream& retVal, const java_lang_String::String& path)
+	java_io_InputStream::InputStream AssetManager::open(const java_lang_String::String& path)
 	{
+		java_io_InputStream::InputStream retVal = java_io_InputStream::InputStream(0);
 		if (!_env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return JNI_ERR;
+			return retVal;
 		}
 
 		jstring arg1 = path.GetInstance();
@@ -118,12 +119,12 @@ namespace android_content_res_AssetManager
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on open path");
 			retVal.SetInstance(result);
-			return JNI_OK;
+			return retVal;
 		}
 		else
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to open path");
-			return JNI_ERR;
+			return retVal;
 		}
 	}
 }
