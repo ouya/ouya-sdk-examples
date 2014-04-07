@@ -13,12 +13,6 @@ namespace java_io_InputStream
 
 	int InputStream::InitJNI(JNIEnv* env)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-
 		const char* strInputStreamClass = "java/io/InputStream";
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strInputStreamClass);
 		_jcInputStream = env->FindClass(strInputStreamClass);

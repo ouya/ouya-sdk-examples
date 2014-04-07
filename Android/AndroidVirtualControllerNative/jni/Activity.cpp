@@ -13,12 +13,6 @@ namespace android_app_Activity
 
 	int Activity::InitJNI(JNIEnv* env)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-
 		const char* strActivityClass = "android/app/Activity";
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strActivityClass);
 		_jcActivity = env->FindClass(strActivityClass);

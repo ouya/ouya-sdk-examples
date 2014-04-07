@@ -146,6 +146,17 @@ jint RegisterClasses(ANativeActivity* activity)
 	return JNI_VERSION_1_6;
 }
 
+void LoadTexture(AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath)
+{
+	String strController = String(texturePath);
+	InputStream stream = assetManager.open(strController);
+	Bitmap bitmap = BitmapFactory::decodeStream(stream, 0, options);
+	stream.close();
+	int width = bitmap.getWidth();
+	int height = bitmap.getHeight();
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%dx%d", texturePath, width, height);
+}
+
 void Test(jobject objActivity)
 {
 	BitmapFactory::Options options = BitmapFactory::Options();
@@ -153,19 +164,39 @@ void Test(jobject objActivity)
 	bool result = options.get_inScaled();
 	Activity activity = Activity(objActivity);
 	Context context = activity.getApplicationContext();
-	AssetManager am = context.getAssets();
+	AssetManager assetManager = context.getAssets();
 
 	String path = String("");
-	std::vector<std::string> files = am.list(path);
+	std::vector<std::string> files = assetManager.list(path);
 	for (int index = 0; index < files.size(); ++index)
 	{
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, files[index].c_str());
 	}
 
-	String strController = String("controller.png");
-	InputStream stream = am.open(strController);
-	Bitmap bitmap = BitmapFactory::decodeStream(stream, 0, options);
-	stream.close();
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+
+	LoadTexture(assetManager, options, "a.png");
+	LoadTexture(assetManager, options, "controller.png");
+	LoadTexture(assetManager, options, "dpad_down.png");
+	LoadTexture(assetManager, options, "dpad_left.png");
+	LoadTexture(assetManager, options, "dpad_right.png");
+	LoadTexture(assetManager, options, "dpad_up.png");
+	LoadTexture(assetManager, options, "lb.png");
+	LoadTexture(assetManager, options, "lt.png");
+	LoadTexture(assetManager, options, "l_stick.png");
+	LoadTexture(assetManager, options, "o.png");
+	LoadTexture(assetManager, options, "rb.png");
+	LoadTexture(assetManager, options, "rt.png");
+	LoadTexture(assetManager, options, "r_stick.png");
+	LoadTexture(assetManager, options, "thumbl.png");
+	LoadTexture(assetManager, options, "thumbr.png");
+	LoadTexture(assetManager, options, "u.png");
+	LoadTexture(assetManager, options, "y.png");
 }
 
 /**

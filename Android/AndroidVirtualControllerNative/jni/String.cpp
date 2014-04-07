@@ -12,12 +12,6 @@ namespace java_lang_String
 
 	int String::InitJNI(JNIEnv* env)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "****************");
-
 		const char* strStringClass = "java/lang/String";
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strStringClass);
 		_jcString = env->FindClass(strStringClass);
@@ -43,11 +37,6 @@ namespace java_lang_String
 
 	String::String(const char* bytes)
 	{
-		if (_instance)
-		{
-			_env->DeleteLocalRef(_instance);
-		}
-
 		if (bytes)
 		{
 			_instance = _env->NewStringUTF(bytes);
