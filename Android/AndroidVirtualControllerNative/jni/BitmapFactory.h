@@ -30,7 +30,7 @@ namespace android_graphics_BitmapFactory
 			static JNIEnv* _env;
 			static jclass _jcOptions;
 			static jmethodID _mOptionsConstruct;
-			static jfieldID _jbInScaled;
+			static jfieldID _jfInScaled;
 			jobject _instance;
 		};
 		static android_graphics_Bitmap::Bitmap decodeStream(java_io_InputStream::InputStream stream, int rect, Options options);

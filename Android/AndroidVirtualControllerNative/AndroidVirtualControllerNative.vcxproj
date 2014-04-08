@@ -37,6 +37,7 @@
     <None Include="assets\u.png" />
     <None Include="assets\y.png" />
     <None Include="build.xml" />
+    <None Include="libs\ouya-sdk.jar" />
     <None Include="local.properties" />
     <None Include="proguard.cfg" />
     <None Include="project.properties" />
@@ -51,6 +52,7 @@
     <ClCompile Include="jni\GLUtils.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
     <ClCompile Include="jni\main.cpp" />
+    <ClCompile Include="jni\OuyaController.cpp" />
     <ClCompile Include="jni\String.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
@@ -62,6 +64,7 @@
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\GLUtils.h" />
     <ClInclude Include="jni\InputStream.h" />
+    <ClInclude Include="jni\OuyaController.h" />
     <ClInclude Include="jni\String.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>

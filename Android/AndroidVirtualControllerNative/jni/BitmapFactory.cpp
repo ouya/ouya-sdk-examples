@@ -71,7 +71,7 @@ namespace android_graphics_BitmapFactory
 	JNIEnv* BitmapFactory::Options::_env = 0;
 	jclass BitmapFactory::Options::_jcOptions = 0;
 	jmethodID BitmapFactory::Options::_mOptionsConstruct = 0;
-	jfieldID BitmapFactory::Options::_jbInScaled = 0;
+	jfieldID BitmapFactory::Options::_jfInScaled = 0;
 
 	int BitmapFactory::Options::InitJNI(JNIEnv* env)
 	{
@@ -101,8 +101,8 @@ namespace android_graphics_BitmapFactory
 		}
 
 		const char* strOptionsInScaled = "inScaled";
-		_jbInScaled = env->GetFieldID(_jcOptions, strOptionsInScaled, "Z");
-		if (_jbInScaled)
+		_jfInScaled = env->GetFieldID(_jcOptions, strOptionsInScaled, "Z");
+		if (_jfInScaled)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strOptionsInScaled);
 		}
@@ -146,7 +146,7 @@ namespace android_graphics_BitmapFactory
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Instance is invalid");
 			return false;
 		}
-		bool result = _env->GetBooleanField(_instance, _jbInScaled);
+		bool result = _env->GetBooleanField(_instance, _jfInScaled);
 		if (result)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "get Object.inScaled=true");
@@ -166,7 +166,7 @@ namespace android_graphics_BitmapFactory
 			return;
 		}
 
-		_env->SetBooleanField(_instance, _jbInScaled, inScaled);
+		_env->SetBooleanField(_instance, _jfInScaled, inScaled);
 		if (inScaled)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "set Object.inScaled=true");

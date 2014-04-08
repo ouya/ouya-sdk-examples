@@ -35,6 +35,7 @@
 #include "Context.h"
 #include "GLUtils.h"
 #include "InputStream.h"
+#include "OuyaController.h"
 #include "String.h"
 
 #define LOG_TAG "VirtualControllerNative"
@@ -51,6 +52,7 @@ using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace java_io_InputStream;
 using namespace java_lang_String;
+using namespace tv_ouya_console_api_OuyaController;
 
 /**
  * Our saved state data.
@@ -134,6 +136,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == InputStream::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == OuyaController::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
@@ -419,7 +426,18 @@ static void engine_term_display(struct engine* engine) {
     engine->surface = EGL_NO_SURFACE;
 }
 
-static void debugMotionEvent(AInputEvent* motionEvent) {
+static void debugOuyaMotionEvent(AInputEvent* motionEvent)
+{
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_X value=%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_LS_X(), 0));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_Y value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_LS_Y(), 0));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_X value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_RS_X(), 0));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_Y value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_RS_Y(), 0));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_L2 value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_L2(), 0));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_R2 value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_R2(), 0));
+}
+
+static void debugMotionEvent(AInputEvent* motionEvent)
+{
 	std::map<int, const char*> names;
 	names[AMOTION_EVENT_AXIS_X] = "AXIS_X";
 	names[AMOTION_EVENT_AXIS_Y] = "AXIS_Y";
