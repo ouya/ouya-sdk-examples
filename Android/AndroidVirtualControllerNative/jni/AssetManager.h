@@ -1,5 +1,5 @@
-#ifndef __ASSET_MANAGER_H__
-#define __ASSET_MANAGER_H__
+#ifndef android_content_res_AssetManager_AssetManager__
+#define android_content_res_AssetManager_AssetManager__
 
 #include <string>
 #include <vector>

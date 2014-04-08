@@ -1,5 +1,5 @@
-#ifndef __STRING_H__
-#define __STRING_H__
+#ifndef __java_lang_String_String__
+#define __java_lang_String_String__
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;

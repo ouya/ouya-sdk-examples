@@ -1,5 +1,5 @@
-#ifndef __CONTEXT_H__
-#define __CONTEXT_H__
+#ifndef __android_content_Context_Context__
+#define __android_content_Context_Context__
 
 #include "AssetManager.h"
 

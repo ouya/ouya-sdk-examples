@@ -1,5 +1,5 @@
-#ifndef __INPUT_STREAM_H__
-#define __INPUT_STREAM_H__
+#ifndef __java_io_InputStream_InputStream__
+#define __java_io_InputStream_InputStream__
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;

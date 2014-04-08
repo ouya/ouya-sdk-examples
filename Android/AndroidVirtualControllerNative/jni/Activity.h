@@ -1,5 +1,5 @@
-#ifndef __ACTIVITY_H__
-#define __ACTIVITY_H__
+#ifndef __android_app_Activity_Activity__
+#define __android_app_Activity_Activity__
 
 #include "Context.h"
 

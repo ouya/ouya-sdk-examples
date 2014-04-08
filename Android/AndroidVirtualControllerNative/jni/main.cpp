@@ -32,6 +32,7 @@
 #include "Bitmap.h"
 #include "BitmapFactory.h"
 #include "Context.h"
+#include "GLUtils.h"
 #include "InputStream.h"
 #include "String.h"
 
@@ -44,6 +45,7 @@
 using namespace android_app_Activity;
 using namespace android_content_Context;
 using namespace android_content_res_AssetManager;
+using namespace android_opengl_GLUtils;
 using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace java_io_InputStream;
@@ -76,15 +78,6 @@ struct engine {
     int32_t height;
     struct saved_state state;
 };
-
-/*
-jint JNI_OnLoad(JavaVM* vm, void* reserved)
-{
-	JNIEnv* env;
-	if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
-		return JNI_ERR;
-	}
-*/
 
 jint RegisterClasses(ANativeActivity* activity)
 {
@@ -134,6 +127,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == GLUtils::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == InputStream::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -146,6 +144,9 @@ jint RegisterClasses(ANativeActivity* activity)
 
 	return JNI_VERSION_1_6;
 }
+
+const int textureCount = 17;
+static GLuint textures[textureCount];
 
 void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath, int textureId)
 {
@@ -170,16 +171,18 @@ void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::O
 		return;
 	}
 
-	char* pixels = 0;
-	AndroidBitmap_lockPixels(env, bitmap.GetInstance(), reinterpret_cast<void **>(&pixels));
+	glBindTexture(GL_TEXTURE_2D, textures[textureId]);
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "glBindTexture=%d", textures[textureId]);
 
-	glGenTextures(1, (GLuint*)&textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	AndroidBitmap_unlockPixels(env, bitmap.GetInstance());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	bitmap.recycle();
+	android_opengl_GLUtils::GLUtils::texImage2D(GL_TEXTURE_2D, 0, bitmap.GetInstance(), 0);
+
+	//bitmap.recycle();
 }
 
 void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
@@ -200,16 +203,11 @@ void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, files[index].c_str());
 	}
 
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
+	glGenTextures(textureCount, &textures[0]);
 
 	int textureId = 0;
-	LoadTexture(env, assetManager, options, "a.png", textureId);
-	LoadTexture(env, assetManager, options, "controller.png", ++textureId);
+	LoadTexture(env, assetManager, options, "controller.png", textureId);
+	LoadTexture(env, assetManager, options, "a.png", ++textureId);
 	LoadTexture(env, assetManager, options, "dpad_down.png", ++textureId);
 	LoadTexture(env, assetManager, options, "dpad_left.png", ++textureId);
 	LoadTexture(env, assetManager, options, "dpad_right.png", ++textureId);
@@ -225,11 +223,11 @@ void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
 	LoadTexture(env, assetManager, options, "thumbr.png", ++textureId);
 	LoadTexture(env, assetManager, options, "u.png", ++textureId);
 	LoadTexture(env, assetManager, options, "y.png", ++textureId);
+
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %d textures", textureId + 1);
 }
 
-#define one 1.0f
-
-static unsigned int vbo[4];
+static unsigned int vbo[3];
 static float positions[12] = { 0.1, -0.1, 0.0, 0.1, 0.1, 0.0, -0.1, -0.1, 0.0, -0.1, 0.1, 0.0 };
 static float textureCoords[8] = { 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0 };
 static short indices[4] = { 0, 1, 2, 3 };
@@ -243,8 +241,6 @@ static int engine_init_display(struct engine* engine) {
 	{
 		return JNI_ERR;
 	}
-
-	Test(engine->app->activity->vm, engine->app->activity->env, engine->app->activity->clazz);
 
     /*
      * Here specify the attributes of the desired configuration.
@@ -302,18 +298,21 @@ static int engine_init_display(struct engine* engine) {
     // Initialize GL state.
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
     glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
     glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
 
-	glGenBuffers(4, vbo);
+	Test(engine->app->activity->vm, engine->app->activity->env, engine->app->activity->clazz);
+
+	glGenBuffers(3, vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, 4 * 12, positions, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, 8, textureCoords, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 4, indices, GL_STATIC_DRAW);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 8, textureCoords, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 4, indices, GL_STATIC_DRAW);
 
     return 0;
 }
@@ -327,69 +326,33 @@ static void engine_draw_frame(struct engine* engine) {
         return;
     }
 
-    // Just fill the screen with a color.
-	/*
-    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
-            ((float)engine->state.y)/engine->height, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-	*/
-
 	glClearColor(0, 0, 0, 1);
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	// model view matrix
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	
+	glRotatef(90, 0, 0, 1);
+	glScalef(4, 4, 4);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glEnable(GL_TEXTURE_2D);
+	// draw the model
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	int index;
-	for (index = 0; index < 8; ++index)
-	{
-		// draw the model
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glTexCoordPointer(2, GL_FLOAT, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
-		glBindTexture(GL_TEXTURE_2D, index);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		switch (index)
-		{
-		case 0:
-			glTranslatef(-0.5f, 0.5, 0);
-			break;
-		case 1:
-			glTranslatef(0.3f, 0, 0);
-			break;
-		case 2:
-			glTranslatef(0.3f, 0, 0);
-			break;
-		case 3:
-			glTranslatef(0.3f, 0, 0);
-			break;
-		case 4:
-			glTranslatef(-0.9f, -0.5, 0);
-			break;
-		case 5:
-			glTranslatef(0.3f, 0, 0);
-			break;
-		case 6:
-			glTranslatef(0.3f, 0, 0);
-			break;
-		case 7:
-			glTranslatef(0.3f, 0, 0);
-			break;
-		}
-		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
-	}
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     eglSwapBuffers(engine->display, engine->surface);
 }
