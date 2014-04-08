@@ -317,6 +317,12 @@ static int engine_init_display(struct engine* engine) {
     return 0;
 }
 
+static void DrawTexture(int textureId)
+{
+	glBindTexture(GL_TEXTURE_2D, textures[textureId]);
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+}
+
 /**
  * Just the current frame in the display.
  */
@@ -332,6 +338,7 @@ static void engine_draw_frame(struct engine* engine) {
 
 	// model view matrix
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	
 	glRotatef(90, 0, 0, 1);
 	glScalef(4, 4, 4);
@@ -348,8 +355,7 @@ static void engine_draw_frame(struct engine* engine) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+	DrawTexture(0);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
