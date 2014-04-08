@@ -147,7 +147,7 @@ jint RegisterClasses(ANativeActivity* activity)
 	return JNI_VERSION_1_6;
 }
 
-void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath)
+void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath, int textureId)
 {
 	String strController = String(texturePath);
 	InputStream stream = assetManager.open(strController);
@@ -155,7 +155,7 @@ void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::O
 	stream.close();
 	int width = bitmap.getWidth();
 	int height = bitmap.getHeight();
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%dx%d", texturePath, width, height);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%d height=%d", texturePath, width, height);
 
 	AndroidBitmapInfo info = AndroidBitmapInfo();
 	AndroidBitmap_getInfo(env, bitmap.GetInstance(), &info);
@@ -164,6 +164,22 @@ void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::O
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.stride=%d", info.stride);
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.format=%d", info.format);
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.flags=%d", info.flags);
+
+	if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Bitmap format is not RGBA_8888! %s", texturePath);
+		return;
+	}
+
+	char* pixels = 0;
+	AndroidBitmap_lockPixels(env, bitmap.GetInstance(), reinterpret_cast<void **>(&pixels));
+
+	glGenTextures(1, (GLuint*)&textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
+
+	AndroidBitmap_unlockPixels(env, bitmap.GetInstance());
+
+	bitmap.recycle();
 }
 
 void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
@@ -191,24 +207,32 @@ void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "**************");
 
-	LoadTexture(env, assetManager, options, "a.png");
-	LoadTexture(env, assetManager, options, "controller.png");
-	LoadTexture(env, assetManager, options, "dpad_down.png");
-	LoadTexture(env, assetManager, options, "dpad_left.png");
-	LoadTexture(env, assetManager, options, "dpad_right.png");
-	LoadTexture(env, assetManager, options, "dpad_up.png");
-	LoadTexture(env, assetManager, options, "lb.png");
-	LoadTexture(env, assetManager, options, "lt.png");
-	LoadTexture(env, assetManager, options, "l_stick.png");
-	LoadTexture(env, assetManager, options, "o.png");
-	LoadTexture(env, assetManager, options, "rb.png");
-	LoadTexture(env, assetManager, options, "rt.png");
-	LoadTexture(env, assetManager, options, "r_stick.png");
-	LoadTexture(env, assetManager, options, "thumbl.png");
-	LoadTexture(env, assetManager, options, "thumbr.png");
-	LoadTexture(env, assetManager, options, "u.png");
-	LoadTexture(env, assetManager, options, "y.png");
+	int textureId = 0;
+	LoadTexture(env, assetManager, options, "a.png", textureId);
+	LoadTexture(env, assetManager, options, "controller.png", ++textureId);
+	LoadTexture(env, assetManager, options, "dpad_down.png", ++textureId);
+	LoadTexture(env, assetManager, options, "dpad_left.png", ++textureId);
+	LoadTexture(env, assetManager, options, "dpad_right.png", ++textureId);
+	LoadTexture(env, assetManager, options, "dpad_up.png", ++textureId);
+	LoadTexture(env, assetManager, options, "lb.png", ++textureId);
+	LoadTexture(env, assetManager, options, "lt.png", ++textureId);
+	LoadTexture(env, assetManager, options, "l_stick.png", ++textureId);
+	LoadTexture(env, assetManager, options, "o.png", ++textureId);
+	LoadTexture(env, assetManager, options, "rb.png", ++textureId);
+	LoadTexture(env, assetManager, options, "rt.png", ++textureId);
+	LoadTexture(env, assetManager, options, "r_stick.png", ++textureId);
+	LoadTexture(env, assetManager, options, "thumbl.png", ++textureId);
+	LoadTexture(env, assetManager, options, "thumbr.png", ++textureId);
+	LoadTexture(env, assetManager, options, "u.png", ++textureId);
+	LoadTexture(env, assetManager, options, "y.png", ++textureId);
 }
+
+#define one 1.0f
+
+static unsigned int vbo[4];
+static float positions[12] = { 0.1, -0.1, 0.0, 0.1, 0.1, 0.0, -0.1, -0.1, 0.0, -0.1, 0.1, 0.0 };
+static float textureCoords[8] = { 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0 };
+static short indices[4] = { 0, 1, 2, 3 };
 
 /**
  * Initialize an EGL context for the current display.
@@ -281,6 +305,16 @@ static int engine_init_display(struct engine* engine) {
     glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
 
+	glGenBuffers(4, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 12, positions, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, 8, textureCoords, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[3]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 4, indices, GL_STATIC_DRAW);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+
     return 0;
 }
 
@@ -294,9 +328,68 @@ static void engine_draw_frame(struct engine* engine) {
     }
 
     // Just fill the screen with a color.
+	/*
     glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
             ((float)engine->state.y)/engine->height, 1);
     glClear(GL_COLOR_BUFFER_BIT);
+	*/
+
+	glClearColor(0, 0, 0, 1);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// model view matrix
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int index;
+	for (index = 0; index < 8; ++index)
+	{
+		// draw the model
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		glVertexPointer(3, GL_FLOAT, 0, 0);
+		glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+		glBindTexture(GL_TEXTURE_2D, index);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		switch (index)
+		{
+		case 0:
+			glTranslatef(-0.5f, 0.5, 0);
+			break;
+		case 1:
+			glTranslatef(0.3f, 0, 0);
+			break;
+		case 2:
+			glTranslatef(0.3f, 0, 0);
+			break;
+		case 3:
+			glTranslatef(0.3f, 0, 0);
+			break;
+		case 4:
+			glTranslatef(-0.9f, -0.5, 0);
+			break;
+		case 5:
+			glTranslatef(0.3f, 0, 0);
+			break;
+		case 6:
+			glTranslatef(0.3f, 0, 0);
+			break;
+		case 7:
+			glTranslatef(0.3f, 0, 0);
+			break;
+		}
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+	}
 
     eglSwapBuffers(engine->display, engine->surface);
 }

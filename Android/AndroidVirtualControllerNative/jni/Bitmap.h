@@ -17,11 +17,13 @@ namespace android_graphics_Bitmap
 		jobject GetInstance() const;
 		int getHeight();
 		int getWidth();
+		void recycle();
 	private:
 		static JNIEnv* _env;
 		static jclass _jcBitmap;
 		static jmethodID _mGetHeight;
 		static jmethodID _mGetWidth;
+		static jmethodID _mRecycle;
 		jobject _instance;
 	};
 }
