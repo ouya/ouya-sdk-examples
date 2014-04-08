@@ -18,6 +18,7 @@
 //BEGIN_INCLUDE(all)
 #include <jni.h>
 #include <errno.h>
+#include <map>
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>
@@ -148,7 +149,7 @@ jint RegisterClasses(ANativeActivity* activity)
 const int textureCount = 17;
 static GLuint textures[textureCount];
 
-void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath, int textureId)
+int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath, int textureId)
 {
 	String strController = String(texturePath);
 	InputStream stream = assetManager.open(strController);
@@ -168,7 +169,7 @@ void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::O
 
 	if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
 		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Bitmap format is not RGBA_8888! %s", texturePath);
-		return;
+		return -1;
 	}
 
 	glBindTexture(GL_TEXTURE_2D, textures[textureId]);
@@ -182,16 +183,35 @@ void LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::O
 
 	android_opengl_GLUtils::GLUtils::texImage2D(GL_TEXTURE_2D, 0, bitmap.GetInstance(), 0);
 
-	//bitmap.recycle();
+	bitmap.recycle();
+
+	return textureId;
 }
 
-void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
+int g_controller = 0;
+int g_buttonA = 0;
+int g_buttonO = 0;
+int g_buttonU = 0;
+int g_buttonY = 0;
+int g_dpadDown = 0;
+int g_dpadLeft = 0;
+int g_dpadRight = 0;
+int g_dpadUp = 0;
+int g_leftBumper = 0;
+int g_leftTrigger = 0;
+int g_leftStickInactive = 0;
+int g_leftStickActive = 0;
+int g_rightBumper = 0;
+int g_rightTrigger = 0;
+int g_rightStickInactive = 0;
+int g_rightStickActive = 0;
+
+void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 {
 	vm->AttachCurrentThread(&env, NULL);
 
 	BitmapFactory::Options options = BitmapFactory::Options();
 	options.set_inScaled(false); // No pre-scaling
-	bool result = options.get_inScaled();
 	Activity activity = Activity(objActivity);
 	Context context = activity.getApplicationContext();
 	AssetManager assetManager = context.getAssets();
@@ -206,23 +226,23 @@ void Test(JavaVM* vm, JNIEnv* env, jobject objActivity)
 	glGenTextures(textureCount, &textures[0]);
 
 	int textureId = 0;
-	LoadTexture(env, assetManager, options, "controller.png", textureId);
-	LoadTexture(env, assetManager, options, "a.png", ++textureId);
-	LoadTexture(env, assetManager, options, "dpad_down.png", ++textureId);
-	LoadTexture(env, assetManager, options, "dpad_left.png", ++textureId);
-	LoadTexture(env, assetManager, options, "dpad_right.png", ++textureId);
-	LoadTexture(env, assetManager, options, "dpad_up.png", ++textureId);
-	LoadTexture(env, assetManager, options, "lb.png", ++textureId);
-	LoadTexture(env, assetManager, options, "lt.png", ++textureId);
-	LoadTexture(env, assetManager, options, "l_stick.png", ++textureId);
-	LoadTexture(env, assetManager, options, "o.png", ++textureId);
-	LoadTexture(env, assetManager, options, "rb.png", ++textureId);
-	LoadTexture(env, assetManager, options, "rt.png", ++textureId);
-	LoadTexture(env, assetManager, options, "r_stick.png", ++textureId);
-	LoadTexture(env, assetManager, options, "thumbl.png", ++textureId);
-	LoadTexture(env, assetManager, options, "thumbr.png", ++textureId);
-	LoadTexture(env, assetManager, options, "u.png", ++textureId);
-	LoadTexture(env, assetManager, options, "y.png", ++textureId);
+	g_controller = LoadTexture(env, assetManager, options, "controller.png", textureId);
+	g_buttonA = LoadTexture(env, assetManager, options, "a.png", ++textureId);
+	g_dpadDown = LoadTexture(env, assetManager, options, "dpad_down.png", ++textureId);
+	g_dpadLeft = LoadTexture(env, assetManager, options, "dpad_left.png", ++textureId);
+	g_dpadRight = LoadTexture(env, assetManager, options, "dpad_right.png", ++textureId);
+	g_dpadUp = LoadTexture(env, assetManager, options, "dpad_up.png", ++textureId);
+	g_leftBumper = LoadTexture(env, assetManager, options, "lb.png", ++textureId);
+	g_leftTrigger = LoadTexture(env, assetManager, options, "lt.png", ++textureId);
+	g_leftStickInactive = LoadTexture(env, assetManager, options, "l_stick.png", ++textureId);
+	g_buttonO = LoadTexture(env, assetManager, options, "o.png", ++textureId);
+	g_rightBumper = LoadTexture(env, assetManager, options, "rb.png", ++textureId);
+	g_rightTrigger = LoadTexture(env, assetManager, options, "rt.png", ++textureId);
+	g_rightStickInactive = LoadTexture(env, assetManager, options, "r_stick.png", ++textureId);
+	g_leftStickActive = LoadTexture(env, assetManager, options, "thumbl.png", ++textureId);
+	g_rightStickActive = LoadTexture(env, assetManager, options, "thumbr.png", ++textureId);
+	g_buttonU = LoadTexture(env, assetManager, options, "u.png", ++textureId);
+	g_buttonY = LoadTexture(env, assetManager, options, "y.png", ++textureId);
 
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %d textures", textureId + 1);
 }
@@ -302,7 +322,7 @@ static int engine_init_display(struct engine* engine) {
     glShadeModel(GL_SMOOTH);
     glDisable(GL_DEPTH_TEST);
 
-	Test(engine->app->activity->vm, engine->app->activity->env, engine->app->activity->clazz);
+	LoadBitmaps(engine->app->activity->vm, engine->app->activity->env, engine->app->activity->clazz);
 
 	glGenBuffers(3, vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
@@ -355,7 +375,23 @@ static void engine_draw_frame(struct engine* engine) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	DrawTexture(0);
+	DrawTexture(g_controller);
+	DrawTexture(g_buttonA);
+	DrawTexture(g_dpadDown);
+	DrawTexture(g_dpadLeft);
+	DrawTexture(g_dpadRight);
+	DrawTexture(g_dpadUp);
+	DrawTexture(g_leftBumper);
+	DrawTexture(g_leftTrigger);
+	DrawTexture(g_leftStickInactive);
+	DrawTexture(g_buttonO);
+	DrawTexture(g_rightBumper);
+	DrawTexture(g_rightTrigger);
+	DrawTexture(g_rightStickInactive);
+	DrawTexture(g_leftStickActive);
+	DrawTexture(g_rightStickActive);
+	DrawTexture(g_buttonU);
+	DrawTexture(g_buttonY);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -383,17 +419,87 @@ static void engine_term_display(struct engine* engine) {
     engine->surface = EGL_NO_SURFACE;
 }
 
+static void debugMotionEvent(AInputEvent* motionEvent) {
+	std::map<int, const char*> names;
+	names[AMOTION_EVENT_AXIS_X] = "AXIS_X";
+	names[AMOTION_EVENT_AXIS_Y] = "AXIS_Y";
+	names[AMOTION_EVENT_AXIS_PRESSURE] = "AXIS_PRESSURE";
+	names[AMOTION_EVENT_AXIS_SIZE] = "AXIS_SIZE";
+	names[AMOTION_EVENT_AXIS_TOUCH_MAJOR] = "AXIS_TOUCH_MAJOR";
+	names[AMOTION_EVENT_AXIS_TOUCH_MINOR] = "AXIS_TOUCH_MINOR";
+	names[AMOTION_EVENT_AXIS_TOOL_MAJOR] = "AXIS_TOOL_MAJOR";
+	names[AMOTION_EVENT_AXIS_TOOL_MINOR] = "AXIS_TOOL_MINOR";
+	names[AMOTION_EVENT_AXIS_ORIENTATION] = "AXIS_ORIENTATION";
+	names[AMOTION_EVENT_AXIS_VSCROLL] = "AXIS_VSCROLL";
+	names[AMOTION_EVENT_AXIS_HSCROLL] = "AXIS_HSCROLL";
+	names[AMOTION_EVENT_AXIS_Z] = "AXIS_Z";
+	names[AMOTION_EVENT_AXIS_RX] = "AXIS_RX";
+	names[AMOTION_EVENT_AXIS_RY] = "AXIS_RY";
+	names[AMOTION_EVENT_AXIS_RZ] = "AXIS_RZ";
+	names[AMOTION_EVENT_AXIS_HAT_X] = "AXIS_HAT_X";
+	names[AMOTION_EVENT_AXIS_HAT_Y] = "AXIS_HAT_Y";
+	names[AMOTION_EVENT_AXIS_LTRIGGER] = "AXIS_LTRIGGER";
+	names[AMOTION_EVENT_AXIS_RTRIGGER] = "AXIS_RTRIGGER";
+	names[AMOTION_EVENT_AXIS_THROTTLE] = "AXIS_THROTTLE";
+	names[AMOTION_EVENT_AXIS_RUDDER] = "AXIS_RUDDER";
+	names[AMOTION_EVENT_AXIS_WHEEL] = "AXIS_WHEEL";
+	names[AMOTION_EVENT_AXIS_GAS] = "AXIS_GAS";
+	names[AMOTION_EVENT_AXIS_BRAKE] = "AXIS_BRAKE";
+	names[AMOTION_EVENT_AXIS_DISTANCE] = "AXIS_DISTANCE";
+	names[AMOTION_EVENT_AXIS_TILT] = "AXIS_TILT";
+	names[AMOTION_EVENT_AXIS_GENERIC_1] = "AXIS_GENERIC_1";
+	names[AMOTION_EVENT_AXIS_GENERIC_2] = "AXIS_GENERIC_2";
+	names[AMOTION_EVENT_AXIS_GENERIC_3] = "AXIS_GENERIC_3";
+	names[AMOTION_EVENT_AXIS_GENERIC_4] = "AXIS_GENERIC_4";
+	names[AMOTION_EVENT_AXIS_GENERIC_5] = "AXIS_GENERIC_5";
+	names[AMOTION_EVENT_AXIS_GENERIC_6] = "AXIS_GENERIC_6";
+	names[AMOTION_EVENT_AXIS_GENERIC_7] = "AXIS_GENERIC_7";
+	names[AMOTION_EVENT_AXIS_GENERIC_8] = "AXIS_GENERIC_8";
+	names[AMOTION_EVENT_AXIS_GENERIC_9] = "AXIS_GENERIC_9";
+	names[AMOTION_EVENT_AXIS_GENERIC_10] = "AXIS_GENERIC_10";
+	names[AMOTION_EVENT_AXIS_GENERIC_11] = "AXIS_GENERIC_11";
+	names[AMOTION_EVENT_AXIS_GENERIC_12] = "AXIS_GENERIC_12";
+	names[AMOTION_EVENT_AXIS_GENERIC_13] = "AXIS_GENERIC_13";
+	names[AMOTION_EVENT_AXIS_GENERIC_14] = "AXIS_GENERIC_14";
+	names[AMOTION_EVENT_AXIS_GENERIC_15] = "AXIS_GENERIC_15";
+	names[AMOTION_EVENT_AXIS_GENERIC_16] = "AXIS_GENERIC_16";
+
+	for (std::map<int, const char*>::iterator iter = names.begin(); iter != names.end(); ++iter)
+	{
+		float val = AMotionEvent_getAxisValue(motionEvent, iter->first, 0);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s=%f", iter->second, val);
+	}
+}
+
 /**
  * Process the next input event.
  */
-static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
+static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
+{
     struct engine* engine = (struct engine*)app->userData;
-    if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-        engine->animating = 1;
-        engine->state.x = AMotionEvent_getX(event, 0);
-        engine->state.y = AMotionEvent_getY(event, 0);
+    if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
+	{
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onGenericMotionEvent");
+
+		debugMotionEvent(event);
+
         return 1;
-    }
+	}
+	else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
+	{
+		int action = AMotionEvent_getAction(event);
+		int32_t keyCode = AKeyEvent_getKeyCode(event);
+		if (action == AKEY_STATE_UP)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
+		}
+		else if (action == AKEY_STATE_DOWN)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
+		}
+
+		return 1;
+	}
     return 0;
 }
 
