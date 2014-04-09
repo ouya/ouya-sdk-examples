@@ -19,6 +19,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <map>
+#include <math.h>
 #include <stdlib.h>
 
 #include <EGL/egl.h>
@@ -97,6 +98,13 @@ const float POS_RIGHT = 0.1f;
 const float POS_TOP = 0.1f;
 const float POS_BOTTOM = -0.1f;
 static float g_positions[12] =
+{
+	POS_RIGHT, POS_BOTTOM, 0.0,
+	POS_RIGHT, POS_TOP, 0.0,
+	POS_LEFT, POS_BOTTOM, 0.0,
+	POS_LEFT, POS_TOP, 0.0
+};
+static float g_positions2[12] =
 {
 	POS_RIGHT, POS_BOTTOM, 0.0,
 	POS_RIGHT, POS_TOP, 0.0,
@@ -442,6 +450,28 @@ static int engine_init_display(struct engine* engine) {
 
 static void DrawTexture(int textureId)
 {
+	glBindBuffer(GL_ARRAY_BUFFER, g_vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 12, g_positions, GL_STATIC_DRAW);
+
+	glBindTexture(GL_TEXTURE_2D, textures[textureId]);
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+}
+
+static void DrawTexture(int textureId, float offsetX, float offsetY)
+{
+	g_positions2[0] = g_positions[0] + offsetX;
+	g_positions2[3] = g_positions[3] + offsetX;
+	g_positions2[6] = g_positions[6] + offsetX;
+	g_positions2[9] = g_positions[9] + offsetX;
+
+	g_positions2[1] = g_positions[1] + offsetY;
+	g_positions2[4] = g_positions[4] + offsetY;
+	g_positions2[7] = g_positions[7] + offsetY;
+	g_positions2[10] = g_positions[10] + offsetY;
+
+	glBindBuffer(GL_ARRAY_BUFFER, g_vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 12, g_positions2, GL_STATIC_DRAW);
+
 	glBindTexture(GL_TEXTURE_2D, textures[textureId]);
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 }
@@ -529,32 +559,44 @@ static void engine_draw_frame(struct engine* engine) {
 		DrawTexture(g_buttonY);
 	}
 
-	if (isPressed(OuyaController::BUTTON_L3()))
-	{
-		DrawTexture(g_leftStickActive);
-	}
-	else
-	{
-		DrawTexture(g_leftStickInactive);
-	}
-
-	if (isPressed(OuyaController::BUTTON_R3()))
-	{
-		DrawTexture(g_rightStickActive);
-	}
-	else
-	{
-		DrawTexture(g_rightStickInactive);
-	}
-
 	if (abs(getAxis(OuyaController::AXIS_L2())) > 0.25f)
 	{
 		DrawTexture(g_leftTrigger);
-	}		
+	}
 
 	if (abs(getAxis(OuyaController::AXIS_R2())) > 0.25f)
 	{
 		DrawTexture(g_rightTrigger);
+	}
+
+	const float AXIS_SENSITIVITY = 0.005f;
+
+	// rotate input by N degrees to match image
+	const float degrees = 135;
+	const float radians = degrees / 180.0f * 3.14f;
+	const float cos = (float)cosf(radians);
+	const float sin = (float)sinf(radians);
+
+	float lx = getAxis(OuyaController::AXIS_LS_X());
+	float ly = getAxis(OuyaController::AXIS_LS_Y());
+	if (isPressed(OuyaController::BUTTON_L3()))
+	{
+		DrawTexture(g_leftStickActive, AXIS_SENSITIVITY * (lx * cos - ly * sin), -AXIS_SENSITIVITY * (lx * sin + ly * cos));
+	}
+	else
+	{
+		DrawTexture(g_leftStickInactive, AXIS_SENSITIVITY * (lx * cos - ly * sin), -AXIS_SENSITIVITY * (lx * sin + ly * cos));
+	}
+
+	float rx = getAxis(OuyaController::AXIS_RS_X());
+	float ry = getAxis(OuyaController::AXIS_RS_Y());
+	if (isPressed(OuyaController::BUTTON_R3()))
+	{
+		DrawTexture(g_rightStickActive, AXIS_SENSITIVITY * (rx * cos - ry * sin), -AXIS_SENSITIVITY * (rx * sin + ry * cos));
+	}
+	else
+	{
+		DrawTexture(g_rightStickInactive, AXIS_SENSITIVITY * (rx * cos - ry * sin), -AXIS_SENSITIVITY * (rx * sin + ry * cos));
 	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
