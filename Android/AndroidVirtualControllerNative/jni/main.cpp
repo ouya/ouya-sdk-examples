@@ -283,15 +283,14 @@ jint RegisterClasses(ANativeActivity* activity)
 	return JNI_VERSION_1_6;
 }
 
-int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath, int textureId)
+int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const std::string& texturePath, int textureId)
 {
-	String strController = String(texturePath);
-	InputStream stream = assetManager.open(strController);
+	InputStream stream = assetManager.open(texturePath);
 	Bitmap bitmap = BitmapFactory::decodeStream(stream, 0, options);
 	stream.close();
 	int width = bitmap.getWidth();
 	int height = bitmap.getHeight();
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%d height=%d", texturePath, width, height);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s bitmap width=%d height=%d", texturePath.c_str(), width, height);
 
 	AndroidBitmapInfo info = AndroidBitmapInfo();
 	AndroidBitmap_getInfo(env, bitmap.GetInstance(), &info);
@@ -302,7 +301,7 @@ int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Op
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "info.flags=%d", info.flags);
 
 	if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Bitmap format is not RGBA_8888! %s", texturePath);
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Bitmap format is not RGBA_8888! %s", texturePath.c_str());
 		return -1;
 	}
 
@@ -332,8 +331,7 @@ void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 	Context context = activity.getApplicationContext();
 	AssetManager assetManager = context.getAssets();
 
-	String path = String("");
-	std::vector<std::string> files = assetManager.list(path);
+	std::vector<std::string> files = assetManager.list("");
 	for (int index = 0; index < files.size(); ++index)
 	{
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, files[index].c_str());
@@ -371,6 +369,21 @@ static int engine_init_display(struct engine* engine) {
 	if (JNI_ERR == RegisterClasses(engine->app->activity))
 	{
 		return JNI_ERR;
+	}
+
+	{
+		Activity activity = Activity(engine->app->activity->clazz);
+		Context context = activity.getApplicationContext();
+		AssetManager assetManager = context.getAssets();
+
+		InputStream inputStream = assetManager.open("input.json", AssetManager::ACCESS_BUFFER());
+		int length = inputStream.available();
+		jbyte* configurationBytes = new jbyte[length];
+		inputStream.read(configurationBytes, length);
+		String json = String(configurationBytes, length);
+		std::string strJson = json.ToString();
+		inputStream.close();
+		delete configurationBytes;
 	}
 
     /*

@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "InputStream.h"
-#include "String.h"
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;
@@ -21,13 +20,17 @@ namespace android_content_res_AssetManager
 		AssetManager(jobject assetManager);
 		static int InitJNI(JNIEnv* env);
 		jobject GetInstance();
-		std::vector<std::string> list(const java_lang_String::String& path);
-		java_io_InputStream::InputStream open(const java_lang_String::String& path);
+		static int ACCESS_BUFFER();
+		std::vector<std::string> list(const std::string& path);
+		java_io_InputStream::InputStream open(const std::string& fileName);
+		java_io_InputStream::InputStream open(const std::string& fileName, int accessMode);
 	private:
 		static JNIEnv* _env;
 		static jclass _jcAssetManager;
+		static jfieldID _jfAccessBuffer;
 		static jmethodID _mList;
 		static jmethodID _mOpen;
+		static jmethodID _mOpen2;
 		jobject _instance;
 	};
 }
