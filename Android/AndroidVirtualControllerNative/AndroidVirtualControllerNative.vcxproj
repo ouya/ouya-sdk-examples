@@ -57,6 +57,7 @@
     <ClCompile Include="jni\main.cpp" />
     <ClCompile Include="jni\OuyaController.cpp" />
     <ClCompile Include="jni\String.cpp" />
+    <ClCompile Include="jni\System.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +71,7 @@
     <ClInclude Include="jni\InputStream.h" />
     <ClInclude Include="jni\OuyaController.h" />
     <ClInclude Include="jni\String.h" />
+    <ClInclude Include="jni\System.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

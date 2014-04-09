@@ -38,6 +38,7 @@
 #include "InputStream.h"
 #include "OuyaController.h"
 #include "String.h"
+#include "System.h"
 
 #define LOG_TAG "VirtualControllerNative"
 
@@ -54,6 +55,7 @@ using namespace android_graphics_BitmapFactory;
 using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
+using namespace java_lang_System;
 using namespace tv_ouya_console_api_OuyaController;
 
 /**
@@ -91,12 +93,12 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		return -1;
 	}
 
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "JNI_OnLoad");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
+	LOGI("***************");
+	LOGI("***************");
+	LOGI("*****JNI*******");
+	LOGI("******ONLOAD***");
+	LOGI("***************");
+	LOGI("***************");
 
 	// Get jclass with env->FindClass.
 	// Register methods with env->RegisterNatives.
@@ -122,11 +124,20 @@ jint RegisterClasses(ANativeActivity* activity)
 		LOGI("Found activity class");
 	}
 
-	// load the class loader first
+	// load the system first
+	if (JNI_ERR == System::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	// load the class loader second
 	if (JNI_ERR == ClassLoader::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
+
+	// get JNI_Onload to fire
+	System::loadLibrary("ouya-sdk");
 
 	if (JNI_ERR == Activity::InitJNI(env))
 	{
