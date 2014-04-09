@@ -110,6 +110,16 @@ namespace java_lang_ClassLoader
 
 		jstring arg1 = _env->NewStringUTF(className.c_str());
 		jstring result = (jstring)_env->CallObjectMethod(_instance, _mLoadClass, arg1);
+		if (_env->ExceptionCheck())
+		{
+			_env->ExceptionDescribe();
+			_env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to load class");
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Success on load class");
+		}
 		_env->DeleteLocalRef(arg1);
 
 		return retVal;

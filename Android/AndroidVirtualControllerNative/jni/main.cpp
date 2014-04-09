@@ -84,6 +84,26 @@ struct engine {
     struct saved_state state;
 };
 
+jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+	JNIEnv* env;
+	if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+		return -1;
+	}
+
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "JNI_OnLoad");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***************");
+
+	// Get jclass with env->FindClass.
+	// Register methods with env->RegisterNatives.
+
+	return JNI_VERSION_1_6;
+}
+
 jint RegisterClasses(ANativeActivity* activity)
 {
 	JNIEnv* env = activity->env;
