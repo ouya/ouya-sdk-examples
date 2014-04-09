@@ -16,9 +16,27 @@ namespace tv_ouya_console_api_OuyaController
 	jfieldID OuyaController::_jfAxisRsY = 0;
 	jfieldID OuyaController::_jfAxisL2 = 0;
 	jfieldID OuyaController::_jfAxisR2 = 0;
+	jfieldID OuyaController::_jfButtonO = 0;
+	jfieldID OuyaController::_jfButtonU = 0;
+	jfieldID OuyaController::_jfButtonY = 0;
+	jfieldID OuyaController::_jfButtonA = 0;
+	jfieldID OuyaController::_jfButtonL1 = 0;
+	jfieldID OuyaController::_jfButtonL3 = 0;
+	jfieldID OuyaController::_jfButtonR1 = 0;
+	jfieldID OuyaController::_jfButtonR3 = 0;
+	jfieldID OuyaController::_jfButtonMenu = 0;
+	jfieldID OuyaController::_jfButtonDpadUp = 0;
+	jfieldID OuyaController::_jfButtonDpadRight = 0;
+	jfieldID OuyaController::_jfButtonDpadDown = 0;
+	jfieldID OuyaController::_jfButtonDpadLeft = 0;
 
 	int OuyaController::InitJNI(JNIEnv* env)
 	{
+		if (true)
+		{
+			return JNI_OK;
+		}
+
 		{
 			java_lang_ClassLoader::ClassLoader classLoader = java_lang_ClassLoader::ClassLoader::getSystemClassLoader();
 			std::string className = "tv.ouya.console.api.OuyaController";
@@ -67,26 +85,91 @@ namespace tv_ouya_console_api_OuyaController
 
 	const int OuyaController::AXIS_LS_Y()
 	{
-		return 0;
+		return 1;
 	}
 
 	const int OuyaController::AXIS_RS_X()
 	{
-		return 0;
+		return 11;
 	}
 
 	const int OuyaController::AXIS_RS_Y()
 	{
-		return 0;
+		return 14;
 	}
 
 	const int OuyaController::AXIS_L2()
 	{
-		return 0;
+		return 17;
 	}
 
 	const int OuyaController::AXIS_R2()
 	{
-		return 0;
+		return 18;
+	}
+
+	const int OuyaController::BUTTON_O()
+	{
+		return 96;
+	}
+
+	const int OuyaController::BUTTON_U()
+	{
+		return 99;
+	}
+
+	const int OuyaController::BUTTON_Y()
+	{
+		return 100;
+	}
+
+	const int OuyaController::BUTTON_A()
+	{
+		return 97;
+	}
+
+	const int OuyaController::BUTTON_L1()
+	{
+		return 102;
+	}
+
+	const int OuyaController::BUTTON_L3()
+	{
+		return 106;
+	}
+
+	const int OuyaController::BUTTON_R1()
+	{
+		return 103;
+	}
+
+	const int OuyaController::BUTTON_R3()
+	{
+		return 107;
+	}
+
+	const int OuyaController::BUTTON_MENU()
+	{
+		return 82;
+	}
+
+	const int OuyaController::BUTTON_DPAD_UP()
+	{
+		return 19;
+	}
+
+	const int OuyaController::BUTTON_DPAD_RIGHT()
+	{
+		return 22;
+	}
+
+	const int OuyaController::BUTTON_DPAD_DOWN()
+	{
+		return 20;
+	}
+
+	const int OuyaController::BUTTON_DPAD_LEFT()
+	{
+		return 21;
 	}
 }

@@ -58,6 +58,19 @@ using namespace java_lang_String;
 using namespace java_lang_System;
 using namespace tv_ouya_console_api_OuyaController;
 
+//key states
+static std::map<int, bool> g_buttons;
+
+static bool isPressed(int keyCode)
+{
+	std::map<int, bool>::const_iterator search = g_buttons.find(keyCode);
+	if (search != g_buttons.end())
+	{
+		return search->second;
+	}
+	return false;
+}
+
 /**
  * Our saved state data.
  */
@@ -77,7 +90,6 @@ struct engine {
     const ASensor* accelerometerSensor;
     ASensorEventQueue* sensorEventQueue;
 
-    int animating;
     EGLDisplay display;
     EGLSurface surface;
     EGLContext context;
@@ -234,23 +246,24 @@ int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Op
 	return textureId;
 }
 
-int g_controller = 0;
-int g_buttonA = 0;
-int g_buttonO = 0;
-int g_buttonU = 0;
-int g_buttonY = 0;
-int g_dpadDown = 0;
-int g_dpadLeft = 0;
-int g_dpadRight = 0;
-int g_dpadUp = 0;
-int g_leftBumper = 0;
-int g_leftTrigger = 0;
-int g_leftStickInactive = 0;
-int g_leftStickActive = 0;
-int g_rightBumper = 0;
-int g_rightTrigger = 0;
-int g_rightStickInactive = 0;
-int g_rightStickActive = 0;
+// texture Ids
+static int g_controller = 0;
+static int g_buttonA = 0;
+static int g_buttonO = 0;
+static int g_buttonU = 0;
+static int g_buttonY = 0;
+static int g_dpadDown = 0;
+static int g_dpadLeft = 0;
+static int g_dpadRight = 0;
+static int g_dpadUp = 0;
+static int g_leftBumper = 0;
+static int g_leftTrigger = 0;
+static int g_leftStickInactive = 0;
+static int g_leftStickActive = 0;
+static int g_rightBumper = 0;
+static int g_rightTrigger = 0;
+static int g_rightStickInactive = 0;
+static int g_rightStickActive = 0;
 
 void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 {
@@ -294,8 +307,30 @@ void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 }
 
 static unsigned int vbo[3];
-static float positions[12] = { 0.1, -0.1, 0.0, 0.1, 0.1, 0.0, -0.1, -0.1, 0.0, -0.1, 0.1, 0.0 };
-static float textureCoords[8] = { 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0 };
+
+const float POS_LEFT = -0.1f;
+const float POS_RIGHT = 0.1f;
+const float POS_TOP = 0.1f;
+const float POS_BOTTOM = -0.1f;
+static float positions[12] =
+{ 
+	POS_RIGHT, POS_BOTTOM, 0.0,
+	POS_RIGHT, POS_TOP, 0.0,
+	POS_LEFT, POS_BOTTOM, 0.0,
+	POS_LEFT, POS_TOP, 0.0
+};
+
+const float TEX_LEFT = 0.0f;
+const float TEX_RIGHT = 1.0f;
+const float TEX_TOP = 0.0f;
+const float TEX_BOTTOM = 1.0f;
+static float textureCoords[8] =
+{
+	TEX_RIGHT, TEX_BOTTOM,
+	TEX_RIGHT, TEX_TOP,
+	TEX_LEFT, TEX_BOTTOM,
+	TEX_LEFT, TEX_TOP
+};
 static short indices[4] = { 0, 1, 2, 3 };
 
 /**
@@ -406,7 +441,7 @@ static void engine_draw_frame(struct engine* engine) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	glRotatef(90, 0, 0, 1);
+	//glRotatef(90, 0, 0, 1);
 	glScalef(4, 4, 4);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -422,22 +457,83 @@ static void engine_draw_frame(struct engine* engine) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	DrawTexture(g_controller);
-	DrawTexture(g_buttonA);
-	DrawTexture(g_dpadDown);
-	DrawTexture(g_dpadLeft);
-	DrawTexture(g_dpadRight);
-	DrawTexture(g_dpadUp);
-	DrawTexture(g_leftBumper);
-	DrawTexture(g_leftTrigger);
-	DrawTexture(g_leftStickInactive);
-	DrawTexture(g_buttonO);
-	DrawTexture(g_rightBumper);
-	DrawTexture(g_rightTrigger);
-	DrawTexture(g_rightStickInactive);
-	DrawTexture(g_leftStickActive);
-	DrawTexture(g_rightStickActive);
-	DrawTexture(g_buttonU);
-	DrawTexture(g_buttonY);
+	if (isPressed(OuyaController::BUTTON_A()))
+	{
+		DrawTexture(g_buttonA);
+	}
+	
+	if (isPressed(OuyaController::BUTTON_DPAD_DOWN()))
+	{
+		DrawTexture(g_dpadDown);
+	}
+
+	if (isPressed(OuyaController::BUTTON_DPAD_LEFT()))
+	{
+		DrawTexture(g_dpadLeft);
+	}
+
+	if (isPressed(OuyaController::BUTTON_DPAD_RIGHT()))
+	{
+		DrawTexture(g_dpadRight);
+	}
+
+	if (isPressed(OuyaController::BUTTON_DPAD_UP()))
+	{
+		DrawTexture(g_dpadUp);
+	}
+
+	if (isPressed(OuyaController::BUTTON_L1()))
+	{
+		DrawTexture(g_leftBumper);
+	}
+
+	if (isPressed(OuyaController::AXIS_L2()))
+	{
+		DrawTexture(g_leftTrigger);
+	}
+	
+	if (isPressed(OuyaController::BUTTON_L3()))
+	{
+		DrawTexture(g_leftStickActive);
+	}
+	else
+	{
+		DrawTexture(g_leftStickInactive);
+	}
+
+	if (isPressed(OuyaController::BUTTON_O()))
+	{
+		DrawTexture(g_buttonO);
+	}
+
+	if (isPressed(OuyaController::BUTTON_R1()))
+	{
+		DrawTexture(g_rightBumper);
+	}
+
+	if (isPressed(OuyaController::AXIS_R2()))
+	{
+		DrawTexture(g_rightTrigger);
+	}
+
+	if (isPressed(OuyaController::BUTTON_R3()))
+	{
+		DrawTexture(g_rightStickActive);
+	}
+	else
+	{
+		DrawTexture(g_rightStickInactive);
+	}
+
+	if (isPressed(OuyaController::BUTTON_U()))
+	{
+		DrawTexture(g_buttonU);
+	}
+
+	if (isPressed(OuyaController::BUTTON_Y()))
+	{
+		DrawTexture(g_buttonY);
+	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -459,10 +555,26 @@ static void engine_term_display(struct engine* engine) {
         }
         eglTerminate(engine->display);
     }
-    engine->animating = 0;
     engine->display = EGL_NO_DISPLAY;
     engine->context = EGL_NO_CONTEXT;
     engine->surface = EGL_NO_SURFACE;
+}
+
+static void debugOuyaKeyEvent()
+{
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_O value=%d", isPressed(OuyaController::BUTTON_O()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_U value=%d", isPressed(OuyaController::BUTTON_U()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_Y value=%d", isPressed(OuyaController::BUTTON_Y()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_A value=%d", isPressed(OuyaController::BUTTON_A()));;
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_L1 value=%d", isPressed(OuyaController::BUTTON_L1()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_L3 value=%d", isPressed(OuyaController::BUTTON_L3()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_R1 value=%d", isPressed(OuyaController::BUTTON_R1()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_R3 value=%d", isPressed(OuyaController::BUTTON_R3()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_MENU value=%d", isPressed(OuyaController::BUTTON_MENU()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_UP value=%d", isPressed(OuyaController::BUTTON_DPAD_UP()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_RIGHT value=%d", isPressed(OuyaController::BUTTON_DPAD_RIGHT()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_DOWN value=%d", isPressed(OuyaController::BUTTON_DPAD_DOWN()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_LEFT value=%d", isPressed(OuyaController::BUTTON_DPAD_LEFT()));
 }
 
 static void debugOuyaMotionEvent(AInputEvent* motionEvent)
@@ -540,20 +652,26 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 
 		debugMotionEvent(event);
 
+		debugOuyaMotionEvent(event);
+
         return 1;
 	}
 	else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
 	{
 		int action = AMotionEvent_getAction(event);
 		int32_t keyCode = AKeyEvent_getKeyCode(event);
-		if (action == AKEY_STATE_UP)
+		if (action == AMOTION_EVENT_ACTION_UP)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
+			g_buttons[keyCode] = false;
 		}
-		else if (action == AKEY_STATE_DOWN)
+		else if (action == AMOTION_EVENT_ACTION_DOWN)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
+			g_buttons[keyCode] = true;
 		}
+
+		debugOuyaKeyEvent();
 
 		return 1;
 	}
@@ -600,8 +718,6 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
                 ASensorEventQueue_disableSensor(engine->sensorEventQueue,
                         engine->accelerometerSensor);
             }
-            // Also stop animating.
-            engine->animating = 0;
             engine_draw_frame(engine);
             break;
     }
@@ -644,10 +760,7 @@ void android_main(struct android_app* state) {
         int events;
         struct android_poll_source* source;
 
-        // If not animating, we will block forever waiting for events.
-        // If animating, we loop until all events are read, then continue
-        // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+        while ((ident=ALooper_pollAll(0, NULL, &events,
                 (void**)&source)) >= 0) {
 
             // Process this event.
@@ -675,17 +788,7 @@ void android_main(struct android_app* state) {
             }
         }
 
-        if (engine.animating) {
-            // Done with events; draw next animation frame.
-            engine.state.angle += .01f;
-            if (engine.state.angle > 1) {
-                engine.state.angle = 0;
-            }
-
-            // Drawing is throttled to the screen update rate, so there
-            // is no need to do timing here.
-            engine_draw_frame(&engine);
-        }
+		engine_draw_frame(&engine);
     }
 }
 //END_INCLUDE(all)
