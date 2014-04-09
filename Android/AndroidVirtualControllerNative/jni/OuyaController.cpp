@@ -1,6 +1,7 @@
 #include <android/log.h>
 #include <jni.h>
 
+#include "ClassLoader.h"
 #include "OuyaController.h"
 
 #define LOG_TAG "tv_ouya_console_api_OuyaController"
@@ -18,19 +19,27 @@ namespace tv_ouya_console_api_OuyaController
 
 	int OuyaController::InitJNI(JNIEnv* env)
 	{
+		if (true)
 		{
-			const char* strOuyaControllerClass = "tv/ouya/console/api/OuyaController";
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strOuyaControllerClass);
-			_jcOuyaController = env->FindClass(strOuyaControllerClass);
-			if (_jcOuyaController)
-			{
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strOuyaControllerClass);
-			}
-			else
-			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strOuyaControllerClass);
-				return JNI_ERR;
-			}
+			return JNI_OK;
+		}
+
+		java_lang_ClassLoader::ClassLoader classLoader = java_lang_ClassLoader::ClassLoader::getSystemClassLoader();
+		std::string className = "tv.ouya.console.api.OuyaController";
+		std::string result = classLoader.loadClass(className);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %s", result.c_str());
+
+		const char* strOuyaControllerClass = "tv/ouya/console/api/OuyaController";
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strOuyaControllerClass);
+		_jcOuyaController = env->FindClass(strOuyaControllerClass);
+		if (_jcOuyaController)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strOuyaControllerClass);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strOuyaControllerClass);
+			return JNI_ERR;
 		}
 
 		{

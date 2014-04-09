@@ -37,7 +37,9 @@
     <None Include="assets\u.png" />
     <None Include="assets\y.png" />
     <None Include="build.xml" />
-    <None Include="libs\ouya-sdk.jar" />
+    <None Include="libs\ouya-sdk.jar">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="local.properties" />
     <None Include="proguard.cfg" />
     <None Include="project.properties" />
@@ -48,6 +50,7 @@
     <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\Bitmap.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
+    <ClCompile Include="jni\ClassLoader.cpp" />
     <ClCompile Include="jni\Context.cpp" />
     <ClCompile Include="jni\GLUtils.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
@@ -61,6 +64,7 @@
     <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\Bitmap.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
+    <ClInclude Include="jni\ClassLoader.h" />
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\GLUtils.h" />
     <ClInclude Include="jni\InputStream.h" />
@@ -98,6 +102,8 @@
     </Link>
     <AntBuild>
       <AntBuildPath>$(ProjectDir)\</AntBuildPath>
+      <JarDependencies>ouya-sdk.jar</JarDependencies>
+      <JarDirectories>libs</JarDirectories>
       <NativeLibDirectories>
       </NativeLibDirectories>
       <NativeLibDependencies>

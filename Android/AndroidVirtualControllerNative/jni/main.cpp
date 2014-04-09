@@ -32,6 +32,7 @@
 #include "AssetManager.h"
 #include "Bitmap.h"
 #include "BitmapFactory.h"
+#include "ClassLoader.h"
 #include "Context.h"
 #include "GLUtils.h"
 #include "InputStream.h"
@@ -51,6 +52,7 @@ using namespace android_opengl_GLUtils;
 using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace java_io_InputStream;
+using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
 using namespace tv_ouya_console_api_OuyaController;
 
@@ -98,6 +100,12 @@ jint RegisterClasses(ANativeActivity* activity)
 	else
 	{
 		LOGI("Found activity class");
+	}
+
+	// load the class loader first
+	if (JNI_ERR == ClassLoader::InitJNI(env))
+	{
+		return JNI_ERR;
 	}
 
 	if (JNI_ERR == Activity::InitJNI(env))
