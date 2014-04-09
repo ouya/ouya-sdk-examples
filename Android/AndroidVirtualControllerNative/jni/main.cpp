@@ -19,6 +19,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <map>
+#include <stdlib.h>
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>
@@ -58,13 +59,83 @@ using namespace java_lang_String;
 using namespace java_lang_System;
 using namespace tv_ouya_console_api_OuyaController;
 
-//key states
-static std::map<int, bool> g_buttons;
+//axis states
+static std::map<int, float> g_axis;
 
+//button states
+static std::map<int, bool> g_button;
+
+//gles textures
+const int TEXTURE_COUNT = 17;
+static GLuint textures[TEXTURE_COUNT];
+
+// texture Ids
+static int g_controller = 0;
+static int g_buttonA = 0;
+static int g_buttonO = 0;
+static int g_buttonU = 0;
+static int g_buttonY = 0;
+static int g_dpadDown = 0;
+static int g_dpadLeft = 0;
+static int g_dpadRight = 0;
+static int g_dpadUp = 0;
+static int g_leftBumper = 0;
+static int g_leftTrigger = 0;
+static int g_leftStickInactive = 0;
+static int g_leftStickActive = 0;
+static int g_rightBumper = 0;
+static int g_rightTrigger = 0;
+static int g_rightStickInactive = 0;
+static int g_rightStickActive = 0;
+
+// vbo buffer
+static unsigned int g_vbo[3];
+
+// position verteces
+const float POS_LEFT = -0.1f;
+const float POS_RIGHT = 0.1f;
+const float POS_TOP = 0.1f;
+const float POS_BOTTOM = -0.1f;
+static float g_positions[12] =
+{
+	POS_RIGHT, POS_BOTTOM, 0.0,
+	POS_RIGHT, POS_TOP, 0.0,
+	POS_LEFT, POS_BOTTOM, 0.0,
+	POS_LEFT, POS_TOP, 0.0
+};
+
+// texture coordinates
+const float TEX_LEFT = 0.0f;
+const float TEX_RIGHT = 1.0f;
+const float TEX_TOP = 0.0f;
+const float TEX_BOTTOM = 1.0f;
+static float g_textureCoords[8] =
+{
+	TEX_RIGHT, TEX_BOTTOM,
+	TEX_RIGHT, TEX_TOP,
+	TEX_LEFT, TEX_BOTTOM,
+	TEX_LEFT, TEX_TOP
+};
+
+// face indices
+static short g_indices[4] = { 0, 1, 2, 3 };
+
+// get axis value
+static float getAxis(int axis)
+{
+	std::map<int, float>::const_iterator search = g_axis.find(axis);
+	if (search != g_axis.end())
+	{
+		return search->second;
+	}
+	return 0.0f;
+}
+
+// check if a button is pressed
 static bool isPressed(int keyCode)
 {
-	std::map<int, bool>::const_iterator search = g_buttons.find(keyCode);
-	if (search != g_buttons.end())
+	std::map<int, bool>::const_iterator search = g_button.find(keyCode);
+	if (search != g_button.end())
 	{
 		return search->second;
 	}
@@ -204,9 +275,6 @@ jint RegisterClasses(ANativeActivity* activity)
 	return JNI_VERSION_1_6;
 }
 
-const int textureCount = 17;
-static GLuint textures[textureCount];
-
 int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Options& options, const char* texturePath, int textureId)
 {
 	String strController = String(texturePath);
@@ -246,25 +314,6 @@ int LoadTexture(JNIEnv* env, AssetManager& assetManager, const BitmapFactory::Op
 	return textureId;
 }
 
-// texture Ids
-static int g_controller = 0;
-static int g_buttonA = 0;
-static int g_buttonO = 0;
-static int g_buttonU = 0;
-static int g_buttonY = 0;
-static int g_dpadDown = 0;
-static int g_dpadLeft = 0;
-static int g_dpadRight = 0;
-static int g_dpadUp = 0;
-static int g_leftBumper = 0;
-static int g_leftTrigger = 0;
-static int g_leftStickInactive = 0;
-static int g_leftStickActive = 0;
-static int g_rightBumper = 0;
-static int g_rightTrigger = 0;
-static int g_rightStickInactive = 0;
-static int g_rightStickActive = 0;
-
 void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 {
 	vm->AttachCurrentThread(&env, NULL);
@@ -282,7 +331,7 @@ void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, files[index].c_str());
 	}
 
-	glGenTextures(textureCount, &textures[0]);
+	glGenTextures(TEXTURE_COUNT, &textures[0]);
 
 	int textureId = 0;
 	g_controller = LoadTexture(env, assetManager, options, "controller.png", textureId);
@@ -305,33 +354,6 @@ void LoadBitmaps(JavaVM* vm, JNIEnv* env, jobject objActivity)
 
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded %d textures", textureId + 1);
 }
-
-static unsigned int vbo[3];
-
-const float POS_LEFT = -0.1f;
-const float POS_RIGHT = 0.1f;
-const float POS_TOP = 0.1f;
-const float POS_BOTTOM = -0.1f;
-static float positions[12] =
-{ 
-	POS_RIGHT, POS_BOTTOM, 0.0,
-	POS_RIGHT, POS_TOP, 0.0,
-	POS_LEFT, POS_BOTTOM, 0.0,
-	POS_LEFT, POS_TOP, 0.0
-};
-
-const float TEX_LEFT = 0.0f;
-const float TEX_RIGHT = 1.0f;
-const float TEX_TOP = 0.0f;
-const float TEX_BOTTOM = 1.0f;
-static float textureCoords[8] =
-{
-	TEX_RIGHT, TEX_BOTTOM,
-	TEX_RIGHT, TEX_TOP,
-	TEX_LEFT, TEX_BOTTOM,
-	TEX_LEFT, TEX_TOP
-};
-static short indices[4] = { 0, 1, 2, 3 };
 
 /**
  * Initialize an EGL context for the current display.
@@ -405,15 +427,15 @@ static int engine_init_display(struct engine* engine) {
 
 	LoadBitmaps(engine->app->activity->vm, engine->app->activity->env, engine->app->activity->clazz);
 
-	glGenBuffers(3, vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, 4 * 12, positions, GL_STATIC_DRAW);
+	glGenBuffers(3, g_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, g_vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 12, g_positions, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, 4 * 8, textureCoords, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, g_vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 8, g_textureCoords, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 4, indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_vbo[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 4, g_indices, GL_STATIC_DRAW);
 
     return 0;
 }
@@ -448,9 +470,9 @@ static void engine_draw_frame(struct engine* engine) {
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	// draw the model
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, g_vbo[0]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, g_vbo[1]);
 	glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
 	glEnable(GL_BLEND);
@@ -487,20 +509,6 @@ static void engine_draw_frame(struct engine* engine) {
 		DrawTexture(g_leftBumper);
 	}
 
-	if (isPressed(OuyaController::AXIS_L2()))
-	{
-		DrawTexture(g_leftTrigger);
-	}
-	
-	if (isPressed(OuyaController::BUTTON_L3()))
-	{
-		DrawTexture(g_leftStickActive);
-	}
-	else
-	{
-		DrawTexture(g_leftStickInactive);
-	}
-
 	if (isPressed(OuyaController::BUTTON_O()))
 	{
 		DrawTexture(g_buttonO);
@@ -511,9 +519,23 @@ static void engine_draw_frame(struct engine* engine) {
 		DrawTexture(g_rightBumper);
 	}
 
-	if (isPressed(OuyaController::AXIS_R2()))
+	if (isPressed(OuyaController::BUTTON_U()))
 	{
-		DrawTexture(g_rightTrigger);
+		DrawTexture(g_buttonU);
+	}
+
+	if (isPressed(OuyaController::BUTTON_Y()))
+	{
+		DrawTexture(g_buttonY);
+	}
+
+	if (isPressed(OuyaController::BUTTON_L3()))
+	{
+		DrawTexture(g_leftStickActive);
+	}
+	else
+	{
+		DrawTexture(g_leftStickInactive);
 	}
 
 	if (isPressed(OuyaController::BUTTON_R3()))
@@ -525,14 +547,14 @@ static void engine_draw_frame(struct engine* engine) {
 		DrawTexture(g_rightStickInactive);
 	}
 
-	if (isPressed(OuyaController::BUTTON_U()))
+	if (abs(getAxis(OuyaController::AXIS_L2())) > 0.25f)
 	{
-		DrawTexture(g_buttonU);
-	}
+		DrawTexture(g_leftTrigger);
+	}		
 
-	if (isPressed(OuyaController::BUTTON_Y()))
+	if (abs(getAxis(OuyaController::AXIS_R2())) > 0.25f)
 	{
-		DrawTexture(g_buttonY);
+		DrawTexture(g_rightTrigger);
 	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -577,14 +599,14 @@ static void debugOuyaKeyEvent()
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_LEFT value=%d", isPressed(OuyaController::BUTTON_DPAD_LEFT()));
 }
 
-static void debugOuyaMotionEvent(AInputEvent* motionEvent)
+static void debugOuyaMotionEvent()
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_X value=%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_LS_X(), 0));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_Y value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_LS_Y(), 0));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_X value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_RS_X(), 0));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_Y value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_RS_Y(), 0));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_L2 value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_L2(), 0));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_R2 value==%f", AMotionEvent_getAxisValue(motionEvent, OuyaController::AXIS_R2(), 0));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_X value=%f", getAxis(OuyaController::AXIS_LS_X()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_Y value=%f", getAxis(OuyaController::AXIS_LS_Y()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_X value=%f", getAxis(OuyaController::AXIS_RS_X()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_Y value=%f", getAxis(OuyaController::AXIS_RS_Y()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_L2 value=%f", getAxis(OuyaController::AXIS_L2()));
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_R2 value=%f", getAxis(OuyaController::AXIS_R2()));
 }
 
 static void debugMotionEvent(AInputEvent* motionEvent)
@@ -652,7 +674,14 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 
 		debugMotionEvent(event);
 
-		debugOuyaMotionEvent(event);
+		g_axis[OuyaController::AXIS_LS_X()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_LS_X(), 0);
+		g_axis[OuyaController::AXIS_LS_Y()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_LS_Y(), 0);
+		g_axis[OuyaController::AXIS_RS_X()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_RS_X(), 0);
+		g_axis[OuyaController::AXIS_RS_Y()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_RS_Y(), 0);
+		g_axis[OuyaController::AXIS_L2()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_L2(), 0);
+		g_axis[OuyaController::AXIS_R2()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_R2(), 0);
+
+		debugOuyaMotionEvent();
 
         return 1;
 	}
@@ -663,12 +692,12 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 		if (action == AMOTION_EVENT_ACTION_UP)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
-			g_buttons[keyCode] = false;
+			g_button[keyCode] = false;
 		}
 		else if (action == AMOTION_EVENT_ACTION_DOWN)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
-			g_buttons[keyCode] = true;
+			g_button[keyCode] = true;
 		}
 
 		debugOuyaKeyEvent();
