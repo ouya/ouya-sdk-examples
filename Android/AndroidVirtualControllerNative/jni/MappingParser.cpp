@@ -339,8 +339,8 @@ namespace OuyaEverywhere
 		}
 
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Button SourceKeyCode=%d,%s DestinationKeyCode=%d,%s",
-			button->mSourceKeyCode, debugGetAxisName(button->mSourceKeyCode).c_str(),
-			button->mDestinationKeyCode, debugGetAxisName(button->mDestinationKeyCode).c_str());
+			button->mSourceKeyCode, debugGetButtonName(button->mSourceKeyCode).c_str(),
+			button->mDestinationKeyCode, debugGetButtonName(button->mDestinationKeyCode).c_str());
 	}
 
 	void MappingParser::debugAxisRemap(AxisRemap* axisRemap)

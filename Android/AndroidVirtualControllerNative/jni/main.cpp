@@ -633,12 +633,12 @@ static void engine_draw_frame(struct engine* engine) {
 		DrawTexture(g_buttonY);
 	}
 
-	if (abs(getAxis(OuyaController::AXIS_L2())) > 0.25f)
+	if (getAxis(OuyaController::AXIS_L2()) > 0.25f)
 	{
 		DrawTexture(g_leftTrigger);
 	}
 
-	if (abs(getAxis(OuyaController::AXIS_R2())) > 0.25f)
+	if (getAxis(OuyaController::AXIS_R2()) > 0.25f)
 	{
 		DrawTexture(g_rightTrigger);
 	}
@@ -795,6 +795,7 @@ static void passOnKeyUp(int deviceId, int keyCode)
 static void passOnGenericMotionEvent(int deviceId, int axis, float val)
 {
 	g_axis[axis] = val;
+	debugOuyaMotionEvent();
 }
 
 static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
@@ -805,6 +806,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 	//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s : dispatchGenericMotionEvent deviceId=%d name=%s", g_model.c_str(), deviceId, deviceName.c_str());
 
 	//debugMotionEvent(motionEvent);
+	//debugOuyaMotionEvent();
 
 	MappingParser::Device* device = g_parser.getDevice(g_model);
 	if (device)
@@ -936,10 +938,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 		*/
 
 		dispatchGenericMotionEvent(event);
-
-		//debugMotionEvent(event);
-
-		//debugOuyaMotionEvent();
 
         return 1;
 	}
