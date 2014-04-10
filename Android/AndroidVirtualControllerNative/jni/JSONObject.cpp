@@ -12,6 +12,7 @@ namespace org_json_JSONObject
 	jclass JSONObject::_jcJsonObject = 0;
 	jmethodID JSONObject::_mConstruct = 0;
 	jmethodID JSONObject::_mGetJsonArray = 0;
+	jmethodID JSONObject::_mGetJsonObject = 0;
 
 	int JSONObject::InitJNI(JNIEnv* env)
 	{
@@ -61,6 +62,20 @@ namespace org_json_JSONObject
 			else
 			{
 				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strJsonObjectGetJsonArray);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strJsonObjectGetJsonObject = "getJSONObject";
+			_mGetJsonObject = env->GetMethodID(_jcJsonObject, strJsonObjectGetJsonObject, "(Ljava/lang/String;)Lorg/json/JSONObject;");
+			if (_mGetJsonObject)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetJsonObject);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strJsonObjectGetJsonObject);
 				return JNI_ERR;
 			}
 		}
@@ -118,13 +133,6 @@ namespace org_json_JSONObject
 
 	org_json_JSONArray::JSONArray JSONObject::getJSONArray(const std::string& name)
 	{
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "************************");
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "************************");
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "************************");
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "********HERE************");
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "************************");
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "************************");
-
 		if (!_env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
@@ -146,5 +154,30 @@ namespace org_json_JSONObject
 		_env->DeleteLocalRef(arg1);
 
 		return org_json_JSONArray::JSONArray(result);
+	}
+
+	JSONObject JSONObject::getJSONObject(const std::string& name)
+	{
+		if (!_env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return JSONObject(0);
+		}
+
+		jstring arg1 = _env->NewStringUTF(name.c_str());
+		jobject result = _env->CallObjectMethod(_instance, _mGetJsonObject, arg1);
+
+		if (_env->ExceptionCheck())
+		{
+			_env->ExceptionDescribe();
+			_env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get json object");
+			return JSONObject(0);
+		}
+
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success got json object");
+		_env->DeleteLocalRef(arg1);
+
+		return JSONObject(result);
 	}
 }
