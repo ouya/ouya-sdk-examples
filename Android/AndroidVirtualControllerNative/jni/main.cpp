@@ -38,6 +38,7 @@
 #include "Context.h"
 #include "GLUtils.h"
 #include "InputStream.h"
+#include "JSONObject.h"
 #include "MappingParser.h"
 #include "OuyaController.h"
 #include "String.h"
@@ -59,7 +60,13 @@ using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
 using namespace java_lang_System;
+using namespace org_json_JSONObject;
 using namespace tv_ouya_console_api_OuyaController;
+
+using namespace OuyaEverywhere;
+
+//controller remapping
+MappingParser g_parser;
 
 //axis states
 static std::map<int, float> g_axis;
@@ -271,6 +278,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == JSONObject::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == OuyaController::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -385,6 +397,8 @@ static int engine_init_display(struct engine* engine) {
 		std::string strJson = json.ToString();
 		inputStream.close();
 		delete configurationBytes;
+
+		g_parser.parse(strJson);
 	}
 
     /*

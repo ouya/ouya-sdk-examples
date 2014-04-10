@@ -13,22 +13,22 @@ namespace OuyaEverywhere
 		class Button
 		{
 		public:
-			int mSourceKeyCode = 0;
-			int mDestinationKeyCode = 0;
+			int mSourceKeyCode;
+			int mDestinationKeyCode;
 			std::vector<int> mExcludeSource;
 		};
 		class AxisRemap
 		{
 		public:
-			int mSourceAxis = 0;
-			int mDestinationAxis = 0;
+			int mSourceAxis;
+			int mDestinationAxis;
 		};
 		class ButtonIsAxis
 		{
 		public:
-			int mSourceAxis = 0;
-			float mActionDown = 0;
-			int mDestinationKeyCode = 0;
+			int mSourceAxis;
+			float mActionDown;
+			int mDestinationKeyCode;
 		};
 		class Controller
 		{
