@@ -56,10 +56,10 @@
     <ClCompile Include="jni\GLUtils.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
     <ClCompile Include="jni\main.cpp" />
+    <ClCompile Include="jni\MappingParser.cpp" />
     <ClCompile Include="jni\OuyaController.cpp" />
     <ClCompile Include="jni\String.cpp" />
     <ClCompile Include="jni\System.cpp" />
-    <ClCompile Include="MappingParser.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
@@ -71,10 +71,10 @@
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\GLUtils.h" />
     <ClInclude Include="jni\InputStream.h" />
+    <ClInclude Include="jni\MappingParser.h" />
     <ClInclude Include="jni\OuyaController.h" />
     <ClInclude Include="jni\String.h" />
     <ClInclude Include="jni\System.h" />
-    <ClInclude Include="MappingParser.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

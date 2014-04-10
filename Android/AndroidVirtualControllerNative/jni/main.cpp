@@ -38,6 +38,7 @@
 #include "Context.h"
 #include "GLUtils.h"
 #include "InputStream.h"
+#include "MappingParser.h"
 #include "OuyaController.h"
 #include "String.h"
 #include "System.h"
