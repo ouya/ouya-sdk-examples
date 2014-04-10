@@ -25,6 +25,7 @@
     <None Include="assets\dpad_left.png" />
     <None Include="assets\dpad_right.png" />
     <None Include="assets\dpad_up.png" />
+    <None Include="assets\input.json" />
     <None Include="assets\lb.png" />
     <None Include="assets\lt.png" />
     <None Include="assets\l_stick.png" />
@@ -58,6 +59,7 @@
     <ClCompile Include="jni\OuyaController.cpp" />
     <ClCompile Include="jni\String.cpp" />
     <ClCompile Include="jni\System.cpp" />
+    <ClCompile Include="MappingParser.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +74,7 @@
     <ClInclude Include="jni\OuyaController.h" />
     <ClInclude Include="jni\String.h" />
     <ClInclude Include="jni\System.h" />
+    <ClInclude Include="MappingParser.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

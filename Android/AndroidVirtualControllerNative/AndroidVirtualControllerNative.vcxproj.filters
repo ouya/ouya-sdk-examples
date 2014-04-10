@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="jni">
@@ -10,6 +10,15 @@
     <Filter Include="res\values">
       <UniqueIdentifier>2fb7d762-29a1-432d-b8cb-d43652b10952</UniqueIdentifier>
     </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{1cef973d-848f-4b66-b668-1bee25e08a1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{06a70ab6-3cd8-4391-b2c5-083a1db8169e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="java">
+      <UniqueIdentifier>{cc5f0ad6-0325-4370-9059-6829428a68c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidManifest.xml" />
@@ -20,10 +29,145 @@
     <None Include="res\values\strings.xml">
       <Filter>res\values</Filter>
     </None>
+    <None Include="assets\a.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_up.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\controller.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_down.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_left.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_right.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\l_stick.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\lb.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\lt.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\o.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\r_stick.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\rb.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\rt.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\thumbl.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\thumbr.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\u.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\y.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="libs\ouya-sdk.jar">
+      <Filter>libs</Filter>
+    </None>
+    <None Include="assets\input.json">
+      <Filter>assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jni\main.c">
+    <ClCompile Include="jni\main.cpp" />
+    <ClCompile Include="MappingParser.cpp">
       <Filter>jni</Filter>
     </ClCompile>
+    <ClCompile Include="native_app_glue\android_native_app_glue.c">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Activity.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AssetManager.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Bitmap.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\BitmapFactory.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\ClassLoader.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Context.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\GLUtils.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\InputStream.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\OuyaController.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\String.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\System.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MappingParser.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="native_app_glue\android_native_app_glue.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Activity.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AssetManager.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Bitmap.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\BitmapFactory.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\ClassLoader.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Context.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\GLUtils.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\InputStream.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\OuyaController.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\String.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\System.h">
+      <Filter>java</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
