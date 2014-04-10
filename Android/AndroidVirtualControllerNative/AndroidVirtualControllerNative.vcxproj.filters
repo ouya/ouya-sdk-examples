@@ -88,10 +88,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jni\main.cpp" />
-    <ClCompile Include="MappingParser.cpp">
-      <Filter>jni</Filter>
-    </ClCompile>
     <ClCompile Include="native_app_glue\android_native_app_glue.c">
       <Filter>jni</Filter>
     </ClCompile>
@@ -128,11 +124,23 @@
     <ClCompile Include="jni\System.cpp">
       <Filter>java</Filter>
     </ClCompile>
+    <ClCompile Include="jni\main.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\MappingParser.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\JSONObject.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\JSONArray.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Build.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MappingParser.h">
-      <Filter>jni</Filter>
-    </ClInclude>
     <ClInclude Include="native_app_glue\android_native_app_glue.h">
       <Filter>jni</Filter>
     </ClInclude>
@@ -167,6 +175,18 @@
       <Filter>java</Filter>
     </ClInclude>
     <ClInclude Include="jni\System.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\MappingParser.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\JSONObject.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\JSONArray.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Build.h">
       <Filter>java</Filter>
     </ClInclude>
   </ItemGroup>

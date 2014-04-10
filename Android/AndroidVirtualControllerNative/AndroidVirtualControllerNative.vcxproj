@@ -51,6 +51,7 @@
     <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\Bitmap.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
+    <ClCompile Include="jni\Build.cpp" />
     <ClCompile Include="jni\ClassLoader.cpp" />
     <ClCompile Include="jni\Context.cpp" />
     <ClCompile Include="jni\GLUtils.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\Bitmap.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
+    <ClInclude Include="jni\Build.h" />
     <ClInclude Include="jni\ClassLoader.h" />
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\GLUtils.h" />

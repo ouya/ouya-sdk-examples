@@ -34,6 +34,7 @@
 #include "AssetManager.h"
 #include "Bitmap.h"
 #include "BitmapFactory.h"
+#include "Build.h"
 #include "ClassLoader.h"
 #include "Context.h"
 #include "GLUtils.h"
@@ -54,9 +55,10 @@
 using namespace android_app_Activity;
 using namespace android_content_Context;
 using namespace android_content_res_AssetManager;
-using namespace android_opengl_GLUtils;
 using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
+using namespace android_opengl_GLUtils;
+using namespace android_os_Build;
 using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
@@ -261,6 +263,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == BitmapFactory::Options::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == Build::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
@@ -739,6 +746,115 @@ static void debugMotionEvent(AInputEvent* motionEvent)
 	}
 }
 
+static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
+{
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s : dispatchGenericMotionEvent", Build::MODEL().c_str());
+
+	/*
+	debugMotionEvent(motionEvent);
+
+	int deviceId = AInputEvent_getDeviceId(motionEvent);
+
+	AMotionEvent_getAxisValue
+
+	std::vector<MappingParser::ButtonIsAxis> buttons =
+		g_parser.getButtonIsAxis(android.os.Build.MODEL, motionEvent.getDevice().getName());
+
+	if (null != buttons) {
+		for (int i = 0; i < buttons.size(); ++i) {
+			ButtonIsAxis button = buttons.get(i);
+			float axis = motionEvent.getAxisValue(button.mSourceAxis);
+			if (axis == button.mActionDown) {
+				if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
+					!mLastValue.get(button.mDestinationKeyCode)) {
+					mLastValue.put(button.mDestinationKeyCode, true);
+					//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
+					long downTime = 0;
+					long eventTime = 0;
+					int action = KeyEvent.ACTION_DOWN;
+					int code = button.mDestinationKeyCode;
+					int repeat = 0;
+					int metaState = 0;
+					int deviceId = motionEvent.getDeviceId();
+					int scancode = 0;
+					KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
+					passDispatchKeyEvent(keyEvent);
+				}
+			}
+			else {
+				if (mLastValue.containsKey(button.mDestinationKeyCode) &&
+					mLastValue.get(button.mDestinationKeyCode)) {
+					mLastValue.put(button.mDestinationKeyCode, false);
+					//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
+					long downTime = 0;
+					long eventTime = 0;
+					int action = KeyEvent.ACTION_UP;
+					int code = button.mDestinationKeyCode;
+					int repeat = 0;
+					int metaState = 0;
+					int deviceId = motionEvent.getDeviceId();
+					int scancode = 0;
+					KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
+					passDispatchKeyEvent(keyEvent);
+				}
+			}
+		}
+	}
+
+	Vector<AxisRemap> axises =
+		mParser.getAxisRemap(android.os.Build.MODEL, motionEvent.getDevice().getName());
+
+	if (null != axises) {
+		int pointerCount = motionEvent.getPointerCount();
+		if (pointerCount > 0 &&
+			axises.size() > 0) {
+
+			PointerProperties[] pointerProperties = new PointerProperties[1];
+			pointerProperties[0] = new PointerProperties();
+			PointerCoords[] pointerCoords = new PointerCoords[1];
+			pointerCoords[0] = new PointerCoords();
+
+			motionEvent.getPointerProperties(0, pointerProperties[0]);
+			motionEvent.getPointerCoords(0, pointerCoords[0]);
+
+			for (int i = 0; i < axises.size(); ++i) {
+				AxisRemap axis = axises.get(i);
+				float val = motionEvent.getAxisValue(axis.mSourceAxis);
+				Log.i(TAG, "Remap " + debugGetAxisName(axis.mSourceAxis) + " to " + debugGetAxisName(axis.mDestinationAxis) + "val=" + val);
+				pointerCoords[0].setAxisValue(axis.mDestinationAxis, val);
+			}
+
+			long downTime = motionEvent.getDownTime();
+			long eventTime = motionEvent.getEventTime();
+			int action = motionEvent.getAction();
+			int metaState = motionEvent.getMetaState();
+			int buttonState = motionEvent.getButtonState();
+			float xPrecision = 1;
+			float yPrecision = 1;
+			int deviceId = motionEvent.getDeviceId();
+			int edgeFlags = motionEvent.getEdgeFlags();
+			int source = motionEvent.getSource();
+			int flags = motionEvent.getFlags();
+
+			motionEvent = MotionEvent.obtain(downTime, eventTime, action,
+				pointerCount, pointerProperties, pointerCoords,
+				metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
+				source, flags);
+			//debugMotionEvent(motionEvent);
+			//debugOuyaMotionEvent(motionEvent);
+			passDispatchGenericMotionEvent(motionEvent);
+			motionEvent.recycle();
+			return true;
+		}
+	}
+
+	debugMotionEvent(motionEvent);
+	//debugOuyaMotionEvent(motionEvent);
+	passDispatchGenericMotionEvent(motionEvent);
+	*/
+	return true;
+}
+
 /**
  * Process the next input event.
  */
@@ -747,9 +863,9 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
     struct engine* engine = (struct engine*)app->userData;
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 	{
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onGenericMotionEvent");
+		dispatchGenericMotionEvent(event);
 
-		debugMotionEvent(event);
+		//debugMotionEvent(event);
 
 		g_axis[OuyaController::AXIS_LS_X()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_LS_X(), 0);
 		g_axis[OuyaController::AXIS_LS_Y()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_LS_Y(), 0);
