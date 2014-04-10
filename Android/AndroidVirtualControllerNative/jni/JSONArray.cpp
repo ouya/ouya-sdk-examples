@@ -10,6 +10,7 @@ namespace org_json_JSONArray
 {
 	JNIEnv* JSONArray::_env = 0;
 	jclass JSONArray::_jcJsonArray = 0;
+	jmethodID JSONArray::_mGetInt = 0;
 	jmethodID JSONArray::_mGetJsonObject = 0;
 	jmethodID JSONArray::_mGetString = 0;
 	jmethodID JSONArray::_mLength = 0;
@@ -41,6 +42,20 @@ namespace org_json_JSONArray
 			else
 			{
 				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strJsonObjectGetJsonObject);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strJsonObjectGetInt = "getInt";
+			_mGetInt = env->GetMethodID(_jcJsonArray, strJsonObjectGetInt, "(I)I");
+			if (_mGetInt)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetInt);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strJsonObjectGetInt);
 				return JNI_ERR;
 			}
 		}
@@ -117,6 +132,36 @@ namespace org_json_JSONArray
 		{
 			return org_json_JSONObject::JSONObject(0);
 		}
+	}
+
+	int JSONArray::getInt(int index)
+	{
+		if (!_env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return 0;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Instance is not valid!");
+			return 0;
+		}
+
+		jint arg1 = index;
+		jint result = _env->CallIntMethod(_instance, _mGetString, arg1);
+		if (_env->ExceptionCheck())
+		{
+			_env->ExceptionDescribe();
+			_env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get int");
+			return 0;
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Success on get int: %d", result);
+			return (int)result;
+		}		
 	}
 
 	std::string JSONArray::getString(int index)

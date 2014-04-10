@@ -52,7 +52,7 @@ namespace OuyaEverywhere
 		std::map<std::string, Device> mDevice;
 		Device getDevice(std::string deviceName);
 		Controller getController(Device device, std::string controllerName);
-		int getKeyCode(std::string name);
+		int getKeyCode(const std::string& name);
 	};
 }
 
