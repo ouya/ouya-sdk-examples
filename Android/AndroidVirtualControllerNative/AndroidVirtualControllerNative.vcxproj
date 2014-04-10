@@ -55,6 +55,8 @@
     <ClCompile Include="jni\Context.cpp" />
     <ClCompile Include="jni\GLUtils.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
+    <ClCompile Include="jni\JSONArray.cpp" />
+    <ClCompile Include="jni\JSONObject.cpp" />
     <ClCompile Include="jni\main.cpp" />
     <ClCompile Include="jni\MappingParser.cpp" />
     <ClCompile Include="jni\OuyaController.cpp" />
@@ -71,6 +73,8 @@
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\GLUtils.h" />
     <ClInclude Include="jni\InputStream.h" />
+    <ClInclude Include="jni\JSONArray.h" />
+    <ClInclude Include="jni\JSONObject.h" />
     <ClInclude Include="jni\MappingParser.h" />
     <ClInclude Include="jni\OuyaController.h" />
     <ClInclude Include="jni\String.h" />

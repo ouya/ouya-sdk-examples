@@ -38,6 +38,7 @@
 #include "Context.h"
 #include "GLUtils.h"
 #include "InputStream.h"
+#include "JSONArray.h"
 #include "JSONObject.h"
 #include "MappingParser.h"
 #include "OuyaController.h"
@@ -60,6 +61,7 @@ using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
 using namespace java_lang_System;
+using namespace org_json_JSONArray;
 using namespace org_json_JSONObject;
 using namespace tv_ouya_console_api_OuyaController;
 
@@ -274,6 +276,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == InputStream::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == JSONArray::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
