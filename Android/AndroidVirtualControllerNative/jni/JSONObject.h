@@ -25,12 +25,16 @@ namespace org_json_JSONObject
 		jobject GetInstance() const;
 		org_json_JSONArray::JSONArray getJSONArray(const std::string& name);
 		JSONObject getJSONObject(const std::string& name);
+		int getInt(const std::string& name);
+		bool has(const std::string& name);
 	private:
 		static JNIEnv* _env;
 		static jclass _jcJsonObject;
 		static jmethodID _mConstruct;
+		static jmethodID _mGetInt;
 		static jmethodID _mGetJsonArray;
 		static jmethodID _mGetJsonObject;
+		static jmethodID _mHas;
 		jobject _instance;
 	};
 }

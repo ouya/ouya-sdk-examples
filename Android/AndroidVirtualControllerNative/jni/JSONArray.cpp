@@ -91,6 +91,12 @@ namespace org_json_JSONArray
 			return org_json_JSONObject::JSONObject(0);
 		}
 
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Instance is not valid!");
+			return org_json_JSONObject::JSONObject(0);
+		}
+
 		jint arg1 = index;
 		jobject result = _env->CallObjectMethod(_instance, _mGetJsonObject, arg1);
 
@@ -102,9 +108,15 @@ namespace org_json_JSONArray
 			return org_json_JSONObject::JSONObject(0);
 		}
 
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success got json object");
-
-		return org_json_JSONObject::JSONObject(result);
+		if (result)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success got json object");
+			return org_json_JSONObject::JSONObject(result);
+		}
+		else
+		{
+			return org_json_JSONObject::JSONObject(0);
+		}
 	}
 
 	const std::string& JSONArray::getString(int index)
@@ -112,6 +124,12 @@ namespace org_json_JSONArray
 		if (!_env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return std::string();
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Instance is not valid!");
 			return std::string();
 		}
 
@@ -149,6 +167,12 @@ namespace org_json_JSONArray
 		if (!_env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return 0;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Instance is not valid!");
 			return 0;
 		}
 
