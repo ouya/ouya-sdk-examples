@@ -724,87 +724,6 @@ static void debugOuyaMotionEvent()
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_R2 value=%f", getAxis(OuyaController::AXIS_R2()));
 }
 
-static std::string debugGetAxisName(int axis)
-{
-	std::map<int, const char*> names;
-	names[AMOTION_EVENT_AXIS_X] = "AXIS_X";
-	names[AMOTION_EVENT_AXIS_Y] = "AXIS_Y";
-	names[AMOTION_EVENT_AXIS_PRESSURE] = "AXIS_PRESSURE";
-	names[AMOTION_EVENT_AXIS_SIZE] = "AXIS_SIZE";
-	names[AMOTION_EVENT_AXIS_TOUCH_MAJOR] = "AXIS_TOUCH_MAJOR";
-	names[AMOTION_EVENT_AXIS_TOUCH_MINOR] = "AXIS_TOUCH_MINOR";
-	names[AMOTION_EVENT_AXIS_TOOL_MAJOR] = "AXIS_TOOL_MAJOR";
-	names[AMOTION_EVENT_AXIS_TOOL_MINOR] = "AXIS_TOOL_MINOR";
-	names[AMOTION_EVENT_AXIS_ORIENTATION] = "AXIS_ORIENTATION";
-	names[AMOTION_EVENT_AXIS_VSCROLL] = "AXIS_VSCROLL";
-	names[AMOTION_EVENT_AXIS_HSCROLL] = "AXIS_HSCROLL";
-	names[AMOTION_EVENT_AXIS_Z] = "AXIS_Z";
-	names[AMOTION_EVENT_AXIS_RX] = "AXIS_RX";
-	names[AMOTION_EVENT_AXIS_RY] = "AXIS_RY";
-	names[AMOTION_EVENT_AXIS_RZ] = "AXIS_RZ";
-	names[AMOTION_EVENT_AXIS_HAT_X] = "AXIS_HAT_X";
-	names[AMOTION_EVENT_AXIS_HAT_Y] = "AXIS_HAT_Y";
-	names[AMOTION_EVENT_AXIS_LTRIGGER] = "AXIS_LTRIGGER";
-	names[AMOTION_EVENT_AXIS_RTRIGGER] = "AXIS_RTRIGGER";
-	names[AMOTION_EVENT_AXIS_THROTTLE] = "AXIS_THROTTLE";
-	names[AMOTION_EVENT_AXIS_RUDDER] = "AXIS_RUDDER";
-	names[AMOTION_EVENT_AXIS_WHEEL] = "AXIS_WHEEL";
-	names[AMOTION_EVENT_AXIS_GAS] = "AXIS_GAS";
-	names[AMOTION_EVENT_AXIS_BRAKE] = "AXIS_BRAKE";
-	names[AMOTION_EVENT_AXIS_DISTANCE] = "AXIS_DISTANCE";
-	names[AMOTION_EVENT_AXIS_TILT] = "AXIS_TILT";
-	names[AMOTION_EVENT_AXIS_GENERIC_1] = "AXIS_GENERIC_1";
-	names[AMOTION_EVENT_AXIS_GENERIC_2] = "AXIS_GENERIC_2";
-	names[AMOTION_EVENT_AXIS_GENERIC_3] = "AXIS_GENERIC_3";
-	names[AMOTION_EVENT_AXIS_GENERIC_4] = "AXIS_GENERIC_4";
-	names[AMOTION_EVENT_AXIS_GENERIC_5] = "AXIS_GENERIC_5";
-	names[AMOTION_EVENT_AXIS_GENERIC_6] = "AXIS_GENERIC_6";
-	names[AMOTION_EVENT_AXIS_GENERIC_7] = "AXIS_GENERIC_7";
-	names[AMOTION_EVENT_AXIS_GENERIC_8] = "AXIS_GENERIC_8";
-	names[AMOTION_EVENT_AXIS_GENERIC_9] = "AXIS_GENERIC_9";
-	names[AMOTION_EVENT_AXIS_GENERIC_10] = "AXIS_GENERIC_10";
-	names[AMOTION_EVENT_AXIS_GENERIC_11] = "AXIS_GENERIC_11";
-	names[AMOTION_EVENT_AXIS_GENERIC_12] = "AXIS_GENERIC_12";
-	names[AMOTION_EVENT_AXIS_GENERIC_13] = "AXIS_GENERIC_13";
-	names[AMOTION_EVENT_AXIS_GENERIC_14] = "AXIS_GENERIC_14";
-	names[AMOTION_EVENT_AXIS_GENERIC_15] = "AXIS_GENERIC_15";
-	names[AMOTION_EVENT_AXIS_GENERIC_16] = "AXIS_GENERIC_16";
-
-	std::map<int, const char*>::const_iterator search = names.find(axis);
-	if (search != names.end())
-	{
-		return search->second;
-	}
-
-	return "Unknown axis";
-}
-
-static std::string debugGetButtonName(int button)
-{
-	std::map<int, const char*> names;
-	names[OuyaController::BUTTON_O()] = "BUTTON_O";
-	names[OuyaController::BUTTON_U()] = "BUTTON_U";
-	names[OuyaController::BUTTON_Y()] = "BUTTON_Y";
-	names[OuyaController::BUTTON_A()] = "BUTTON_A";
-	names[OuyaController::BUTTON_L1()] = "BUTTON_L1";
-	names[OuyaController::BUTTON_L3()] = "BUTTON_L3";
-	names[OuyaController::BUTTON_R1()] = "BUTTON_R1";
-	names[OuyaController::BUTTON_R3()] = "BUTTON_R3";
-	names[OuyaController::BUTTON_MENU()] = "BUTTON_MENU";
-	names[OuyaController::BUTTON_DPAD_UP()] = "BUTTON_DPAD_UP";
-	names[OuyaController::BUTTON_DPAD_RIGHT()] = "BUTTON_DPAD_RIGHT";
-	names[OuyaController::BUTTON_DPAD_DOWN()] = "BUTTON_DPAD_DOWN";;
-	names[OuyaController::BUTTON_DPAD_LEFT()] = "BUTTON_DPAD_LEFT";
-
-	std::map<int, const char*>::const_iterator search = names.find(button);
-	if (search != names.end())
-	{
-		return search->second;
-	}
-
-	return "Unknown button";
-}
-
 static void debugMotionEvent(AInputEvent* motionEvent)
 {
 	std::map<int, const char*> names;
@@ -860,13 +779,13 @@ static void debugMotionEvent(AInputEvent* motionEvent)
 
 static void passOnKeyDown(int deviceId, int keyCode)
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyDown: deviceId=%d keyCode=%s", deviceId, debugGetButtonName(keyCode).c_str());
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyDown: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
 	g_button[keyCode] = true;
 }
 
 static void passOnKeyUp(int deviceId, int keyCode)
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyUp: deviceId=%d keyCode=%s", deviceId, debugGetButtonName(keyCode).c_str());
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyUp: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
 	g_button[keyCode] = false;
 }
 
@@ -889,6 +808,16 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 
 	debugMotionEvent(motionEvent);
 
+	MappingParser::Device* device = g_parser.getDevice(g_model);
+	if (device)
+	{
+		MappingParser::Controller* controller = g_parser.getController(device, deviceName);
+		if (controller)
+		{
+			MappingParser::debugController(controller);
+		}
+	}
+
 	std::vector<MappingParser::ButtonIsAxis*>* buttons =
 		g_parser.getButtonIsAxis(g_model, deviceName);
 
@@ -902,8 +831,8 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 			{
 				float axis = AMotionEvent_getAxisValue(motionEvent, button->mSourceAxis, 0);
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Button Is Axis source=%d,%s destination=%d,%s Expected=%f Value=%f",
-					button->mSourceAxis, debugGetAxisName(button->mSourceAxis).c_str(),
-					button->mDestinationKeyCode, debugGetButtonName(button->mDestinationKeyCode).c_str(),
+					button->mSourceAxis, MappingParser::debugGetAxisName(button->mSourceAxis).c_str(),
+					button->mDestinationKeyCode, MappingParser::debugGetButtonName(button->mDestinationKeyCode).c_str(),
 					button->mActionDown, axis);
 				if (axis == button->mActionDown)
 				{
@@ -942,8 +871,8 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 			{
 				float val = AMotionEvent_getAxisValue(motionEvent, axis->mSourceAxis, 0);
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Remap %s to %s val=%f",
-					debugGetAxisName(axis->mSourceAxis).c_str(),
-					debugGetAxisName(axis->mDestinationAxis).c_str(),
+					MappingParser::debugGetAxisName(axis->mSourceAxis).c_str(),
+					MappingParser::debugGetAxisName(axis->mDestinationAxis).c_str(),
 					val);
 				passOnGenericMotionEvent(deviceId, axis->mDestinationAxis, val);
 			}

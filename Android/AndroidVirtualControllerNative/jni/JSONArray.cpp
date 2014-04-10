@@ -6,6 +6,8 @@
 
 #define LOG_TAG "org_json_JSONArray"
 
+#define ENABLE_VERBOSE_LOGGING false
+
 namespace org_json_JSONArray
 {
 	JNIEnv* JSONArray::_env = 0;
@@ -19,11 +21,15 @@ namespace org_json_JSONArray
 	{
 		{
 			const char* strClass = "org/json/JSONArray";
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strClass);
+#endif
 			_jcJsonArray = env->FindClass(strClass);
 			if (_jcJsonArray)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
+#endif
 			}
 			else
 			{
@@ -37,7 +43,9 @@ namespace org_json_JSONArray
 			_mGetJsonObject = env->GetMethodID(_jcJsonArray, strJsonObjectGetJsonObject, "(I)Lorg/json/JSONObject;");
 			if (_mGetJsonObject)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetJsonObject);
+#endif
 			}
 			else
 			{
@@ -51,7 +59,9 @@ namespace org_json_JSONArray
 			_mGetInt = env->GetMethodID(_jcJsonArray, strJsonObjectGetInt, "(I)I");
 			if (_mGetInt)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetInt);
+#endif
 			}
 			else
 			{
@@ -65,7 +75,9 @@ namespace org_json_JSONArray
 			_mGetString = env->GetMethodID(_jcJsonArray, strJsonObjectGetString, "(I)Ljava/lang/String;");
 			if (_mGetString)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetString);
+#endif
 			}
 			else
 			{
@@ -79,7 +91,9 @@ namespace org_json_JSONArray
 			_mLength = env->GetMethodID(_jcJsonArray, strJsonObjectLength, "()I");
 			if (_mLength)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectLength);
+#endif
 			}
 			else
 			{
@@ -125,7 +139,9 @@ namespace org_json_JSONArray
 
 		if (result)
 		{
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success got json object");
+#endif
 			return org_json_JSONObject::JSONObject(result);
 		}
 		else
@@ -159,7 +175,9 @@ namespace org_json_JSONArray
 		}
 		else
 		{
-			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Success on get int: %d", result);
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on get int: %d", result);
+#endif
 			return (int)result;
 		}		
 	}
@@ -198,7 +216,9 @@ namespace org_json_JSONArray
 			std::string retVal = std::string(nativeString);
 			_env->ReleaseStringUTFChars(result, nativeString);
 
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Get string: %s", retVal.c_str());
+#endif
 			return retVal;
 		}
 		else
@@ -222,7 +242,9 @@ namespace org_json_JSONArray
 		}
 
 		jint result = _env->CallIntMethod(_instance, _mLength);
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on length: %d", result);
+#endif
 		return result;
 	}
 }

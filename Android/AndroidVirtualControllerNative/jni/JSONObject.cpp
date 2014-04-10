@@ -6,6 +6,8 @@
 
 #define LOG_TAG "org_json_JSONObject"
 
+#define ENABLE_VERBOSE_LOGGING false
+
 namespace org_json_JSONObject
 {
 	JNIEnv* JSONObject::_env = 0;
@@ -22,11 +24,15 @@ namespace org_json_JSONObject
 	{
 		{
 			const char* strClass = "org/json/JSONObject";
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strClass);
+#endif
 			_jcJsonObject = env->FindClass(strClass);
 			if (_jcJsonObject)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
+#endif
 			}
 			else
 			{
@@ -40,7 +46,9 @@ namespace org_json_JSONObject
 			_mConstruct = env->GetMethodID(_jcJsonObject, strStringConstructor, "(Ljava/lang/String;)V");
 			if (_mConstruct)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strStringConstructor);
+#endif
 			}
 			else
 			{
@@ -54,7 +62,9 @@ namespace org_json_JSONObject
 			_mGetDouble = env->GetMethodID(_jcJsonObject, strJsonObjectGetDouble, "(Ljava/lang/String;)D");
 			if (_mGetDouble)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetDouble);
+#endif
 			}
 			else
 			{
@@ -68,7 +78,9 @@ namespace org_json_JSONObject
 			_mGetInt = env->GetMethodID(_jcJsonObject, strJsonObjectGetInt, "(Ljava/lang/String;)I");
 			if (_mGetInt)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetInt);
+#endif
 			}
 			else
 			{
@@ -82,7 +94,9 @@ namespace org_json_JSONObject
 			_mGetJsonArray = env->GetMethodID(_jcJsonObject, strJsonObjectGetJsonArray, "(Ljava/lang/String;)Lorg/json/JSONArray;");
 			if (_mGetJsonArray)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetJsonArray);
+#endif
 			}
 			else
 			{
@@ -96,7 +110,9 @@ namespace org_json_JSONObject
 			_mGetJsonObject = env->GetMethodID(_jcJsonObject, strJsonObjectGetJsonObject, "(Ljava/lang/String;)Lorg/json/JSONObject;");
 			if (_mGetJsonObject)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetJsonObject);
+#endif
 			}
 			else
 			{
@@ -110,7 +126,9 @@ namespace org_json_JSONObject
 			_mGetString = env->GetMethodID(_jcJsonObject, strJsonObjectGetString, "(Ljava/lang/String;)Ljava/lang/String;");
 			if (_mGetString)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetString);
+#endif
 			}
 			else
 			{
@@ -124,7 +142,9 @@ namespace org_json_JSONObject
 			_mHas = env->GetMethodID(_jcJsonObject, strJsonObjectHas, "(Ljava/lang/String;)Z");
 			if (_mHas)
 			{
+#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectHas);
+#endif
 			}
 			else
 			{
@@ -154,7 +174,9 @@ namespace org_json_JSONObject
 		_instance = _env->AllocObject(_jcJsonObject);
 		if (_instance)
 		{
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success allocate JSONObject");
+#endif
 		}
 		else
 		{
@@ -173,7 +195,9 @@ namespace org_json_JSONObject
 			return;
 		}
 
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success constructed JSONObject");
+#endif
 		_env->DeleteLocalRef(arg1);
 	}
 
@@ -202,7 +226,9 @@ namespace org_json_JSONObject
 			return 0;
 		}
 
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success get double: %f", result);
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success get double: %f", (float)result);
+#endif
 		_env->DeleteLocalRef(arg1);
 
 		return (double)result;
@@ -233,7 +259,9 @@ namespace org_json_JSONObject
 			return 0;
 		}
 
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success get int: %d", result);
+#endif
 		_env->DeleteLocalRef(arg1);
 
 		return result;
@@ -264,7 +292,9 @@ namespace org_json_JSONObject
 			return org_json_JSONArray::JSONArray(0);
 		}
 
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success got json array");
+#endif
 		_env->DeleteLocalRef(arg1);
 
 		return org_json_JSONArray::JSONArray(result);
@@ -295,7 +325,9 @@ namespace org_json_JSONObject
 			return JSONObject(0);
 		}
 
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success got json object");
+#endif
 		_env->DeleteLocalRef(arg1);
 
 		return JSONObject(result);
@@ -334,7 +366,9 @@ namespace org_json_JSONObject
 			std::string retVal = std::string(nativeString);
 			_env->ReleaseStringUTFChars(result, nativeString);
 
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Get string: %s", retVal.c_str());
+#endif
 			return retVal;
 		}
 		else
@@ -368,7 +402,9 @@ namespace org_json_JSONObject
 			return false;
 		}
 
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success has");
+#endif
 		_env->DeleteLocalRef(arg1);
 
 		return result;

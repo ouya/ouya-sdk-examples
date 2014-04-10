@@ -47,11 +47,18 @@ namespace OuyaEverywhere
 		Button* getButton(const std::string& deviceName, const std::string& controllerName, int keyCode);
 		std::vector<AxisRemap*>* getAxisRemap(const std::string& deviceName, const std::string& controllerName);
 		std::vector<ButtonIsAxis*>* getButtonIsAxis(const std::string& deviceName, const std::string& controllerName);
+		Controller* getController(Device* device, const std::string& controllerName);
+		Device* getDevice(const std::string& deviceName);
 		void parse(const std::string& jsonData);
+		static std::string debugGetAxisName(int axis);
+		static std::string debugGetButtonName(int button);
+		static void debugButton(Button* button);
+		static void debugAxisRemap(AxisRemap* axisRemap);
+		static void debugButtonIsAxis(ButtonIsAxis* buttonIsAxis);
+		static void debugController(Controller* controller);
+		static void debugDevice(Device* device);
 	private:
 		std::map<std::string, Device*> mDevice;
-		Device* getDevice(const std::string& deviceName);
-		Controller* getController(Device* device, const std::string& controllerName);
 		int getKeyCode(const std::string& name);
 	};
 }
