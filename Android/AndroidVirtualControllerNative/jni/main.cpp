@@ -16,6 +16,7 @@
  */
 
 //BEGIN_INCLUDE(all)
+#include <algorithm>
 #include <jni.h>
 #include <errno.h>
 #include <map>
@@ -115,8 +116,8 @@ static unsigned int g_vbo[3];
 // position verteces
 const float POS_LEFT = -0.1f;
 const float POS_RIGHT = 0.1f;
-const float POS_TOP = 0.1f;
-const float POS_BOTTOM = -0.1f;
+const float POS_TOP = 0.15f;
+const float POS_BOTTOM = -0.15f;
 static float g_positions[12] =
 {
 	POS_RIGHT, POS_BOTTOM, 0.0,
@@ -781,12 +782,14 @@ static void passOnKeyDown(int deviceId, int keyCode)
 {
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyDown: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
 	g_button[keyCode] = true;
+	debugOuyaKeyEvent();
 }
 
 static void passOnKeyUp(int deviceId, int keyCode)
 {
 	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyUp: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
 	g_button[keyCode] = false;
+	debugOuyaKeyEvent();
 }
 
 static void passOnGenericMotionEvent(int deviceId, int axis, float val)
@@ -794,19 +797,14 @@ static void passOnGenericMotionEvent(int deviceId, int axis, float val)
 	g_axis[axis] = val;
 }
 
-static void passDispatchKeyEvent(AInputEvent* keyEvent)
-{
-
-}
-
 static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 {
 	int deviceId = AInputEvent_getDeviceId(motionEvent);
 	std::string deviceName = getDeviceName(deviceId);
 
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s : dispatchGenericMotionEvent deviceId=%d name=%s", g_model.c_str(), deviceId, deviceName.c_str());
+	//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s : dispatchGenericMotionEvent deviceId=%d name=%s", g_model.c_str(), deviceId, deviceName.c_str());
 
-	debugMotionEvent(motionEvent);
+	//debugMotionEvent(motionEvent);
 
 	MappingParser::Device* device = g_parser.getDevice(g_model);
 	if (device)
@@ -823,25 +821,25 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 
 	if (NULL != buttons)
 	{
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Button Is Axis Count: %d", buttons->size());
+		//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Button Is Axis Count: %d", buttons->size());
 		for (int i = 0; i < buttons->size(); ++i)
 		{
 			MappingParser::ButtonIsAxis* button = (*buttons)[i];
 			if (button)
 			{
 				float axis = AMotionEvent_getAxisValue(motionEvent, button->mSourceAxis, 0);
+				/*
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Button Is Axis source=%d,%s destination=%d,%s Expected=%f Value=%f",
 					button->mSourceAxis, MappingParser::debugGetAxisName(button->mSourceAxis).c_str(),
 					button->mDestinationKeyCode, MappingParser::debugGetButtonName(button->mDestinationKeyCode).c_str(),
 					button->mActionDown, axis);
+				*/
 				if (axis == button->mActionDown)
 				{
 					if (!isPressed(button->mDestinationKeyCode))
 					{
 						//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
 						passOnKeyDown(deviceId, button->mDestinationKeyCode);
-
-						debugOuyaKeyEvent();
 					}
 				}
 				else
@@ -850,8 +848,6 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 					{
 						//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
 						passOnKeyUp(deviceId, button->mDestinationKeyCode);
-
-						debugOuyaKeyEvent();
 					}
 				}
 			}
@@ -863,17 +859,19 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 
 	if (NULL != axises)
 	{
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Axis Remap Count: %d", axises->size());
+		//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Axis Remap Count: %d", axises->size());
 		for (int i = 0; i < axises->size(); ++i)
 		{
 			MappingParser::AxisRemap* axis = (*axises)[i];
 			if (axis)
 			{
 				float val = AMotionEvent_getAxisValue(motionEvent, axis->mSourceAxis, 0);
+				/*
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Remap %s to %s val=%f",
 					MappingParser::debugGetAxisName(axis->mSourceAxis).c_str(),
 					MappingParser::debugGetAxisName(axis->mDestinationAxis).c_str(),
 					val);
+				*/
 				passOnGenericMotionEvent(deviceId, axis->mDestinationAxis, val);
 			}
 		}
@@ -888,6 +886,38 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 	return true;
 }
 
+static bool dispatchKeyEvent(AInputEvent* keyEvent)
+{
+	int deviceId = AInputEvent_getDeviceId(keyEvent);
+	std::string deviceName = getDeviceName(deviceId);
+
+	int32_t keyCode = AKeyEvent_getKeyCode(keyEvent);
+
+	MappingParser::Button* button =
+		g_parser.getButton(g_model, deviceName, keyCode);
+	if (NULL == button) {
+		return true;
+	}
+
+	int source = AInputEvent_getSource(keyEvent);
+	if (std::find(button->mExcludeSource.begin(), button->mExcludeSource.end(), source) != button->mExcludeSource.end())
+	{
+		return true;
+	}
+
+	int action = AMotionEvent_getAction(keyEvent);
+	if (action == AMOTION_EVENT_ACTION_UP)
+	{
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
+		passOnKeyUp(deviceId, button->mDestinationKeyCode);
+	}
+	else if (action == AMOTION_EVENT_ACTION_DOWN)
+	{
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
+		passOnKeyDown(deviceId, button->mDestinationKeyCode);
+	}
+}
+
 /**
  * Process the next input event.
  */
@@ -896,38 +926,26 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
     struct engine* engine = (struct engine*)app->userData;
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 	{
+		/*
 		g_axis[OuyaController::AXIS_LS_X()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_LS_X(), 0);
 		g_axis[OuyaController::AXIS_LS_Y()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_LS_Y(), 0);
 		g_axis[OuyaController::AXIS_RS_X()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_RS_X(), 0);
 		g_axis[OuyaController::AXIS_RS_Y()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_RS_Y(), 0);
 		g_axis[OuyaController::AXIS_L2()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_L2(), 0);
 		g_axis[OuyaController::AXIS_R2()] = AMotionEvent_getAxisValue(event, OuyaController::AXIS_R2(), 0);
+		*/
 
 		dispatchGenericMotionEvent(event);
 
 		//debugMotionEvent(event);
 
-		debugOuyaMotionEvent();
+		//debugOuyaMotionEvent();
 
         return 1;
 	}
 	else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
 	{
-		int action = AMotionEvent_getAction(event);
-		int32_t keyCode = AKeyEvent_getKeyCode(event);
-		if (action == AMOTION_EVENT_ACTION_UP)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
-			g_button[keyCode] = false;
-		}
-		else if (action == AMOTION_EVENT_ACTION_DOWN)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
-			g_button[keyCode] = true;
-		}
-
-		debugOuyaKeyEvent();
-
+		dispatchKeyEvent(event);
 		return 1;
 	}
     return 0;
