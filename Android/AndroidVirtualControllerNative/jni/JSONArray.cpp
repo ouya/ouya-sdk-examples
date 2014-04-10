@@ -119,7 +119,7 @@ namespace org_json_JSONArray
 		}
 	}
 
-	const std::string& JSONArray::getString(int index)
+	std::string JSONArray::getString(int index)
 	{
 		if (!_env)
 		{

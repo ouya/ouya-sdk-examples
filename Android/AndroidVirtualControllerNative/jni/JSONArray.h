@@ -24,7 +24,7 @@ namespace org_json_JSONArray
 		jobject GetInstance() const;
 		int length();
 		org_json_JSONObject::JSONObject getJSONObject(int index);
-		const std::string& getString(int index);
+		std::string getString(int index);
 	private:
 		static JNIEnv* _env;
 		static jclass _jcJsonArray;
