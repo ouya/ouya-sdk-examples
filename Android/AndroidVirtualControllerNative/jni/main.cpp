@@ -698,31 +698,41 @@ static void engine_term_display(struct engine* engine) {
     engine->surface = EGL_NO_SURFACE;
 }
 
+static void debugButton(int button)
+{
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%d, %s value=%d", button, MappingParser::debugGetButtonName(button).c_str(), isPressed(button));
+}
+
 static void debugOuyaKeyEvent()
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_O value=%d", isPressed(OuyaController::BUTTON_O()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_U value=%d", isPressed(OuyaController::BUTTON_U()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_Y value=%d", isPressed(OuyaController::BUTTON_Y()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_A value=%d", isPressed(OuyaController::BUTTON_A()));;
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_L1 value=%d", isPressed(OuyaController::BUTTON_L1()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_L3 value=%d", isPressed(OuyaController::BUTTON_L3()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_R1 value=%d", isPressed(OuyaController::BUTTON_R1()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_R3 value=%d", isPressed(OuyaController::BUTTON_R3()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_MENU value=%d", isPressed(OuyaController::BUTTON_MENU()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_UP value=%d", isPressed(OuyaController::BUTTON_DPAD_UP()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_RIGHT value=%d", isPressed(OuyaController::BUTTON_DPAD_RIGHT()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_DOWN value=%d", isPressed(OuyaController::BUTTON_DPAD_DOWN()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "BUTTON_DPAD_LEFT value=%d", isPressed(OuyaController::BUTTON_DPAD_LEFT()));
+	debugButton(OuyaController::BUTTON_O());
+	debugButton(OuyaController::BUTTON_U());
+	debugButton(OuyaController::BUTTON_Y());
+	debugButton(OuyaController::BUTTON_A());;
+	debugButton(OuyaController::BUTTON_L1());
+	debugButton(OuyaController::BUTTON_L3());
+	debugButton(OuyaController::BUTTON_R1());
+	debugButton(OuyaController::BUTTON_R3());
+	debugButton(OuyaController::BUTTON_MENU());
+	debugButton(OuyaController::BUTTON_DPAD_UP());
+	debugButton(OuyaController::BUTTON_DPAD_RIGHT());
+	debugButton(OuyaController::BUTTON_DPAD_DOWN());
+	debugButton(OuyaController::BUTTON_DPAD_LEFT());
+}
+
+static void debugAxis(int axis)
+{
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%d, %s value=%f", axis, MappingParser::debugGetAxisName(axis).c_str(), getAxis(axis));
 }
 
 static void debugOuyaMotionEvent()
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_X value=%f", getAxis(OuyaController::AXIS_LS_X()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_LS_Y value=%f", getAxis(OuyaController::AXIS_LS_Y()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_X value=%f", getAxis(OuyaController::AXIS_RS_X()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_RS_Y value=%f", getAxis(OuyaController::AXIS_RS_Y()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_L2 value=%f", getAxis(OuyaController::AXIS_L2()));
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "OuyaController.AXIS_R2 value=%f", getAxis(OuyaController::AXIS_R2()));
+	debugAxis(OuyaController::AXIS_LS_X());
+	debugAxis(OuyaController::AXIS_LS_Y());
+	debugAxis(OuyaController::AXIS_RS_X());
+	debugAxis(OuyaController::AXIS_RS_Y());
+	debugAxis(OuyaController::AXIS_L2());
+	debugAxis(OuyaController::AXIS_R2());
 }
 
 static void debugMotionEvent(AInputEvent* motionEvent)
@@ -780,22 +790,22 @@ static void debugMotionEvent(AInputEvent* motionEvent)
 
 static void passOnKeyDown(int deviceId, int keyCode)
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyDown: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
+	//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyDown: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
 	g_button[keyCode] = true;
-	debugOuyaKeyEvent();
+	//debugOuyaKeyEvent();
 }
 
 static void passOnKeyUp(int deviceId, int keyCode)
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyUp: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
+	//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyUp: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
 	g_button[keyCode] = false;
-	debugOuyaKeyEvent();
+	//debugOuyaKeyEvent();
 }
 
 static void passOnGenericMotionEvent(int deviceId, int axis, float val)
 {
 	g_axis[axis] = val;
-	debugOuyaMotionEvent();
+	//debugOuyaMotionEvent();
 }
 
 static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
@@ -808,6 +818,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 	//debugMotionEvent(motionEvent);
 	//debugOuyaMotionEvent();
 
+	/*
 	MappingParser::Device* device = g_parser.getDevice(g_model);
 	if (device)
 	{
@@ -817,6 +828,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 			MappingParser::debugController(controller);
 		}
 	}
+	*/
 
 	std::vector<MappingParser::ButtonIsAxis*>* buttons =
 		g_parser.getButtonIsAxis(g_model, deviceName);
@@ -910,12 +922,12 @@ static bool dispatchKeyEvent(AInputEvent* keyEvent)
 	int action = AMotionEvent_getAction(keyEvent);
 	if (action == AMOTION_EVENT_ACTION_UP)
 	{
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
+		//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyUp keyCode=%d", keyCode);
 		passOnKeyUp(deviceId, button->mDestinationKeyCode);
 	}
 	else if (action == AMOTION_EVENT_ACTION_DOWN)
 	{
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
+		//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "onKeyDown keyCode=%d", keyCode);
 		passOnKeyDown(deviceId, button->mDestinationKeyCode);
 	}
 }
