@@ -55,6 +55,7 @@
     <ClCompile Include="jni\ClassLoader.cpp" />
     <ClCompile Include="jni\Context.cpp" />
     <ClCompile Include="jni\GLUtils.cpp" />
+    <ClCompile Include="jni\InputDevice.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
     <ClCompile Include="jni\JSONArray.cpp" />
     <ClCompile Include="jni\JSONObject.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="jni\ClassLoader.h" />
     <ClInclude Include="jni\Context.h" />
     <ClInclude Include="jni\GLUtils.h" />
+    <ClInclude Include="jni\InputDevice.h" />
     <ClInclude Include="jni\InputStream.h" />
     <ClInclude Include="jni\JSONArray.h" />
     <ClInclude Include="jni\JSONObject.h" />

@@ -34,24 +34,24 @@ namespace OuyaEverywhere
 		{
 		public:
 			std::vector<std::string> mAlias;
-			std::vector<AxisRemap> mAxisRemap;
-			std::map<int, Button> mButton;
-			std::vector<ButtonIsAxis> mButtonIsAxis;
+			std::vector<AxisRemap*> mAxisRemap;
+			std::map<int, Button*> mButton;
+			std::vector<ButtonIsAxis*> mButtonIsAxis;
 		};
 		class Device
 		{
 		public:
 			std::vector<std::string> mAlias;
-			std::map<std::string, Controller> mController;
+			std::map<std::string, Controller*> mController;
 		};
-		Button getButton(std::string deviceName, std::string controllerName, int keyCode);
-		std::vector<AxisRemap> getAxisRemap(std::string deviceName, std::string controllerName);
-		std::vector<ButtonIsAxis> getButtonIsAxis(std::string deviceName, std::string controllerName);
-		void parse(std::string jsonData);
+		Button* getButton(const std::string& deviceName, const std::string& controllerName, int keyCode);
+		std::vector<AxisRemap*>* getAxisRemap(const std::string& deviceName, const std::string& controllerName);
+		std::vector<ButtonIsAxis*>* getButtonIsAxis(const std::string& deviceName, const std::string& controllerName);
+		void parse(const std::string& jsonData);
 	private:
-		std::map<std::string, Device> mDevice;
-		Device getDevice(std::string deviceName);
-		Controller getController(Device device, std::string controllerName);
+		std::map<std::string, Device*> mDevice;
+		Device* getDevice(const std::string& deviceName);
+		Controller* getController(Device* device, const std::string& controllerName);
 		int getKeyCode(const std::string& name);
 	};
 }

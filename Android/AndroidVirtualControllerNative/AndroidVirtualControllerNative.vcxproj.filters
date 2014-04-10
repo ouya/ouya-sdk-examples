@@ -139,6 +139,9 @@
     <ClCompile Include="jni\Build.cpp">
       <Filter>java</Filter>
     </ClCompile>
+    <ClCompile Include="jni\InputDevice.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="native_app_glue\android_native_app_glue.h">
@@ -187,6 +190,9 @@
       <Filter>java</Filter>
     </ClInclude>
     <ClInclude Include="jni\Build.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\InputDevice.h">
       <Filter>java</Filter>
     </ClInclude>
   </ItemGroup>
