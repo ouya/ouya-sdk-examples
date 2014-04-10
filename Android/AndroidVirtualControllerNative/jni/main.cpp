@@ -38,6 +38,7 @@
 #include "ClassLoader.h"
 #include "Context.h"
 #include "GLUtils.h"
+#include "InputDevice.h"
 #include "InputStream.h"
 #include "JSONArray.h"
 #include "JSONObject.h"
@@ -59,6 +60,7 @@ using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace android_opengl_GLUtils;
 using namespace android_os_Build;
+using namespace android_view_InputDevice;
 using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
@@ -278,6 +280,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == GLUtils::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == InputDevice::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
@@ -748,12 +755,16 @@ static void debugMotionEvent(AInputEvent* motionEvent)
 
 static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 {
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s : dispatchGenericMotionEvent", Build::MODEL().c_str());
+	int deviceId = AInputEvent_getDeviceId(motionEvent);
+	InputDevice inputDevice = InputDevice::getDevice(deviceId);
+	std::string deviceName = inputDevice.getName();
+
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "%s : dispatchGenericMotionEvent deviceId=%d name=%s", Build::MODEL().c_str(), deviceId, deviceName.c_str());
 
 	/*
 	debugMotionEvent(motionEvent);
 
-	int deviceId = AInputEvent_getDeviceId(motionEvent);
+	
 
 	AMotionEvent_getAxisValue
 

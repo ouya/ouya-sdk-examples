@@ -322,11 +322,10 @@ namespace org_json_JSONObject
 		{
 			_env->ExceptionDescribe();
 			_env->ExceptionClear();
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get double");
-			return 0;
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get string");
+			return std::string();
 		}
 
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success get double: %f", result);
 		_env->DeleteLocalRef(arg1);
 
 		if (result)
