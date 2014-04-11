@@ -13,29 +13,33 @@ namespace android_app_Activity
 
 	int Activity::InitJNI(JNIEnv* env)
 	{
-		const char* strActivityClass = "android/app/Activity";
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strActivityClass);
-		_jcActivity = env->FindClass(strActivityClass);
-		if (_jcActivity)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strActivityClass);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strActivityClass);
-			return JNI_ERR;
+			const char* strActivityClass = "android/app/Activity";
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strActivityClass);
+			_jcActivity = env->FindClass(strActivityClass);
+			if (_jcActivity)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strActivityClass);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strActivityClass);
+				return JNI_ERR;
+			}
 		}
 
-		const char* strActivityGetApplicationContext = "getApplicationContext";
-		_mGetApplicationContext = env->GetMethodID(_jcActivity, strActivityGetApplicationContext, "()Landroid/content/Context;");
-		if (_mGetApplicationContext)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strActivityGetApplicationContext);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strActivityGetApplicationContext);
-			return JNI_ERR;
+			const char* strActivityGetApplicationContext = "getApplicationContext";
+			_mGetApplicationContext = env->GetMethodID(_jcActivity, strActivityGetApplicationContext, "()Landroid/content/Context;");
+			if (_mGetApplicationContext)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strActivityGetApplicationContext);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strActivityGetApplicationContext);
+				return JNI_ERR;
+			}
 		}
 
 		_env = env;

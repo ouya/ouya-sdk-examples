@@ -1,5 +1,5 @@
-#ifndef __android_os_Build_Build__
-#define __android_os_Build_Build__
+#ifndef __ANDROID_OS_BUILD_BUILD_H__
+#define __ANDROID_OS_BUILD_BUILD_H__
 
 #include <string>
 

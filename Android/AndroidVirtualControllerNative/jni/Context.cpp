@@ -15,41 +15,47 @@ namespace android_content_Context
 
 	int Context::InitJNI(JNIEnv* env)
 	{
-		const char* strContextClass = "android/content/Context";
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strContextClass);
-		_jcContext = env->FindClass(strContextClass);
-		if (_jcContext)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextClass);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextClass);
-			return JNI_ERR;
-		}
-
-		const char* strContextGetApplicationContext = "getApplicationContext";
-		_mGetApplicationContext = env->GetMethodID(_jcContext, strContextGetApplicationContext, "()Landroid/content/Context;");
-		if (_mGetApplicationContext)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextGetApplicationContext);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetApplicationContext);
-			return JNI_ERR;
+			const char* strContextClass = "android/content/Context";
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strContextClass);
+			_jcContext = env->FindClass(strContextClass);
+			if (_jcContext)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextClass);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextClass);
+				return JNI_ERR;
+			}
 		}
 
-		const char* strContextGetAssets = "getAssets";
-		_mGetAssets = env->GetMethodID(_jcContext, strContextGetAssets, "()Landroid/content/res/AssetManager;");
-		if (_mGetAssets)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextGetAssets);
+			const char* strContextGetApplicationContext = "getApplicationContext";
+			_mGetApplicationContext = env->GetMethodID(_jcContext, strContextGetApplicationContext, "()Landroid/content/Context;");
+			if (_mGetApplicationContext)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextGetApplicationContext);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetApplicationContext);
+				return JNI_ERR;
+			}
 		}
-		else
+
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetAssets);
-			return JNI_ERR;
+			const char* strContextGetAssets = "getAssets";
+			_mGetAssets = env->GetMethodID(_jcContext, strContextGetAssets, "()Landroid/content/res/AssetManager;");
+			if (_mGetAssets)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strContextGetAssets);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetAssets);
+				return JNI_ERR;
+			}
 		}
 
 		_env = env;

@@ -29,18 +29,18 @@ namespace android_os_Build
 		}
 
 		{
-		const char* strBuildModel = "MODEL";
-		_fModel = env->GetStaticFieldID(_jcBuild, strBuildModel, "Ljava/lang/String;");
-		if (_fModel)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strBuildModel);
+			const char* strBuildModel = "MODEL";
+			_fModel = env->GetStaticFieldID(_jcBuild, strBuildModel, "Ljava/lang/String;");
+			if (_fModel)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strBuildModel);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBuildModel);
+				return JNI_ERR;
+			}
 		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBuildModel);
-			return JNI_ERR;
-		}
-	}
 
 		_env = env;
 

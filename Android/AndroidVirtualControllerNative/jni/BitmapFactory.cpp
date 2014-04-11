@@ -13,29 +13,34 @@ namespace android_graphics_BitmapFactory
 
 	int BitmapFactory::InitJNI(JNIEnv* env)
 	{
-		const char* strBitmapFactoryClass = "android/graphics/BitmapFactory";
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strBitmapFactoryClass);
-		_jcBitmapFactory = env->FindClass(strBitmapFactoryClass);
-		if (_jcBitmapFactory)
+
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strBitmapFactoryClass);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBitmapFactoryClass);
-			return JNI_ERR;
+			const char* strBitmapFactoryClass = "android/graphics/BitmapFactory";
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strBitmapFactoryClass);
+			_jcBitmapFactory = env->FindClass(strBitmapFactoryClass);
+			if (_jcBitmapFactory)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strBitmapFactoryClass);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBitmapFactoryClass);
+				return JNI_ERR;
+			}
 		}
 
-		const char* strBitmapFactoryDecodeStream = "decodeStream";
-		_mDecodeStream = env->GetStaticMethodID(_jcBitmapFactory, strBitmapFactoryDecodeStream, "(Ljava/io/InputStream;Landroid/graphics/Rect;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;");
-		if (_mDecodeStream)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strBitmapFactoryDecodeStream);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBitmapFactoryDecodeStream);
-			return JNI_ERR;
+			const char* strBitmapFactoryDecodeStream = "decodeStream";
+			_mDecodeStream = env->GetStaticMethodID(_jcBitmapFactory, strBitmapFactoryDecodeStream, "(Ljava/io/InputStream;Landroid/graphics/Rect;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;");
+			if (_mDecodeStream)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strBitmapFactoryDecodeStream);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBitmapFactoryDecodeStream);
+				return JNI_ERR;
+			}
 		}
 		
 		_env = env;

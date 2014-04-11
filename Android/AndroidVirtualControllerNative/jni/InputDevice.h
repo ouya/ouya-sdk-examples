@@ -1,5 +1,5 @@
-#ifndef __android_view_InputDevice_InputDevice__
-#define __android_view_InputDevice_InputDevice__
+#ifndef __ANDROID_VIEW_INPUTDEVICE_INPUTDEVICE_H__
+#define __ANDROID_VIEW_INPUTDEVICE_INPUTDEVICE_H__
 
 #include <string>
 

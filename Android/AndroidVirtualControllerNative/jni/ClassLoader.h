@@ -1,5 +1,5 @@
-#ifndef __java_lang_ClassLoader_ClassLoader__
-#define __java_lang_ClassLoader_ClassLoader__
+#ifndef __JAVA_LANG_CLASSLOADER_CLASSLOADER_H__
+#define __JAVA_LANG_CLASSLOADER_CLASSLOADER_H__
 
 #include <string>
 

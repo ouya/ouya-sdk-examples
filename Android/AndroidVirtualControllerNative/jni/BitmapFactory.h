@@ -1,5 +1,5 @@
-#ifndef __android_graphics_BitmapFactory_BitmapFactory__
-#define __android_graphics_BitmapFactory_BitmapFactory__
+#ifndef __ANDROID_GRAPHICS_BITMAPFACTORY_BITMAPFACTORY_H__
+#define __ANDROID_GRAPHICS_BITMAPFACTORY_BITMAPFACTORY_H__
 
 #include "Bitmap.h"
 #include "BitmapFactory.h"

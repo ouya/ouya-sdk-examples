@@ -1,5 +1,5 @@
-#ifndef __java_lang_System_System__
-#define __java_lang_System_System__
+#ifndef __JAVA_LANG_SYSTEM_SYSTEM_H__
+#define __JAVA_LANG_SYSTEM_SYSTEM_H__
 
 #include <string>
 

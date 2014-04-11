@@ -1,5 +1,5 @@
-#ifndef __android_opengl_GLUtils_GLUtils__
-#define __android_opengl_GLUtils_GLUtils__
+#ifndef __ANDROID_OPENGL_GLUTILS_GLUTILS_H__
+#define __ANDROID_OPENGL_GLUTILS_GLUTILS_H__
 
 #include "Bitmap.h"
 

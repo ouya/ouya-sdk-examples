@@ -1,5 +1,5 @@
-#ifndef __android_graphics_Bitmap_Bitmap__
-#define __android_graphics_Bitmap_Bitmap__
+#ifndef __ANDROID_GRAPHICS_BITMAP_BITMAP_H__
+#define __ANDROID_GRAPHICS_BITMAP_BITMAP_H__
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;

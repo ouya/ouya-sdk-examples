@@ -1,5 +1,5 @@
-#ifndef __org_json_JSONObject_JSONObject__
-#define __org_json_JSONObject_JSONObject__
+#ifndef __ORG_JSON_JSONOBJECT_JSONOBJECT_H__
+#define __ORG_JSON_JSONOBJECT_JSONOBJECT_H__
 
 #include <string>
 

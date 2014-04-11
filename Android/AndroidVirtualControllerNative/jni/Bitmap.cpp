@@ -42,7 +42,7 @@ namespace android_graphics_Bitmap
 				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strBitmapGetHeight);
 				return JNI_ERR;
 			}
-	}
+		}
 
 		{
 			const char* strBitmapGetWidth = "getWidth";

@@ -1,5 +1,5 @@
-#ifndef __org_json_JSONArray_JSONArray__
-#define __org_json_JSONArray_JSONArray__
+#ifndef __ORG_JSON_JSONARRAY_JSONARRAY_H__
+#define __ORG_JSON_JSONARRAY_JSONARRAY_H__
 
 #include <string>
 

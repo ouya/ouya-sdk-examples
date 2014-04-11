@@ -19,11 +19,11 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := AndroidVirtualControllerNative
 LOCAL_C_INCLUDES := \
 Activity.h AssetManager.h Bitmap.h BitmapFactory.h \
-Context.h InputStream.h String.h
+Context.h InputStream.h String.h OuyaController.h
 
 LOCAL_SRC_FILES := Activity.cpp AssetManager.cpp Bitmap.cpp \
 BitmapFactory.cpp Context.cpp InputStream.cpp String.cpp \
-main.cpp
+main.cpp OuyaController.cpp
 
 LOCAL_LDLIBS := -lc -lm -llog -lgcc -landroid -lEGL -lGLESv1_CM -ljnigraphics
 LOCAL_STATIC_LIBRARIES := android_native_app_glue

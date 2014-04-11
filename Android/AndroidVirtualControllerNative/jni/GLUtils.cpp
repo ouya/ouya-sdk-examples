@@ -13,29 +13,33 @@ namespace android_opengl_GLUtils
 
 	int GLUtils::InitJNI(JNIEnv* env)
 	{
-		const char* strGlUtilsClass = "android/opengl/GLUtils";
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strGlUtilsClass);
-		_jcGlUtils = env->FindClass(strGlUtilsClass);
-		if (_jcGlUtils)
 		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strGlUtilsClass);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strGlUtilsClass);
-			return JNI_ERR;
+			const char* strGlUtilsClass = "android/opengl/GLUtils";
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strGlUtilsClass);
+			_jcGlUtils = env->FindClass(strGlUtilsClass);
+			if (_jcGlUtils)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strGlUtilsClass);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strGlUtilsClass);
+				return JNI_ERR;
+			}
 		}
 
+		{
 		const char* strGlUtilsTexImage2D = "texImage2D";
-		_mTexImage2D = env->GetStaticMethodID(_jcGlUtils, strGlUtilsTexImage2D, "(IILandroid/graphics/Bitmap;I)V");
-		if (_mTexImage2D)
-		{
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strGlUtilsTexImage2D);
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strGlUtilsTexImage2D);
-			return JNI_ERR;
+			_mTexImage2D = env->GetStaticMethodID(_jcGlUtils, strGlUtilsTexImage2D, "(IILandroid/graphics/Bitmap;I)V");
+			if (_mTexImage2D)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strGlUtilsTexImage2D);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strGlUtilsTexImage2D);
+				return JNI_ERR;
+			}
 		}
 
 		_env = env;

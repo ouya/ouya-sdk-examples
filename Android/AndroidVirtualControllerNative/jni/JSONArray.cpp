@@ -43,9 +43,9 @@ namespace org_json_JSONArray
 			_mGetJsonObject = env->GetMethodID(_jcJsonArray, strJsonObjectGetJsonObject, "(I)Lorg/json/JSONObject;");
 			if (_mGetJsonObject)
 			{
-#if ENABLE_VERBOSE_LOGGING
+	#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strJsonObjectGetJsonObject);
-#endif
+	#endif
 			}
 			else
 			{
@@ -179,7 +179,7 @@ namespace org_json_JSONArray
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on get int: %d", result);
 #endif
 			return (int)result;
-		}		
+		}
 	}
 
 	std::string JSONArray::getString(int index)
@@ -209,7 +209,7 @@ namespace org_json_JSONArray
 		{
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Success on get string");
 		}
-		
+
 		if (result)
 		{
 			const char* nativeString = _env->GetStringUTFChars(result, 0);

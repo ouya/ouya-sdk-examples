@@ -1,5 +1,5 @@
-#ifndef __java_lang_String_String__
-#define __java_lang_String_String__
+#ifndef __JAVA_LANG_STRING_STRING_H__
+#define __JAVA_LANG_STRING_STRING_H__
 
 #include <string>
 

@@ -1,5 +1,5 @@
-#ifndef __tv_ouya_console_api_OuyaController_OuyaController__
-#define __tv_ouya_console_api_OuyaController_OuyaController__
+#ifndef __TV_OUYA_CONSOLE_API_OUYACONTROLLER_OUYACONTROLLER_H__
+#define __TV_OUYA_CONSOLE_API_OUYACONTROLLER_OUYACONTROLLER_H__
 
 struct _JNIEnv;
 typedef _JNIEnv JNIEnv;
