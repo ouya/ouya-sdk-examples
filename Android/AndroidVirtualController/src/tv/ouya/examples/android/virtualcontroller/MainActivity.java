@@ -2,6 +2,7 @@ package tv.ouya.examples.android.virtualcontroller;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,6 +64,13 @@ public class MainActivity extends OuyaActivity {
 		imgButtonU = (ImageView)findViewById(R.id.imgButtonU);
 		imgButtonY = (ImageView)findViewById(R.id.imgButtonY);
 		
+		try {
+			Log.i(TAG, "Load class: " + ClassLoader.getSystemClassLoader().loadClass("OuyaController"));
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		OuyaController.init(this);
         OuyaController.showCursor(false); //hide mouse
 	}
@@ -70,19 +78,24 @@ public class MainActivity extends OuyaActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		txtSystem.setText("System: " + android.os.Build.MODEL);
+		txtSystem.setText("Brand=" + android.os.Build.BRAND + " Model=" + android.os.Build.MODEL + " Version=" + android.os.Build.VERSION.SDK_INT);
 	}
 	
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		//Log.i(TAG, "dispatchKeyEvent");
 		if (null != txtKeyCode) {
-			txtKeyCode.setText("dispatchKeyEvent: " + keyEvent.getDevice().getName() + " " + "KeyCode: " + keyEvent.getKeyCode());
+			InputDevice device = keyEvent.getDevice();
+			if (null != device) {
+				txtKeyCode.setText("dispatchKeyEvent name=" + device.getName() + " KeyCode=" + keyEvent.getKeyCode());
+			}
 		}
 		return super.dispatchKeyEvent(keyEvent);
 	}
 
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+		//Log.i(TAG, "onGenericMotionEvent");
 		txtController.setText(motionEvent.getDevice().getName());
 		
 		float lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
@@ -129,6 +142,8 @@ public class MainActivity extends OuyaActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+		//Log.i(TAG, "onKeyDown");
+		
 		//txtController.setText(keyEvent.getDevice().getName());
 		
 		if (null != txtController) {
@@ -186,6 +201,7 @@ public class MainActivity extends OuyaActivity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+		//Log.i(TAG, "onKeyUp");
 		
 		//txtController.setText(keyEvent.getDevice().getName());
 		

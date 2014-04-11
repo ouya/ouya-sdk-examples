@@ -85,7 +85,6 @@ public class OuyaNativeActivity extends NativeActivity {
 						int scancode = 0;
 						KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
 						super.dispatchKeyEvent(keyEvent);
-						keyEvent.recycle();
 					}
 				} else {
 					if (mLastValue.containsKey(button.mDestinationKeyCode) &&
@@ -102,7 +101,6 @@ public class OuyaNativeActivity extends NativeActivity {
 						int scancode = 0;
 						KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
 						super.dispatchKeyEvent(keyEvent);
-						keyEvent.recycle();
 					}
 				}
 			}
@@ -252,7 +250,6 @@ public class OuyaNativeActivity extends NativeActivity {
 		int scancode = 0;
 		KeyEvent newKeyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
 		super.dispatchKeyEvent(newKeyEvent);
-		newKeyEvent.recycle();
         return true;
 	}	
 	

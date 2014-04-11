@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Vector;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -48,16 +49,44 @@ public class OuyaActivity extends Activity {
 			Log.e(TAG, "Failed to load input configuration");
 		}
 		
+		
 		mParser.parse(json);
 	
 		takeKeyEvents(true);
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+		return super.onKeyUp(keyCode, keyEvent);
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+		return super.onKeyDown(keyCode, keyEvent);
+	}
+	
+	private void passDispatchGenericMotionEvent(MotionEvent motionEvent) {
+		super.dispatchGenericMotionEvent(motionEvent);
+	}
+	
+	private void passDispatchKeyEvent(KeyEvent keyEvent) {
+		//super.dispatchKeyEvent(keyEvent);
+		int keyCode = keyEvent.getKeyCode();
+		switch (keyEvent.getAction()) {
+			case KeyEvent.ACTION_DOWN:
+				onKeyDown(keyCode, keyEvent);
+				break;
+			case KeyEvent.ACTION_UP:
+				onKeyUp(keyCode, keyEvent);
+				break;
+		}
 	}
 
 	@Override
 	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
 		
-		Log.i(TAG, android.os.Build.MODEL + " : dispatchGenericMotionEvent");
-		//debugMotionEvent(motionEvent);
+		//Log.i(TAG, android.os.Build.MODEL + " : dispatchGenericMotionEvent");
+		debugMotionEvent(motionEvent);
 		
 		/*
 		if (true) {
@@ -66,7 +95,7 @@ public class OuyaActivity extends Activity {
 		*/
 	    
 	    Vector<ButtonIsAxis> buttons =
-				mParser.getButtonIsAxis(android.os.Build.MODEL, motionEvent.getDevice().getName());
+				mParser.getButtonIsAxis(Build.MODEL, motionEvent.getDevice().getName());
 	    
 	    if (null != buttons) {		
 			for (int i = 0; i < buttons.size(); ++i) {
@@ -86,8 +115,7 @@ public class OuyaActivity extends Activity {
 						int deviceId = motionEvent.getDeviceId();
 						int scancode = 0;
 						KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
-						super.dispatchKeyEvent(keyEvent);
-						keyEvent.recycle();
+						passDispatchKeyEvent(keyEvent);
 					}
 				} else {
 					if (mLastValue.containsKey(button.mDestinationKeyCode) &&
@@ -103,8 +131,7 @@ public class OuyaActivity extends Activity {
 						int deviceId = motionEvent.getDeviceId();
 						int scancode = 0;
 						KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
-						super.dispatchKeyEvent(keyEvent);
-						keyEvent.recycle();
+						passDispatchKeyEvent(keyEvent);
 					}
 				}
 			}
@@ -149,13 +176,18 @@ public class OuyaActivity extends Activity {
 		    			pointerCount, pointerProperties, pointerCoords,
 		    			metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags,
 		    			source, flags);
-		    	super.dispatchGenericMotionEvent(motionEvent);
+		    	//debugMotionEvent(motionEvent);
+		    	//debugOuyaMotionEvent(motionEvent);
+		    	passDispatchGenericMotionEvent(motionEvent);
 		    	motionEvent.recycle();
 		    	return true;
 		    }
 	    }
 		
-		return super.dispatchGenericMotionEvent(motionEvent);
+	    debugMotionEvent(motionEvent);
+	    //debugOuyaMotionEvent(motionEvent);
+	    passDispatchGenericMotionEvent(motionEvent);
+	    return true;
 	}
 	
 	private String debugGetAxisName(int axis) {
@@ -210,22 +242,17 @@ public class OuyaActivity extends Activity {
         	return axisName;
         }
 	}
+
+	private void debugOuyaMotionEvent(MotionEvent motionEvent) {
+		Log.i(TAG, "OuyaController.AXIS_LS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+		Log.i(TAG, "OuyaController.AXIS_LS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+		Log.i(TAG, "OuyaController.AXIS_RS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+		Log.i(TAG, "OuyaController.AXIS_RS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+		Log.i(TAG, "OuyaController.AXIS_L2 value="+motionEvent.getAxisValue(OuyaController.AXIS_L2));
+		Log.i(TAG, "OuyaController.AXIS_R2 value="+motionEvent.getAxisValue(OuyaController.AXIS_R2));
+	}
 	
 	private void debugMotionEvent(MotionEvent motionEvent) {
-		float lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
-	    float lsY = motionEvent.getAxisValue(OuyaController.AXIS_LS_Y);
-	    float rsX = motionEvent.getAxisValue(OuyaController.AXIS_RS_X);
-	    float rsY = motionEvent.getAxisValue(OuyaController.AXIS_RS_Y);
-	    float l2 = motionEvent.getAxisValue(OuyaController.AXIS_L2);
-	    float r2 = motionEvent.getAxisValue(OuyaController.AXIS_R2);
-	    
-		Log.i(TAG, "dispatchGenericMotionEvent lsX="+lsX);
-		Log.i(TAG, "dispatchGenericMotionEvent lsY="+lsY);
-		Log.i(TAG, "dispatchGenericMotionEvent rsX="+rsX);
-		Log.i(TAG, "dispatchGenericMotionEvent rsY="+rsY);
-		Log.i(TAG, "dispatchGenericMotionEvent l2="+l2);
-		Log.i(TAG, "dispatchGenericMotionEvent r2="+r2);
-		
 		SparseArray<String> names = new SparseArray<String>();
         names.append(MotionEvent.AXIS_X, "AXIS_X");
         names.append(MotionEvent.AXIS_Y, "AXIS_Y");
@@ -281,7 +308,9 @@ public class OuyaActivity extends Activity {
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		int keyCode = keyEvent.getKeyCode();
 		int source = keyEvent.getSource();
-		Log.i(TAG, android.os.Build.MODEL + " : dispatchKeyEvent="+keyCode + " action="+keyEvent.getAction());
+		Log.i(TAG, "model=" + android.os.Build.MODEL);
+		Log.i(TAG, "device=" + keyEvent.getDevice().getName());
+		Log.i(TAG, "dispatchKeyEvent="+keyCode + " action="+keyEvent.getAction());
 		
 		/*
 		if (true) {
@@ -308,8 +337,7 @@ public class OuyaActivity extends Activity {
 		int deviceId = keyEvent.getDeviceId();
 		int scancode = 0;
 		KeyEvent newKeyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
-		super.dispatchKeyEvent(newKeyEvent);
-		newKeyEvent.recycle();
+		passDispatchKeyEvent(newKeyEvent);
         return true;
 	}	
 	

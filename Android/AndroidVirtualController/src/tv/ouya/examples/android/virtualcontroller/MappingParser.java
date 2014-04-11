@@ -27,6 +27,11 @@ public class MappingParser {
 	
 	private static final String TAG = MappingParser.class.getSimpleName();
 	
+	protected class Alias
+	{
+		public String mName = "";
+		public String mFriendlyName = "";
+	}
 	protected class Button
 	{
 		public int mSourceKeyCode = 0;
@@ -46,14 +51,14 @@ public class MappingParser {
 	}
 	private class Controller
 	{
-		public Vector<String> mAlias = new Vector<String>();
+		public HashMap<String, Alias> mAlias = new HashMap<String, Alias>();
 		public Vector<AxisRemap> mAxisRemap = new Vector<AxisRemap>();
 		public HashMap<Integer, Button> mButton = new HashMap<Integer, Button>();
 		public Vector<ButtonIsAxis> mButtonIsAxis = new Vector<ButtonIsAxis>();
 	}
 	private class Device
 	{		
-		public Vector<String> mAlias = new Vector<String>();
+		public HashMap<String, Alias> mAlias = new HashMap<String, Alias>();
 		public HashMap<String, Controller> mController = new HashMap<String, Controller>();
 	}
 	
@@ -160,10 +165,15 @@ public class MappingParser {
 				JSONArray deviceAlias = device.getJSONArray("alias");
 				//Log.i(TAG, "alias="+alias.toString());
 				for (int aliasId=0; aliasId < deviceAlias.length(); ++aliasId) {
-					String strAlias = deviceAlias.getString(aliasId);
-					Log.i(TAG, "device alias="+strAlias);
-					mappingDevice.mAlias.add(strAlias);
-					mDevice.put(strAlias, mappingDevice);
+					JSONObject objAlias = deviceAlias.getJSONObject(aliasId);
+					//Log.i(TAG, "device alias="+objAlias.toString());
+					Alias alias = new Alias();
+					alias.mName = objAlias.getString("name");
+					Log.i(TAG, "device alias name="+alias.mName);
+					alias.mFriendlyName = objAlias.getString("friendly_name");
+					Log.i(TAG, "device alias friendly_name="+alias.mFriendlyName);
+					mappingDevice.mAlias.put(alias.mName, alias);
+					mDevice.put(alias.mName, mappingDevice);
 				}
 				JSONArray controller = device.getJSONArray("controller");
 				//Log.i(TAG, "controller="+controller.toString());
@@ -176,10 +186,15 @@ public class MappingParser {
 					JSONArray controllerAlias = objController.getJSONArray("alias");
 					//Log.i(TAG, "controllerAlias="+controllerAlias.toString());
 					for (int aliasId=0; aliasId < controllerAlias.length(); ++aliasId) {
-						String strController = controllerAlias.getString(aliasId);
-						Log.i(TAG, "controller alias="+strController);
-						mappingController.mAlias.add(strController);
-						mappingDevice.mController.put(strController, mappingController);
+						JSONObject objAlias = controllerAlias.getJSONObject(aliasId);
+						//Log.i(TAG, "controller alias="+objAlias.toString());
+						Alias alias = new Alias();
+						alias.mName = objAlias.getString("name");
+						Log.i(TAG, "controller alias name="+alias.mName);
+						alias.mFriendlyName = objAlias.getString("friendly_name");
+						Log.i(TAG, "controller alias friendly_name="+alias.mFriendlyName);
+						mappingController.mAlias.put(alias.mName, alias);
+						mappingDevice.mController.put(alias.mName, mappingController);
 					}
 					if (objController.has("axis_remap")) {
 						JSONArray axis = objController.getJSONArray("axis_remap");
@@ -211,9 +226,9 @@ public class MappingParser {
 							//Log.i(TAG, "sourceAxis="+sourceAxis);
 							mappingButton.mActionDown = (float)objButton.getDouble("action_down");
 							//Log.i(TAG, "actionDown="+actionDown);
-							String destinationKeyCode = objButton.getString("destination_keycode"); 
+							int destinationKeyCode = objButton.getInt("destination_keycode"); 
 							//Log.i(TAG, "destinationKeyCode="+destinationKeyCode);
-							mappingButton.mDestinationKeyCode = getKeyCode(destinationKeyCode);
+							mappingButton.mDestinationKeyCode = destinationKeyCode;
 							
 							mappingController.mButtonIsAxis.add(mappingButton);
 						}
@@ -229,7 +244,7 @@ public class MappingParser {
 							//Log.i(TAG, "objButton="+objButton);
 							mappingButton.mSourceKeyCode = objButton.getInt("source_keycode"); 
 							//Log.i(TAG, "sourceKeycode="+mappingButton.mSourceKeyCode);
-							String destination_keycode = objButton.getString("destination_keycode"); 
+							int destination_keycode = objButton.getInt("destination_keycode"); 
 							//Log.i(TAG, "destination_keycode="+destination_keycode);							
 							//Log.i(TAG, "sourceKeycode="+mappingButton.mSourceKeyCode+" destination_keycode="+destination_keycode);
 							
@@ -242,7 +257,7 @@ public class MappingParser {
 								}
 							}
 
-							mappingButton.mDestinationKeyCode = getKeyCode(destination_keycode);
+							mappingButton.mDestinationKeyCode = destination_keycode;
 							
 							mappingController.mButton.put(mappingButton.mSourceKeyCode, mappingButton);
 						}
