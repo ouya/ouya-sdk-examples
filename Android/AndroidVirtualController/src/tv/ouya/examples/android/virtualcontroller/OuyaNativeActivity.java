@@ -70,7 +70,8 @@ public class OuyaNativeActivity extends NativeActivity {
 			for (int i = 0; i < buttons.size(); ++i) {
 				ButtonIsAxis button = buttons.get(i);	    			
 				float axis = motionEvent.getAxisValue(button.mSourceAxis);
-				if (axis == button.mActionDown) {
+				if (axis >= button.mActionDownMin &&
+					axis <= button.mActionDownMax) {
 					if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
 						!mLastValue.get(button.mDestinationKeyCode)) {					
 						mLastValue.put(button.mDestinationKeyCode, true);

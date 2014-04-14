@@ -46,7 +46,8 @@ public class MappingParser {
 	protected class ButtonIsAxis
 	{
 		public int mSourceAxis = 0;
-		public float mActionDown = 0;
+		public float mActionDownMax = 0;
+		public float mActionDownMin = 0;
 		public int mDestinationKeyCode = 0;
 	}
 	private class Controller
@@ -224,8 +225,10 @@ public class MappingParser {
 							//Log.i(TAG, "objButton="+objButton);
 							mappingButton.mSourceAxis = objButton.getInt("source_axis");
 							//Log.i(TAG, "sourceAxis="+sourceAxis);
-							mappingButton.mActionDown = (float)objButton.getDouble("action_down");
-							//Log.i(TAG, "actionDown="+actionDown);
+							mappingButton.mActionDownMax = (float)objButton.getDouble("action_down_max");
+							//Log.i(TAG, "actionDownMax="+actionDownMax
+							mappingButton.mActionDownMin = (float)objButton.getDouble("action_down_min");
+							//Log.i(TAG, "actionDownMin="+actionDownMin);
 							int destinationKeyCode = objButton.getInt("destination_keycode"); 
 							//Log.i(TAG, "destinationKeyCode="+destinationKeyCode);
 							mappingButton.mDestinationKeyCode = destinationKeyCode;

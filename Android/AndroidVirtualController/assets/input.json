@@ -45,22 +45,26 @@
             "button_is_axis": [
               {
                 "source_axis": 16,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 19
               },
               {
                 "source_axis": 16,
-                "action_down": 1,
+				"action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 20
               },
               {
                 "source_axis": 15,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 22
               },
               {
                 "source_axis": 15,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 21
               }
             ],
@@ -198,6 +202,74 @@
                 "destination_keycode": 21
               }
             ]
+          },
+          {
+            "alias": [
+              {
+                "name": "Microsoft X-Box 360 pad",
+                "friendly_name": "Microsoft X-Box 360 pad"
+              }
+            ],
+            "button_is_axis": [
+              {
+                "source_axis": 16,
+                "action_down_min": -1,
+                "action_down_max": -1,
+                "destination_keycode": 19
+              },
+              {
+                "source_axis": 16,
+                "action_down_min": 1,
+                "action_down_max": 1,
+                "destination_keycode": 20
+              },
+              {
+                "source_axis": 15,
+                "action_down_min": 1,
+                "action_down_max": 1,
+                "destination_keycode": 22
+              },
+              {
+                "source_axis": 15,
+                "action_down_min": -1,
+                "action_down_max": -1,
+                "destination_keycode": 21
+              }
+            ],
+            "button": [
+              {
+                "source_keycode": 96,
+                "destination_keycode": 96
+              },
+              {
+                "source_keycode": 97,
+                "destination_keycode": 97
+              },
+              {
+                "source_keycode": 99,
+                "destination_keycode": 99
+              },
+              {
+                "source_keycode": 100,
+                "destination_keycode": 100
+              },
+              {
+                "source_keycode": 102,
+                "destination_keycode": 102
+              },
+              {
+                "source_keycode": 103,
+                "destination_keycode": 103
+              },
+              {
+                "source_keycode": 106,
+                "destination_keycode": 106
+              },
+              {
+                "source_keycode": 107,
+                "destination_keycode": 107
+              }
+            ]
           }
         ]
       }
@@ -299,22 +371,26 @@
             "button_is_axis": [
               {
                 "source_axis": 16,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 19
               },
               {
                 "source_axis": 16,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 20
               },
               {
                 "source_axis": 15,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 22
               },
               {
                 "source_axis": 15,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 21
               }
             ],
@@ -555,22 +631,26 @@
             "button_is_axis": [
               {
                 "source_axis": 16,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 19
               },
               {
                 "source_axis": 16,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 20
               },
               {
                 "source_axis": 15,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 22
               },
               {
                 "source_axis": 15,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 21
               }
             ],
@@ -641,22 +721,26 @@
             "button_is_axis": [
               {
                 "source_axis": 16,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 19
               },
               {
                 "source_axis": 16,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 20
               },
               {
                 "source_axis": 15,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 22
               },
               {
                 "source_axis": 15,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 21
               }
             ],
@@ -721,22 +805,26 @@
             "button_is_axis": [
               {
                 "source_axis": 16,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 19
               },
               {
                 "source_axis": 16,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 20
               },
               {
                 "source_axis": 15,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 22
               },
               {
                 "source_axis": 15,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 21
               }
             ],
@@ -813,22 +901,26 @@
             "button_is_axis": [
               {
                 "source_axis": 16,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 19
               },
               {
                 "source_axis": 16,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 20
               },
               {
                 "source_axis": 15,
-                "action_down": 1,
+                "action_down_min": 1,
+                "action_down_max": 1,
                 "destination_keycode": 22
               },
               {
                 "source_axis": 15,
-                "action_down": -1,
+                "action_down_min": -1,
+                "action_down_max": -1,
                 "destination_keycode": 21
               }
             ],
