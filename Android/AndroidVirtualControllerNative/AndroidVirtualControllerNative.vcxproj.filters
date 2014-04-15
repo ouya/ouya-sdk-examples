@@ -89,15 +89,9 @@
     <None Include="res\raw\boom.wav">
       <Filter>assets</Filter>
     </None>
-    <None Include="classes.dex" />
-    <None Include="libs\ouya-sdk.jar">
-      <Filter>libs</Filter>
-    </None>
+    <None Include="libs\classes.jar" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="native_app_glue\android_native_app_glue.c">
-      <Filter>jni</Filter>
-    </ClCompile>
     <ClCompile Include="jni\Activity.cpp">
       <Filter>java</Filter>
     </ClCompile>
@@ -161,11 +155,11 @@
     <ClCompile Include="jni\DexFile.cpp">
       <Filter>java</Filter>
     </ClCompile>
+    <ClCompile Include="jni\android_native_app_glue.c">
+      <Filter>jni</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="native_app_glue\android_native_app_glue.h">
-      <Filter>jni</Filter>
-    </ClInclude>
     <ClInclude Include="jni\Activity.h">
       <Filter>java</Filter>
     </ClInclude>
@@ -225,6 +219,9 @@
     </ClInclude>
     <ClInclude Include="jni\DexFile.h">
       <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\android_native_app_glue.h">
+      <Filter>jni</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

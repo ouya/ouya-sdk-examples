@@ -93,6 +93,8 @@ namespace dalvik_system_DexFile
 			_env->ExceptionDescribe();
 			_env->ExceptionClear();
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to construct DexFile");
+			_env->DeleteLocalRef(_instance);
+			_instance = 0;
 			return;
 		}
 

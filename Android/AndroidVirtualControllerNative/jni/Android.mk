@@ -37,7 +37,8 @@ MappingParser.h \
 OuyaController.h \
 SoundPool.h \
 String.h \
-System.h
+System.h \
+android_native_app_glue.h
 
 LOCAL_SRC_FILES := \
 Activity.cpp \
@@ -60,12 +61,11 @@ MappingParser.cpp \
 OuyaController.cpp \
 SoundPool.cpp \
 String.cpp \
-System.cpp
+System.cpp \
+android_native_app_glue.c
 
-LOCAL_LDLIBS := -lc -lm -llog -landroid -lEGL -lGLESv1_CM -ljnigraphics -lgcc -lstlport
-LOCAL_STATIC_LIBRARIES := android_native_app_glue
-
-LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := ouya-sdk.jar
-include $(BUILD_MULTI_PREBUILT)
+#LOCAL_LDLIBS := -lc -lm -llog -landroid -lEGL -lGLESv1_CM -ljnigraphics -lgcc -lstlport
+LOCAL_LDLIBS := -lc -lm -llog -landroid -lEGL -lGLESv1_CM -ljnigraphics
+LOCAL_STATIC_LIBRARIES := android_native_app_glue gcc stlport
 
 include $(BUILD_SHARED_LIBRARY)

@@ -38,10 +38,7 @@
     <None Include="assets\u.png" />
     <None Include="assets\y.png" />
     <None Include="build.xml" />
-    <None Include="classes.dex" />
-    <None Include="libs\ouya-sdk.jar">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <None Include="libs\classes.jar" />
     <None Include="local.properties" />
     <None Include="proguard.cfg" />
     <None Include="project.properties" />
@@ -51,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jni\Activity.cpp" />
+    <ClCompile Include="jni\android_native_app_glue.c" />
     <ClCompile Include="jni\ApplicationInfo.cpp" />
     <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\AudioManager.cpp" />
@@ -71,10 +69,10 @@
     <ClCompile Include="jni\SoundPool.cpp" />
     <ClCompile Include="jni\String.cpp" />
     <ClCompile Include="jni\System.cpp" />
-    <ClCompile Include="native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\Activity.h" />
+    <ClInclude Include="jni\android_native_app_glue.h" />
     <ClInclude Include="jni\ApplicationInfo.h" />
     <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\AudioManager.h" />
@@ -94,7 +92,6 @@
     <ClInclude Include="jni\SoundPool.h" />
     <ClInclude Include="jni\String.h" />
     <ClInclude Include="jni\System.h" />
-    <ClInclude Include="native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9619C1F6-A7A6-4DA9-8268-D97EAD671FE8}</ProjectGuid>
@@ -126,13 +123,18 @@
     </Link>
     <AntBuild>
       <AntBuildPath>$(ProjectDir)\</AntBuildPath>
-      <JarDependencies>ouya-sdk.jar</JarDependencies>
+      <JarDependencies>
+      </JarDependencies>
       <JarDirectories>libs</JarDirectories>
       <NativeLibDirectories>
       </NativeLibDirectories>
       <NativeLibDependencies>
       </NativeLibDependencies>
     </AntBuild>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <ClCompile>

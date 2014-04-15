@@ -29,7 +29,7 @@
 #include <android/bitmap.h>
 #include <android/log.h>
 #include <android/sensor.h>
-#include "../native_app_glue/android_native_app_glue.h"
+#include "android_native_app_glue.h"
 
 #include "Activity.h"
 #include "ApplicationInfo.h"
@@ -468,8 +468,8 @@ static int engine_init_display(struct engine* engine) {
 
 		ApplicationInfo applicationInfo = context.getApplicationInfo();
 		std::string sourceDir = applicationInfo.sourceDir();
-		/*
 		DexFile dexFile = DexFile(sourceDir);
+		/*
 		std::vector<std::string> classes = dexFile.entries();
 		for (int index = 0; index < classes.size(); ++index)
 		{
@@ -782,6 +782,7 @@ static void debugOuyaMotionEvent()
 static void debugMotionEvent(AInputEvent* motionEvent)
 {
 	std::map<int, const char*> names;
+	/*
 	names[AMOTION_EVENT_AXIS_X] = "AXIS_X";
 	names[AMOTION_EVENT_AXIS_Y] = "AXIS_Y";
 	names[AMOTION_EVENT_AXIS_PRESSURE] = "AXIS_PRESSURE";
@@ -824,6 +825,51 @@ static void debugMotionEvent(AInputEvent* motionEvent)
 	names[AMOTION_EVENT_AXIS_GENERIC_14] = "AXIS_GENERIC_14";
 	names[AMOTION_EVENT_AXIS_GENERIC_15] = "AXIS_GENERIC_15";
 	names[AMOTION_EVENT_AXIS_GENERIC_16] = "AXIS_GENERIC_16";
+	*/
+
+	std::map<int, const char*>::iterator it = names.begin();
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_X, "AXIS_X"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_Y, "AXIS_Y"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_PRESSURE, "AXIS_PRESSURE"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_SIZE, "AXIS_SIZE"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_TOUCH_MAJOR, "AXIS_TOUCH_MAJOR"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_TOUCH_MINOR, "AXIS_TOUCH_MINOR"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_TOOL_MAJOR, "AXIS_TOOL_MAJOR"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_TOOL_MINOR, "AXIS_TOOL_MINOR"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_ORIENTATION, "AXIS_ORIENTATION"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_VSCROLL, "AXIS_VSCROLL"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_HSCROLL, "AXIS_HSCROLL"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_Z, "AXIS_Z"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_RX, "AXIS_RX"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_RY, "AXIS_RY"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_RZ, "AXIS_RZ"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_HAT_X, "AXIS_HAT_X"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_HAT_Y, "AXIS_HAT_Y"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_LTRIGGER, "AXIS_LTRIGGER"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_RTRIGGER, "AXIS_RTRIGGER"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_THROTTLE, "AXIS_THROTTLE"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_RUDDER, "AXIS_RUDDER"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_WHEEL, "AXIS_WHEEL"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GAS, "AXIS_GAS"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_BRAKE, "AXIS_BRAKE"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_DISTANCE, "AXIS_DISTANCE"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_TILT, "AXIS_TILT"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_1, "AXIS_GENERIC_1"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_2, "AXIS_GENERIC_2"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_3, "AXIS_GENERIC_3"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_4, "AXIS_GENERIC_4"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_5, "AXIS_GENERIC_5"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_6, "AXIS_GENERIC_6"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_7, "AXIS_GENERIC_7"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_8, "AXIS_GENERIC_8"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_9, "AXIS_GENERIC_9"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_10, "AXIS_GENERIC_10"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_11, "AXIS_GENERIC_11"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_12, "AXIS_GENERIC_12"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_13, "AXIS_GENERIC_13"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_14, "AXIS_GENERIC_14"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_15, "AXIS_GENERIC_15"));
+	names.insert(it, std::pair<int, const char*>(AMOTION_EVENT_AXIS_GENERIC_16, "AXIS_GENERIC_16"));
 
 	for (std::map<int, const char*>::iterator iter = names.begin(); iter != names.end(); ++iter)
 	{
