@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="res">
+      <UniqueIdentifier>b03e2e58-64ff-4587-9fdf-bb573b1122ca</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\values">
+      <UniqueIdentifier>f703d8fc-dd1a-4b93-9067-dbe44399f927</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml" />
+    <None Include="build.xml" />
+    <None Include="project.properties" />
+    <None Include="proguard.cfg" />
+    <None Include="res\values\strings.xml">
+      <Filter>res\values</Filter>
+    </None>
+    <None Include="AndroidVirtualControllerNativeActivity.java" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AndroidVirtualControllerNativeActivity.c" />
+  </ItemGroup>
+</Project>

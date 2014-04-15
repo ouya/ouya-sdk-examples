@@ -1,0 +1,241 @@
+{
+    "map": [{
+        "device": {
+            "alias": ["OUYA Console"],
+            "controller": [{
+                "alias": ["Amazon Fire Game Controller"],
+                "axis_remap": [{
+                    "source_axis": 22,
+                    "destination_axis": 18
+                }, {
+                    "source_axis": 23,
+                    "destination_axis": 17
+                }],
+                "button_is_axis": [{
+                    "source_axis": 16,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_axis": 16,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_axis": 15,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_axis": 15,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }],
+                "button": [{
+                    "source_keycode": 96,
+                    "destination_keycode": "BUTTON_O"
+                }, {
+                    "source_keycode": 99,
+                    "destination_keycode": "BUTTON_U"
+                }, {
+                    "source_keycode": 100,
+                    "destination_keycode": "BUTTON_Y"
+                }, {
+                    "source_keycode": 97,
+                    "destination_keycode": "BUTTON_A"
+                }, {
+                    "source_keycode": 102,
+                    "destination_keycode": "BUTTON_L1"
+                }, {
+                    "source_keycode": 103,
+                    "destination_keycode": "BUTTON_R1"
+                }, {
+                    "source_keycode": 106,
+                    "destination_keycode": "BUTTON_L3"
+                }, {
+                    "source_keycode": 107,
+                    "destination_keycode": "BUTTON_R3"
+                }, {
+                    "source_keycode": 19,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_keycode": 20,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_keycode": 22,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_keycode": 21,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }]
+            }, {
+                "alias": ["GameStick Controller"],
+                "button_is_axis": [{
+                    "source_axis": 16,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_axis": 16,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_axis": 15,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_axis": 15,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }],
+                "button": [{
+                    "source_keycode": 96,
+                    "destination_keycode": "BUTTON_O"
+                }, {
+                    "source_keycode": 99,
+                    "destination_keycode": "BUTTON_U"
+                }, {
+                    "source_keycode": 100,
+                    "destination_keycode": "BUTTON_Y"
+                }, {
+                    "source_keycode": 97,
+                    "destination_keycode": "BUTTON_A"
+                }, {
+                    "source_keycode": 102,
+                    "destination_keycode": "BUTTON_L1"
+                }, {
+                    "source_keycode": 103,
+                    "destination_keycode": "BUTTON_R1"
+                }, {
+                    "source_keycode": 106,
+                    "destination_keycode": "BUTTON_L3"
+                }, {
+                    "source_keycode": 107,
+                    "destination_keycode": "BUTTON_R3"
+                }, {
+                    "source_keycode": 19,
+                    "destination_keycode": "BUTTON_DPAD_UP",
+                    "exclude_source": [
+                        16777232
+                    ]
+                }, {
+                    "source_keycode": 20,
+                    "destination_keycode": "BUTTON_DPAD_DOWN",
+                    "exclude_source": [
+                        16777232
+                    ]
+                }, {
+                    "source_keycode": 22,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT",
+                    "exclude_source": [
+                        16777232
+                    ]
+                }, {
+                    "source_keycode": 21,
+                    "destination_keycode": "BUTTON_DPAD_LEFT",
+                    "exclude_source": [
+                        16777232
+                    ]
+                }]
+            }, {
+                "alias": ["Microsoft X-Box 360 pad"],
+                "button_is_axis": [{
+                    "source_axis": 16,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_axis": 16,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_axis": 15,
+                    "action_down": 1,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_axis": 15,
+                    "action_down": -1,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }],
+                "button": [{
+                    "source_keycode": 96,
+                    "destination_keycode": "BUTTON_O"
+                }, {
+                    "source_keycode": 97,
+                    "destination_keycode": "BUTTON_A"
+                }, {
+                    "source_keycode": 99,
+                    "destination_keycode": "BUTTON_U"
+                }, {
+                    "source_keycode": 100,
+                    "destination_keycode": "BUTTON_Y"
+                }, {
+                    "source_keycode": 102,
+                    "destination_keycode": "BUTTON_L1"
+                }, {
+                    "source_keycode": 103,
+                    "destination_keycode": "BUTTON_R1"
+                }, {
+                    "source_keycode": 106,
+                    "destination_keycode": "BUTTON_L3"
+                }, {
+                    "source_keycode": 107,
+                    "destination_keycode": "BUTTON_R3"
+                }]
+            }, {
+                "alias": ["OUYA Game Controller"],
+                "axis_remap": [{
+                    "source_axis": 0,
+                    "destination_axis": 0
+                }, {
+                    "source_axis": 1,
+                    "destination_axis": 1
+                }, {
+                    "source_axis": 11,
+                    "destination_axis": 11
+				}, {
+                    "source_axis": 14,
+                    "destination_axis": 14
+                }, {
+                    "source_axis": 17,
+                    "destination_axis": 17
+                }, {
+                    "source_axis": 18,
+                    "destination_axis": 18
+                }],
+                "button": [{
+                    "source_keycode": 96,
+                    "destination_keycode": "BUTTON_O"
+                }, {
+                    "source_keycode": 99,
+                    "destination_keycode": "BUTTON_U"
+                }, {
+                    "source_keycode": 100,
+                    "destination_keycode": "BUTTON_Y"
+                }, {
+                    "source_keycode": 97,
+                    "destination_keycode": "BUTTON_A"
+                }, {
+                    "source_keycode": 102,
+                    "destination_keycode": "BUTTON_L1"
+                }, {
+                    "source_keycode": 103,
+                    "destination_keycode": "BUTTON_R1"
+                }, {
+                    "source_keycode": 106,
+                    "destination_keycode": "BUTTON_L3"
+                }, {
+                    "source_keycode": 107,
+                    "destination_keycode": "BUTTON_R3"
+                }, {
+                    "source_keycode": 19,
+                    "destination_keycode": "BUTTON_DPAD_UP"
+                }, {
+                    "source_keycode": 20,
+                    "destination_keycode": "BUTTON_DPAD_DOWN"
+                }, {
+                    "source_keycode": 22,
+                    "destination_keycode": "BUTTON_DPAD_RIGHT"
+                }, {
+                    "source_keycode": 21,
+                    "destination_keycode": "BUTTON_DPAD_LEFT"
+                }]
+            }]
+        }
+    }]
+}
