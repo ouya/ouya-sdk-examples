@@ -18,14 +18,54 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := AndroidVirtualControllerNative
 LOCAL_C_INCLUDES := \
-Activity.h AssetManager.h Bitmap.h BitmapFactory.h \
-Context.h InputStream.h String.h OuyaController.h
+Activity.h \
+ApplicationInfo.h \
+AssetManager.h \
+AudioManager.h \
+Bitmap.h \
+BitmapFactory.h \
+Build.h \
+ClassLoader.h \
+Context.h \
+DexFile.h \
+GLUtils.h \
+InputDevice.h \
+InputStream.h \
+JSONArray.h \
+JSONObject.h \
+MappingParser.h \
+OuyaController.h \
+SoundPool.h \
+String.h \
+System.h
 
-LOCAL_SRC_FILES := Activity.cpp AssetManager.cpp Bitmap.cpp \
-BitmapFactory.cpp Context.cpp InputStream.cpp String.cpp \
-main.cpp OuyaController.cpp
+LOCAL_SRC_FILES := \
+Activity.cpp \
+ApplicationInfo.cpp \
+AssetManager.cpp \
+AudioManager.cpp \
+Bitmap.cpp \
+BitmapFactory.cpp \
+Build.cpp \
+ClassLoader.cpp \
+Context.cpp \
+DexFile.cpp \
+GLUtils.cpp \
+InputDevice.cpp \
+InputStream.cpp \
+JSONArray.cpp \
+JSONObject.cpp \
+main.cpp \
+MappingParser.cpp \
+OuyaController.cpp \
+SoundPool.cpp \
+String.cpp \
+System.cpp
 
-LOCAL_LDLIBS := -lc -lm -llog -lgcc -landroid -lEGL -lGLESv1_CM -ljnigraphics
+LOCAL_LDLIBS := -lc -lm -llog -landroid -lEGL -lGLESv1_CM -ljnigraphics -lgcc -lstlport
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
+
+LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := ouya-sdk.jar
+include $(BUILD_MULTI_PREBUILT)
 
 include $(BUILD_SHARED_LIBRARY)

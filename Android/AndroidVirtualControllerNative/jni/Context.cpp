@@ -1,16 +1,20 @@
 #include <android/log.h>
 #include <jni.h>
 
+#include "ApplicationInfo.h"
 #include "AssetManager.h"
 #include "Context.h"
 
 #define LOG_TAG "android_content_res_AssetManager"
+
+using namespace android_content_pm_ApplicationInfo;
 
 namespace android_content_Context
 {
 	JNIEnv* Context::_env = 0;
 	jclass Context::_jcContext = 0;
 	jmethodID Context::_mGetApplicationContext = 0;
+	jmethodID Context::_mGetApplicationInfo = 0;
 	jmethodID Context::_mGetAssets = 0;
 
 	int Context::InitJNI(JNIEnv* env)
@@ -40,6 +44,20 @@ namespace android_content_Context
 			else
 			{
 				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strContextGetApplicationContext);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strGetApplicationInfo = "getApplicationInfo";
+			_mGetApplicationInfo = env->GetMethodID(_jcContext, strGetApplicationInfo, "()Landroid/content/pm/ApplicationInfo;");
+			if (_mGetApplicationInfo)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strGetApplicationInfo);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strGetApplicationInfo);
 				return JNI_ERR;
 			}
 		}
@@ -86,6 +104,26 @@ namespace android_content_Context
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get application context");
 		}
 		return Context(result);
+	}
+
+	ApplicationInfo Context::getApplicationInfo()
+	{
+		if (!_env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return ApplicationInfo(0);
+		}
+
+		jobject result = _env->CallObjectMethod(_instance, _mGetApplicationInfo);
+		if (result)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success get application info");
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get application info");
+		}
+		return ApplicationInfo(result);
 	}
 
 	android_content_res_AssetManager::AssetManager Context::getAssets()

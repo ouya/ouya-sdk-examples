@@ -80,14 +80,19 @@
     <None Include="assets\y.png">
       <Filter>assets</Filter>
     </None>
-    <None Include="libs\ouya-sdk.jar">
-      <Filter>libs</Filter>
-    </None>
     <None Include="assets\input.json">
       <Filter>assets</Filter>
     </None>
-    <None Include="res\raw\boom.wav" />
-    <None Include="res\raw\ouch.wav" />
+    <None Include="res\raw\ouch.wav">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="res\raw\boom.wav">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="classes.dex" />
+    <None Include="libs\ouya-sdk.jar">
+      <Filter>libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="native_app_glue\android_native_app_glue.c">
@@ -147,7 +152,15 @@
     <ClCompile Include="jni\SoundPool.cpp">
       <Filter>java</Filter>
     </ClCompile>
-    <ClCompile Include="jni\AudioManager.cpp" />
+    <ClCompile Include="jni\ApplicationInfo.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AudioManager.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\DexFile.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="native_app_glue\android_native_app_glue.h">
@@ -204,6 +217,14 @@
     <ClInclude Include="jni\SoundPool.h">
       <Filter>java</Filter>
     </ClInclude>
-    <ClInclude Include="jni\AudioManager.h" />
+    <ClInclude Include="jni\ApplicationInfo.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AudioManager.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\DexFile.h">
+      <Filter>java</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

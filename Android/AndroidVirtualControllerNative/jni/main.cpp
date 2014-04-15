@@ -32,12 +32,14 @@
 #include "../native_app_glue/android_native_app_glue.h"
 
 #include "Activity.h"
+#include "ApplicationInfo.h"
 #include "AudioManager.h"
 #include "AssetManager.h"
 #include "Bitmap.h"
 #include "BitmapFactory.h"
 #include "Build.h"
 #include "ClassLoader.h"
+#include "DexFile.h"
 #include "Context.h"
 #include "GLUtils.h"
 #include "InputDevice.h"
@@ -58,6 +60,7 @@
 
 using namespace android_app_Activity;
 using namespace android_content_Context;
+using namespace android_content_pm_ApplicationInfo;
 using namespace android_content_res_AssetManager;
 using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
@@ -66,6 +69,7 @@ using namespace android_os_Build;
 using namespace android_media_AudioManager;
 using namespace android_media_SoundPool;
 using namespace android_view_InputDevice;
+using namespace dalvik_system_DexFile;
 using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
 using namespace java_lang_String;
@@ -279,6 +283,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == ApplicationInfo::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == AudioManager::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -310,6 +319,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == Context::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == DexFile::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
@@ -451,6 +465,17 @@ static int engine_init_display(struct engine* engine) {
 		Activity activity = Activity(engine->app->activity->clazz);
 		Context context = activity.getApplicationContext();
 		AssetManager assetManager = context.getAssets();
+
+		ApplicationInfo applicationInfo = context.getApplicationInfo();
+		std::string sourceDir = applicationInfo.sourceDir();
+		/*
+		DexFile dexFile = DexFile(sourceDir);
+		std::vector<std::string> classes = dexFile.entries();
+		for (int index = 0; index < classes.size(); ++index)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Loaded: %s", classes[index].c_str());
+		}
+		*/
 
 		InputStream inputStream = assetManager.open("input.json", AssetManager::ACCESS_BUFFER());
 		int length = inputStream.available();

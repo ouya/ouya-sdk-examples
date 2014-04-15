@@ -38,6 +38,7 @@
     <None Include="assets\u.png" />
     <None Include="assets\y.png" />
     <None Include="build.xml" />
+    <None Include="classes.dex" />
     <None Include="libs\ouya-sdk.jar">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -50,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jni\Activity.cpp" />
+    <ClCompile Include="jni\ApplicationInfo.cpp" />
     <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\AudioManager.cpp" />
     <ClCompile Include="jni\Bitmap.cpp" />
@@ -57,6 +59,7 @@
     <ClCompile Include="jni\Build.cpp" />
     <ClCompile Include="jni\ClassLoader.cpp" />
     <ClCompile Include="jni\Context.cpp" />
+    <ClCompile Include="jni\DexFile.cpp" />
     <ClCompile Include="jni\GLUtils.cpp" />
     <ClCompile Include="jni\InputDevice.cpp" />
     <ClCompile Include="jni\InputStream.cpp" />
@@ -72,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\Activity.h" />
+    <ClInclude Include="jni\ApplicationInfo.h" />
     <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\AudioManager.h" />
     <ClInclude Include="jni\Bitmap.h" />
@@ -79,6 +83,7 @@
     <ClInclude Include="jni\Build.h" />
     <ClInclude Include="jni\ClassLoader.h" />
     <ClInclude Include="jni\Context.h" />
+    <ClInclude Include="jni\DexFile.h" />
     <ClInclude Include="jni\GLUtils.h" />
     <ClInclude Include="jni\InputDevice.h" />
     <ClInclude Include="jni\InputStream.h" />
