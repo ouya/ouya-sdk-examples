@@ -86,6 +86,8 @@
     <None Include="assets\input.json">
       <Filter>assets</Filter>
     </None>
+    <None Include="res\raw\boom.wav" />
+    <None Include="res\raw\ouch.wav" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="native_app_glue\android_native_app_glue.c">
@@ -142,6 +144,10 @@
     <ClCompile Include="jni\InputDevice.cpp">
       <Filter>java</Filter>
     </ClCompile>
+    <ClCompile Include="jni\SoundPool.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AudioManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="native_app_glue\android_native_app_glue.h">
@@ -195,5 +201,9 @@
     <ClInclude Include="jni\InputDevice.h">
       <Filter>java</Filter>
     </ClInclude>
+    <ClInclude Include="jni\SoundPool.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AudioManager.h" />
   </ItemGroup>
 </Project>

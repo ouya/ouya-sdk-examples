@@ -44,11 +44,14 @@
     <None Include="local.properties" />
     <None Include="proguard.cfg" />
     <None Include="project.properties" />
+    <None Include="res\raw\boom.wav" />
+    <None Include="res\raw\ouch.wav" />
     <None Include="res\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jni\Activity.cpp" />
     <ClCompile Include="jni\AssetManager.cpp" />
+    <ClCompile Include="jni\AudioManager.cpp" />
     <ClCompile Include="jni\Bitmap.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
     <ClCompile Include="jni\Build.cpp" />
@@ -62,6 +65,7 @@
     <ClCompile Include="jni\main.cpp" />
     <ClCompile Include="jni\MappingParser.cpp" />
     <ClCompile Include="jni\OuyaController.cpp" />
+    <ClCompile Include="jni\SoundPool.cpp" />
     <ClCompile Include="jni\String.cpp" />
     <ClCompile Include="jni\System.cpp" />
     <ClCompile Include="native_app_glue\android_native_app_glue.c" />
@@ -69,6 +73,7 @@
   <ItemGroup>
     <ClInclude Include="jni\Activity.h" />
     <ClInclude Include="jni\AssetManager.h" />
+    <ClInclude Include="jni\AudioManager.h" />
     <ClInclude Include="jni\Bitmap.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
     <ClInclude Include="jni\Build.h" />
@@ -81,6 +86,7 @@
     <ClInclude Include="jni\JSONObject.h" />
     <ClInclude Include="jni\MappingParser.h" />
     <ClInclude Include="jni\OuyaController.h" />
+    <ClInclude Include="jni\SoundPool.h" />
     <ClInclude Include="jni\String.h" />
     <ClInclude Include="jni\System.h" />
     <ClInclude Include="native_app_glue\android_native_app_glue.h" />

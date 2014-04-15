@@ -32,6 +32,7 @@
 #include "../native_app_glue/android_native_app_glue.h"
 
 #include "Activity.h"
+#include "AudioManager.h"
 #include "AssetManager.h"
 #include "Bitmap.h"
 #include "BitmapFactory.h"
@@ -45,6 +46,7 @@
 #include "JSONObject.h"
 #include "MappingParser.h"
 #include "OuyaController.h"
+#include "SoundPool.h"
 #include "String.h"
 #include "System.h"
 
@@ -61,6 +63,8 @@ using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace android_opengl_GLUtils;
 using namespace android_os_Build;
+using namespace android_media_AudioManager;
+using namespace android_media_SoundPool;
 using namespace android_view_InputDevice;
 using namespace java_io_InputStream;
 using namespace java_lang_ClassLoader;
@@ -148,6 +152,9 @@ static float g_textureCoords[8] =
 
 // face indices
 static short g_indices[4] = { 0, 1, 2, 3 };
+
+// defer initialization of the sound pool
+static SoundPool g_soundPool = SoundPool(0);
 
 // get device name
 static std::string getDeviceName(int id)
@@ -272,6 +279,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == AudioManager::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == AssetManager::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -328,6 +340,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == OuyaController::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == SoundPool::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
@@ -445,6 +462,8 @@ static int engine_init_display(struct engine* engine) {
 		delete configurationBytes;
 
 		g_parser.parse(strJson);
+
+		g_soundPool = SoundPool(5, AudioManager::STREAM_MUSIC(), 0);
 	}
 
     /*
