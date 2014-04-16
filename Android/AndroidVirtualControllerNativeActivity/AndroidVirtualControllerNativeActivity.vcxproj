@@ -20,6 +20,7 @@
   <ItemGroup>
     <None Include="AndroidManifest.xml" />
     <None Include="assets\a.png" />
+    <None Include="assets\boom.wav" />
     <None Include="assets\controller.png" />
     <None Include="assets\dpad_down.png" />
     <None Include="assets\dpad_left.png" />
@@ -30,6 +31,7 @@
     <None Include="assets\lt.png" />
     <None Include="assets\l_stick.png" />
     <None Include="assets\o.png" />
+    <None Include="assets\ouch.wav" />
     <None Include="assets\rb.png" />
     <None Include="assets\rt.png" />
     <None Include="assets\r_stick.png" />
@@ -48,6 +50,7 @@
     <ClCompile Include="jni\Activity.cpp" />
     <ClCompile Include="jni\android_native_app_glue.c" />
     <ClCompile Include="jni\ApplicationInfo.cpp" />
+    <ClCompile Include="jni\AssetFileDescriptor.cpp" />
     <ClCompile Include="jni\AssetManager.cpp" />
     <ClCompile Include="jni\AudioManager.cpp" />
     <ClCompile Include="jni\Bitmap.cpp" />
@@ -72,6 +75,7 @@
     <ClInclude Include="jni\Activity.h" />
     <ClInclude Include="jni\android_native_app_glue.h" />
     <ClInclude Include="jni\ApplicationInfo.h" />
+    <ClInclude Include="jni\AssetFileDescriptor.h" />
     <ClInclude Include="jni\AssetManager.h" />
     <ClInclude Include="jni\AudioManager.h" />
     <ClInclude Include="jni\Bitmap.h" />

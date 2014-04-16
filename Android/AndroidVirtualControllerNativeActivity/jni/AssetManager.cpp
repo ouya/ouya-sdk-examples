@@ -1,9 +1,12 @@
 #include <android/log.h>
 #include <jni.h>
 
+#include "AssetFileDescriptor.h";
 #include "AssetManager.h"
 
 #define LOG_TAG "android_content_res_AssetManager"
+
+using namespace android_content_res_AssetFileDescriptor;
 
 namespace android_content_res_AssetManager
 {
@@ -13,6 +16,7 @@ namespace android_content_res_AssetManager
 	jmethodID AssetManager::_mList = 0;
 	jmethodID AssetManager::_mOpen = 0;
 	jmethodID AssetManager::_mOpen2 = 0;
+	jmethodID AssetManager::_mOpenFd = 0;
 
 	int AssetManager::InitJNI(JNIEnv* env)
 	{
@@ -77,6 +81,20 @@ namespace android_content_res_AssetManager
 			const char* strAssetManagerOpen = "open";
 			_mOpen2 = env->GetMethodID(_jcAssetManager, strAssetManagerOpen, "(Ljava/lang/String;I)Ljava/io/InputStream;");
 			if (_mOpen2)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strAssetManagerOpen);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strAssetManagerOpen);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strAssetManagerOpen = "openFd";
+			_mOpenFd = env->GetMethodID(_jcAssetManager, strAssetManagerOpen, "(Ljava/lang/String;)Landroid/content/res/AssetFileDescriptor;");
+			if (_mOpenFd)
 			{
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strAssetManagerOpen);
 			}
@@ -203,6 +221,39 @@ namespace android_content_res_AssetManager
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on open file");
 			retVal.SetInstance(result);
+			return retVal;
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to open file");
+			return retVal;
+		}
+	}
+
+	AssetFileDescriptor AssetManager::openFd(const std::string& fileName)
+	{
+		AssetFileDescriptor retVal = AssetFileDescriptor(0);
+		if (!_env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return retVal;
+		}
+
+		jstring arg1 = _env->NewStringUTF(fileName.c_str());
+		jobject result = _env->CallObjectMethod(_instance, _mOpenFd, arg1);
+		if (_env->ExceptionCheck())
+		{
+			_env->ExceptionDescribe();
+			_env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to open file descriptor");
+			return retVal;
+		}
+		_env->DeleteLocalRef(arg1);
+		if (result)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on open file descriptor: %s", fileName.c_str());
+			retVal = AssetFileDescriptor(result);
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Success on open file descriptor: length=%d", retVal.getLength());
 			return retVal;
 		}
 		else

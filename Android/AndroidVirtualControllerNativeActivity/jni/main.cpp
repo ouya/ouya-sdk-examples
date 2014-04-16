@@ -34,6 +34,7 @@
 #include "Activity.h"
 #include "ApplicationInfo.h"
 #include "AudioManager.h"
+#include "AssetFileDescriptor.h"
 #include "AssetManager.h"
 #include "Bitmap.h"
 #include "BitmapFactory.h"
@@ -61,6 +62,7 @@
 using namespace android_app_Activity;
 using namespace android_content_Context;
 using namespace android_content_pm_ApplicationInfo;
+using namespace android_content_res_AssetFileDescriptor;
 using namespace android_content_res_AssetManager;
 using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
@@ -94,6 +96,10 @@ static std::map<int, float> g_axis;
 
 //button states
 static std::map<int, bool> g_button;
+
+//sound ids
+int g_soundBoom = 0;
+int g_soundOuch = 0;
 
 //gles textures
 const int TEXTURE_COUNT = 17;
@@ -295,6 +301,11 @@ jint RegisterClasses(ANativeActivity* activity)
 		return JNI_ERR;
 	}
 
+	if (JNI_ERR == AssetFileDescriptor::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
 	if (JNI_ERR == AssetManager::InitJNI(env))
 	{
 		return JNI_ERR;
@@ -481,7 +492,24 @@ static int engine_init_display(struct engine* engine) {
 
 		g_parser.parse(strJson);
 
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "****************");
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "****************");
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "****SOUND*******");
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "*****POOL*******");
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "****************");
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "****************");
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "****************");
+
 		g_soundPool = SoundPool(5, AudioManager::STREAM_MUSIC(), 0);
+
+		// load the resources
+		AssetFileDescriptor afd1 = assetManager.openFd("boom.wav");
+		g_soundBoom = g_soundPool.load(afd1, 1);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "boom.wav file=%d length=%ld", g_soundBoom, afd1.getLength());
+
+		AssetFileDescriptor afd2 = assetManager.openFd("ouch.wav");
+		g_soundOuch = g_soundPool.load(afd2, 1);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "ouch.wav file=%d length=%ld", g_soundOuch, afd2.getLength());
 	}
 
     /*
@@ -874,6 +902,12 @@ static void debugMotionEvent(AInputEvent* motionEvent)
 static void passOnKeyDown(int deviceId, int keyCode)
 {
 	//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyDown: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
+	
+	if (!isPressed(keyCode))
+	{
+		g_soundPool.play(g_soundBoom, 0.99, 0.99, 0, 0, 1);
+	}
+	
 	g_button[keyCode] = true;
 	//debugOuyaKeyEvent();
 }
@@ -881,6 +915,12 @@ static void passOnKeyDown(int deviceId, int keyCode)
 static void passOnKeyUp(int deviceId, int keyCode)
 {
 	//__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "passOnKeyUp: deviceId=%d keyCode=%s", deviceId, MappingParser::debugGetButtonName(keyCode).c_str());
+	
+	if (isPressed(keyCode))
+	{
+		g_soundPool.play(g_soundOuch, 0.99, 0.99, 0, 0, 1);
+	}
+	
 	g_button[keyCode] = false;
 	//debugOuyaKeyEvent();
 }
