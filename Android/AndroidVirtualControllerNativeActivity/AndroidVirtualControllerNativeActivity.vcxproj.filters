@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="res">
@@ -6,6 +6,15 @@
     </Filter>
     <Filter Include="res\values">
       <UniqueIdentifier>f703d8fc-dd1a-4b93-9067-dbe44399f927</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{bcc83f61-2937-4d2c-9c07-7f8ab73563e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="java">
+      <UniqueIdentifier>{dc2a72e5-a34d-455f-a5e7-9639f73d9fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jni">
+      <UniqueIdentifier>{f1850933-a8fa-49cd-99d9-ef1613941337}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -16,9 +25,206 @@
     <None Include="res\values\strings.xml">
       <Filter>res\values</Filter>
     </None>
-    <None Include="AndroidVirtualControllerNativeActivity.java" />
+    <None Include="libs\ouya-sdk.jar" />
+    <None Include="src\tv\ouya\examples\android\androidvirtualcontrollernativeactivity\AndroidVirtualControllerNativeActivity.java" />
+    <None Include="assets\a.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\boom.wav">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\r_stick.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\rb.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\rt.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\thumbl.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\thumbr.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\u.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\y.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\controller.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_down.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_left.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_right.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\dpad_up.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\input.json">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\l_stick.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\lb.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\lt.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\o.png">
+      <Filter>assets</Filter>
+    </None>
+    <None Include="assets\ouch.wav">
+      <Filter>assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AndroidVirtualControllerNativeActivity.c" />
+    <ClCompile Include="jni\Activity.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\android_native_app_glue.c">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\ApplicationInfo.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AssetFileDescriptor.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AssetManager.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AudioManager.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Bitmap.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\BitmapFactory.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Build.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\ClassLoader.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\Context.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\DexFile.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\GLUtils.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\InputDevice.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\InputStream.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\JSONArray.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\JSONObject.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\OuyaController.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\SoundPool.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\String.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\System.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\main.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\MappingParser.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\Activity.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\android_native_app_glue.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\ApplicationInfo.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AssetFileDescriptor.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AssetManager.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AudioManager.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Bitmap.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\BitmapFactory.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Build.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\ClassLoader.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Context.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\DexFile.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\GLUtils.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\InputDevice.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\InputStream.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\JSONArray.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\JSONObject.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\OuyaController.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\SoundPool.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\String.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\System.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\MappingParser.h">
+      <Filter>jni</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
