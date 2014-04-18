@@ -158,6 +158,12 @@
     <ClCompile Include="jni\MappingParser.cpp">
       <Filter>jni</Filter>
     </ClCompile>
+    <ClCompile Include="jni\AudioFormat.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\AudioTrack.cpp">
+      <Filter>java</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\Activity.h">
@@ -225,6 +231,18 @@
     </ClInclude>
     <ClInclude Include="jni\MappingParser.h">
       <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AudioTrack.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\AudioFormat.h">
+      <Filter>java</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Audio_Hit.h">
+      <Filter>assets</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\Audio_Explode.h">
+      <Filter>assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -33,7 +33,9 @@
 
 #include "Activity.h"
 #include "ApplicationInfo.h"
+#include "AudioFormat.h"
 #include "AudioManager.h"
+#include "AudioTrack.h"
 #include "AssetFileDescriptor.h"
 #include "AssetManager.h"
 #include "Bitmap.h"
@@ -53,6 +55,10 @@
 #include "String.h"
 #include "System.h"
 
+//sound assets
+#include "Audio_Explode.h"
+#include "Audio_Hit.h"
+
 #define LOG_TAG "VirtualControllerNativeActivity"
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__))
@@ -68,7 +74,9 @@ using namespace android_graphics_Bitmap;
 using namespace android_graphics_BitmapFactory;
 using namespace android_opengl_GLUtils;
 using namespace android_os_Build;
+using namespace audio_media_AudioFormat;
 using namespace android_media_AudioManager;
+using namespace android_media_AudioTrack;
 using namespace android_media_SoundPool;
 using namespace android_view_InputDevice;
 using namespace dalvik_system_DexFile;
@@ -165,6 +173,9 @@ static short g_indices[4] = { 0, 1, 2, 3 };
 
 // defer initialization of the sound pool
 static SoundPool g_soundPool = SoundPool(0);
+
+// defer initialization of the audio track
+static AudioTrack g_audioTrack = AudioTrack(0);
 
 // get device name
 static std::string getDeviceName(int id)
@@ -297,6 +308,11 @@ jint RegisterClasses(ANativeActivity* activity)
 	}
 
 	if (JNI_ERR == AudioManager::InitJNI(env))
+	{
+		return JNI_ERR;
+	}
+
+	if (JNI_ERR == AudioTrack::InitJNI(env))
 	{
 		return JNI_ERR;
 	}
@@ -510,6 +526,10 @@ static int engine_init_display(struct engine* engine) {
 		AssetFileDescriptor afd2 = assetManager.openFd("ouch.wav");
 		g_soundOuch = g_soundPool.load(afd2, 1);
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "ouch.wav file=%d length=%ld", g_soundOuch, afd2.getLength());
+
+		g_audioTrack = AudioTrack(AudioManager::STREAM_MUSIC(), 11025, AudioFormat::CHANNEL_OUT_MONO(), AudioFormat::ENCODING_PCM_8BIT(), 11025, AudioTrack::MODE_STREAM());
+
+		g_audioTrack.write((jbyte*)Assets::AUDIO_EXPLODE, 0, sizeof(Assets::AUDIO_EXPLODE));
 	}
 
     /*
@@ -906,6 +926,7 @@ static void passOnKeyDown(int deviceId, int keyCode)
 	if (!isPressed(keyCode))
 	{
 		g_soundPool.play(g_soundBoom, 0.99, 0.99, 0, 0, 1);
+		//g_audioTrack.play();
 	}
 	
 	g_button[keyCode] = true;
@@ -919,6 +940,7 @@ static void passOnKeyUp(int deviceId, int keyCode)
 	if (isPressed(keyCode))
 	{
 		g_soundPool.play(g_soundOuch, 0.99, 0.99, 0, 0, 1);
+		//g_audioTrack.play();
 	}
 	
 	g_button[keyCode] = false;

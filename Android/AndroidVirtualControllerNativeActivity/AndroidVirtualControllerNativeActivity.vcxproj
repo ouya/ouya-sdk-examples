@@ -52,7 +52,9 @@
     <ClCompile Include="jni\ApplicationInfo.cpp" />
     <ClCompile Include="jni\AssetFileDescriptor.cpp" />
     <ClCompile Include="jni\AssetManager.cpp" />
+    <ClCompile Include="jni\AudioFormat.cpp" />
     <ClCompile Include="jni\AudioManager.cpp" />
+    <ClCompile Include="jni\AudioTrack.cpp" />
     <ClCompile Include="jni\Bitmap.cpp" />
     <ClCompile Include="jni\BitmapFactory.cpp" />
     <ClCompile Include="jni\Build.cpp" />
@@ -77,7 +79,11 @@
     <ClInclude Include="jni\ApplicationInfo.h" />
     <ClInclude Include="jni\AssetFileDescriptor.h" />
     <ClInclude Include="jni\AssetManager.h" />
+    <ClInclude Include="jni\AudioFormat.h" />
     <ClInclude Include="jni\AudioManager.h" />
+    <ClInclude Include="jni\AudioTrack.h" />
+    <ClInclude Include="jni\Audio_Explode.h" />
+    <ClInclude Include="jni\Audio_Hit.h" />
     <ClInclude Include="jni\Bitmap.h" />
     <ClInclude Include="jni\BitmapFactory.h" />
     <ClInclude Include="jni\Build.h" />
