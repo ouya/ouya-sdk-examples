@@ -51,7 +51,7 @@
               },
               {
                 "source_axis": 16,
-				"action_down_min": 1,
+                "action_down_min": 1,
                 "action_down_max": 1,
                 "destination_keycode": 20
               },
@@ -123,7 +123,8 @@
             "alias": [
               {
                 "name": "Broadcom Bluetooth HID",
-                "friendly_name": "OUYA Controller"
+                "friendly_name": "OUYA Controller",
+                "fallback": true
               }
             ],
             "axis_remap": [
@@ -287,7 +288,8 @@
             "alias": [
               {
                 "name": "OUYA Game Controller",
-                "friendly_name": "OUYA Game Controller"
+                "friendly_name": "OUYA Game Controller",
+                "fallback": true
               }
             ],
             "axis_remap": [
@@ -461,7 +463,8 @@
             "alias": [
               {
                 "name": "Broadcom Bluetooth HID",
-                "friendly_name": "OUYA Game Controller"
+                "friendly_name": "OUYA Game Controller",
+                "fallback": true
               }
             ],
             "axis_remap": [
@@ -549,7 +552,8 @@
             "alias": [
               {
                 "name": "Broadcom Bluetooth HID",
-                "friendly_name": "OUYA Game Controller"
+                "friendly_name": "OUYA Game Controller",
+                "fallback": true
               }
             ],
             "axis_remap": [
@@ -697,7 +701,8 @@
         "alias": [
           {
             "name": "OUYA Console",
-            "friendly_name": "OUYA Console"
+            "friendly_name": "OUYA Console",
+            "fallback": true
           }
         ],
         "controller": [
@@ -963,7 +968,8 @@
             "alias": [
               {
                 "name": "OUYA Game Controller",
-                "friendly_name": "OUYA Game Controller"
+                "friendly_name": "OUYA Game Controller",
+                "fallback": true
               }
             ],
             "button": [
