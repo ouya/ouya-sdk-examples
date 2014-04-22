@@ -2,7 +2,9 @@ package tv.ouya.examples.android.virtualcontroller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import android.os.Build;
@@ -23,7 +25,7 @@ public class OuyaActivity extends Activity {
 	
 	private static final String TAG = OuyaActivity.class.getSimpleName();	
 	
-	private HashMap<Integer, Boolean> mLastValue = new HashMap<Integer, Boolean>();
+	private List<HashMap<Integer, Boolean>> mLastValue = new ArrayList<HashMap<Integer, Boolean>>();
 	
 	private MappingParser mParser = new MappingParser();
 
@@ -49,6 +51,10 @@ public class OuyaActivity extends Activity {
 		}
 		
 		OuyaController.init(this);
+		
+		for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index) {
+			mLastValue.add(new HashMap<Integer, Boolean>());
+		}
 		
 		Log.i(TAG, "****************");
 		Log.i(TAG, "****************");
@@ -105,15 +111,17 @@ public class OuyaActivity extends Activity {
 	    Vector<ButtonIsAxis> buttons =
 				mParser.getButtonIsAxis(Build.MODEL, motionEvent.getDevice().getName());
 	    
+	    int playerId = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
+	    
 	    if (null != buttons) {		
 			for (int i = 0; i < buttons.size(); ++i) {
 				ButtonIsAxis button = buttons.get(i);	    			
 				float axis = motionEvent.getAxisValue(button.mSourceAxis);
 				if (axis >= button.mActionDownMin &&
 					axis <= button.mActionDownMax) {
-					if (!mLastValue.containsKey(button.mDestinationKeyCode) ||
-						!mLastValue.get(button.mDestinationKeyCode)) {					
-						mLastValue.put(button.mDestinationKeyCode, true);
+					if (!mLastValue.get(playerId).containsKey(button.mDestinationKeyCode) ||
+						!mLastValue.get(playerId).get(button.mDestinationKeyCode)) {					
+						mLastValue.get(playerId).put(button.mDestinationKeyCode, true);
 						//Log.i(TAG, "Injected ACTION_DOWN for " + button.mDestinationKeyCode);
 						long downTime = 0;
 						long eventTime = 0;
@@ -127,9 +135,9 @@ public class OuyaActivity extends Activity {
 						passDispatchKeyEvent(keyEvent);
 					}
 				} else {
-					if (mLastValue.containsKey(button.mDestinationKeyCode) &&
-						mLastValue.get(button.mDestinationKeyCode)) {					
-						mLastValue.put(button.mDestinationKeyCode, false);
+					if (mLastValue.get(playerId).containsKey(button.mDestinationKeyCode) &&
+						mLastValue.get(playerId).get(button.mDestinationKeyCode)) {					
+						mLastValue.get(playerId).put(button.mDestinationKeyCode, false);
 						//Log.i(TAG, "Injected ACTION_UP for " + button.mDestinationKeyCode);
 						long downTime = 0;
 						long eventTime = 0;
