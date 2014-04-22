@@ -3,7 +3,9 @@ package tv.ouya.examples.android.virtualcontroller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -22,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
 import tv.ouya.console.api.OuyaController;
+import tv.ouya.examples.android.virtualcontroller.MappingParser.Alias;
 
 public class MappingParser {
 	
@@ -31,6 +34,7 @@ public class MappingParser {
 	{
 		public String mName = "";
 		public String mFriendlyName = "";
+		public Boolean mFallback = false;
 	}
 	protected class Button
 	{
@@ -61,14 +65,22 @@ public class MappingParser {
 	{		
 		public HashMap<String, Alias> mAlias = new HashMap<String, Alias>();
 		public HashMap<String, Controller> mController = new HashMap<String, Controller>();
+		public Controller mControllerFallback = null;
 	}
 	
-	private HashMap<String, Device> mDevice = new HashMap<String, Device>();	
+	private HashMap<String, Device> mDevice = new HashMap<String, Device>();
+	private Device mDeviceFallback = null;
 	private Device getDevice(String deviceName) {
 		if (mDevice.containsKey(deviceName)) {
 			return mDevice.get(deviceName);
 		} else {
-			return null;
+			if (null != mDeviceFallback) {
+				Iterator<Entry<String, Alias>> it = mDeviceFallback.mAlias.entrySet().iterator();
+				while (it.hasNext()) {
+					Log.i(TAG, "Using device fallback="+it.next().getKey());
+				}
+			}
+			return mDeviceFallback;
 		}
 	}
 	private Controller getController(Device device, String controllerName) {
@@ -76,7 +88,13 @@ public class MappingParser {
 			return null;
 		}
 		if (!device.mController.containsKey(controllerName)) {
-			return null;
+			if (null != device.mControllerFallback) {
+				Iterator<Entry<String, Alias>> it = device.mControllerFallback.mAlias.entrySet().iterator();
+				while (it.hasNext()) {
+					Log.i(TAG, "Using controller fallback="+it.next().getKey());
+				}
+			}
+			return device.mControllerFallback;
 		}
 		return device.mController.get(controllerName);
 	}
@@ -173,8 +191,15 @@ public class MappingParser {
 					Log.i(TAG, "device alias name="+alias.mName);
 					alias.mFriendlyName = objAlias.getString("friendly_name");
 					Log.i(TAG, "device alias friendly_name="+alias.mFriendlyName);
+					if (objAlias.has("fallback")) {
+						alias.mFallback = objAlias.getBoolean("fallback");
+						Log.i(TAG, "device alias fallback="+alias.mFallback);
+					}
 					mappingDevice.mAlias.put(alias.mName, alias);
 					mDevice.put(alias.mName, mappingDevice);
+					if (alias.mFallback) {
+						mDeviceFallback = mappingDevice;
+					}
 				}
 				JSONArray controller = device.getJSONArray("controller");
 				//Log.i(TAG, "controller="+controller.toString());
@@ -194,8 +219,15 @@ public class MappingParser {
 						Log.i(TAG, "controller alias name="+alias.mName);
 						alias.mFriendlyName = objAlias.getString("friendly_name");
 						Log.i(TAG, "controller alias friendly_name="+alias.mFriendlyName);
+						if (objAlias.has("fallback")) {
+							alias.mFallback = objAlias.getBoolean("fallback");
+							Log.i(TAG, "controller alias fallback="+alias.mFallback);
+						}
 						mappingController.mAlias.put(alias.mName, alias);
 						mappingDevice.mController.put(alias.mName, mappingController);
+						if (alias.mFallback) {
+							mappingDevice.mControllerFallback = mappingController;
+						}
 					}
 					if (objController.has("axis_remap")) {
 						JSONArray axis = objController.getJSONArray("axis_remap");

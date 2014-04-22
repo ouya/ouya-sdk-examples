@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
@@ -53,7 +52,7 @@ public class OuyaActivity extends Activity {
 		
 		Log.i(TAG, "****************");
 		Log.i(TAG, "****************");
-		Log.i(TAG, "****START*******");
+		Log.i(TAG, "DETECTED CONTROLLERS");
 		Log.i(TAG, "****************");
 		Log.i(TAG, "****************");
 		
@@ -103,12 +102,6 @@ public class OuyaActivity extends Activity {
 		//Log.i(TAG, android.os.Build.MODEL + " : dispatchGenericMotionEvent");
 		//DebugLogging.debugMotionEvent(motionEvent);
 		
-		/*
-		if (true) {
-			return true;
-		}
-		*/
-	    
 	    Vector<ButtonIsAxis> buttons =
 				mParser.getButtonIsAxis(Build.MODEL, motionEvent.getDevice().getName());
 	    
@@ -214,12 +207,6 @@ public class OuyaActivity extends Activity {
 		Log.i(TAG, "model=" + android.os.Build.MODEL);
 		Log.i(TAG, "device=" + keyEvent.getDevice().getName());
 		Log.i(TAG, "dispatchKeyEvent="+keyCode + " action="+keyEvent.getAction());
-		
-		/*
-		if (true) {
-			return true;
-		}
-		*/
 		
 		MappingParser.Button button =
 				mParser.getButton(android.os.Build.MODEL, keyEvent.getDevice().getName(), keyCode);
