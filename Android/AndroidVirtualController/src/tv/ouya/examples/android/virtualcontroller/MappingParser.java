@@ -73,14 +73,14 @@ public class MappingParser {
 		public float mActionDownMin = 0;
 		public Integer mDestinationKeyCode = 0;
 	}
-	private class Controller
+	public class Controller
 	{
 		public HashMap<Integer, Alias> mAlias = new HashMap<Integer, Alias>();
 		public Vector<AxisRemap> mAxisRemap = new Vector<AxisRemap>();
 		public HashMap<Integer, Button> mButton = new HashMap<Integer, Button>();
 		public Vector<ButtonIsAxis> mButtonIsAxis = new Vector<ButtonIsAxis>();
 	}
-	private class Device
+	public class Device
 	{		
 		public HashMap<Integer, Alias> mAlias = new HashMap<Integer, Alias>();
 		public HashMap<Integer, Controller> mController = new HashMap<Integer, Controller>();
@@ -89,7 +89,7 @@ public class MappingParser {
 	
 	private HashMap<Integer, Device> mDevice = new HashMap<Integer, Device>();
 	private Device mDeviceFallback = null;
-	private Device getDevice(Integer deviceName) {
+	public Device getDevice(Integer deviceName) {
 		if (mDevice.containsKey(deviceName)) {
 			return mDevice.get(deviceName);
 		} else {
@@ -102,7 +102,7 @@ public class MappingParser {
 			return mDeviceFallback;
 		}
 	}
-	private Controller getController(Device device, Integer controllerName) {
+	public Controller getController(Device device, Integer controllerName) {
 		if (null == device) {
 			return null;
 		}
@@ -117,12 +117,7 @@ public class MappingParser {
 		}
 		return device.mController.get(controllerName);
 	}
-	public Button getButton(int deviceName, int controllerName, int keyCode) {
-		Device device = getDevice(deviceName);
-		if (null == device) {
-			return null;
-		}
-		Controller controller = getController(device, controllerName);
+	public Button getButton(Controller controller, int keyCode) {
 		if (null == controller) {
 			return null;
 		}
@@ -130,6 +125,14 @@ public class MappingParser {
 			return null;
 		}
 		return controller.mButton.get(keyCode);
+	}
+	public Button getButton(int deviceName, int controllerName, int keyCode) {
+		Device device = getDevice(deviceName);
+		if (null == device) {
+			return null;
+		}
+		Controller controller = getController(device, controllerName);
+		return getButton(controller, keyCode);
 	}
 	public Vector<AxisRemap> getAxisRemap(int deviceName, int controllerName) {
 		Device device = getDevice(deviceName);
