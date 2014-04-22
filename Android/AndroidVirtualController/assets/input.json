@@ -123,7 +123,7 @@
             "alias": [
               {
                 "name": "Broadcom Bluetooth HID",
-                "friendly_name": "OUYA Controller",
+                "friendly_name": "OUYA Game Controller",
                 "fallback": true
               }
             ],

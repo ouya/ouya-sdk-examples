@@ -64,13 +64,6 @@ public class MainActivity extends OuyaActivity {
 		imgButtonU = (ImageView)findViewById(R.id.imgButtonU);
 		imgButtonY = (ImageView)findViewById(R.id.imgButtonY);
 		
-		try {
-			Log.i(TAG, "Load class: " + ClassLoader.getSystemClassLoader().loadClass("OuyaController"));
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		OuyaController.init(this);
         OuyaController.showCursor(false); //hide mouse
 	}

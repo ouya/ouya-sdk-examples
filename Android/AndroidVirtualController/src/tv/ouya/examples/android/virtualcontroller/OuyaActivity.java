@@ -1,12 +1,6 @@
 package tv.ouya.examples.android.virtualcontroller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
+import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
@@ -17,13 +11,23 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.examples.android.virtualcontroller.MappingParser.AxisRemap;
 import tv.ouya.examples.android.virtualcontroller.MappingParser.ButtonIsAxis;
 
-public class OuyaActivity extends Activity {
+public class OuyaActivity extends Activity implements InputManager.InputDeviceListener
+{
+	private static final String TAG = OuyaActivity.class.getSimpleName();
 	
-	private static final String TAG = OuyaActivity.class.getSimpleName();	
+	private InputManager mInputManager;
 	
 	private List<HashMap<Integer, Boolean>> mLastValue = new ArrayList<HashMap<Integer, Boolean>>();
 	
@@ -33,7 +37,15 @@ public class OuyaActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		OuyaController.init(this);
+		
+		mInputManager = (InputManager)getSystemService(Context.INPUT_SERVICE);
+		if (null != mInputManager) {		
+			mInputManager.registerInputDeviceListener(this, null);
+		}
+		
 		Context context = getApplicationContext();
+		
 		String json = "";
 		
 		try {
@@ -49,8 +61,6 @@ public class OuyaActivity extends Activity {
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to load input configuration");
 		}
-		
-		OuyaController.init(this);
 		
 		for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index) {
 			mLastValue.add(new HashMap<Integer, Boolean>());
@@ -75,6 +85,14 @@ public class OuyaActivity extends Activity {
 		takeKeyEvents(true);
 	}
 	
+	@Override
+	protected void onDestroy() {
+		if (null != mInputManager) {
+			mInputManager.unregisterInputDeviceListener(this);
+		}
+		super.onDestroy();
+	}
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
 		return super.onKeyUp(keyCode, keyEvent);
@@ -101,17 +119,28 @@ public class OuyaActivity extends Activity {
 				break;
 		}
 	}
+	
+	private int getPlayerNumByDeviceId(Integer deviceId) {
+		//int playerId = OuyaController.getPlayerNumByDeviceId(deviceId);
+		//return playerId;
+		return 0;
+	}
 
 	@Override
 	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
 		
 		//Log.i(TAG, android.os.Build.MODEL + " : dispatchGenericMotionEvent");
-		//DebugLogging.debugMotionEvent(motionEvent);
+		DebugLogging.debugMotionEvent(motionEvent);
+		
+		int playerId = getPlayerNumByDeviceId(motionEvent.getDeviceId());
+	    
+	    if (playerId < 0) {
+	    	Log.i(TAG, "Failed to find PlayerId for Controller="+motionEvent.getDevice().getName());
+	    	return true;
+	    }
 		
 	    Vector<ButtonIsAxis> buttons =
-				mParser.getButtonIsAxis(Build.MODEL, motionEvent.getDevice().getName());
-	    
-	    int playerId = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
+				mParser.getButtonIsAxis(mParser.getIdByString(Build.MODEL), mParser.getIdByString(motionEvent.getDevice().getName()));
 	    
 	    if (null != buttons) {		
 			for (int i = 0; i < buttons.size(); ++i) {
@@ -155,7 +184,7 @@ public class OuyaActivity extends Activity {
 	    }
 		
 	    Vector<AxisRemap> axises =
-	    	mParser.getAxisRemap(android.os.Build.MODEL, motionEvent.getDevice().getName());
+	    	mParser.getAxisRemap(mParser.getIdByString(android.os.Build.MODEL), mParser.getIdByString(motionEvent.getDevice().getName()));
 	    
 	    if (null != axises) {	    
 		    int pointerCount = motionEvent.getPointerCount();
@@ -210,6 +239,14 @@ public class OuyaActivity extends Activity {
 	
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		
+		int playerId = getPlayerNumByDeviceId(keyEvent.getDeviceId());
+	    
+	    if (playerId < 0) {
+	    	Log.i(TAG, "Failed to find PlayerId for Controller="+keyEvent.getDevice().getName());
+	    	return true;
+	    }
+	    
 		int keyCode = keyEvent.getKeyCode();
 		int source = keyEvent.getSource();
 		Log.i(TAG, "model=" + android.os.Build.MODEL);
@@ -217,7 +254,7 @@ public class OuyaActivity extends Activity {
 		Log.i(TAG, "dispatchKeyEvent="+keyCode + " action="+keyEvent.getAction());
 		
 		MappingParser.Button button =
-				mParser.getButton(android.os.Build.MODEL, keyEvent.getDevice().getName(), keyCode);
+				mParser.getButton(mParser.getIdByString(android.os.Build.MODEL), mParser.getIdByString(keyEvent.getDevice().getName()), keyCode);
 		if (null == button) {
 			return true;
 		}
@@ -237,6 +274,21 @@ public class OuyaActivity extends Activity {
 		KeyEvent newKeyEvent = new KeyEvent(downTime, eventTime, action, code, repeat, metaState, deviceId, scancode);
 		passDispatchKeyEvent(newKeyEvent);
         return true;
+	}
+
+	@Override
+	public void onInputDeviceAdded(int deviceId) {
+		Log.i(TAG, "onInputDeviceAdded="+deviceId);
+	}
+
+	@Override
+	public void onInputDeviceChanged(int deviceId) {
+		Log.i(TAG, "onInputDeviceChanged="+deviceId);
+	}
+
+	@Override	
+	public void onInputDeviceRemoved(int deviceId) {
+		Log.i(TAG, "onInputDeviceRemoved="+deviceId);
 	}	
 	
 }

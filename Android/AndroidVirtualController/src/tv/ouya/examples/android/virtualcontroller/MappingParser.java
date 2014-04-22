@@ -30,75 +30,94 @@ public class MappingParser {
 	
 	private static final String TAG = MappingParser.class.getSimpleName();
 	
+	private Vector<String> mStringHash = new Vector<String>();
+	public final String STRING_NOT_FOUND = "NOT_FOUND";
+	public String getStringById(int id) {
+		if (id >= 0 && id < mStringHash.size()) {
+			return mStringHash.get(id);
+		} else {
+			return STRING_NOT_FOUND;
+		}
+	}
+	public int getIdByString(String val) {
+		if (!mStringHash.contains(val)) {
+			mStringHash.add(val);
+		}
+		return mStringHash.indexOf(val);
+	}
+	public String debugGetStringById(int id) {
+		return "("+id+") "+getStringById(id);
+	}
+	
 	protected class Alias
 	{
-		public String mName = "";
-		public String mFriendlyName = "";
+		public Integer mName = -1;
+		public Integer mFriendlyName = -1;
 		public Boolean mFallback = false;
 	}
 	protected class Button
 	{
-		public int mSourceKeyCode = 0;
-		public int mDestinationKeyCode = 0;
+		public Integer mSourceKeyCode = 0;
+		public Integer mDestinationKeyCode = 0;
 		public Vector<Integer> mExcludeSource = new Vector<Integer>();
 	}
 	protected class AxisRemap
 	{
-		public int mSourceAxis = 0;
-		public int mDestinationAxis = 0;
+		public Integer mSourceAxis = 0;
+		public Integer mDestinationAxis = 0;
 	}
 	protected class ButtonIsAxis
 	{
-		public int mSourceAxis = 0;
+		public Integer mSourceAxis = 0;
 		public float mActionDownMax = 0;
 		public float mActionDownMin = 0;
-		public int mDestinationKeyCode = 0;
+		public Integer mDestinationKeyCode = 0;
 	}
 	private class Controller
 	{
-		public HashMap<String, Alias> mAlias = new HashMap<String, Alias>();
+		public HashMap<Integer, Alias> mAlias = new HashMap<Integer, Alias>();
 		public Vector<AxisRemap> mAxisRemap = new Vector<AxisRemap>();
 		public HashMap<Integer, Button> mButton = new HashMap<Integer, Button>();
 		public Vector<ButtonIsAxis> mButtonIsAxis = new Vector<ButtonIsAxis>();
 	}
 	private class Device
 	{		
-		public HashMap<String, Alias> mAlias = new HashMap<String, Alias>();
-		public HashMap<String, Controller> mController = new HashMap<String, Controller>();
+		public HashMap<Integer, Alias> mAlias = new HashMap<Integer, Alias>();
+		public HashMap<Integer, Controller> mController = new HashMap<Integer, Controller>();
 		public Controller mControllerFallback = null;
 	}
 	
-	private HashMap<String, Device> mDevice = new HashMap<String, Device>();
+	private HashMap<Integer, Device> mDevice = new HashMap<Integer, Device>();
 	private Device mDeviceFallback = null;
-	private Device getDevice(String deviceName) {
+	private Device getDevice(Integer deviceName) {
 		if (mDevice.containsKey(deviceName)) {
 			return mDevice.get(deviceName);
 		} else {
 			if (null != mDeviceFallback) {
-				Iterator<Entry<String, Alias>> it = mDeviceFallback.mAlias.entrySet().iterator();
+				Iterator<Entry<Integer, Alias>> it = mDeviceFallback.mAlias.entrySet().iterator();
 				while (it.hasNext()) {
-					Log.i(TAG, "Using device fallback="+it.next().getKey());
+					Log.i(TAG, "Using device fallback="+getStringById(it.next().getKey()));
 				}
 			}
 			return mDeviceFallback;
 		}
 	}
-	private Controller getController(Device device, String controllerName) {
+	private Controller getController(Device device, Integer controllerName) {
 		if (null == device) {
 			return null;
 		}
 		if (!device.mController.containsKey(controllerName)) {
 			if (null != device.mControllerFallback) {
-				Iterator<Entry<String, Alias>> it = device.mControllerFallback.mAlias.entrySet().iterator();
+				Iterator<Entry<Integer, Alias>> it = device.mControllerFallback.mAlias.entrySet().iterator();
 				while (it.hasNext()) {
-					Log.i(TAG, "Using controller fallback="+it.next().getKey());
+					Log.i(TAG, "Using controller fallback="+getStringById(it.next().getKey()));
 				}
 			}
 			return device.mControllerFallback;
 		}
 		return device.mController.get(controllerName);
 	}
-	public Button getButton(String deviceName, String controllerName, int keyCode) {
+	public Button getButton(int deviceName, int controllerName, int keyCode) {
 		Device device = getDevice(deviceName);
 		if (null == device) {
 			return null;
@@ -112,7 +131,7 @@ public class MappingParser {
 		}
 		return controller.mButton.get(keyCode);
 	}
-	public Vector<AxisRemap> getAxisRemap(String deviceName, String controllerName) {
+	public Vector<AxisRemap> getAxisRemap(int deviceName, int controllerName) {
 		Device device = getDevice(deviceName);
 		if (null == device) {
 			return null;
@@ -123,7 +142,7 @@ public class MappingParser {
 		}
 		return controller.mAxisRemap;
 	}
-	public Vector<ButtonIsAxis> getButtonIsAxis(String deviceName, String controllerName) {
+	public Vector<ButtonIsAxis> getButtonIsAxis(int deviceName, int controllerName) {
 		Device device = getDevice(deviceName);
 		if (null == device) {
 			return null;
@@ -135,7 +154,7 @@ public class MappingParser {
 		return controller.mButtonIsAxis;
 	}
 	
-	private int getKeyCode(String name) {
+	private int debugGetKeyCode(String name) {
 		if (name.equals("BUTTON_O")) {
 			return OuyaController.BUTTON_O;
 		} else if (name.equals("BUTTON_U")) {
@@ -187,10 +206,10 @@ public class MappingParser {
 					JSONObject objAlias = deviceAlias.getJSONObject(aliasId);
 					//Log.i(TAG, "device alias="+objAlias.toString());
 					Alias alias = new Alias();
-					alias.mName = objAlias.getString("name");
-					Log.i(TAG, "device alias name="+alias.mName);
-					alias.mFriendlyName = objAlias.getString("friendly_name");
-					Log.i(TAG, "device alias friendly_name="+alias.mFriendlyName);
+					alias.mName = getIdByString(objAlias.getString("name"));
+					Log.i(TAG, "device alias name="+debugGetStringById(alias.mName));
+					alias.mFriendlyName = getIdByString(objAlias.getString("friendly_name"));
+					Log.i(TAG, "device alias friendly_name="+debugGetStringById(alias.mFriendlyName));
 					if (objAlias.has("fallback")) {
 						alias.mFallback = objAlias.getBoolean("fallback");
 						Log.i(TAG, "device alias fallback="+alias.mFallback);
@@ -215,10 +234,10 @@ public class MappingParser {
 						JSONObject objAlias = controllerAlias.getJSONObject(aliasId);
 						//Log.i(TAG, "controller alias="+objAlias.toString());
 						Alias alias = new Alias();
-						alias.mName = objAlias.getString("name");
-						Log.i(TAG, "controller alias name="+alias.mName);
-						alias.mFriendlyName = objAlias.getString("friendly_name");
-						Log.i(TAG, "controller alias friendly_name="+alias.mFriendlyName);
+						alias.mName = getIdByString(objAlias.getString("name"));
+						Log.i(TAG, "controller alias name="+debugGetStringById(alias.mName));
+						alias.mFriendlyName = getIdByString(objAlias.getString("friendly_name"));
+						Log.i(TAG, "controller alias friendly_name="+debugGetStringById(alias.mFriendlyName));
 						if (objAlias.has("fallback")) {
 							alias.mFallback = objAlias.getBoolean("fallback");
 							Log.i(TAG, "controller alias fallback="+alias.mFallback);
