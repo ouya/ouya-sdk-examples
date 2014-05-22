@@ -17,6 +17,97 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="System:" />
+         
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <ImageView
+			        android:id="@+id/imgControllerL1"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerL2"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerl3"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerR1"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerR2"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerR3"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+        </LinearLayout>
+            
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <ImageView
+			        android:id="@+id/imgControllerO"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerU"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerY"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerA"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerDpadDown"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerDpadLeft"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerDpadRight"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerDpadUp"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerMenu"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+        </LinearLayout> 
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -35,11 +126,17 @@
 			        android:layout_height="wrap_content"
 			        android:src="@drawable/controller" />
 			    <ImageView
+			        android:id="@+id/imgButtonMenu"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@drawable/menu"
+			        android:visibility="invisible"/>
+			    <ImageView
 			        android:id="@+id/imgButtonA"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:src="@drawable/a"
-			        android:visibility="invisible"/>"
+			        android:visibility="invisible"/>
 			    <ImageView
 			        android:id="@+id/imgDpadDown"
 			        android:layout_width="wrap_content"

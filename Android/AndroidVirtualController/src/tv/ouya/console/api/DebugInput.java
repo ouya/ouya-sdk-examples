@@ -1,12 +1,12 @@
-package tv.ouya.examples.android.virtualcontroller;
+package tv.ouya.console.api;
 
 import tv.ouya.console.api.OuyaController;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 
-public class DebugLogging {
-	private static final String TAG = DebugLogging.class.getSimpleName();
+public class DebugInput {
+	private static final String TAG = DebugInput.class.getSimpleName();
 	
 	public static String debugGetAxisName(int axis) {
 		SparseArray<String> names = new SparseArray<String>();
@@ -60,14 +60,70 @@ public class DebugLogging {
         	return axisName;
         }
 	}
+	
+	public int debugGetKeyCode(String name) {
+		if (name.equals("BUTTON_O")) {
+			return OuyaController.BUTTON_O;
+		} else if (name.equals("BUTTON_U")) {
+			return OuyaController.BUTTON_U;
+		} else if (name.equals("BUTTON_Y")) {
+			return OuyaController.BUTTON_Y;
+		} else if (name.equals("BUTTON_A")) {
+			return OuyaController.BUTTON_A;
+		} else if (name.equals("BUTTON_L1")) {
+			return OuyaController.BUTTON_L1;
+		} else if (name.equals("BUTTON_R1")) {
+			return OuyaController.BUTTON_R1;
+		} else if (name.equals("BUTTON_L3")) {
+			return OuyaController.BUTTON_L3;
+		} else if (name.equals("BUTTON_R3")) {
+			return OuyaController.BUTTON_R3;
+		} else if (name.equals("BUTTON_DPAD_UP")) {
+			return OuyaController.BUTTON_DPAD_UP;
+		} else if (name.equals("BUTTON_DPAD_DOWN")) {
+			return OuyaController.BUTTON_DPAD_DOWN;
+		} else if (name.equals("BUTTON_DPAD_RIGHT")) {
+			return OuyaController.BUTTON_DPAD_RIGHT;
+		} else if (name.equals("BUTTON_DPAD_LEFT")) {
+			return OuyaController.BUTTON_DPAD_LEFT;
+		} else if (name.equals("BUTTON_MENU")) {
+			return OuyaController.BUTTON_MENU;
+		} else {
+			return 0;
+		}
+	}
+	
+	public static String debugGetButtonName(int button) {
+		SparseArray<String> names = new SparseArray<String>();
+        names.append(OuyaController.BUTTON_O, "BUTTON_O");
+        names.append(OuyaController.BUTTON_U, "BUTTON_U");
+        names.append(OuyaController.BUTTON_Y, "BUTTON_Y");
+        names.append(OuyaController.BUTTON_A, "BUTTON_A");
+        names.append(OuyaController.BUTTON_L1, "BUTTON_L1");
+        names.append(OuyaController.BUTTON_R1, "BUTTON_R1");
+        names.append(OuyaController.BUTTON_L3, "BUTTON_L3");
+        names.append(OuyaController.BUTTON_R3, "BUTTON_R3");
+        names.append(OuyaController.BUTTON_DPAD_UP, "BUTTON_DPAD_UP");
+        names.append(OuyaController.BUTTON_DPAD_DOWN, "BUTTON_DPAD_DOWN");
+        names.append(OuyaController.BUTTON_DPAD_RIGHT, "BUTTON_DPAD_RIGHT");
+        names.append(OuyaController.BUTTON_DPAD_LEFT, "BUTTON_DPAD_LEFT");
+        names.append(OuyaController.BUTTON_MENU, "BUTTON_MENU");
+        
+        String buttonName = names.get(button);
+        if (null == buttonName) {
+        	return "";
+        } else {
+        	return buttonName;
+        }
+	}
 
 	public static void debugOuyaMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "OuyaController.AXIS_LS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-		Log.i(TAG, "OuyaController.AXIS_LS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-		Log.i(TAG, "OuyaController.AXIS_RS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-		Log.i(TAG, "OuyaController.AXIS_RS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-		Log.i(TAG, "OuyaController.AXIS_L2 value="+motionEvent.getAxisValue(OuyaController.AXIS_L2));
-		Log.i(TAG, "OuyaController.AXIS_R2 value="+motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		Log.i(TAG, "("+OuyaController.AXIS_LS_X + ") OuyaController.AXIS_LS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+		Log.i(TAG, "("+OuyaController.AXIS_LS_Y + ") OuyaController.AXIS_LS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+		Log.i(TAG, "("+OuyaController.AXIS_RS_X + ") OuyaController.AXIS_RS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+		Log.i(TAG, "("+OuyaController.AXIS_RS_Y + ") OuyaController.AXIS_RS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+		Log.i(TAG, "("+OuyaController.AXIS_L2 + ") OuyaController.AXIS_L2 value="+motionEvent.getAxisValue(OuyaController.AXIS_L2));
+		Log.i(TAG, "("+OuyaController.AXIS_R2 + ") OuyaController.AXIS_R2 value="+motionEvent.getAxisValue(OuyaController.AXIS_R2));
 	}
 	
 	public static void debugMotionEvent(MotionEvent motionEvent) {
@@ -115,10 +171,12 @@ public class DebugLogging {
         names.append(MotionEvent.AXIS_GENERIC_15, "AXIS_GENERIC_15");
         names.append(MotionEvent.AXIS_GENERIC_16, "AXIS_GENERIC_16");
         
+        int source = motionEvent.getSource();
+        
         final int count = names.size();
         for (int i = 0; i < count; i++) {
         	float val = motionEvent.getAxisValue(names.keyAt(i));
-            Log.i(TAG, names.valueAt(i) + "=" + val);
+            Log.i(TAG, "(" + names.keyAt(i) + ") "+ names.valueAt(i) + "=" + val + " source="+source);
         }
 	}
 }

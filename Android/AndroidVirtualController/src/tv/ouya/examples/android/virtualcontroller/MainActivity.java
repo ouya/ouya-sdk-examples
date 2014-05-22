@@ -8,7 +8,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import tv.ouya.console.api.DebugInput;
+import tv.ouya.console.api.OuyaActivity;
 import tv.ouya.console.api.OuyaController;
+import tv.ouya.console.api.OuyaController.ButtonData;
+import tv.ouya.console.api.OuyaInputMapper;
 
 public class MainActivity extends OuyaActivity {
 	
@@ -19,7 +23,22 @@ public class MainActivity extends OuyaActivity {
 	private TextView txtSystem = null;
 	private TextView txtController = null;
 	private TextView txtKeyCode = null;
-	//private ImageView imgController = null;
+	private ImageView imgControllerO = null;
+	private ImageView imgControllerU = null;
+	private ImageView imgControllerY = null;
+	private ImageView imgControllerA = null;
+	private ImageView imgControllerL1 = null;
+	private ImageView imgControllerL2 = null;
+	private ImageView imgControllerL3 = null;
+	private ImageView imgControllerR1 = null;
+	private ImageView imgControllerR2 = null;
+	private ImageView imgControllerR3 = null;
+	private ImageView imgControllerDpadDown = null;
+	private ImageView imgControllerDpadLeft = null;
+	private ImageView imgControllerDpadRight = null;
+	private ImageView imgControllerDpadUp = null;
+	private ImageView imgControllerMenu = null;
+	private ImageView imgButtonMenu = null;
 	private ImageView imgButtonA = null;
 	private ImageView imgDpadDown = null;
 	private ImageView imgDpadLeft = null;
@@ -37,6 +56,10 @@ public class MainActivity extends OuyaActivity {
 	private ImageView imgButtonU = null;
 	private ImageView imgButtonY = null;
 	
+	// keep track when menu button was seen
+	private Boolean mWaitToExit = true;
+	private float mMenuDetected = 0f;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -45,8 +68,23 @@ public class MainActivity extends OuyaActivity {
 		
 		txtSystem = (TextView)findViewById(R.id.txtSystem);
 		txtController = (TextView)findViewById(R.id.txtController);
+		imgButtonMenu = (ImageView)findViewById(R.id.imgButtonMenu);
 		txtKeyCode = (TextView)findViewById(R.id.txtKeyCode);
-		//imgController = (ImageView)findViewById(R.id.imgController);
+		imgControllerO = (ImageView)findViewById(R.id.imgControllerO);
+		imgControllerU = (ImageView)findViewById(R.id.imgControllerU);
+		imgControllerY = (ImageView)findViewById(R.id.imgControllerY);
+		imgControllerA = (ImageView)findViewById(R.id.imgControllerA);
+		imgControllerL1 = (ImageView)findViewById(R.id.imgControllerL1);
+		imgControllerL2 = (ImageView)findViewById(R.id.imgControllerL2);
+		imgControllerL3 = (ImageView)findViewById(R.id.imgControllerl3);
+		imgControllerR1 = (ImageView)findViewById(R.id.imgControllerR1);
+		imgControllerR2 = (ImageView)findViewById(R.id.imgControllerR2);
+		imgControllerR3 = (ImageView)findViewById(R.id.imgControllerR3);
+		imgControllerDpadDown = (ImageView)findViewById(R.id.imgControllerDpadDown);
+		imgControllerDpadLeft = (ImageView)findViewById(R.id.imgControllerDpadLeft);
+		imgControllerDpadRight = (ImageView)findViewById(R.id.imgControllerDpadRight);
+		imgControllerDpadUp = (ImageView)findViewById(R.id.imgControllerDpadUp);
+		imgControllerMenu = (ImageView)findViewById(R.id.imgControllerMenu);
 		imgButtonA = (ImageView)findViewById(R.id.imgButtonA);
 		imgDpadDown = (ImageView)findViewById(R.id.imgDpadDown);
 		imgDpadLeft = (ImageView)findViewById(R.id.imgDpadLeft);
@@ -64,32 +102,101 @@ public class MainActivity extends OuyaActivity {
 		imgButtonU = (ImageView)findViewById(R.id.imgButtonU);
 		imgButtonY = (ImageView)findViewById(R.id.imgButtonY);
 		
-		OuyaController.init(this);
-        OuyaController.showCursor(false); //hide mouse
+        OuyaInputMapper.setEnableControllerDispatch(true);        
+        OuyaController.showCursor(true); //show cursor
+        
+    	// spawn thread to toggle menu button
+        Thread timer = new Thread()
+        {
+	        public void run()
+	        {
+	        	while (mWaitToExit)
+	        	{
+	        		if (mMenuDetected != 0 &&
+	        			mMenuDetected < System.nanoTime())
+	        		{
+	        			mMenuDetected = 0;
+	        			Runnable runnable = new Runnable()
+	        			{
+		        			public void run()
+		        			{
+		        				imgButtonMenu.setVisibility(View.INVISIBLE);
+		        			}
+	        			};
+	        			runOnUiThread(runnable);
+	        			
+	        		}
+	        		try
+	        		{
+	        			Thread.sleep(50);
+	        		}
+	        		catch (InterruptedException e)
+	        		{
+	        		}
+		        }
+			}
+        };
+		timer.start();
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		txtSystem.setText("Brand=" + android.os.Build.BRAND + " Model=" + android.os.Build.MODEL + " Version=" + android.os.Build.VERSION.SDK_INT);
+		
+		setDrawable(imgControllerO, OuyaController.BUTTON_O);
+		setDrawable(imgControllerU, OuyaController.BUTTON_U);
+		setDrawable(imgControllerY, OuyaController.BUTTON_Y);
+		setDrawable(imgControllerA, OuyaController.BUTTON_A);
+		setDrawable(imgControllerL1, OuyaController.BUTTON_L1);
+		setDrawable(imgControllerL2, OuyaController.BUTTON_L2);
+		setDrawable(imgControllerL3, OuyaController.BUTTON_L3);
+		setDrawable(imgControllerR1, OuyaController.BUTTON_R1);
+		setDrawable(imgControllerR2, OuyaController.BUTTON_R2);
+		setDrawable(imgControllerR3, OuyaController.BUTTON_R3);
+		setDrawable(imgControllerDpadDown, OuyaController.BUTTON_DPAD_DOWN);
+		setDrawable(imgControllerDpadLeft, OuyaController.BUTTON_DPAD_LEFT);
+		setDrawable(imgControllerDpadRight, OuyaController.BUTTON_DPAD_RIGHT);
+		setDrawable(imgControllerDpadUp, OuyaController.BUTTON_DPAD_UP);
+		setDrawable(imgControllerMenu, OuyaController.BUTTON_MENU);
 	}
 	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mWaitToExit = false; //let timer exit
+	}
+	
+	private void setDrawable(ImageView imageView, int keyCode) {
+		ButtonData data = OuyaController.getButtonData(keyCode);
+		if (null != data) {
+			imageView.setImageDrawable(data.buttonDrawable);
+		}
+	}
+
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		//Log.i(TAG, "dispatchKeyEvent");
 		if (null != txtKeyCode) {
 			InputDevice device = keyEvent.getDevice();
 			if (null != device) {
-				txtKeyCode.setText("dispatchKeyEvent name=" + device.getName() + " KeyCode=" + keyEvent.getKeyCode());
+				txtKeyCode.setText("Original KeyEvent device=" + device.getName() + " KeyCode=(" + keyEvent.getKeyCode() + ") "
+						+ DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 			}
 		}
 		return super.dispatchKeyEvent(keyEvent);
+	}
+	
+	@Override
+	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		DebugInput.debugMotionEvent(motionEvent);
+		return super.dispatchGenericMotionEvent(motionEvent);
 	}
 
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		//Log.i(TAG, "onGenericMotionEvent");
-		txtController.setText(motionEvent.getDevice().getName());
+		DebugInput.debugOuyaMotionEvent(motionEvent);
 		
 		float lsX = motionEvent.getAxisValue(OuyaController.AXIS_LS_X);
 	    float lsY = motionEvent.getAxisValue(OuyaController.AXIS_LS_Y);
@@ -137,10 +244,10 @@ public class MainActivity extends OuyaActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
 		//Log.i(TAG, "onKeyDown");
 		
-		//txtController.setText(keyEvent.getDevice().getName());
-		
-		if (null != txtController) {
-			txtController.setText("onKeyDown: " + keyEvent.getDevice().getName() + " " + "KeyCode: " + keyEvent.getKeyCode());
+		OuyaController controller = OuyaController.getControllerByDeviceId(keyEvent.getDeviceId());
+		if (null != controller) {
+			txtController.setText("Remapped onKeyDown device=" + controller.getDeviceName() + " KeyCode=(" + keyCode + ") "
+					+ DebugInput.debugGetButtonName(keyCode));
 		}
 		
 		//Log.i(TAG, "KeyDown="+keyCode);
@@ -185,6 +292,10 @@ public class MainActivity extends OuyaActivity {
 		case OuyaController.BUTTON_DPAD_UP:
 			imgDpadUp.setVisibility(View.VISIBLE);
 			return true;
+		case OuyaController.BUTTON_MENU:
+			imgButtonMenu.setVisibility(View.VISIBLE);
+			mMenuDetected = System.nanoTime() + 1000000000;
+			return true;
 		}
 		
 		Log.i(TAG, "Unrecognized KeyDown="+keyCode);
@@ -196,10 +307,10 @@ public class MainActivity extends OuyaActivity {
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
 		//Log.i(TAG, "onKeyUp");
 		
-		//txtController.setText(keyEvent.getDevice().getName());
-		
-		if (null != txtController) {
-			txtController.setText("onKeyUp: " + keyEvent.getDevice().getName() + " " + "KeyCode: " + keyEvent.getKeyCode());
+		OuyaController controller = OuyaController.getControllerByDeviceId(keyEvent.getDeviceId());
+		if (null != controller) {
+			txtController.setText("Remapped onKeyUp device=" + controller.getDeviceName() + " KeyCode=(" + keyCode + ") "
+					+ DebugInput.debugGetButtonName(keyCode));
 		}
 		
 		//Log.i(TAG, "KeyUp="+keyCode);
@@ -243,6 +354,9 @@ public class MainActivity extends OuyaActivity {
 			return true;
 		case OuyaController.BUTTON_DPAD_UP:
 			imgDpadUp.setVisibility(View.INVISIBLE);
+			return true;
+		case OuyaController.BUTTON_MENU:
+			//wait 1 second
 			return true;
 		}
 		
