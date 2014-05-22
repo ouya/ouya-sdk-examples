@@ -64,7 +64,7 @@ public class MainActivity extends OuyaActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		setContentView(R.layout.activity_main);
-		super.onCreate(savedInstanceState); //initialize after layout has been loaded
+		super.onCreate(savedInstanceState);
 		
 		txtSystem = (TextView)findViewById(R.id.txtSystem);
 		txtController = (TextView)findViewById(R.id.txtController);

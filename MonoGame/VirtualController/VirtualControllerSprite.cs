@@ -1,30 +1,16 @@
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Input;
+using OuyaSdk;
 
 namespace VirtualController
 {
-    class VirtualControllerSprite
+    public class VirtualControllerSprite : OuyaSdk.VirtualController
     {
         /// <summary>
         /// Scale axis graphics but this amount
         /// </summary>
         private const float AXIS_SCALER = 4f;
-
-        /// <summary>
-        /// The controller index
-        /// </summary>
-        public PlayerIndex Index = PlayerIndex.One;
 
         /// <summary>
         /// The position of the sprite
@@ -44,6 +30,7 @@ namespace VirtualController
         public Texture2D LeftTrigger = null;
         public Texture2D LeftStickActive = null;
         public Texture2D LeftStickInactive = null;
+        public Texture2D ButtonMenu = null;
         public Texture2D RightBumper = null;
         public Texture2D RightTrigger = null;
         public Texture2D RightStickActive = null;
@@ -64,6 +51,7 @@ namespace VirtualController
             Texture2D leftBumper,
             Texture2D leftTrigger,
             Texture2D leftStickInactive,
+            Texture2D buttonMenu,
             Texture2D buttonO,
             Texture2D rightBumper,
             Texture2D rightTrigger,
@@ -74,6 +62,7 @@ namespace VirtualController
             Texture2D buttonY)
         {
             ButtonA = buttonA;
+            ButtonMenu = buttonMenu;
             ButtonO = buttonO;
             ButtonU = buttonU;
             ButtonY = buttonY;
@@ -105,11 +94,6 @@ namespace VirtualController
             }
         }
 
-        private GamePadState GetState()
-        {
-            return GamePad.GetState(Index);
-        }
-
         /// <summary>
         /// Draw the sprite
         /// </summary>
@@ -118,26 +102,33 @@ namespace VirtualController
         {
             Draw(spriteBatch, Controller);
 
-            GamePadState state = GetState();
+            #region MENU
+
+            if (TimerMenuDetected > DateTime.Now)
+            {
+                Draw(spriteBatch, ButtonMenu);
+            }
+
+            #endregion
 
             #region DPADS
 
-            if (state.DPad.Down == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_DPAD_DOWN))
             {
                 Draw(spriteBatch, DpadDown);
             }
 
-            if (state.DPad.Left == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_DPAD_LEFT))
             {
                 Draw(spriteBatch, DpadLeft);
             }
 
-            if (state.DPad.Right == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_DPAD_RIGHT))
             {
                 Draw(spriteBatch, DpadRight);
             }
 
-            if (state.DPad.Up == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_DPAD_UP))
             {
                 Draw(spriteBatch, DpadUp);
             }
@@ -146,32 +137,32 @@ namespace VirtualController
 
             #region Buttons
 
-            if (state.Buttons.B == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_A))
             {
                 Draw(spriteBatch, ButtonA);
             }
 
-            if (state.Buttons.A == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_O))
             {
                 Draw(spriteBatch, ButtonO);
             }
 
-            if (state.Buttons.X == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_U))
             {
                 Draw(spriteBatch, ButtonU);
             }
 
-            if (state.Buttons.Y == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_Y))
             {
                 Draw(spriteBatch, ButtonY);
             }
 
-            if (state.Buttons.LeftShoulder == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_L1))
             {
                 Draw(spriteBatch, LeftBumper);
             }
 
-            if (state.Buttons.RightShoulder == ButtonState.Pressed)
+            if (IsPressed(OuyaController.BUTTON_R1))
             {
                 Draw(spriteBatch, RightBumper);
             }
@@ -180,12 +171,12 @@ namespace VirtualController
 
             #region Triggers
 
-            if (state.Triggers.Left > DeadZone)
+            if (GetAxis(OuyaController.AXIS_L2) > DeadZone)
             {
                 Draw(spriteBatch, LeftTrigger);
             }
 
-            if (state.Triggers.Right > DeadZone)
+            if (GetAxis(OuyaController.AXIS_R2) > DeadZone)
             {
                 Draw(spriteBatch, RightTrigger);
             }
@@ -200,9 +191,9 @@ namespace VirtualController
             float cos = (float)Math.Cos(radians);
             float sin = (float)Math.Sin(radians);
 
-            Vector2 input = state.ThumbSticks.Left;
+            Vector2 input = new Vector2(GetAxis(OuyaController.AXIS_LS_X), GetAxis(OuyaController.AXIS_LS_Y));
 
-            if (state.Buttons.LeftStick == ButtonState.Pressed ||
+            if (IsPressed(OuyaController.BUTTON_L3) ||
                 Math.Abs(input.X) > DeadZone ||
                 Math.Abs(input.Y) > DeadZone)
             {
@@ -214,9 +205,9 @@ namespace VirtualController
             }
 
             //rotate by same degrees
-            input = state.ThumbSticks.Right;
+            input = new Vector2(GetAxis(OuyaController.AXIS_RS_X), GetAxis(OuyaController.AXIS_RS_Y));
 
-            if (state.Buttons.RightStick == ButtonState.Pressed ||
+            if (IsPressed(OuyaController.BUTTON_R3) ||
                 Math.Abs(input.X) > DeadZone ||
                 Math.Abs(input.Y) > DeadZone)
             {
@@ -229,7 +220,5 @@ namespace VirtualController
 
             #endregion
         }
-
-
     }
 }
