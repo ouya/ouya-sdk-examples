@@ -435,7 +435,7 @@ public class OuyaPanel : EditorWindow
     #region NDK Paths
 
     void UpdateAndroidNDKPaths()
-    {
+	{
         pathObj = string.Format("{0}/Assets/Plugins/Android/obj", pathUnityProject);
         pathJNIAndroidMk = string.Format("{0}/Assets/Plugins/Android/jni/Android.mk", pathUnityProject);
         pathJNIApplicationMk = string.Format("{0}/Assets/Plugins/Android/jni/Application.mk", pathUnityProject);
@@ -443,7 +443,7 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                //change this code to search instead
+				pathNDKBuild = string.Format("{0}/ndk-build", pathNDK);
                 pathOuyaNDKLib = string.Format("{0}/Assets/Plugins/Android/libs/armeabi-v7a/lib-ouya-ndk.so", pathUnityProject);
                 break;
             case RuntimePlatform.WindowsEditor:
@@ -517,7 +517,8 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                RunProcess(pathNDKBuild, pathAndroid);
+				environment.Add(new KeyValuePair<string, string>("NDK_PROJECT_PATH", pathAndroid));
+			RunProcess(environment, pathNDKBuild, string.Empty);
                 break;
             case RuntimePlatform.WindowsEditor:
                 environment.Add(new KeyValuePair<string, string>("NDK_PROJECT_PATH", pathAndroid.Replace("/", "\\")));
