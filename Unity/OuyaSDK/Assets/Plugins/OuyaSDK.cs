@@ -29,7 +29,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.3";
+    public const string VERSION = "1.0.12.4";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -633,6 +633,7 @@ public static class OuyaSDK
         public float percentOff = 0f;
         public int priceInCents = 0;
         public int productVersionToBundle = 0;
+        public string developerName = string.Empty;
     }
 
     [Serializable]
