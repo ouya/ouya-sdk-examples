@@ -29,7 +29,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.6";
+    public const string VERSION = "1.0.12.7";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -289,13 +289,14 @@ public static class OuyaSDK
     /// </summary>
     public static void UpdateJoysticks()
     {
-#if !UNITY_WP8
+#if !UNITY_ANDROID || UNITY_EDITOR
+        return;
+#else
         if (m_timerJoysticks < DateTime.Now)
         {
             //check for new joysticks every N seconds
             m_timerJoysticks = DateTime.Now + TimeSpan.FromSeconds(3);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
             string[] joysticks = null;
             List<string> devices = new List<string>();
             for (int deviceId = 0; deviceId < OuyaController.MAX_CONTROLLERS; ++deviceId)
@@ -305,9 +306,6 @@ public static class OuyaSDK
                 devices.Add(deviceName);
             }
             joysticks = devices.ToArray();
-#else
-            string[] joysticks = Input.GetJoystickNames();
-#endif
 
             // look for changes
             bool detectedChange = false;
@@ -355,164 +353,6 @@ public static class OuyaSDK
     /// Inidicates IAP has been setup and is ready for processing
     /// </summary>
     private static bool m_iapInitComplete = false;
-
-    /// <summary>
-    /// Check if the device is an OUYA
-    /// </summary>
-    /// <returns></returns>
-    public static bool IsOUYA()
-    {
-        if (SystemInfo.deviceModel.ToUpper().Contains("OUYA"))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    #region Controllers
-
-    #region Key Codes
-
-    public const int KEYCODE_BUTTON_A = 96;
-    public const int KEYCODE_BUTTON_B = 97;
-    public const int KEYCODE_BUTTON_X = 99;
-    public const int KEYCODE_BUTTON_Y = 100;
-    public const int KEYCODE_BUTTON_L1 = 102;
-    public const int KEYCODE_BUTTON_L2 = 104;
-    public const int KEYCODE_BUTTON_R1 = 103;
-    public const int KEYCODE_BUTTON_R2 = 105;
-    public const int KEYCODE_BUTTON_L3 = 106;
-    public const int KEYCODE_BUTTON_R3 = 107;
-    public const int KEYCODE_BUTTON_SYSTEM = 108;
-    public const int AXIS_X = 0;
-    public const int AXIS_Y = 1;
-    public const int AXIS_Z = 11;
-    public const int AXIS_RZ = 14;
-    public const int KEYCODE_DPAD_UP = 19;
-    public const int KEYCODE_DPAD_DOWN = 20;
-    public const int KEYCODE_DPAD_LEFT = 21;
-    public const int KEYCODE_DPAD_RIGHT = 22;
-    public const int KEYCODE_DPAD_CENTER = 23;
-
-    //For EDITOR / PC / MAC
-    public const int KEYCODE_BUTTON_SELECT = -1;
-    public const int KEYCODE_BUTTON_START = -2;
-    public const int KEYCODE_BUTTON_ESCAPE = 41;
-    #endregion
-
-    #region OUYA controller
-
-    public const int BUTTON_O = KEYCODE_BUTTON_A;
-    public const int BUTTON_U = KEYCODE_BUTTON_X;
-    public const int BUTTON_Y = KEYCODE_BUTTON_Y;
-    public const int BUTTON_A = KEYCODE_BUTTON_B;
-
-    public const int BUTTON_LB = KEYCODE_BUTTON_L1;
-    public const int BUTTON_LT = KEYCODE_BUTTON_L2;
-    public const int BUTTON_RB = KEYCODE_BUTTON_R1;
-    public const int BUTTON_RT = KEYCODE_BUTTON_R2;
-    public const int BUTTON_L3 = KEYCODE_BUTTON_L3;
-    public const int BUTTON_R3 = KEYCODE_BUTTON_R3;
-
-    public const int BUTTON_SYSTEM = KEYCODE_BUTTON_SYSTEM;
-    // for EDITOR / PC / MAC
-    public const int BUTTON_START = KEYCODE_BUTTON_START;
-    public const int BUTTON_SELECT = KEYCODE_BUTTON_SELECT;
-    public const int BUTTON_ESCAPE = KEYCODE_BUTTON_ESCAPE;
-    public const int AXIS_LSTICK_X = AXIS_X;
-    public const int AXIS_LSTICK_Y = AXIS_Y;
-    public const int AXIS_RSTICK_X = AXIS_Z;
-    public const int AXIS_RSTICK_Y = AXIS_RZ;
-
-    public const int BUTTON_DPAD_UP = KEYCODE_DPAD_UP;
-    public const int BUTTON_DPAD_RIGHT = KEYCODE_DPAD_RIGHT;
-    public const int BUTTON_DPAD_DOWN = KEYCODE_DPAD_DOWN;
-    public const int BUTTON_DPAD_LEFT = KEYCODE_DPAD_LEFT;
-    public const int BUTTON_DPAD_CENTER = KEYCODE_DPAD_CENTER;
-
-    public enum KeyEnum
-    {
-        NONE = -1,
-        BUTTON_O = OuyaSDK.BUTTON_O,
-        BUTTON_U = OuyaSDK.BUTTON_U,
-        BUTTON_Y = OuyaSDK.KEYCODE_BUTTON_Y,
-        BUTTON_A = OuyaSDK.BUTTON_A,
-        BUTTON_LB = OuyaSDK.BUTTON_LB,
-        AXIS_LT = OuyaSDK.KEYCODE_BUTTON_L2,
-        BUTTON_LT = OuyaSDK.KEYCODE_BUTTON_L2,
-        BUTTON_RB = OuyaSDK.BUTTON_RB,
-        AXIS_RT = OuyaSDK.BUTTON_RT,
-        BUTTON_RT = OuyaSDK.BUTTON_RT,
-        BUTTON_L3 = OuyaSDK.BUTTON_L3,
-        BUTTON_R3 = OuyaSDK.BUTTON_R3,
-        BUTTON_SYSTEM = OuyaSDK.BUTTON_SYSTEM,
-        BUTTON_START = OuyaSDK.BUTTON_START,
-        BUTTON_SELECT = OuyaSDK.BUTTON_SELECT,
-        BUTTON_ESCAPE = OuyaSDK.BUTTON_ESCAPE,
-        AXIS_LSTICK_X = OuyaSDK.AXIS_LSTICK_X,
-        AXIS_LSTICK_Y = OuyaSDK.AXIS_LSTICK_Y,
-        AXIS_RSTICK_X = OuyaSDK.AXIS_RSTICK_X,
-        AXIS_RSTICK_Y = OuyaSDK.AXIS_RSTICK_Y,
-        BUTTON_DPAD_UP = OuyaSDK.BUTTON_DPAD_UP,
-        BUTTON_DPAD_RIGHT = OuyaSDK.BUTTON_DPAD_RIGHT,
-        BUTTON_DPAD_DOWN = OuyaSDK.BUTTON_DPAD_DOWN,
-        BUTTON_DPAD_LEFT = OuyaSDK.BUTTON_DPAD_LEFT,
-        BUTTON_DPAD_CENTER = OuyaSDK.BUTTON_DPAD_CENTER,
-
-        BUTTON_BACK,
-
-        HARMONIX_ROCK_BAND_GUITAR_GREEN,
-        HARMONIX_ROCK_BAND_GUITAR_RED,
-        HARMONIX_ROCK_BAND_GUITAR_YELLOW,
-        HARMONIX_ROCK_BAND_GUITAR_BLUE,
-        HARMONIX_ROCK_BAND_GUITAR_ORANGE,
-        HARMONIX_ROCK_BAND_GUITAR_LOWER,
-        HARMONIX_ROCK_BAND_GUITAR_WHAMMI,
-        HARMONIX_ROCK_BAND_GUITAR_PICKUP,
-        HARMONIX_ROCK_BAND_GUITAR_STRUM,
-
-        HARMONIX_ROCK_BAND_DRUMKIT_GREEN,
-        HARMONIX_ROCK_BAND_DRUMKIT_RED,
-        HARMONIX_ROCK_BAND_DRUMKIT_YELLOW,
-        HARMONIX_ROCK_BAND_DRUMKIT_BLUE,
-        HARMONIX_ROCK_BAND_DRUMKIT_ORANGE,
-        HARMONIX_ROCK_BAND_DRUMKIT_A,
-        HARMONIX_ROCK_BAND_DRUMKIT_B,
-        HARMONIX_ROCK_BAND_DRUMKIT_X,
-        HARMONIX_ROCK_BAND_DRUMKIT_Y,
-    }
-
-    public enum AxisEnum
-    {
-        NONE = -1,
-        AXIS_LSTICK_X,
-        AXIS_LSTICK_Y,
-        AXIS_RSTICK_X,
-        AXIS_RSTICK_Y,
-        AXIS_LTRIGGER,
-        AXIS_RTRIGGER,
-    }
-
-    public enum OuyaPlayer
-    {
-        player1=1,
-        player2=2,
-        player3=3,
-        player4=4,
-        player5=5,
-        player6=6,
-        player7=7,
-        player8=8,
-        player9=9,
-        player10=10,
-        player11=11,
-        none=0,
-    }
-
-    #endregion
-
-    #endregion
 
     /// <summary>
     /// Initialized by OuyaGameObject
