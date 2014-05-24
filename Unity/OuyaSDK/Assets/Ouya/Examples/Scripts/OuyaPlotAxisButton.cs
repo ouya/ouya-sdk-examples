@@ -16,12 +16,17 @@
 
 using System;
 using System.Collections.Generic;
+#if UNITY_ANDROID && !UNITY_EDITOR
+using tv.ouya.console.api;
+#endif
 using UnityEngine;
 using Object=UnityEngine.Object;
 
 [RequireComponent(typeof(Camera))]
 public class OuyaPlotAxisButton : MonoBehaviour
 {
+    public int PlayerNum = 0;
+
     public Material PlotMaterial = null;
 
     private int TextureSize = 128;
@@ -31,45 +36,8 @@ public class OuyaPlotAxisButton : MonoBehaviour
 
     private int m_timeIndex = 0;
 
-    private string[] m_strAxises = new string[]
-                                       {
-                                           "Joy{0} Axis 1",
-                                           "Joy{0} Axis 2",
-                                           "Joy{0} Axis 3",
-                                           "Joy{0} Axis 4",
-                                           "Joy{0} Axis 5",
-                                           "Joy{0} Axis 6",
-                                           "Joy{0} Axis 7",
-                                           "Joy{0} Axis 8",
-                                           "Joy{0} Axis 9",
-                                           "Joy{0} Axis 10",
-                                       };
-
-    private string[] m_strButtons = new string[]
-                                       {
-                                           "Joystick{0}Button0",
-                                           "Joystick{0}Button1",
-                                           "Joystick{0}Button2",
-                                           "Joystick{0}Button3",
-                                           "Joystick{0}Button4",
-                                           "Joystick{0}Button5",
-                                           "Joystick{0}Button6",
-                                           "Joystick{0}Button7",
-                                           "Joystick{0}Button8",
-                                           "Joystick{0}Button9",
-                                           "Joystick{0}Button10",
-                                           "Joystick{0}Button11",
-                                           "Joystick{0}Button12",
-                                           "Joystick{0}Button13",
-                                           "Joystick{0}Button14",
-                                           "Joystick{0}Button15",
-                                           "Joystick{0}Button16",
-                                           "Joystick{0}Button17",
-                                           "Joystick{0}Button18",
-                                           "Joystick{0}Button19",
-                                       };
-
-    private Dictionary<string, bool> m_inputMap = new Dictionary<string, bool>();
+    private List<int> m_plotAxises = new List<int>();
+    private List<int> m_plotButtons = new List<int>();
 
     public void OnEnable()
     {
@@ -89,7 +57,28 @@ public class OuyaPlotAxisButton : MonoBehaviour
             PlotMaterial.mainTexture = m_texture;
         }
 
-        ClearInputMap();
+#if UNITY_ANDROID && !UNITY_EDITOR
+        m_plotAxises.Add(OuyaController.AXIS_LS_X);
+        m_plotAxises.Add(OuyaController.AXIS_LS_Y);
+        m_plotAxises.Add(OuyaController.AXIS_RS_X);
+        m_plotAxises.Add(OuyaController.AXIS_RS_Y);
+        m_plotAxises.Add(OuyaController.AXIS_L2);
+        m_plotAxises.Add(OuyaController.AXIS_R2);
+
+        m_plotButtons.Add(OuyaController.BUTTON_O);
+        m_plotButtons.Add(OuyaController.BUTTON_U);
+        m_plotButtons.Add(OuyaController.BUTTON_Y);
+        m_plotButtons.Add(OuyaController.BUTTON_A);
+        m_plotButtons.Add(OuyaController.BUTTON_L1);
+        m_plotButtons.Add(OuyaController.BUTTON_R1);
+        m_plotButtons.Add(OuyaController.BUTTON_L3);
+        m_plotButtons.Add(OuyaController.BUTTON_R3);
+        m_plotButtons.Add(OuyaController.BUTTON_DPAD_UP);
+        m_plotButtons.Add(OuyaController.BUTTON_DPAD_DOWN);
+        m_plotButtons.Add(OuyaController.BUTTON_DPAD_RIGHT);
+        m_plotButtons.Add(OuyaController.BUTTON_DPAD_LEFT);
+        m_plotButtons.Add(OuyaController.BUTTON_MENU);
+#endif
     }
 
     public void OnDisable()
@@ -107,54 +96,16 @@ public class OuyaPlotAxisButton : MonoBehaviour
         }
     }
 
-    void ClearInputMap()
-    {
-        for (int player = 1; player <= 8; ++player)
-        {
-            foreach (string s in m_strAxises)
-            {
-                string axisName = string.Format(s, player);
-                m_inputMap[axisName] = false;
-            }
-            foreach (string s in m_strButtons)
-            {
-                string buttonName = string.Format(s, player);
-                m_inputMap[buttonName] = false;
-            }
-        }
-    }
-
-    void CheckForInput()
-    {
-        foreach (string s in m_strAxises)
-        {
-            string axisName = string.Format(s, (int)OuyaExampleCommon.Player);
-            if (Input.GetAxis(axisName) != 0f)
-            {
-                m_inputMap[axisName] = true;
-            }
-        }
-        foreach (string s in m_strButtons)
-        {
-            string buttonName = string.Format(s, (int)OuyaExampleCommon.Player);
-            KeyCode key = (KeyCode)(OuyaKeyCode)Enum.Parse(typeof(OuyaKeyCode), buttonName);
-            if (Input.GetKey(key))
-            {
-                m_inputMap[buttonName] = true;
-            }
-        }
-    }
-
     void UpdateTexture()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
         int offset = m_timeIndex*TextureSize;
         int i = 0;
-        foreach (string s in m_strAxises)
+        foreach (int axis in m_plotAxises)
         {
             int index = i + offset;
             float ratio = i / (float)TextureSize;
-            string axisName = string.Format(s, (int)OuyaExampleCommon.Player);
-            if (m_inputMap[axisName])
+            if (Mathf.Abs(OuyaSDK.OuyaInput.GetAxis(PlayerNum, axis)) > 0.25f)
             {
                 PrintPixel(index, new Color32(255, (byte)(ratio * 255), 0, 255));
             }
@@ -164,12 +115,12 @@ public class OuyaPlotAxisButton : MonoBehaviour
             }
             i += 4;
         }
-        foreach (string s in m_strButtons)
+        foreach (int button in m_plotButtons)
         {
             int index = i + offset;
             float ratio = i / (float)TextureSize;
-            string buttonName = string.Format(s, (int)OuyaExampleCommon.Player);
-            if (m_inputMap[buttonName])
+            if (OuyaSDK.OuyaInput.GetButtonDown(PlayerNum, button) ||
+                OuyaSDK.OuyaInput.GetButtonUp(PlayerNum, button))
             {
                 PrintPixel(index, new Color32(0, (byte)(ratio * 255), 255, 255));
             }
@@ -179,6 +130,7 @@ public class OuyaPlotAxisButton : MonoBehaviour
             }
             i += 4;
         }
+#endif
     }
 
     void PrintPixel(int index, Color32 color)
@@ -196,12 +148,8 @@ public class OuyaPlotAxisButton : MonoBehaviour
         if (m_inputTimer < DateTime.Now)
         {
             m_inputTimer = DateTime.Now + TimeSpan.FromMilliseconds(200);
-            CheckForInput();
-
             UpdateTexture();
             m_timeIndex = (m_timeIndex + 1)%TextureSize;
-
-            ClearInputMap();
         }
 
         ApplyTexture();

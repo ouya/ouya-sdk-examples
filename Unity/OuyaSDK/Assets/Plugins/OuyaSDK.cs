@@ -29,11 +29,9 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.5";
+    public const string VERSION = "1.0.12.6";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-
-    public const int MAX_CONTROLLERS = 4;
 
     public class NdkWrapper
     {
@@ -72,7 +70,7 @@ public static class OuyaSDK
 
         static OuyaInput()
         {
-            for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
+            for (int deviceId = 0; deviceId < OuyaController.MAX_CONTROLLERS; ++deviceId)
             {
                 m_axisStates.Add(new Dictionary<int, float>());
                 m_buttonStates.Add(new Dictionary<int, bool>());
@@ -119,7 +117,7 @@ public static class OuyaSDK
 
         public static void UpdateInputFrame()
         {
-            for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
+            for (int deviceId = 0; deviceId < OuyaController.MAX_CONTROLLERS; ++deviceId)
             {
 
                 #region Track Axis States
@@ -300,7 +298,7 @@ public static class OuyaSDK
 #if UNITY_ANDROID && !UNITY_EDITOR
             string[] joysticks = null;
             List<string> devices = new List<string>();
-            for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
+            for (int deviceId = 0; deviceId < OuyaController.MAX_CONTROLLERS; ++deviceId)
             {
                 string deviceName = getDeviceName(deviceId);
                 //Debug.Log(string.Format("Device={0} name={1}", deviceId, deviceName));
@@ -688,34 +686,6 @@ public static class OuyaSDK
         if (m_joystickCalibrationListeners.Contains(listener))
         {
             m_joystickCalibrationListeners.Remove(listener);
-        }
-    }
-
-    #endregion
-
-    #region Menu Button Up Listeners
-
-    public interface IMenuButtonUpListener
-    {
-        void OuyaMenuButtonUp();
-    }
-    private static List<IMenuButtonUpListener> m_menuButtonUpListeners = new List<IMenuButtonUpListener>();
-    public static List<IMenuButtonUpListener> getMenuButtonUpListeners()
-    {
-        return m_menuButtonUpListeners;
-    }
-    public static void registerMenuButtonUpListener(IMenuButtonUpListener listener)
-    {
-        if (!m_menuButtonUpListeners.Contains(listener))
-        {
-            m_menuButtonUpListeners.Add(listener);
-        }
-    }
-    public static void unregisterMenuButtonUpListener(IMenuButtonUpListener listener)
-    {
-        if (m_menuButtonUpListeners.Contains(listener))
-        {
-            m_menuButtonUpListeners.Remove(listener);
         }
     }
 

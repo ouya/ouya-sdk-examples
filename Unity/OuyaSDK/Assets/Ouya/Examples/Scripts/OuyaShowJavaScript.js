@@ -5,7 +5,6 @@ import System.Collections.Generic;
 public class OuyaShowJavaScript extends MonoBehaviour implements
     OuyaSDK.IPauseListener,
     OuyaSDK.IResumeListener,
-    OuyaSDK.IMenuButtonUpListener,
     OuyaSDK.IMenuAppearingListener,
 	OuyaSDK.IFetchGamerInfoListener,
 	OuyaSDK.IGetProductsListener,
@@ -14,7 +13,6 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
 {
     function Awake()
     {
-        OuyaSDK.registerMenuButtonUpListener(this);
         OuyaSDK.registerMenuAppearingListener(this);
         OuyaSDK.registerPauseListener(this);
         OuyaSDK.registerResumeListener(this);
@@ -26,7 +24,6 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
 
     function OnDestroy()
     {
-        OuyaSDK.unregisterMenuButtonUpListener(this);
         OuyaSDK.unregisterMenuAppearingListener(this);
         OuyaSDK.unregisterPauseListener(this);
         OuyaSDK.unregisterResumeListener(this);
@@ -34,11 +31,6 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
         OuyaSDK.unregisterGetProductsListener(this);
         OuyaSDK.unregisterPurchaseListener(this);
         OuyaSDK.unregisterGetReceiptsListener(this);
-    }
-
-    public function OuyaMenuButtonUp()
-    {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
 
     public function OuyaMenuAppearing()

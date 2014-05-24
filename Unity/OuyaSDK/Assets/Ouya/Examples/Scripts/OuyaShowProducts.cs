@@ -21,7 +21,6 @@ public class OuyaShowProducts : MonoBehaviour,
     OuyaSDK.IPauseListener, OuyaSDK.IResumeListener,
     OuyaSDK.IFetchGamerInfoListener,
     OuyaSDK.IGetProductsListener, OuyaSDK.IPurchaseListener, OuyaSDK.IGetReceiptsListener,
-    OuyaSDK.IMenuButtonUpListener,
     OuyaSDK.IMenuAppearingListener
 {
     /// <summary>
@@ -56,7 +55,6 @@ public class OuyaShowProducts : MonoBehaviour,
 
     void Awake()
     {
-        OuyaSDK.registerMenuButtonUpListener(this);
         OuyaSDK.registerMenuAppearingListener(this);
         OuyaSDK.registerPauseListener(this);
         OuyaSDK.registerResumeListener(this);
@@ -67,7 +65,6 @@ public class OuyaShowProducts : MonoBehaviour,
     }
     void OnDestroy()
     {
-        OuyaSDK.unregisterMenuButtonUpListener(this);
         OuyaSDK.unregisterMenuAppearingListener(this);
         OuyaSDK.unregisterPauseListener(this);
         OuyaSDK.unregisterResumeListener(this);
@@ -75,11 +72,6 @@ public class OuyaShowProducts : MonoBehaviour,
         OuyaSDK.unregisterGetProductsListener(this);
         OuyaSDK.unregisterPurchaseListener(this);
         OuyaSDK.unregisterGetReceiptsListener(this);
-    }
-
-    public void OuyaMenuButtonUp()
-    {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
 
     public void OuyaMenuAppearing()

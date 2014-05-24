@@ -451,7 +451,7 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                //change this code to search instead
+                pathNDKBuild = string.Format("{0}/ndk-build", pathNDK);
                 pathOuyaNDKLib = string.Format("{0}/Assets/Plugins/Android/libs/armeabi-v7a/lib-ouya-ndk.so", pathUnityProject);
                 break;
             case RuntimePlatform.WindowsEditor:
@@ -525,7 +525,8 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                RunProcess(pathNDKBuild, pathAndroid);
+                environment.Add(new KeyValuePair<string, string>("NDK_PROJECT_PATH", pathAndroid));
+                RunProcess(environment, pathNDKBuild, string.Empty);
                 break;
             case RuntimePlatform.WindowsEditor:
                 environment.Add(new KeyValuePair<string, string>("NDK_PROJECT_PATH", pathAndroid.Replace("/", "\\")));
@@ -1466,16 +1467,8 @@ public class OuyaPanel : EditorWindow
     private static string[] m_exampleScenes =
         {
             "Starter Kit Scenes",
-            "SceneShowCamera",
-            "SceneShowDrumkit",
-            "SceneShowGuitar",
             "SceneShowJavaScript",
-            "SceneSetResolution",
-            "SceneShowMeshPerformance",
-            "SceneShowNDK",
             "SceneShowProducts",
-            "SceneShowSounds",
-            "SceneShowSticks",
             "SceneShowUnityInput",
         };
 

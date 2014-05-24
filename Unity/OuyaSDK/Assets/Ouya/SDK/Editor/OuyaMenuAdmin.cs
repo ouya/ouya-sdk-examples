@@ -31,10 +31,34 @@ public class OuyaMenuAdmin : MonoBehaviour
     {
         string[] paths =
             {
-                "ProjectSettings/InputManager.asset",
                 "Assets/Ouya/Litjson",
                 "Assets/Ouya/SDK",
-                "Assets/Plugins",
+                "Assets/Plugins/Bitmap.cs",
+                "Assets/Plugins/BitmapDrawable.cs",
+                "Assets/Plugins/ByteArrayOutputStream.cs",
+                "Assets/Plugins/Drawable.cs",
+                "Assets/Plugins/DebugInput.cs",
+                "Assets/Plugins/JniHandleOwnership.cs",
+                "Assets/Plugins/OuyaController.cs",
+                "Assets/Plugins/OuyaSDK.cs",
+                "Assets/Plugins/Android/AndroidManifest.xml",
+                "Assets/Plugins/Android/jni/Android.mk",
+                "Assets/Plugins/Android/jni/Application.mk",
+                "Assets/Plugins/Android/jni/jni.cpp",
+                "Assets/Plugins/Android/libs/gson-2.2.2.jar",
+                "Assets/Plugins/Android/libs/guava-r09.jar",
+                "Assets/Plugins/Android/libs/ouya-sdk.jar",
+                "Assets/Plugins/Android/res/drawable/app_icon.png",
+                "Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
+                "Assets/Plugins/Android/res/layout/main.xml",
+                "Assets/Plugins/Android/res/raw/key.der",
+                "Assets/Plugins/Android/res/values/strings.xml",
+                "Assets/Plugins/Android/src/DebugInput.java",
+                "Assets/Plugins/Android/src/IOuyaActivity.java",
+                "Assets/Plugins/Android/src/MainActivity.java",
+                "Assets/Plugins/Android/src/OuyaUnityActivity.java",
+                "Assets/Plugins/Android/src/OuyaUnityPlugin.java",
+                "Assets/Plugins/Android/src/UnityOuyaFacade.java",
             };
         AssetDatabase.ExportPackage(paths, "OuyaSDK-Core.unitypackage", ExportPackageOptions.IncludeDependencies | ExportPackageOptions.Recurse | ExportPackageOptions.Interactive);
         Debug.Log(string.Format("Export OuyaSDK-Core.unitypackage success in: {0}", Directory.GetCurrentDirectory()));

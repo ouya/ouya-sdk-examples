@@ -16,13 +16,18 @@
 
 using System;
 using System.Collections.Generic;
+#if UNITY_ANDROID && !UNITY_EDITOR
+using tv.ouya.console.api;
+#endif
 using UnityEngine;
 using Object=UnityEngine.Object;
 
 [RequireComponent(typeof(Camera))]
 public class OuyaPlotMeshThumbstick : MonoBehaviour
 {
-    public OuyaSDK.OuyaPlayer Player;
+    public int PlayerNum;
+    public int AxisX = 0;
+    public int AxisY = 0;
     public MeshRenderer PlotMesh = null;
     private Material PlotMaterial = null;
 
@@ -33,9 +38,6 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
     private float[] m_pixelVs = null;
 
     public Color32 BackgroundColor = Color.clear;
-
-    public string StickX = "LX";
-    public string StickY = "LY";
 
     private static bool m_toggleGraph = true;
 
@@ -143,9 +145,10 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
 
     void UpdateTexture()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
         // range -1 to 1
-        float axisX = OuyaExampleCommon.GetAxis(StickX, Player);
-        float axisY = OuyaExampleCommon.GetAxis(StickY, Player);
+        float axisX = OuyaSDK.OuyaInput.GetAxis(OuyaShowUnityInput.PlayerNum, AxisX);
+        float axisY = OuyaSDK.OuyaInput.GetAxis(OuyaShowUnityInput.PlayerNum, AxisY);
 
         // put in 0 to TextureSize range
         int x = (int)((axisX + 1) * 0.5f * (TextureSize - 1));
@@ -176,6 +179,7 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
                 m_pixels[index].a = 255;
             }
         }
+#endif
     }
 
     public void Update()

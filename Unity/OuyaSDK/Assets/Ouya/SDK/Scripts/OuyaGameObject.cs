@@ -43,9 +43,6 @@ public class OuyaGameObject : MonoBehaviour
 
     #region Private Variables
     private static OuyaGameObject m_instance = null;
-#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 || UNITY_5_1
-    private bool m_sentMenuButtonUp = false;
-#endif
     #endregion
 
     #region Singleton Accessor Class
@@ -70,24 +67,6 @@ public class OuyaGameObject : MonoBehaviour
     #endregion 
      
     #region Java To Unity Event Handlers
-
-    public void onMenuButtonUp(string ignore)
-    {
-#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 || UNITY_5_1
-        if (m_sentMenuButtonUp)
-        {
-            return;
-        }
-        m_sentMenuButtonUp = true;
-#endif
-
-        //Debug.Log("OuyaGameObject: onMenuButtonUp");
-        foreach (OuyaSDK.IMenuButtonUpListener listener in OuyaSDK.getMenuButtonUpListeners())
-        {
-            //Debug.Log("OuyaGameObject: Invoke OuyaMenuButtonUp");
-            listener.OuyaMenuButtonUp();
-        }
-    }
 
     public void onMenuAppearing(string ignore)
     {
@@ -412,37 +391,7 @@ public class OuyaGameObject : MonoBehaviour
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaSDK.OuyaInput.UpdateInputFrame();
 #endif
-
-#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 || UNITY_5_1
-
-        #region OUYA_MENU_BUTTON
-
-        Event e = Event.current;
-        if (null == e)
-        {
-            return;
-        }
-        
-        if (e.isKey &&
-            e.keyCode == KeyCode.Menu &&
-            e.type == EventType.KeyUp)
-        {
-            onMenuButtonUp(string.Empty);
-            e.Use();
-        }
-
-        #endregion
-
-#endif
     }
-
-#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 || UNITY_5_1
-    public void LateUpdate()
-    {
-        m_sentMenuButtonUp = false;
-    }
-
-#endif
 
     private void FixedUpdate()
     {
