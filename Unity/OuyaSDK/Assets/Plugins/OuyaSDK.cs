@@ -29,7 +29,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.4";
+    public const string VERSION = "1.0.12.5";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -225,24 +225,38 @@ public static class OuyaSDK
 
         #region Public API
 
-        public static float GetAxis(int deviceId, int axis)
+        public static bool IsControllerConnected(int playerNum)
         {
-            return GetState(axis, m_axisStates[deviceId]);
+            if (playerNum >= 0 &&
+                null != OuyaSDK.Joysticks &&
+                playerNum < OuyaSDK.Joysticks.Length)
+            {
+                return (null != OuyaSDK.Joysticks[playerNum]);
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        public static bool GetButton(int deviceId, int button)
+        public static float GetAxis(int playerNum, int axis)
         {
-            return GetState(button, m_buttonStates[deviceId]);
+            return GetState(axis, m_axisStates[playerNum]);
         }
 
-        public static bool GetButtonDown(int deviceId, int button)
+        public static bool GetButton(int playerNum, int button)
         {
-            return GetState(button, m_buttonDownStates[deviceId]);
+            return GetState(button, m_buttonStates[playerNum]);
         }
 
-        public static bool GetButtonUp(int deviceId, int button)
+        public static bool GetButtonDown(int playerNum, int button)
         {
-            return GetState(button, m_buttonUpStates[deviceId]);
+            return GetState(button, m_buttonDownStates[playerNum]);
+        }
+
+        public static bool GetButtonUp(int playerNum, int button)
+        {
+            return GetState(button, m_buttonUpStates[playerNum]);
         }
 
         #endregion

@@ -573,7 +573,7 @@ public class OuyaShowUnityInput : MonoBehaviour,
         GUILayout.BeginVertical();
         for (int index = 1; index <= 8; ++index)
         {
-            if (GUILayout.Button(string.Format(OuyaExampleCommon.Player == (OuyaSDK.OuyaPlayer)index ? "[JOY{0}]" : "JOY{0}", index), GUILayout.Height(40)))
+            if (GUILayout.Button(string.Format(OuyaExampleCommon.Player == (OuyaSDK.OuyaPlayer)index ? "[JOY{0}]{1}" : "JOY{0}{1}", index, OuyaSDK.OuyaInput.IsControllerConnected(index-1) ? " |=" : " |X"), GUILayout.Height(60)))
             {
                 OuyaExampleCommon.Player = (OuyaSDK.OuyaPlayer)index;
                 UpdatePlayerButtons();
