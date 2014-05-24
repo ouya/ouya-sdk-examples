@@ -179,11 +179,21 @@ public class OuyaPanel : EditorWindow
         return fi.FullName;
     }
 
+    public static string GetMainActivity()
+    {
+        return javaAppName;
+    }
+
     private static string GetApplicationJava()
     {
         string path = string.Format("Assets/Plugins/Android/src/{0}.java", javaAppName);
         FileInfo fi = new FileInfo(path);
         return fi.FullName;
+    }
+
+    public static string GetBundleId()
+    {
+        return PlayerSettings.bundleIdentifier;
     }
 
     private static DateTime timerCheckAppJavaPackageName = DateTime.MinValue;
@@ -271,7 +281,7 @@ public class OuyaPanel : EditorWindow
         return fi.FullName;
     }
 
-    static string GetBundlePrefix()
+    public static string GetBundlePrefix()
     {
         string identifier = PlayerSettings.bundleIdentifier;
         if (string.IsNullOrEmpty(identifier))
@@ -435,7 +445,7 @@ public class OuyaPanel : EditorWindow
     #region NDK Paths
 
     void UpdateAndroidNDKPaths()
-	{
+    {
         pathObj = string.Format("{0}/Assets/Plugins/Android/obj", pathUnityProject);
         pathJNIAndroidMk = string.Format("{0}/Assets/Plugins/Android/jni/Android.mk", pathUnityProject);
         pathJNIApplicationMk = string.Format("{0}/Assets/Plugins/Android/jni/Application.mk", pathUnityProject);
@@ -443,7 +453,7 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-				pathNDKBuild = string.Format("{0}/ndk-build", pathNDK);
+                //change this code to search instead
                 pathOuyaNDKLib = string.Format("{0}/Assets/Plugins/Android/libs/armeabi-v7a/lib-ouya-ndk.so", pathUnityProject);
                 break;
             case RuntimePlatform.WindowsEditor:
@@ -517,8 +527,7 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-				environment.Add(new KeyValuePair<string, string>("NDK_PROJECT_PATH", pathAndroid));
-			RunProcess(environment, pathNDKBuild, string.Empty);
+                RunProcess(pathNDKBuild, pathAndroid);
                 break;
             case RuntimePlatform.WindowsEditor:
                 environment.Add(new KeyValuePair<string, string>("NDK_PROJECT_PATH", pathAndroid.Replace("/", "\\")));
@@ -981,25 +990,6 @@ public class OuyaPanel : EditorWindow
             }
         }
 
-        if (m_toggleBuildApplication)
-        {
-            m_toggleBuildApplication = false;
-
-            if (GenerateRJava())
-            {
-                if (CompileApplicationClasses())
-                {
-                    if (BuildApplicationJar())
-                    {
-                        AssetDatabase.Refresh();
-
-                        BuildPipeline.BuildPlayer(sceneArray, string.Format("{0}/{1}", pathUnityProject, apkName),
-                                                  BuildTarget.Android, BuildOptions.None);
-                    }
-                }
-            }
-        }
-
         if (m_toggleBuildAndRunApplication)
         {
             m_toggleBuildAndRunApplication = false;
@@ -1024,19 +1014,16 @@ public class OuyaPanel : EditorWindow
             {
                 if (CompileApplicationClasses())
                 {
-                    if (BuildApplicationJar())
+                    AssetDatabase.Refresh();
+
+                    BuildOptions options = BuildOptions.AutoRunPlayer;
+                    if (EditorUserBuildSettings.allowDebugging)
                     {
-                        AssetDatabase.Refresh();
-
-                        BuildOptions options = BuildOptions.AutoRunPlayer;
-                        if (EditorUserBuildSettings.allowDebugging)
-                        {
-                            options |= BuildOptions.Development | BuildOptions.AllowDebugging;
-                        }
-
-                        BuildPipeline.BuildPlayer(sceneArray, string.Format("{0}/{1}", pathUnityProject, apkName),
-                                                  BuildTarget.Android, options);
+                        options |= BuildOptions.Development | BuildOptions.AllowDebugging;
                     }
+
+                    BuildPipeline.BuildPlayer(sceneArray, string.Format("{0}/{1}", pathUnityProject, apkName),
+                                                BuildTarget.Android, options);
                 }
             }
         }
@@ -1265,95 +1252,6 @@ public class OuyaPanel : EditorWindow
             {
                 return false;
             }
-        }
-
-        return true;
-    }
-
-    static bool BuildApplicationJar()
-    {
-        string pathClasses = string.Format("{0}/Assets/Plugins/Android/Classes", pathUnityProject);
-        string bundlePrefix = GetBundlePrefix();
-        if (string.IsNullOrEmpty(bundlePrefix))
-        {
-            Debug.LogError("Bundle prefix cannot be empty");
-            return false;
-        }
-
-        //@hack: remove extra class file
-        // tv/ouya/sdk/IOuyaActivity.class
-        string extraClass = string.Format("{0}/tv/ouya/sdk/IOuyaActivity.class", pathClasses);
-        if (File.Exists(extraClass))
-        {
-            File.Delete(extraClass);
-            Debug.Log(string.Format("Removed: {0}", extraClass));
-        }
-        extraClass = string.Format("{0}/tv/ouya/sdk/IOuyaActivity.class.meta", pathClasses);
-        if (File.Exists(extraClass))
-        {
-            File.Delete(extraClass);
-            Debug.Log(string.Format("Removed: {0}", extraClass));
-        }
-
-        //@hack: remove extra class file
-        // tv/ouya/sdk/UnityOuyaFacade.class
-        extraClass = string.Format("{0}/tv/ouya/sdk/UnityOuyaFacade.class", pathClasses);
-        if (File.Exists(extraClass))
-        {
-            File.Delete(extraClass);
-            Debug.Log(string.Format("Removed: {0}", extraClass));
-        }
-        extraClass = string.Format("{0}/tv/ouya/sdk/UnityOuyaFacade.class.meta", pathClasses);
-        if (File.Exists(extraClass))
-        {
-            File.Delete(extraClass);
-            Debug.Log(string.Format("Removed: {0}", extraClass));
-        }
-
-        //@hack: remove extra folder
-        // tv/ouya/sdk/*
-        string extraFolder = string.Format("{0}/tv/ouya/sdk", pathClasses);
-        if (Directory.Exists(extraFolder))
-        {
-            Directory.Delete(extraFolder, true);
-            Debug.Log(string.Format("Removed: {0}", extraFolder));
-        }
-        string extraMeta = string.Format("{0}/tv/ouya/sdk.meta", pathClasses);
-        if (File.Exists(extraMeta))
-        {
-            File.Delete(extraMeta);
-            Debug.Log(string.Format("Removed: {0}", extraMeta));
-        }
-
-        RunProcess(pathJar, pathClasses, string.Format("cvfM OuyaUnityApplication.jar {0}/", bundlePrefix));
-        OuyaPanel.RunProcess(pathJavaP, pathClasses, string.Format("-s {0}.{1}", PlayerSettings.bundleIdentifier, javaAppName));
-        string pathAppJar = string.Format("{0}/OuyaUnityApplication.jar", pathClasses);
-        string pathDest = string.Format("{0}/Assets/Plugins/Android/OuyaUnityApplication.jar", pathUnityProject);
-        try
-        {
-            if (File.Exists(pathDest))
-            {
-                File.Delete(pathDest);
-            }
-            if (File.Exists(pathAppJar))
-            {
-                File.Move(pathAppJar, pathDest);
-            }
-            if (Directory.Exists(pathClasses))
-            {
-                Directory.Delete(pathClasses, true);
-            }
-
-            extraMeta = string.Format("{0}.meta", pathClasses);
-            if (File.Exists(extraMeta))
-            {
-                File.Delete(extraMeta);
-                Debug.Log(string.Format("Removed: {0}", extraMeta));
-            }
-        }
-        catch (System.Exception)
-        {
-
         }
 
         return true;

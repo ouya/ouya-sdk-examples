@@ -305,11 +305,12 @@ public class OuyaMenuAdmin : MonoBehaviour
     static void BuildApplicationJar()
     {
         string pathClasses = string.Format("{0}/Assets/Plugins/Android/Classes", m_pathUnityProject);
-        OuyaPanel.RunProcess(m_pathJar, pathClasses, string.Format("cvfM OuyaUnityPlugin.jar tv/"));
+        OuyaPanel.RunProcess(m_pathJar, pathClasses, string.Format("cvfM OuyaUnityPlugin.jar tv/ {0}", OuyaPanel.GetBundlePrefix()));
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.OuyaUnityPlugin", "OuyaUnityPlugin");
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.UnityOuyaFacade", "UnityOuyaFacade");
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.IOuyaActivity", "IOuyaActivity");
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.OuyaUnityActivity", "OuyaUnityActivity");
+        OuyaPanel.RunProcess(m_pathJavaP, pathClasses, string.Format("-s {0}/{1}", OuyaPanel.GetBundleId().Replace(".", "/"), OuyaPanel.GetMainActivity()), OuyaPanel.GetMainActivity());
 
         string pathAppJar = string.Format("{0}/OuyaUnityPlugin.jar", pathClasses);
         string pathDest = string.Format("{0}/Assets/Plugins/Android/OuyaUnityPlugin.jar", m_pathUnityProject);
