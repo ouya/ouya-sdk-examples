@@ -109,8 +109,6 @@ public class OuyaPanel : EditorWindow
 
     private bool m_toggleReinstallApplication = false;
 
-    private bool m_toggleBuildApplication = false;
-
     private bool m_toggleBuildAndRunApplication = false;
 
     private bool m_toggleBuildRunAndCompileApplication = false;
@@ -1519,13 +1517,6 @@ public class OuyaPanel : EditorWindow
                 if (GUILayout.Button("Reinstall Application", GUILayout.MaxWidth(position.width)))
                 {
                     m_toggleReinstallApplication = true;
-                }
-
-                if (GUILayout.Button("Build Application", GUILayout.MaxWidth(position.width)))
-                {
-                    m_toggleCompilePlugin = true;
-                    m_toggleCompileNDK = true;
-                    m_toggleBuildApplication = true;
                 }
 
                 if (GUILayout.Button("Build and Run Application", GUILayout.MaxWidth(position.width)))

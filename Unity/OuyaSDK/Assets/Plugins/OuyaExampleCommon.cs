@@ -1531,8 +1531,6 @@ public class OuyaExampleCommon
                 }
 #endif
         }
-
-        return false;
 #endif
     }
 
