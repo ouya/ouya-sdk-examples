@@ -29,7 +29,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.7";
+    public const string VERSION = "1.0.12.8";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -239,22 +239,58 @@ public static class OuyaSDK
 
         public static float GetAxis(int playerNum, int axis)
         {
-            return GetState(axis, m_axisStates[playerNum]);
+            if (playerNum >= 0 &&
+                null != m_axisStates &&
+                playerNum < m_axisStates.Count)
+            {
+                return GetState(axis, m_axisStates[playerNum]);
+            }
+            else
+            {
+                return 0f;
+            }
         }
 
         public static bool GetButton(int playerNum, int button)
         {
-            return GetState(button, m_buttonStates[playerNum]);
+            if (playerNum >= 0 &&
+                null != m_buttonStates &&
+                playerNum < m_buttonStates.Count)
+            {
+                return GetState(button, m_buttonStates[playerNum]);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static bool GetButtonDown(int playerNum, int button)
         {
-            return GetState(button, m_buttonDownStates[playerNum]);
+            if (playerNum >= 0 &&
+                null != m_buttonDownStates &&
+                playerNum < m_buttonDownStates.Count)
+            {
+                return GetState(button, m_buttonDownStates[playerNum]);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static bool GetButtonUp(int playerNum, int button)
         {
-            return GetState(button, m_buttonUpStates[playerNum]);
+            if (playerNum >= 0 &&
+                null != m_buttonUpStates &&
+                playerNum < m_buttonUpStates.Count)
+            {
+                return GetState(button, m_buttonUpStates[playerNum]);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         #endregion
