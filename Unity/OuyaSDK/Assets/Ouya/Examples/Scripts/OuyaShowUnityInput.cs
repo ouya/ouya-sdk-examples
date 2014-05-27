@@ -336,6 +336,13 @@ public class OuyaShowUnityInput : MonoBehaviour,
         GUILayout.EndVertical();
 
         GUILayout.FlexibleSpace();
+
+        if (GUILayout.Button("Hide Cursor"))
+        {
+            OuyaController.showCursor(false);
+        }
+
+        GUILayout.FlexibleSpace();
         
         GUILayout.EndHorizontal();
 

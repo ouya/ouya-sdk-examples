@@ -29,7 +29,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.8";
+    public const string VERSION = "1.0.12.9";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -441,11 +441,6 @@ public static class OuyaSDK
     public static void fetchGamerInfo()
     {
         OuyaSDK.OuyaJava.JavaFetchGamerInfo();
-    }
-
-    public static void showCursor(bool flag)
-    {
-        OuyaSDK.OuyaJava.JavaShowCursor(flag);
     }
 
     public static void putGameData(string key, string val)
@@ -874,34 +869,6 @@ public static class OuyaSDK
             catch (Exception ex)
             {
                 Debug.LogError(string.Format("OuyaSDK.JavaSetResolution exception={0}", ex));
-            }
-            finally
-            {
-                AndroidJNI.PopLocalFrame(IntPtr.Zero);
-            }
-#endif
-        }
-
-        public static void JavaShowCursor(bool flag)
-        {
-#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_STANDALONE_OSX && !UNITY_STANDALONE_WIN && !UNITY_STANDALONE_LINUX
-
-            // again, make sure the thread is attached..
-            AndroidJNI.AttachCurrentThread();
-
-            AndroidJNI.PushLocalFrame(0);
-
-            try
-            {
-                //Debug.Log("JavaShowCursor");
-                using (AndroidJavaClass ajc = new AndroidJavaClass(JAVA_CLASS))
-                {
-                    ajc.CallStatic("showCursor", new object[] { flag.ToString() });
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(string.Format("OuyaSDK.JavaShowCursor exception={0}", ex));
             }
             finally
             {

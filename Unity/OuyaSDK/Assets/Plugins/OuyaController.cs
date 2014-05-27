@@ -154,6 +154,7 @@ namespace tv.ouya.console.api
         private static IntPtr _jmGetButtonData = IntPtr.Zero;
         private static IntPtr _jmGetControllerByPlayer = IntPtr.Zero;
         private static IntPtr _jmGetDeviceName = IntPtr.Zero;
+        private static IntPtr _jmShowCursor = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         static OuyaController()
@@ -206,6 +207,20 @@ namespace tv.ouya.console.api
                     string strMethod = "getButtonData";
                     _jmGetButtonData = AndroidJNI.GetStaticMethodID(_jcOuyaController, strMethod, "(I)Ltv/ouya/console/api/OuyaController$ButtonData;");
                     if (_jmGetButtonData != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "showCursor";
+                    _jmShowCursor = AndroidJNI.GetStaticMethodID(_jcOuyaController, strMethod, "(Z)V");
+                    if (_jmShowCursor != IntPtr.Zero)
                     {
                         Debug.Log(string.Format("Found {0} method", strMethod));
                     }
@@ -297,6 +312,21 @@ namespace tv.ouya.console.api
             ButtonData retVal = new ButtonData();
             retVal.Instance = result;
             return retVal;
+        }
+
+        public static void showCursor(bool visible)
+        {
+            if (_jcOuyaController == IntPtr.Zero)
+            {
+                Debug.Log("_jcOuyaController is not initialized");
+                return;
+            }
+            if (_jmShowCursor == IntPtr.Zero)
+            {
+                Debug.LogError("_jmShowCursor is not initialized");
+                return;
+            }
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaController, _jmShowCursor, new jvalue[] { new jvalue() { z = visible } });
         }
     }
 }
