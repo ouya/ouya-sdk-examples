@@ -142,13 +142,8 @@ public class OuyaPanel : EditorWindow
     private static string pathBin = string.Empty;
     private static string pathSrc = string.Empty;
 
-#if UNITY_4 || UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 || UNITY_5_1
     private static string javaAppName = "MainActivity";
     private static string apkName = "Game.apk";
-#else
-    private static string javaAppName = "OuyaUnityApplication";
-    private static string apkName = "OuyaUnityApplication.apk";
-#endif
 
     void UpdateOuyaPaths()
     {

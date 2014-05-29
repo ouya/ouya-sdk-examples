@@ -113,27 +113,6 @@ public class OuyaUnityPlugin
 		}
 	}
 
-	public static void showCursor(String flag)
-	{
-		//Log.i(LOG_TAG, "OuyaUnityPlugin.showCursor: flag=" + flag);
-
-		try
-		{
-			Boolean show = false;
-			if (flag.equals("True"))
-			{
-				show = true;
-			}
-			//Log.i(LOG_TAG, "OuyaUnityPlugin.showCursor: show=" + show);
-
-			OuyaController.showCursor(show);
-		}
-		catch (Exception ex)
-		{
-			Log.e(LOG_TAG, "Failed to showCursor=" + flag + " Exception=" + ex.toString());
-		}
-	}
-
 	public static void putGameData(String key, String val)
 	{
 		//Log.i(LOG_TAG, "OuyaUnityPlugin.putGameData: key=" + key + " val=" + val);

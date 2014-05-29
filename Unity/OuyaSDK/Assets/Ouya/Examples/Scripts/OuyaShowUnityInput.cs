@@ -369,51 +369,6 @@ public class OuyaShowUnityInput : MonoBehaviour,
 
         GUILayout.FlexibleSpace();
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Legacy:");
-        GUILayout.BeginVertical();
-        GUILayout.Label(m_axis1);
-        GUILayout.Label(m_axis2);
-        GUILayout.Label(m_axis3);
-        GUILayout.Label(m_axis4);
-        GUILayout.Label(m_axis5);
-        GUILayout.Label(m_axis6);
-        GUILayout.Label(m_axis7);
-        GUILayout.EndVertical();
-
-        GUILayout.FlexibleSpace();
-
-        GUILayout.EndHorizontal();
-
-        GUILayout.FlexibleSpace();
-
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Legacy:");
-        GUILayout.BeginVertical();
-        GUILayout.Label(m_button1);
-        GUILayout.Label(m_button2);
-        GUILayout.Label(m_button3);
-        GUILayout.Label(m_button4);
-        GUILayout.Label(m_button5);
-        GUILayout.Label(m_button6);
-        GUILayout.Label(m_button7);
-        GUILayout.Label(m_button8);
-        GUILayout.Label(m_button9);
-        GUILayout.Label(m_button10);
-        GUILayout.EndVertical();
-        GUILayout.BeginVertical();
-        GUILayout.Label(m_button11);
-        GUILayout.Label(m_button12);
-        GUILayout.Label(m_button13);
-        GUILayout.Label(m_button14);
-        GUILayout.EndVertical();
-        
-        GUILayout.FlexibleSpace();
-
-        GUILayout.EndHorizontal();
-
-        GUILayout.FlexibleSpace();
-
         GUILayout.EndHorizontal();
 
         GUILayout.FlexibleSpace();
@@ -434,32 +389,35 @@ public class OuyaShowUnityInput : MonoBehaviour,
 
         GUILayout.EndHorizontal();
 
-        GUILayout.FlexibleSpace();
+        int buttonId = 0;
 
+        GUILayout.FlexibleSpace();
         GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
-
         GUILayout.FlexibleSpace();
-
-        GUILayout.BeginHorizontal(GUILayout.Width(300));
-
-        GUILayout.FlexibleSpace();
-
-        foreach (Texture2D texture in m_controllerButtons)
+        for (; buttonId < 7 && buttonId < m_controllerButtons.Count; ++buttonId)
         {
+            Texture2D texture = m_controllerButtons[buttonId];
             if (null != texture)
             {
                 GUILayout.Button(texture);
             }
         }
-
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
         GUILayout.FlexibleSpace();
 
-        GUILayout.EndHorizontal();
-
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
         GUILayout.FlexibleSpace();
-
+        for (; buttonId < m_controllerButtons.Count; ++buttonId)
+        {
+            Texture2D texture = m_controllerButtons[buttonId];
+            if (null != texture)
+            {
+                GUILayout.Button(texture);
+            }
+        }
+        GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-
         GUILayout.FlexibleSpace();
 
         GUI.skin = null;

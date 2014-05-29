@@ -209,6 +209,7 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
 
     void Draw()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
         if (m_plots.Count > 0 &&
             m_plots[0] == this)
         {
@@ -256,5 +257,6 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
                 }
             }
         }
+#endif
     }
 }

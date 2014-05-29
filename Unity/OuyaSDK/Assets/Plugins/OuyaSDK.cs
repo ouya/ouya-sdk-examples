@@ -298,6 +298,7 @@ public static class OuyaSDK
 
 #endif
 
+#if UNITY_ANDROID && !UNITY_EDITOR
     /// <summary>
     /// Cache joysticks
     /// </summary>
@@ -308,7 +309,6 @@ public static class OuyaSDK
     /// </summary>
     private static DateTime m_timerJoysticks = DateTime.MinValue;
 
-#if UNITY_ANDROID && !UNITY_EDITOR
     private static string getDeviceName(int deviceId)
     {
         OuyaController ouyaController = OuyaController.getControllerByPlayer(deviceId);
