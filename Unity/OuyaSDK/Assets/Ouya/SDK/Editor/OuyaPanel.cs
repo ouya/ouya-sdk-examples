@@ -686,8 +686,7 @@ public class OuyaPanel : EditorWindow
 
     public const string FILE_UNITY_JAR = "classes.jar";
     public const string PATH_UNITY_JAR_WIN = "Data/PlaybackEngines/androidplayer";
-    public const string PATH_UNITY_JAR_MAC = "Contents/PlaybackEngines/AndroidPlayer/bin/classes.jar";
-
+    
     private static string pathUnityJar = string.Empty;
     private static string pathUnityEditor = string.Empty;
     private static string pathUnityProject = string.Empty;
@@ -697,7 +696,8 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                pathUnityJar = string.Format("{0}/{1}", EditorApplication.applicationPath, PATH_UNITY_JAR_MAC);
+				FindFile(new DirectoryInfo(string.Format("{0}", EditorApplication.applicationPath)), FILE_UNITY_JAR, ref pathUnityJar);
+				pathUnityJar = pathUnityJar.Replace(@"\", "/");
                 break;
             case RuntimePlatform.WindowsEditor:
                 FindFile(new DirectoryInfo(string.Format("{0}/{1}", pathUnityEditor, PATH_UNITY_JAR_WIN)), FILE_UNITY_JAR, ref pathUnityJar);
@@ -1492,27 +1492,27 @@ public class OuyaPanel : EditorWindow
         {
             case 0:
 
-                if (GUILayout.Button("Run Application", GUILayout.MaxWidth(position.width)))
+                if (GUILayout.Button("Run", GUILayout.MaxWidth(position.width)))
                 {
                     m_toggleRunApplication = true;
                 }
 
-                if (GUILayout.Button("Stop Application", GUILayout.MaxWidth(position.width)))
+                if (GUILayout.Button("Stop", GUILayout.MaxWidth(position.width)))
                 {
                     m_toggleStopApplication = true;
                 }
 
-                if (GUILayout.Button("Reinstall Application", GUILayout.MaxWidth(position.width)))
+                if (GUILayout.Button("Reinstall", GUILayout.MaxWidth(position.width)))
                 {
                     m_toggleReinstallApplication = true;
                 }
 
-                if (GUILayout.Button("Build and Run Application", GUILayout.MaxWidth(position.width)))
+                if (GUILayout.Button("Build and Run", GUILayout.MaxWidth(position.width)))
                 {
                     m_toggleBuildAndRunApplication = true;
                 }
 
-                if (GUILayout.Button("Build, Run, and Compile Application", GUILayout.MaxWidth(position.width)))
+                if (GUILayout.Button("Compile, Build, and Run", GUILayout.MaxWidth(position.width)))
                 {
                     m_toggleBuildRunAndCompileApplication = true;
                 }

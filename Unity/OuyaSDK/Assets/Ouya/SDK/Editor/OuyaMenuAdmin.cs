@@ -148,7 +148,8 @@ public class OuyaMenuAdmin : MonoBehaviour
         {
             case RuntimePlatform.OSXEditor:
 		        m_pathUnityEditor = EditorApplication.applicationPath;
-                m_pathUnityJar = string.Format("{0}/{1}", m_pathUnityEditor, OuyaPanel.PATH_UNITY_JAR_MAC);
+				OuyaPanel.FindFile(new DirectoryInfo(string.Format("{0}", EditorApplication.applicationPath)), OuyaPanel.FILE_UNITY_JAR, ref m_pathUnityJar);
+				m_pathUnityJar = m_pathUnityJar.Replace(@"\", "/");
                 break;
             case RuntimePlatform.WindowsEditor:
 		        m_pathUnityEditor = new FileInfo(EditorApplication.applicationPath).Directory.FullName;
