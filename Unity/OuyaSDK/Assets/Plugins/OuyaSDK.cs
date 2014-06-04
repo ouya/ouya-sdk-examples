@@ -29,7 +29,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.12.11";
+    public const string VERSION = "1.0.12.13";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -238,6 +238,20 @@ public static class OuyaSDK
         }
 
         public static float GetAxis(int playerNum, int axis)
+        {
+            if (playerNum >= 0 &&
+                null != m_axisStates &&
+                playerNum < m_axisStates.Count)
+            {
+                return GetState(axis, m_axisStates[playerNum]);
+            }
+            else
+            {
+                return 0f;
+            }
+        }
+
+        public static float GetAxisRaw(int playerNum, int axis)
         {
             if (playerNum >= 0 &&
                 null != m_axisStates &&

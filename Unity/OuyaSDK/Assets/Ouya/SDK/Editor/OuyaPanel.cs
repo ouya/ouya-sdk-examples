@@ -27,27 +27,6 @@ using Debug = UnityEngine.Debug;
 
 public class OuyaPanel : EditorWindow
 {
-    private const string KEY_POST_PROCESSOR = "OuyaPanelUsePostProcessor";
-
-    public static bool UsePostProcessor
-    {
-        get
-        {
-            if (EditorPrefs.HasKey(OuyaPanel.KEY_POST_PROCESSOR))
-            {
-                return EditorPrefs.GetBool(OuyaPanel.KEY_POST_PROCESSOR);
-            }
-            else
-            {
-                return false;
-            }
-        }
-        set
-        {
-            EditorPrefs.SetBool(OuyaPanel.KEY_POST_PROCESSOR, value);
-        }
-    }
-
     private const string KEY_ERROR_STOP_BUILD = "OuyaPanelErrorStopBuild";
 
     public static bool StopOnErrors
@@ -787,10 +766,10 @@ public class OuyaPanel : EditorWindow
 
     #endregion
 
-    [MenuItem("Window/Open Ouya Panel")]
+    [MenuItem("Window/Open OUYA Panel")]
     private static void MenuOpenPanel()
     {
-        GetWindow<OuyaPanel>("Ouya Panel");
+        GetWindow<OuyaPanel>("OUYA Panel");
     }
 
     void OnEnable()
@@ -1544,8 +1523,6 @@ public class OuyaPanel : EditorWindow
                 }
                 */
 
-                UsePostProcessor = GUILayout.Toggle(UsePostProcessor, "Enable Java/C++ post processor");
-
                 GUILayout.Space(5);
 
                 GUILayout.Label("By default any Java compiler error will stop building");
@@ -1736,8 +1713,8 @@ public class OuyaPanel : EditorWindow
                 }
 
                 GUIDisplayUnityFile(KEY_PATH_OUYA_SDK, pathOuyaSDKJar);
-                GUIDisplayUnityFile(KEY_PATH_JAR_GUAVA, pathGsonJar);
-                GUIDisplayUnityFile(KEY_PATH_JAR_GSON, pathGuavaJar);
+                GUIDisplayUnityFile(KEY_PATH_JAR_GUAVA, pathGuavaJar);
+                GUIDisplayUnityFile(KEY_PATH_JAR_GSON, pathGsonJar);
                 GUIDisplayUnityFile(KEY_PATH_JAR_OUYA_UNITY_PLUGIN, pathOuyaUnityPluginJar);
                 GUIDisplayUnityFile("Manifest", pathManifestPath);
                 GUIDisplayUnityFile("key.der", "Assets/Plugins/Android/res/raw/key.der");
