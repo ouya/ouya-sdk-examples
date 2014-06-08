@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 #if UNITY_ANDROID && !UNITY_EDITOR
 using com.unity3d.player;
+using org.json;
 using tv.ouya.console.api;
 using tv.ouya.sdk;
 #endif
@@ -31,7 +32,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.13.1";
+    public const string VERSION = "1.0.13.2";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -509,6 +510,26 @@ public static class OuyaSDK
     {
         public string uuid = string.Empty;
         public string username = string.Empty;
+
+        public static GamerInfo Parse(string jsonData)
+        {
+            GamerInfo result = new GamerInfo();
+#if UNITY_ANDROID && !UNITY_EDITOR
+            //Debug.Log(jsonData);
+            using (JSONObject json = new JSONObject(jsonData))
+            {
+                if (json.has("uuid"))
+                {
+                    result.uuid = json.getString("uuid");
+                }
+                if (json.has("username"))
+                {
+                    result.username = json.getString("username");
+                }
+            }
+#endif
+            return result;
+        }
     }
 
     [Serializable]
@@ -527,9 +548,51 @@ public static class OuyaSDK
         public string name = string.Empty;
         public float originalPrice = 0f;
         public float percentOff = 0f;
-        public int priceInCents = 0;
-        public int productVersionToBundle = 0;
         public string developerName = string.Empty;
+
+        public static Product Parse(string jsonData)
+        {
+            Product result = new Product();
+#if UNITY_ANDROID && !UNITY_EDITOR
+            //Debug.Log(jsonData);
+            using (JSONObject json = new JSONObject(jsonData))
+            {
+                if (json.has("currencyCode"))
+                {
+                    result.currencyCode = json.getString("currencyCode");
+                }
+                if (json.has("description"))
+                {
+                    result.description = json.getString("description");
+                }
+                if (json.has("identifier"))
+                {
+                    result.identifier = json.getString("identifier");
+                }
+                if (json.has("localPrice"))
+                {
+                    result.localPrice = (float) json.getDouble("localPrice");
+                }
+                if (json.has("name"))
+                {
+                    result.name = json.getString("name");
+                }
+                if (json.has("originalPrice"))
+                {
+                    result.originalPrice = (float) json.getDouble("originalPrice");
+                }
+                if (json.has("percentOff"))
+                {
+                    result.percentOff = (float) json.getDouble("percentOff");
+                }
+                if (json.has("developerName"))
+                {
+                    result.developerName = json.getString("developerName");
+                }
+            }
+#endif
+            return result;
+        }
     }
 
     [Serializable]
@@ -543,6 +606,54 @@ public static class OuyaSDK
         public int priceInCents = 0;
         public DateTime purchaseDate = DateTime.MinValue;
         public string uuid = string.Empty;
+
+        public static Receipt Parse(string jsonData)
+        {
+            Receipt result = new Receipt();
+#if UNITY_ANDROID && !UNITY_EDITOR
+            //Debug.Log(jsonData);
+            using (JSONObject json = new JSONObject(jsonData))
+            {
+                if (json.has("identifier"))
+                {
+                    result.identifier = json.getString("identifier");
+                }
+                if (json.has("purchaseDate"))
+                {
+                    DateTime date;
+                    DateTime.TryParse(json.getString("purchaseDate"), out date);
+                    result.purchaseDate = date;
+                }
+                if (json.has("gamer"))
+                {
+                    result.gamer = json.getString("gamer");
+                }
+                if (json.has("localPrice"))
+                {
+                    result.localPrice = (float) json.getDouble("localPrice");
+                }
+                if (json.has("uuid"))
+                {
+                    result.uuid = json.getString("uuid");
+                }
+                if (json.has("localPrice"))
+                {
+                    result.localPrice = (float) json.getDouble("localPrice");
+                }
+                if (json.has("currency"))
+                {
+                    result.currency = json.getString("currency");
+                }
+                if (json.has("generatedDate"))
+                {
+                    DateTime date;
+                    DateTime.TryParse(json.getString("generatedDate"), out date);
+                    result.generatedDate = date;
+                }
+            }
+#endif
+            return result;
+        }
     }
     
     #endregion

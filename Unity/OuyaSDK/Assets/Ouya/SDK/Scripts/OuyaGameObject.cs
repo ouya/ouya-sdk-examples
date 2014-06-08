@@ -16,10 +16,6 @@
 
 using System;
 
-#if !UNITY_WP8
-using OuyaSDK_LitJson;
-#endif
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -103,7 +99,7 @@ public class OuyaGameObject : MonoBehaviour
     {
 #if !UNITY_WP8
         //Debug.Log(string.Format("FetchGamerInfoSuccessListener jsonData={0}", jsonData));
-        OuyaSDK.GamerInfo gamerInfo = JsonMapper.ToObject<OuyaSDK.GamerInfo>(jsonData);
+        OuyaSDK.GamerInfo gamerInfo = OuyaSDK.GamerInfo.Parse(jsonData);
         InvokeOuyaFetchGamerInfoOnSuccess(gamerInfo.uuid, gamerInfo.username);
 #endif
     }
@@ -133,7 +129,7 @@ public class OuyaGameObject : MonoBehaviour
         }
 
         Debug.Log(string.Format("OuyaSDK.ProductListListener: jsonData={0}", jsonData));
-        OuyaSDK.Product product = JsonMapper.ToObject<OuyaSDK.Product>(jsonData);
+        OuyaSDK.Product product = OuyaSDK.Product.Parse(jsonData);
         m_products.Add(product);
 #endif
     }
@@ -147,7 +143,7 @@ public class OuyaGameObject : MonoBehaviour
         foreach (OuyaSDK.Product product in m_products)
         {
             Debug.Log(string.Format("ProductListCompleteListener Product id={0} name={1} price={2}",
-                product.identifier, product.name, product.priceInCents));
+                product.identifier, product.name, product.localPrice));
         }
         InvokeOuyaGetProductsOnSuccess(m_products);
     }
@@ -156,7 +152,7 @@ public class OuyaGameObject : MonoBehaviour
     {
 #if !UNITY_WP8
         Debug.Log(string.Format("PurchaseSuccessListener jsonData={0}", jsonData));
-        OuyaSDK.Product product = JsonMapper.ToObject<OuyaSDK.Product>(jsonData);
+        OuyaSDK.Product product = OuyaSDK.Product.Parse(jsonData);
         InvokeOuyaPurchaseOnSuccess(product);
 #endif
     }
@@ -186,7 +182,7 @@ public class OuyaGameObject : MonoBehaviour
         }
 
         Debug.Log(string.Format("OuyaSDK.ReceiptListListener: jsonData={0}", jsonData));
-        OuyaSDK.Receipt receipt = JsonMapper.ToObject<OuyaSDK.Receipt>(jsonData);
+        OuyaSDK.Receipt receipt = OuyaSDK.Receipt.Parse(jsonData);
         m_receipts.Add(receipt);
 #endif
     }

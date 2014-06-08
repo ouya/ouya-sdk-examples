@@ -32,8 +32,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
-
 import com.unity3d.player.UnityPlayer;
 import com.unity3d.player.UnityPlayerActivity;
 import com.unity3d.player.UnityPlayerNativeActivity;

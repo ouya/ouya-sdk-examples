@@ -139,7 +139,6 @@ public class OuyaMenuAdmin : MonoBehaviour
     private static string m_pathJavaP = string.Empty;
     private static string m_pathSDK = string.Empty;
     private static string m_pathOuyaSDKJar = string.Empty;
-    private static string m_pathGsonJar = string.Empty;
 
     private static void UpdatePaths()
     {
@@ -174,7 +173,6 @@ public class OuyaMenuAdmin : MonoBehaviour
                 break;
         }
         m_pathOuyaSDKJar = string.Format("{0}/Assets/Plugins/Android/libs/ouya-sdk.jar", m_pathUnityProject);
-        m_pathGsonJar = string.Format("{0}/Assets/Plugins/Android/libs/gson-2.2.2.jar", m_pathUnityProject);
     }
 
     private static string GetPathAndroidJar()
@@ -266,16 +264,6 @@ public class OuyaMenuAdmin : MonoBehaviour
             return false;
         }
 
-        if (File.Exists(m_pathGsonJar))
-        {
-            Debug.Log(string.Format("Found GJON jar: {0}", m_pathGsonJar));
-        }
-        else
-        {
-            Debug.LogError(string.Format("Failed to find GSON jar: {0}", m_pathGsonJar));
-            return false;
-        }
-
         if (File.Exists(m_pathUnityJar))
         {
             Debug.Log(string.Format("Found Unity jar: {0}", m_pathUnityJar));
@@ -292,7 +280,7 @@ public class OuyaMenuAdmin : MonoBehaviour
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                jars = string.Format("\"{0}:{1}:{2}:{3}:{4}\"", m_pathToolsJar, GetPathAndroidJar(), m_pathGsonJar, m_pathUnityJar, m_pathOuyaSDKJar);
+                jars = string.Format("\"{0}:{1}:{2}:{3}\"", m_pathToolsJar, GetPathAndroidJar(), m_pathUnityJar, m_pathOuyaSDKJar);
 
                 OuyaPanel.RunProcess(m_pathJavaC, string.Empty, string.Format("-g -source 1.6 -target 1.6 {0} -classpath {1} -bootclasspath {1} -d \"{2}\"",
                     includeFiles,
@@ -302,7 +290,7 @@ public class OuyaMenuAdmin : MonoBehaviour
                     ref error);
                 break;
             case RuntimePlatform.WindowsEditor:
-                jars = string.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\";\"{4}\"", m_pathToolsJar, GetPathAndroidJar(), m_pathGsonJar, m_pathUnityJar, m_pathOuyaSDKJar);
+                jars = string.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\"", m_pathToolsJar, GetPathAndroidJar(), m_pathUnityJar, m_pathOuyaSDKJar);
 
                 OuyaPanel.RunProcess(m_pathJavaC, string.Empty, string.Format("-Xlint:deprecation -g -source 1.6 -target 1.6 {0} -classpath {1} -bootclasspath {1} -d \"{2}\"",
                     includeFiles,

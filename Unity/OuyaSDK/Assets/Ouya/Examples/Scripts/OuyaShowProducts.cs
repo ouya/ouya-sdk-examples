@@ -252,7 +252,7 @@ public class OuyaShowProducts : MonoBehaviour,
                 GUILayout.Space(400);
 
                 GUILayout.Label(string.Format("Name={0}", product.name));
-                GUILayout.Label(string.Format("Price={0}", product.priceInCents));
+                GUILayout.Label(string.Format("Price={0}", product.localPrice));
                 GUILayout.Label(string.Format("Identifier={0}", product.identifier));
 
                 if (GUILayout.Button("Purchase"))

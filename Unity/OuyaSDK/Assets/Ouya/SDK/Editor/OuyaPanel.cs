@@ -112,8 +112,6 @@ public class OuyaPanel : EditorWindow
     public const string KEY_APK_NAME = @"OuyaJavaApkName";
 
     private static string pathOuyaSDKJar = string.Empty;
-    private static string pathGsonJar = string.Empty;
-    private static string pathGuavaJar = string.Empty;
     private static string pathOuyaUnityPluginJar = string.Empty;
 
     private static string pathManifestPath = string.Empty;
@@ -127,8 +125,6 @@ public class OuyaPanel : EditorWindow
     void UpdateOuyaPaths()
     {
         pathOuyaSDKJar = string.Format("{0}/Assets/Plugins/Android/libs/ouya-sdk.jar", pathUnityProject);
-        pathGsonJar = string.Format("{0}/Assets/Plugins/Android/libs/gson-2.2.2.jar", pathUnityProject);
-        pathGuavaJar = string.Format("{0}/Assets/Plugins/Android/libs/guava-r09.jar", pathUnityProject);
         pathOuyaUnityPluginJar = string.Format("{0}/Assets/Plugins/Android/OuyaUnityPlugin.jar", pathUnityProject);
 
         pathManifestPath = string.Format("{0}/Assets/Plugins/Android/AndroidManifest.xml", pathUnityProject);
@@ -1149,16 +1145,6 @@ public class OuyaPanel : EditorWindow
             return false;
         }
 
-        if (File.Exists(pathGsonJar))
-        {
-            Debug.Log(string.Format("Found GJON jar: {0}", pathGsonJar));
-        }
-        else
-        {
-            Debug.LogError(string.Format("Failed to find GSON jar: {0}", pathGsonJar));
-            return false;
-        }
-
         if (File.Exists(pathUnityJar))
         {
             Debug.Log(string.Format("Found Unity jar: {0}", pathUnityJar));
@@ -1195,8 +1181,8 @@ public class OuyaPanel : EditorWindow
         switch (Application.platform)
         {
             case RuntimePlatform.OSXEditor:
-                jars = string.Format("\"{0}:{1}:{2}:{3}:{4}:{5}\"",
-                    pathToolsJar, GetPathAndroidJar(), pathGsonJar, pathUnityJar, pathOuyaUnityPluginJar, pathOuyaSDKJar);
+                jars = string.Format("\"{0}:{1}:{2}:{3}:{4}\"",
+                    pathToolsJar, GetPathAndroidJar(), pathUnityJar, pathOuyaUnityPluginJar, pathOuyaSDKJar);
 
                 RunProcess(pathJavaC, string.Empty, string.Format("-g -source 1.6 -target 1.6 {0} -classpath {1} -bootclasspath {1} -d \"{2}\"",
                     includeFiles,
@@ -1206,8 +1192,8 @@ public class OuyaPanel : EditorWindow
                     ref error);
                 break;
             case RuntimePlatform.WindowsEditor:
-                jars = string.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\";\"{4}\";\"{5}\"",
-                    pathToolsJar, GetPathAndroidJar(), pathGsonJar, pathUnityJar, pathOuyaUnityPluginJar, pathOuyaSDKJar);
+                jars = string.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\";\"{4}\"",
+                    pathToolsJar, GetPathAndroidJar(), pathUnityJar, pathOuyaUnityPluginJar, pathOuyaSDKJar);
 
                 RunProcess(pathJavaC, string.Empty, string.Format("-Xlint:deprecation -g -source 1.6 -target 1.6 {0} -classpath {1} -bootclasspath {1} -d \"{2}\"",
                     includeFiles,
@@ -1713,8 +1699,6 @@ public class OuyaPanel : EditorWindow
                 }
 
                 GUIDisplayUnityFile(KEY_PATH_OUYA_SDK, pathOuyaSDKJar);
-                GUIDisplayUnityFile(KEY_PATH_JAR_GUAVA, pathGuavaJar);
-                GUIDisplayUnityFile(KEY_PATH_JAR_GSON, pathGsonJar);
                 GUIDisplayUnityFile(KEY_PATH_JAR_OUYA_UNITY_PLUGIN, pathOuyaUnityPluginJar);
                 GUIDisplayUnityFile("Manifest", pathManifestPath);
                 GUIDisplayUnityFile("key.der", "Assets/Plugins/Android/res/raw/key.der");

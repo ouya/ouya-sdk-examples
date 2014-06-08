@@ -1,7 +1,6 @@
 ﻿#if UNITY_ANDROID && !UNITY_EDITOR
 
 using Android.Graphics.Drawables;
-using Android.Runtime;
 using System;
 using UnityEngine;
 
@@ -231,9 +230,9 @@ namespace tv.ouya.console.api
                     }
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                Debug.LogError("Exception finding AsyncCppOuyaFetchGamerUUID class");
+                Debug.LogError(string.Format("Exception loading JNI - {0}", ex));
             }
         }
 
