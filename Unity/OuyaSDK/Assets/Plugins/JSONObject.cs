@@ -3,7 +3,9 @@
 //#define VERBOSE_LOGGING
 
 using System;
+#if VERBOSE_LOGGING
 using System.Reflection;
+#endif
 using UnityEngine;
 
 namespace org.json

@@ -11,7 +11,15 @@ import tv.ouya.console.api.OuyaController;
 
 public class OuyaUnityActivity extends OuyaActivity
 {
-	private static final String TAG = OuyaUnityActivity.class.getSimpleName();	
+	private static final String TAG = OuyaUnityActivity.class.getSimpleName();
+
+	// ****
+	// Performance testing
+	private long mKeyDownDetected = System.nanoTime();
+	private long mKeyUpDetected = System.nanoTime();	
+	private final long TICKS_SECOND = 1000000000;
+	// end of -- performance testing
+	// *****
 
 	static {
     	Log.i(TAG, "Loading lib-ouya-ndk...");
@@ -39,6 +47,35 @@ public class OuyaUnityActivity extends OuyaActivity
 		return super.dispatchKeyEvent(keyEvent);
 	}
 	*/
+
+	// ****
+	// Performance testing
+	/*
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+
+		if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+			mKeyDownDetected = System.nanoTime();
+		}
+		
+		else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+			mKeyUpDetected = System.nanoTime();
+		}
+
+		return super.dispatchKeyEvent(keyEvent);
+	}
+	*/
+	public void debugDisplayKeyDownElapsed() {
+		long elapsed = System.nanoTime() - mKeyDownDetected;
+		Log.i(TAG, "Elapsed Down - "  + String.format("%1$,.5f", elapsed / (double) TICKS_SECOND));
+	}
+
+	public void debugDisplayKeyUpElapsed() {
+		long elapsed = System.nanoTime() - mKeyUpDetected;
+		Log.i(TAG, "Elapsed Up - "  + String.format("%1$,.5f", elapsed / (double) TICKS_SECOND));
+	}
+	// ****
+	// End of Performance testing
 
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {

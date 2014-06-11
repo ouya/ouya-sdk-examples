@@ -21,6 +21,7 @@ namespace com.unity3d.player
                     if (_jcUnityPlayer != IntPtr.Zero)
                     {
                         Debug.Log(string.Format("Found {0} class", strName));
+                        _jcUnityPlayer = AndroidJNI.NewGlobalRef(_jcUnityPlayer);
                     }
                     else
                     {
@@ -28,7 +29,17 @@ namespace com.unity3d.player
                         return;
                     }
                 }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError(string.Format("Exception loading JNI - {0}", ex));
+            }
+        }
 
+        private static void JNIFind()
+        {
+            try
+            {
                 {
                     string strField = "currentActivity";
                     _jfCurrentActivity = AndroidJNI.GetStaticFieldID(_jcUnityPlayer, strField, "Landroid/app/Activity;");
@@ -43,9 +54,9 @@ namespace com.unity3d.player
                     }
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                Debug.LogError("Exception finding UnityPlayer class");
+                Debug.LogError(string.Format("Exception loading JNI - {0}", ex));
             }
         }
 
@@ -53,6 +64,8 @@ namespace com.unity3d.player
         {
             get
             {
+                JNIFind();
+
                 if (_jcUnityPlayer == IntPtr.Zero)
                 {
                     Debug.LogError("_jcUnityPlayer is not initialized");
@@ -68,6 +81,10 @@ namespace com.unity3d.player
                 if (result == IntPtr.Zero)
                 {
                     Debug.LogError("Failed to get current activity");
+                }
+                else
+                {
+                    result = AndroidJNI.NewGlobalRef(result);
                 }
                 return result;
             }

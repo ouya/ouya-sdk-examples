@@ -15,9 +15,12 @@
  */
 
 #if UNITY_ANDROID && !UNITY_EDITOR
+//#define PERFORMANCE_TEST_MEASURE_LATENCY
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using com.unity3d.player;
 using java.io;
+using tv.ouya.sdk;
 #endif
 using System;
 using System.Collections.Generic;
@@ -120,8 +123,29 @@ public class OuyaShowUnityInput : MonoBehaviour,
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
-    void Awake()
+    private OuyaUnityActivity m_activity = null;
+
+    private int[] Buttons =
     {
+        OuyaController.BUTTON_O,
+        OuyaController.BUTTON_U,
+        OuyaController.BUTTON_Y,
+        OuyaController.BUTTON_A,
+        OuyaController.BUTTON_L1,
+        OuyaController.BUTTON_L3,
+        OuyaController.BUTTON_R1,
+        OuyaController.BUTTON_R3,
+        OuyaController.BUTTON_DPAD_DOWN,
+        OuyaController.BUTTON_DPAD_LEFT,
+        OuyaController.BUTTON_DPAD_RIGHT,
+        OuyaController.BUTTON_DPAD_UP,
+        OuyaController.BUTTON_MENU,
+    };
+
+    private void Awake()
+    {
+        m_activity = new OuyaUnityActivity(UnityPlayer.currentActivity);
+
         OuyaSDK.registerJoystickCalibrationListener(this);
         OuyaSDK.registerMenuAppearingListener(this);
         OuyaSDK.registerPauseListener(this);
@@ -135,25 +159,8 @@ public class OuyaShowUnityInput : MonoBehaviour,
         m_guiSkin.label.normal.textColor = Color.white;
         m_guiSkin.label.normal.background = m_backgroundBlack;
 
-        int[] buttons =
-            {
-                OuyaController.BUTTON_O,
-                OuyaController.BUTTON_U,
-                OuyaController.BUTTON_Y,
-                OuyaController.BUTTON_A,
-                OuyaController.BUTTON_L1,
-                OuyaController.BUTTON_L3,
-                OuyaController.BUTTON_R1,
-                OuyaController.BUTTON_R3,
-                OuyaController.BUTTON_DPAD_DOWN,
-                OuyaController.BUTTON_DPAD_LEFT,
-                OuyaController.BUTTON_DPAD_RIGHT,
-                OuyaController.BUTTON_DPAD_UP,
-                OuyaController.BUTTON_MENU,
-            };
-
         StringBuilder sb = new StringBuilder();
-        foreach (int button in buttons)
+        foreach (int button in Buttons)
         {
             Setup(button);
 
@@ -169,7 +176,7 @@ public class OuyaShowUnityInput : MonoBehaviour,
         }
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         OuyaSDK.unregisterJoystickCalibrationListener(this);
         OuyaSDK.unregisterMenuAppearingListener(this);
@@ -189,6 +196,7 @@ public class OuyaShowUnityInput : MonoBehaviour,
     {
         field = DebugInput.DebugGetAxisName(axis) + "=" + OuyaSDK.OuyaInput.GetAxis(PlayerNum, axis);
     }
+
     private void UpdateLabelButton(out string field, int button)
     {
         field = DebugInput.DebugGetButtonName(button) + "=" + OuyaSDK.OuyaInput.GetButton(PlayerNum, button);
@@ -267,6 +275,24 @@ public class OuyaShowUnityInput : MonoBehaviour,
         {
         }
     }
+
+#if PERFORMANCE_TEST_MEASURE_LATENCY
+    void Update()
+    {
+        foreach (int button in Buttons)
+        {
+            if (OuyaSDK.OuyaInput.GetButtonDown(0, button))
+            {
+                m_activity.debugDisplayKeyDownElapsed();
+            }
+
+            if (OuyaSDK.OuyaInput.GetButtonUp(0, button))
+            {
+                m_activity.debugDisplayKeyUpElapsed();
+            }
+        }
+    }
+#endif
 
     void FixedUpdate()
     {
