@@ -67,12 +67,12 @@ public class OuyaUnityActivity extends OuyaActivity
 	*/
 	public void debugDisplayKeyDownElapsed() {
 		long elapsed = System.nanoTime() - mKeyDownDetected;
-		Log.i(TAG, "Elapsed Down - "  + String.format("%1$,.5f", elapsed / (double) TICKS_SECOND));
+		Log.i(TAG, "debugDisplayKeyDownElapsed: Elapsed Down - "  + String.format("%1$,.5f", elapsed / (double) TICKS_SECOND));
 	}
 
 	public void debugDisplayKeyUpElapsed() {
 		long elapsed = System.nanoTime() - mKeyUpDetected;
-		Log.i(TAG, "Elapsed Up - "  + String.format("%1$,.5f", elapsed / (double) TICKS_SECOND));
+		Log.i(TAG, "debugDisplayKeyUpElapsed: Elapsed Up - "  + String.format("%1$,.5f", elapsed / (double) TICKS_SECOND));
 	}
 	// ****
 	// End of Performance testing

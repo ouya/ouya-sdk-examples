@@ -1,6 +1,6 @@
 ﻿#if UNITY_ANDROID && !UNITY_EDITOR
 
-#define VERBOSE_LOGGING
+//#define VERBOSE_LOGGING
 
 using System;
 #if VERBOSE_LOGGING

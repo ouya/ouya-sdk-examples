@@ -20,14 +20,13 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using com.unity3d.player;
 using java.io;
+using System.Threading;
+using tv.ouya.console.api;
 using tv.ouya.sdk;
 #endif
 using System;
 using System.Collections.Generic;
 using System.Text;
-#if UNITY_ANDROID && !UNITY_EDITOR
-using tv.ouya.console.api;
-#endif
 using UnityEngine;
 
 public class OuyaShowUnityInput : MonoBehaviour,
@@ -67,7 +66,6 @@ public class OuyaShowUnityInput : MonoBehaviour,
     private string m_axis4 = string.Empty;
     private string m_axis5 = string.Empty;
     private string m_axis6 = string.Empty;
-    private string m_axis7 = string.Empty;
 
     private string m_button1 = string.Empty;
     private string m_button2 = string.Empty;
@@ -82,7 +80,6 @@ public class OuyaShowUnityInput : MonoBehaviour,
     private string m_button11 = string.Empty;
     private string m_button12 = string.Empty;
     private string m_button13 = string.Empty;
-    private string m_button14 = string.Empty;
 
     private string m_controller1 = string.Empty;
     private string m_controller2 = string.Empty;
@@ -146,6 +143,12 @@ public class OuyaShowUnityInput : MonoBehaviour,
     {
         m_activity = new OuyaUnityActivity(UnityPlayer.currentActivity);
 
+#if PERFORMANCE_TEST_MEASURE_LATENCY
+        ThreadStart ts = new ThreadStart(TestWorker);
+        Thread thread = new Thread(ts);
+        thread.Start();
+#endif
+
         OuyaSDK.registerJoystickCalibrationListener(this);
         OuyaSDK.registerMenuAppearingListener(this);
         OuyaSDK.registerPauseListener(this);
@@ -176,8 +179,14 @@ public class OuyaShowUnityInput : MonoBehaviour,
         }
     }
 
+    private bool m_waitForExit = true;
+    void OnApplicationQuit()
+    {
+        m_waitForExit = false;
+    }
     private void OnDestroy()
     {
+        m_waitForExit = false;
         OuyaSDK.unregisterJoystickCalibrationListener(this);
         OuyaSDK.unregisterMenuAppearingListener(this);
         OuyaSDK.unregisterPauseListener(this);
@@ -187,7 +196,6 @@ public class OuyaShowUnityInput : MonoBehaviour,
     private void Start()
     {
         UpdatePlayerButtons();
-        Input.ResetInputAxes();
     }
 
     #region Presentation
@@ -277,19 +285,23 @@ public class OuyaShowUnityInput : MonoBehaviour,
     }
 
 #if PERFORMANCE_TEST_MEASURE_LATENCY
-    void Update()
+    private void TestWorker()
     {
-        foreach (int button in Buttons)
+        while (m_waitForExit)
         {
-            if (OuyaSDK.OuyaInput.GetButtonDown(0, button))
+            foreach (int button in Buttons)
             {
-                m_activity.debugDisplayKeyDownElapsed();
-            }
+                if (OuyaSDK.OuyaInput.GetButtonDown(0, button))
+                {
+                    m_activity.debugDisplayKeyDownElapsed();
+                }
 
-            if (OuyaSDK.OuyaInput.GetButtonUp(0, button))
-            {
-                m_activity.debugDisplayKeyUpElapsed();
+                if (OuyaSDK.OuyaInput.GetButtonUp(0, button))
+                {
+                    m_activity.debugDisplayKeyUpElapsed();
+                }
             }
+            Thread.Sleep(0);
         }
     }
 #endif
