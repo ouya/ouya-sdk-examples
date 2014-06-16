@@ -135,18 +135,6 @@ public class OuyaPanel : EditorWindow
         EditorPrefs.SetString(KEY_PATH_OUYA_SDK, pathOuyaSDKJar);
     }
 
-    static string GetRJava()
-    {
-        if (string.IsNullOrEmpty(PlayerSettings.bundleIdentifier))
-        {
-            return string.Empty;
-        }
-
-        string path = string.Format("Assets/Plugins/Android/src/{0}/R.java", PlayerSettings.bundleIdentifier.Replace(".", "/"));
-        FileInfo fi = new FileInfo(path);
-        return fi.FullName;
-    }
-
     public static string GetMainActivity()
     {
         return javaAppName;
@@ -1068,25 +1056,10 @@ public class OuyaPanel : EditorWindow
 
         Thread.Sleep(100);
 
+        /*
         RunProcess(pathAAPT, string.Format("package -v -f -m -J gen -M \"{0}\" -S \"{1}\" -I \"{2}\" -F \"{3}/resources.ap_\" -J \"{4}\"",
             pathManifestPath, pathRes, GetPathAndroidJar(), pathBin, pathSrc));
-
-        string pathRJava = GetRJava();
-        if (string.IsNullOrEmpty(pathRJava))
-        {
-            Debug.LogError("Path to R.java is empty");
-            return false;
-        }
-        if (File.Exists(pathRJava))
-        {
-            using (FileStream fs = File.Open(pathRJava, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                using (StreamReader sr = new StreamReader(fs))
-                {
-                    Debug.Log(sr.ReadToEnd());
-                }
-            }
-        }
+        */
 
         if (Directory.Exists(pathBin))
         {
@@ -1110,19 +1083,8 @@ public class OuyaPanel : EditorWindow
         {
             Directory.CreateDirectory(pathClasses);
         }
-        string pathRJava = GetRJava();
-        if (string.IsNullOrEmpty(pathRJava))
-        {
-            Debug.LogError("Path to R.java is empty");
-            return false;
-        }
-        if (!File.Exists(pathRJava))
-        {
-            Debug.LogError("R.java cannot be found");
-            return false;
-        }
-        string includeFiles = string.Format("\"{0}/{1}.java\" \"{0}/IOuyaActivity.java\" \"{0}/UnityOuyaFacade.java\" \"{2}\"",
-            pathSrc, javaAppName, pathRJava);
+        string includeFiles = string.Format("\"{0}/{1}.java\" \"{0}/IOuyaActivity.java\" \"{0}/UnityOuyaFacade.java\"",
+            pathSrc, javaAppName);
         string jars = string.Empty;
 
         if (File.Exists(pathToolsJar))
@@ -1701,8 +1663,7 @@ public class OuyaPanel : EditorWindow
                 GUIDisplayUnityFile(KEY_PATH_OUYA_SDK, pathOuyaSDKJar);
                 GUIDisplayUnityFile(KEY_PATH_JAR_OUYA_UNITY_PLUGIN, pathOuyaUnityPluginJar);
                 GUIDisplayUnityFile("Manifest", pathManifestPath);
-                GUIDisplayUnityFile("key.der", "Assets/Plugins/Android/res/raw/key.der");
-                GUIDisplayUnityFile("R.Java", GetRJava());
+                GUIDisplayUnityFile("key.der", "Assets/Plugins/Android/assets/key.der");
                 GUIDisplayUnityFile("Activity.Java", GetApplicationJava());
                 GUIDisplayUnityFile("IOuyaActivity.Java", GetIOuyaActivityJava());
                 //GUIDisplayFolder("Bin", pathBin);

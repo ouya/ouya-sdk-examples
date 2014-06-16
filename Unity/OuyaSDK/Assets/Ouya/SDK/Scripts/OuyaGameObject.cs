@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-using System;
-
 using System.Collections.Generic;
+#if UNITY_ANDROID && !UNITY_EDITOR
 using System.Threading;
+#endif
 using UnityEngine;
 
 public class OuyaGameObject : MonoBehaviour
 {
     #region Public Visible Variables
 
-    public string DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+    public string m_developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
-    [@HideInInspector]
-    private static string m_inputData = null;
-    public static string InputData{
-        get{
-            return m_inputData;
-        }
-        set{
-            m_inputData = value;
-        }
-    }
+    public bool m_useInputThreading = false;
+
     #endregion
 
     #region Private Variables
@@ -228,7 +220,7 @@ public class OuyaGameObject : MonoBehaviour
         {
             //Initialize OuyaSDK with your developer ID
             //Get your developer_id from the ouya developer portal @ http://developer.ouya.tv
-            OuyaSDK.initialize(DEVELOPER_ID);
+            OuyaSDK.initialize(m_developerId);
         }
         catch (System.Exception ex)
         {
@@ -240,9 +232,12 @@ public class OuyaGameObject : MonoBehaviour
         #region Init Input
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        ThreadStart ts = new ThreadStart(InputWorker);
-        Thread thread = new Thread(ts);
-        thread.Start();
+        if (m_useInputThreading)
+        {
+            ThreadStart ts = new ThreadStart(InputWorker);
+            Thread thread = new Thread(ts);
+            thread.Start();
+        }
 #endif
 
         #endregion
@@ -253,7 +248,7 @@ public class OuyaGameObject : MonoBehaviour
 
     public void RequestUnityAwake(string ignore)
     {
-        OuyaSDK.initialize(DEVELOPER_ID);
+        OuyaSDK.initialize(m_developerId);
     }
 
     public void SendIAPInitComplete(string ignore)
@@ -406,7 +401,15 @@ public class OuyaGameObject : MonoBehaviour
     private bool m_clearFrame = true;
     public void Update()
     {
-        m_clearFrame = true;
+        if (m_useInputThreading)
+        {
+            m_clearFrame = true;   
+        }
+        else
+        {
+            OuyaSDK.OuyaInput.UpdateInputFrame();
+            OuyaSDK.OuyaInput.ClearButtonStates();
+        }
     }
     private void InputWorker()
     {

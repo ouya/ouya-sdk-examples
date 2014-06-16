@@ -71,48 +71,6 @@ public class OuyaUnityPlugin
 		m_pluginAwake = true;
 	}
 
-	private static void changeResolution(final int width, final int height) {
-		if (null != IOuyaActivity.GetLayout()) {
-			IOuyaActivity.GetActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-
-					WindowManager.LayoutParams params = IOuyaActivity.GetActivity().getWindow().getAttributes();
-					params.width = width;
-					params.height = height;
-					IOuyaActivity.GetActivity().getWindow().setAttributes(params);
-
-
-					Log.i(LOG_TAG, "IOuyaActivity.GetLayout().layout(0, 0, width, height);");
-					IOuyaActivity.GetLayout().getLayoutParams().width = width;
-					IOuyaActivity.GetLayout().getLayoutParams().height = height;
-					IOuyaActivity.GetLayout().requestLayout();
-				}
-			});
-		}
-	}
-
-	public static void setResolution(String resolutionId)
-	{
-		if (null == IOuyaActivity.GetUnityPlayer())
-		{
-			Log.i(LOG_TAG, "IOuyaActivity.GetUnityPlayer() is null");
-			return;
-		}
-		if (resolutionId.equals("640x480"))
-		{
-			changeResolution(640, 480);
-		}
-		else if (resolutionId.equals("1280x720"))
-		{
-			changeResolution(1280, 720);
-		}
-		else if (resolutionId.equals("1920x1080"))
-		{
-			changeResolution(1920, 1080);
-		}
-	}
-
 	public static void putGameData(String key, String val)
 	{
 		//Log.i(LOG_TAG, "OuyaUnityPlugin.putGameData: key=" + key + " val=" + val);

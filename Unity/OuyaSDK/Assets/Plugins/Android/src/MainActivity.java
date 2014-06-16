@@ -22,20 +22,22 @@ import tv.ouya.sdk.*;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.*;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.InputDevice;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 
 import com.unity3d.player.UnityPlayer;
-import com.unity3d.player.UnityPlayerActivity;
-import com.unity3d.player.UnityPlayerNativeActivity;
-import com.unity3d.player.UnityPlayerProxyActivity;
 
 import tv.ouya.console.api.*;
 
@@ -61,9 +63,11 @@ public class MainActivity extends OuyaUnityActivity
 		//make bundle accessible to Unity
 		IOuyaActivity.SetSavedInstanceState(savedInstanceState);
 
-		// load the raw resource for the application key
+		// load the signing key from assets
 		try {
-			InputStream inputStream = getResources().openRawResource(R.raw.key);
+			Context context = getApplicationContext();
+			AssetManager assetManager = context.getAssets();
+			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
 			byte[] applicationKey = new byte[inputStream.available()];
 			inputStream.read(applicationKey);
 			inputStream.close();
@@ -72,21 +76,32 @@ public class MainActivity extends OuyaUnityActivity
 			e.printStackTrace();
 		}
 
+		// Create the View
+		RelativeLayout mainLayout = new RelativeLayout(this);
+		LayoutParams lp = new LayoutParams (LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		mainLayout.setLayoutParams(lp);
+
+		LinearLayout linearLayout = new LinearLayout(this);
+		lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		linearLayout.setOrientation(LinearLayout.VERTICAL);
+		mainLayout.addView(linearLayout, 0, lp);
+		
+		FrameLayout unityLayout = new FrameLayout(this);
+		lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		linearLayout.addView(unityLayout, 0, lp);
+		
 		// Create the UnityPlayer
         IOuyaActivity.SetUnityPlayer(new UnityPlayer(this));
         int glesMode = IOuyaActivity.GetUnityPlayer().getSettings().getInt("gles_mode", 1);
         boolean trueColor8888 = false;
         IOuyaActivity.GetUnityPlayer().init(glesMode, trueColor8888);
-        setContentView(R.layout.main);
+        setContentView(mainLayout);
 
         // Add the Unity view
-        FrameLayout layout = (FrameLayout) findViewById(R.id.unityLayout);
-        LayoutParams lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layout.addView(IOuyaActivity.GetUnityPlayer().getView(), 0, lp);
-		IOuyaActivity.SetLayout(layout);
+        lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        unityLayout.addView(IOuyaActivity.GetUnityPlayer().getView(), 0, lp);
 
 		// Set the focus
-        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
 		mainLayout.setFocusableInTouchMode(true);
 	}
 

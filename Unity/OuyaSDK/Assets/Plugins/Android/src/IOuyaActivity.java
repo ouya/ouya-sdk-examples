@@ -56,17 +56,6 @@ public class IOuyaActivity
 		m_savedInstanceState = savedInstanceState;
 	}
 
-	// save reference to the FrameLayout
-	protected static FrameLayout m_layout = null;
-	public static FrameLayout GetLayout()
-	{
-		return m_layout;
-	}
-	public static void SetLayout(FrameLayout layout)
-	{
-		m_layout = layout;
-	}
-
 	// save reference to the UnityOuyaFacade
 	protected static UnityOuyaFacade m_unityOuyaFacade = null;
 	public static UnityOuyaFacade GetUnityOuyaFacade()
