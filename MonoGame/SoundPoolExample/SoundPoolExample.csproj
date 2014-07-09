@@ -59,11 +59,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity1.cs" />
+    <Compile Include="ButtonSprite.cs" />
+    <Compile Include="FocusManager.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\Content\Graphics\ButtonActive.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\ButtonInactive.xnb" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
@@ -87,6 +91,12 @@
     <AndroidAsset Include="Assets\Content\ouch.wav" />
     <AndroidAsset Include="Assets\Content\spriteFont1.xnb" />
     <Content Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OuyaSdk\OuyaSdk.csproj">
+      <Project>{3c5c877c-83e9-4bc1-984c-940052d091e7}</Project>
+      <Name>OuyaSdk</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
