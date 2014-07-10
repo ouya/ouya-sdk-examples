@@ -12,6 +12,7 @@ import tv.ouya.console.api.DebugInput;
 import tv.ouya.console.api.OuyaActivity;
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.console.api.OuyaController.ButtonData;
+import tv.ouya.console.api.OuyaFacade;
 import tv.ouya.console.api.OuyaInputMapper;
 
 public class MainActivity extends OuyaActivity {
@@ -60,11 +61,16 @@ public class MainActivity extends OuyaActivity {
 	private Boolean mWaitToExit = true;
 	private float mMenuDetected = 0f;
 	
+	private OuyaFacade mOuyaFacade = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		setContentView(R.layout.activity_main);
 		super.onCreate(savedInstanceState);
+		
+		mOuyaFacade = mOuyaFacade.getInstance();
+		mOuyaFacade.init(this, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 		
 		txtSystem = (TextView)findViewById(R.id.txtSystem);
 		txtController = (TextView)findViewById(R.id.txtController);
@@ -142,7 +148,9 @@ public class MainActivity extends OuyaActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		txtSystem.setText("Brand=" + android.os.Build.BRAND + " Model=" + android.os.Build.MODEL + " Version=" + android.os.Build.VERSION.SDK_INT);
+		txtSystem.setText("Brand=" + android.os.Build.BRAND + " Model=" + android.os.Build.MODEL +
+				" Version=" + android.os.Build.VERSION.SDK_INT +
+				" isRunningOnOUYASupportedHardware="+mOuyaFacade.isRunningOnOUYASupportedHardware());
 		
 		setDrawable(imgControllerO, OuyaController.BUTTON_O);
 		setDrawable(imgControllerU, OuyaController.BUTTON_U);
@@ -164,6 +172,7 @@ public class MainActivity extends OuyaActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		mOuyaFacade.shutdown();
 		mWaitToExit = false; //let timer exit
 	}
 	
