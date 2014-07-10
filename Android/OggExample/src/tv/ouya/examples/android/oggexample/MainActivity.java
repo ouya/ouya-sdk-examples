@@ -113,28 +113,28 @@ public class MainActivity extends Activity {
 		btnFadeIn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	fadeIn(mpSound1, SOUND_1, mpSound2);
+            	fadeIn(mpSound1, SOUND_1);
             }
         });
 		
 		btnFadeIn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	fadeIn(mpSound2, SOUND_2, mpSound1);
+            	fadeIn(mpSound2, SOUND_2);
             }
         });
 		
 		btnFadeOut1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	fadeOut(mpSound1, mpSound2);
+            	fadeOut(mpSound1);
             }
         });
 		
 		btnFadeOut2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	fadeOut(mpSound2, mpSound1);
+            	fadeOut(mpSound2);
             }
         });		
 	}
@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
         timer.start();
 	}
 	
-	private void fadeIn(CustomMediaPlayer fadeInSound, String soundFile, CustomMediaPlayer alternateSound) {
+	private void fadeIn(CustomMediaPlayer fadeInSound, String soundFile) {
 		if (null != fadeInSound) {
 			if (fadeInSound.isPlaying()) {
 				fadeInSound.stop();
@@ -204,29 +204,13 @@ public class MainActivity extends Activity {
 			fadeInSound.setVolume(0f, 0f);
 			playSound(fadeInSound, soundFile);
 		}
-		if (null != alternateSound) {
-			alternateSound.mState = States.None;
-			alternateSound.mTimer = 0;
-			alternateSound.setVolume(0f, 0f);
-			if (alternateSound.isPlaying()) {
-				alternateSound.stop();
-			}
-		}
 	}
 	
-	private void fadeOut(CustomMediaPlayer fadeOutSound, CustomMediaPlayer alternateSound) {
+	private void fadeOut(CustomMediaPlayer fadeOutSound) {
 		if (null != fadeOutSound) {
 			fadeOutSound.mState = States.FadeOut;
 			fadeOutSound.mTimer = System.nanoTime() + TICKS_SECOND;
 			fadeOutSound.setVolume(1f, 1f);
-		}
-		if (null != alternateSound) {
-			alternateSound.mState = States.None;
-			alternateSound.mTimer = 0;
-			alternateSound.setVolume(0f, 0f);
-			if (alternateSound.isPlaying()) {
-				alternateSound.stop();
-			}
 		}
 	}
 	
