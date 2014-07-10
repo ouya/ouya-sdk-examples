@@ -4,8 +4,7 @@ MonoGame/InAppPurchases/obj/*
 !MonoGame/InAppPurchases/Ouya.Console.Api.dll
 MonoGame/SetResolutions/bin/*
 MonoGame/SetResolutions/obj/*
-!MonoGame/SetResolutions/MonoGame.Framework.dll
-!MonoGame/SetResolutions/Ouya.Console.Api.dll
+!MonoGame/SetResolutions/libs/MonoGame.Framework.dll
 MonoGame/VirtualController/bin/*
 MonoGame/VirtualController/obj/*
 Android/AndroidKeyLogger/
