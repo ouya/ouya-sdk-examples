@@ -316,7 +316,17 @@ public class OuyaShowUnityInput : MonoBehaviour,
     {
         GUI.skin = m_guiSkin;
 
-        GUILayout.Space(80);
+        GUILayout.Space(40);
+
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+        GUILayout.FlexibleSpace();
+        GUILayout.Label(string.Format("isRunningOnOUYASupportedHardware: {0}",
+            OuyaSDK.isRunningOnOUYASupportedHardware()),
+            GUILayout.Width(300));
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(5);
 
         GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
 

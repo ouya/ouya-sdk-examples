@@ -21,6 +21,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmGetProductsAsync = IntPtr.Zero;
         private static IntPtr _jmRequestPurchaseAsync = IntPtr.Zero;
         private static IntPtr _jmGetReceiptsAsync = IntPtr.Zero;
+        private static IntPtr _jmIsRunningOnOUYASupportedHardware = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         static OuyaUnityPlugin()
@@ -199,6 +200,20 @@ namespace tv.ouya.sdk
                     string strMethod = "getReceiptsAsync";
                     _jmGetReceiptsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
                     if (_jmGetReceiptsAsync != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "isRunningOnOUYASupportedHardware";
+                    _jmIsRunningOnOUYASupportedHardware = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Z");
+                    if (_jmIsRunningOnOUYASupportedHardware != IntPtr.Zero)
                     {
                         Debug.Log(string.Format("Found {0} method", strMethod));
                     }
@@ -429,6 +444,21 @@ namespace tv.ouya.sdk
                 return;
             }
             AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmGetReceiptsAsync, new jvalue[0]);
+        }
+
+        public static bool isRunningOnOUYASupportedHardware()
+        {
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return false;
+            }
+            if (_jmIsRunningOnOUYASupportedHardware == IntPtr.Zero)
+            {
+                Debug.LogError("_jmIsRunningOnOUYASupportedHardware is not initialized");
+                return false;
+            }
+            return AndroidJNI.CallStaticBooleanMethod(_jcOuyaUnityPlugin, _jmIsRunningOnOUYASupportedHardware, new jvalue[0]);
         }
     }
 }

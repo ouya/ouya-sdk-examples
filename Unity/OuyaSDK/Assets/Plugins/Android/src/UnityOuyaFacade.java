@@ -441,6 +441,10 @@ public class UnityOuyaFacade
         ouyaFacade.requestReceipts(new ReceiptListener());
     }
 
+	public Boolean isRunningOnOUYASupportedHardware() {
+		return ouyaFacade.isRunningOnOUYASupportedHardware();
+	}
+
     /*
      * This will be called when the user clicks on an item in the ListView.
      */
@@ -951,5 +955,4 @@ public class UnityOuyaFacade
 			UnityPlayer.UnitySendMessage("OuyaGameObject", "PurchaseCancelListener", "");
 		}
     }
-
 }

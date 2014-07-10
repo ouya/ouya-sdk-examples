@@ -32,7 +32,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.13.5";
+    public const string VERSION = "1.0.13.6";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -518,6 +518,15 @@ public static class OuyaSDK
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.getReceiptsAsync();
+#endif
+    }
+
+    public static bool isRunningOnOUYASupportedHardware()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        return OuyaUnityPlugin.isRunningOnOUYASupportedHardware();
+#else
+        return false;
 #endif
     }
 

@@ -362,4 +362,27 @@ public class OuyaUnityPlugin
 			Log.i(LOG_TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
 		}
 	}
+
+	public static boolean isRunningOnOUYASupportedHardware()
+	{
+		boolean result = false;
+		try
+		{
+			//Log.i(LOG_TAG, "OuyaUnityPlugin.isRunningOnOUYASupportedHardware");
+			if (null == m_unityOuyaFacade)
+			{
+				Log.i(LOG_TAG, "OuyaUnityPlugin.isRunningOnOUYASupportedHardware: m_unityOuyaFacade is null");
+			}
+			else
+			{
+				//Log.i(LOG_TAG, "OuyaUnityPlugin.isRunningOnOUYASupportedHardware: m_unityOuyaFacade is valid");
+				result = m_unityOuyaFacade.isRunningOnOUYASupportedHardware();
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.i(LOG_TAG, "OuyaUnityPlugin: isRunningOnOUYASupportedHardware exception: " + ex.toString());
+		}
+		return result;
+	}
 }
