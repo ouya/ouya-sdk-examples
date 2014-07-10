@@ -7,7 +7,7 @@ using Android.Util;
 using Android.Views;
 using OuyaSdk;
 
-namespace SoundPoolExample
+namespace OggExample
 {
     [Activity(Label = "OggExample"
         , MainLauncher = true

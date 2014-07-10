@@ -7,68 +7,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace SoundPoolExample
+namespace OggExample
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        public enum States
-        {
-            None,
-            FadeIn,
-            FadeOut,
-        }
-
-        class CustomMediaPlayer : MediaPlayer
-        {
-            public States _State = States.None;
-            public DateTime _Timer = DateTime.MinValue;
-            public void Update()
-            {
-                if (_Timer == DateTime.MinValue)
-                {
-                    return;
-                }
-                switch (_State)
-                {
-                    case States.FadeIn:
-                        if (_Timer < DateTime.Now)
-                        {
-                            SetVolume(1f, 1f);
-                            _Timer = DateTime.MinValue;
-                        }
-                        else
-                        {
-                            float volume = 1f - (float)(_Timer - DateTime.Now).TotalSeconds;
-                            //Log.i(TAG, "Volume: "+volume);
-                            SetVolume(volume, volume);
-                        }
-                        break;
-                    case States.FadeOut:
-                        if (_Timer < DateTime.Now)
-                        {
-                            if (IsPlaying)
-                            {
-                                Stop();
-                            }
-                            SetVolume(0f, 0f);
-                            _Timer = DateTime.MinValue;
-                        }
-                        else
-                        {
-                            float volume = (float)(_Timer - DateTime.Now).TotalSeconds;
-                            //Log.i(TAG, "Volume: "+volume);
-                            SetVolume(volume, volume);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
@@ -224,22 +169,22 @@ namespace SoundPoolExample
 
             if (clickEventArgs.Button == _btnFadeIn1)
             {
-                FadeIn(_mpSound1, SOUND_1, _mpSound2);
+                FadeIn(_mpSound1, SOUND_1);
             }
 
             if (clickEventArgs.Button == _btnFadeIn2)
             {
-                FadeIn(_mpSound2, SOUND_2, _mpSound1);
+                FadeIn(_mpSound2, SOUND_2);
             }
 
             if (clickEventArgs.Button == _btnFadeOut1)
             {
-                FadeOut(_mpSound1, _mpSound2);
+                FadeOut(_mpSound1);
             }
 
             if (clickEventArgs.Button == _btnFadeOut2)
             {
-                FadeOut(_mpSound2, _mpSound1);
+                FadeOut(_mpSound2);
             }
 
             if (clickEventArgs.Button == _btnCrossFade1)
@@ -309,7 +254,7 @@ namespace SoundPoolExample
             return _focusManager;
         }
 
-        private void FadeIn(CustomMediaPlayer fadeInSound, String soundFile, CustomMediaPlayer alternateSound)
+        private void FadeIn(CustomMediaPlayer fadeInSound, String soundFile)
         {
             if (null != fadeInSound)
             {
@@ -317,40 +262,20 @@ namespace SoundPoolExample
                 {
                     fadeInSound.Stop();
                 }
-                fadeInSound._State = States.FadeIn;
+                fadeInSound._State = CustomMediaPlayer.States.FadeIn;
                 fadeInSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
                 fadeInSound.SetVolume(0f, 0f);
                 PlaySound(fadeInSound, soundFile);
             }
-            if (null != alternateSound)
-            {
-                alternateSound._State = States.None;
-                alternateSound._Timer = DateTime.MinValue;
-                alternateSound.SetVolume(0f, 0f);
-                if (alternateSound.IsPlaying)
-                {
-                    alternateSound.Stop();
-                }
-            }
         }
 
-        private void FadeOut(CustomMediaPlayer fadeOutSound, CustomMediaPlayer alternateSound)
+        private void FadeOut(CustomMediaPlayer fadeOutSound)
         {
             if (null != fadeOutSound)
             {
-                fadeOutSound._State = States.FadeOut;
+                fadeOutSound._State = CustomMediaPlayer.States.FadeOut;
                 fadeOutSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
                 fadeOutSound.SetVolume(1f, 1f);
-            }
-            if (null != alternateSound)
-            {
-                alternateSound._State = States.None;
-                alternateSound._Timer = DateTime.MinValue;
-                alternateSound.SetVolume(0f, 0f);
-                if (alternateSound.IsPlaying)
-                {
-                    alternateSound.Stop();
-                }
             }
         }
 
@@ -358,14 +283,14 @@ namespace SoundPoolExample
         {
             if (null != fadeOutSound)
             {
-                fadeOutSound._State = States.FadeOut;
+                fadeOutSound._State = CustomMediaPlayer.States.FadeOut;
                 fadeOutSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
                 fadeOutSound.SetVolume(1f, 1f);
             }
 
             if (null != fadeInSound)
             {
-                fadeInSound._State = States.FadeIn;
+                fadeInSound._State = CustomMediaPlayer.States.FadeIn;
                 fadeInSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
                 fadeInSound.SetVolume(0f, 0f);
                 if (!fadeInSound.IsPlaying)

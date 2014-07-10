@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Activity1.cs" />
     <Compile Include="ButtonSprite.cs" />
+    <Compile Include="CustomMediaPlayer.cs" />
     <Compile Include="FocusManager.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

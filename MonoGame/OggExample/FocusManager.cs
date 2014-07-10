@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundPoolExample
+namespace OggExample
 {
     public class FocusManager
     {
