@@ -169,32 +169,32 @@ namespace OggExample
 
             if (clickEventArgs.Button == _btnFadeIn1)
             {
-                FadeIn(_mpSound1, SOUND_1);
+                CustomMediaPlayer.FadeIn(_mpSound1, SOUND_1);
             }
 
             if (clickEventArgs.Button == _btnFadeIn2)
             {
-                FadeIn(_mpSound2, SOUND_2);
+                CustomMediaPlayer.FadeIn(_mpSound2, SOUND_2);
             }
 
             if (clickEventArgs.Button == _btnFadeOut1)
             {
-                FadeOut(_mpSound1);
+                CustomMediaPlayer.FadeOut(_mpSound1);
             }
 
             if (clickEventArgs.Button == _btnFadeOut2)
             {
-                FadeOut(_mpSound2);
+                CustomMediaPlayer.FadeOut(_mpSound2);
             }
 
             if (clickEventArgs.Button == _btnCrossFade1)
             {
-                CrossFade(_mpSound2, _mpSound1, SOUND_1);
+                CustomMediaPlayer.CrossFade(_mpSound2, _mpSound1, SOUND_1);
             }
 
             if (clickEventArgs.Button == _btnCrossFade2)
             {
-                CrossFade(_mpSound1, _mpSound2, SOUND_2);
+                CustomMediaPlayer.CrossFade(_mpSound1, _mpSound2, SOUND_2);
             }
         }
 
@@ -252,90 +252,6 @@ namespace OggExample
         public FocusManager GetFocusManager()
         {
             return _focusManager;
-        }
-
-        private void FadeIn(CustomMediaPlayer fadeInSound, String soundFile)
-        {
-            if (null != fadeInSound)
-            {
-                if (fadeInSound.IsPlaying)
-                {
-                    fadeInSound.Stop();
-                }
-                fadeInSound._State = CustomMediaPlayer.States.FadeIn;
-                fadeInSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
-                fadeInSound.SetVolume(0f, 0f);
-                PlaySound(fadeInSound, soundFile);
-            }
-        }
-
-        private void FadeOut(CustomMediaPlayer fadeOutSound)
-        {
-            if (null != fadeOutSound)
-            {
-                fadeOutSound._State = CustomMediaPlayer.States.FadeOut;
-                fadeOutSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
-                fadeOutSound.SetVolume(1f, 1f);
-            }
-        }
-
-        private void CrossFade(CustomMediaPlayer fadeOutSound, CustomMediaPlayer fadeInSound, String soundFile)
-        {
-            if (null != fadeOutSound)
-            {
-                fadeOutSound._State = CustomMediaPlayer.States.FadeOut;
-                fadeOutSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
-                fadeOutSound.SetVolume(1f, 1f);
-            }
-
-            if (null != fadeInSound)
-            {
-                fadeInSound._State = CustomMediaPlayer.States.FadeIn;
-                fadeInSound._Timer = DateTime.Now + TimeSpan.FromSeconds(1);
-                fadeInSound.SetVolume(0f, 0f);
-                if (!fadeInSound.IsPlaying)
-                {
-                    PlaySound(fadeInSound, soundFile);
-                }
-            }
-        }
-
-        private void PlaySound(CustomMediaPlayer mp, String asset)
-        {
-            if (null == mp)
-            {
-                return;
-            }
-
-            AssetManager assetManager = Activity.ApplicationContext.Assets;
-
-            AssetFileDescriptor afd = null;
-            try
-            {
-                afd = assetManager.OpenFd(asset);
-            }
-            catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.PrintStackTrace();
-            }
-
-            if (null == afd)
-            {
-                return;
-            }
-
-            mp.Reset();
-
-            mp.SetDataSource(afd.FileDescriptor,
-                afd.StartOffset,
-                afd.Length);
-
-            mp.Prepare();
-
-            afd.Close();
-
-            mp.Start();
         }
     }
 }
