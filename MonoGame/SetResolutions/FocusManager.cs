@@ -1,31 +1,17 @@
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Input;
 
 namespace SetResolutions
 {
-    internal class FocusManager
+    public class FocusManager
     {
+        private const int DELAY_MS = 150;
+
         public ButtonSprite SelectedButton = null;
 
         private DateTime m_timerSelection = DateTime.MinValue;
 
-        public int SelectedProductIndex = 0;
-        public int SelectedReceiptIndex = 0;
-
-        private const int DELAY_MS = 150;
-
-        private void SetSelection(ButtonSprite selection)
+        public void SetSelection(ButtonSprite selection)
         {
             if (null != selection &&
                 m_timerSelection < DateTime.Now)
@@ -35,13 +21,14 @@ namespace SetResolutions
             }
         }
 
-        private void InvokeClick()
+        public void InvokeClick()
         {
             if (null != OnClick &&
+                null != SelectedButton &&
                 m_timerSelection < DateTime.Now)
             {
                 m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
-                OnClick.Invoke(SelectedButton, new ClickEventArgs() {Button = SelectedButton});
+                OnClick.Invoke(SelectedButton, new ClickEventArgs() { Button = SelectedButton });
             }
         }
 
@@ -55,34 +42,37 @@ namespace SetResolutions
 
         public Dictionary<ButtonSprite, ButtonMapping> Mappings = new Dictionary<ButtonSprite, ButtonMapping>();
 
-        private GamePadState GetState(PlayerIndex index)
+        public void FocusDown()
         {
-            return GamePad.GetState(index);
+            if (null != SelectedButton &&
+                Mappings.ContainsKey(SelectedButton))
+            {
+                SetSelection(Mappings[SelectedButton].Down);
+            }
         }
-        
-        private bool GetDpadDown(PlayerIndex index)
+        public void FocusLeft()
         {
-            return (GetState(index).DPad.Down == ButtonState.Pressed);
+            if (null != SelectedButton &&
+                Mappings.ContainsKey(SelectedButton))
+            {
+                SetSelection(Mappings[SelectedButton].Left);
+            }
         }
-        private bool GetDpadLeft(PlayerIndex index)
+        public void FocusRight()
         {
-            return (GetState(index).DPad.Left == ButtonState.Pressed);
+            if (null != SelectedButton &&
+                Mappings.ContainsKey(SelectedButton))
+            {
+                SetSelection(Mappings[SelectedButton].Right);
+            }
         }
-        private bool GetDpadRight(PlayerIndex index)
+        public void FocusUp()
         {
-            return (GetState(index).DPad.Right == ButtonState.Pressed);
-        }
-        private bool GetDpadUp(PlayerIndex index)
-        {
-            return (GetState(index).DPad.Up == ButtonState.Pressed);
-        }
-        private bool GetButtonO(PlayerIndex index)
-        {
-            return (GetState(index).Buttons.A == ButtonState.Pressed);
-        }
-        private bool PausePressed(PlayerIndex index)
-        {
-            return (GetState(index).Buttons.Start == ButtonState.Pressed);
+            if (null != SelectedButton &&
+                Mappings.ContainsKey(SelectedButton))
+            {
+                SetSelection(Mappings[SelectedButton].Up);
+            }
         }
 
         public class ClickEventArgs : EventArgs
@@ -91,55 +81,5 @@ namespace SetResolutions
         }
 
         public EventHandler<ClickEventArgs> OnClick = null;
-
-        public void UpdateFocus()
-        {
-            if (null == SelectedButton)
-            {
-                return;
-            }
-
-            if (Mappings.ContainsKey(SelectedButton))
-            {
-                for (int index = 0; index < 4; ++index)
-                {
-                    #region DPADS
-
-                    if (GetDpadDown((PlayerIndex) index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Down);
-                    }
-                    else if (GetDpadLeft((PlayerIndex)index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Left);
-                    }
-                    else if (GetDpadRight((PlayerIndex)index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Right);
-                    }
-                    else if (GetDpadUp((PlayerIndex)index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Up);
-                    }
-                    else if (GetButtonO((PlayerIndex)index))
-                    {
-                        InvokeClick();
-                    }
-
-                    #endregion
-                }
-            }
-        }
-
-        public void UpdatePauseFocus(ButtonSprite pauseButton)
-        {
-            for (int index = 0; index < 4; ++index)
-            {
-                if (PausePressed((PlayerIndex)index))
-                {
-                    SetSelection(pauseButton);
-                }
-            }
-        }
     }
 }

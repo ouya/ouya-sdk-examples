@@ -50,9 +50,6 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK" />
-    <Reference Include="Ouya.Console.Api">
-      <HintPath>.\Ouya.Console.Api.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -93,6 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OuyaSdk\OuyaSdk.csproj">
+      <Project>{3c5c877c-83e9-4bc1-984c-940052d091e7}</Project>
+      <Name>OuyaSdk</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

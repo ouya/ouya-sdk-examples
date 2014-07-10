@@ -10,31 +10,33 @@ namespace SetResolutions
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        SpriteFont font;
+        GraphicsDeviceManager _graphics;
+        SpriteBatch _spriteBatch;
+        SpriteFont _font;
 
-        private string m_resolution = string.Empty;
+        private string _resolution = string.Empty;
 
-        private FocusManager m_focusManager = new FocusManager();
+        private FocusManager _focusManager = new FocusManager();
 
-        private List<ButtonSprite> m_buttons = new List<ButtonSprite>();
+        private List<ButtonSprite> _buttons = new List<ButtonSprite>();
 
-        private ButtonSprite Btn480 = null;
-        private ButtonSprite Btn720 = null;
-        private ButtonSprite Btn1080 = null;
-        private ButtonSprite BtnPause = null;
+        private ButtonSprite _btn480 = null;
+        private ButtonSprite _btn720 = null;
+        private ButtonSprite _btn1080 = null;
+        public ButtonSprite _btnPause = null;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
 
-            graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
-            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
+            _graphics.IsFullScreen = true;
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
+
+            _focusManager.OnClick += OnClick;
         }
 
         /// <summary>
@@ -45,76 +47,61 @@ namespace SetResolutions
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            m_focusManager.OnClick += OnClick;
+            _btnPause = new ButtonSprite();
+            _btn480 = new ButtonSprite();
+            _btn720 = new ButtonSprite();
+            _btn1080 = new ButtonSprite();
 
-            GamePad.EventOnKeyUp += EventOnKeyUp;
+            _buttons.Add(_btnPause);
+            _buttons.Add(_btn480);
+            _buttons.Add(_btn720);
+            _buttons.Add(_btn1080);
 
-            BtnPause = new ButtonSprite();
-            Btn480 = new ButtonSprite();
-            Btn720 = new ButtonSprite();
-            Btn1080 = new ButtonSprite();
+            _btnPause.Position = new Vector2(100, 225);
+            _btnPause.TextureScale = new Vector2(1f, 0.5f);
+            _btnPause.Text = "Pause";
+            _btnPause.TextOffset = new Vector2(30, 20);
 
-            m_buttons.Add(BtnPause);
-            m_buttons.Add(Btn480);
-            m_buttons.Add(Btn720);
-            m_buttons.Add(Btn1080);
+            _btn480.Position = new Vector2(250, 225);
+            _btn480.TextureScale = new Vector2(0.5f, 0.5f);
+            _btn480.Text = "480";
+            _btn480.TextOffset = new Vector2(15, 20);
 
-            BtnPause.Position = new Vector2(100, 225);
-            BtnPause.TextureScale = new Vector2(1f, 0.5f);
-            BtnPause.Text = "Pause";
-            BtnPause.TextOffset = new Vector2(30, 20);
+            _btn720.Position = new Vector2(325, 225);
+            _btn720.TextureScale = new Vector2(0.5f, 0.5f);
+            _btn720.Text = "720";
+            _btn720.TextOffset = new Vector2(15, 20);
 
-            Btn480.Position = new Vector2(250, 225);
-            Btn480.TextureScale = new Vector2(0.5f, 0.5f);
-            Btn480.Text = "480";
-            Btn480.TextOffset = new Vector2(15, 20);
+            _btn1080.Position = new Vector2(400, 225);
+            _btn1080.TextureScale = new Vector2(0.6f, 0.5f);
+            _btn1080.Text = "1080";
+            _btn1080.TextOffset = new Vector2(15, 20);
 
-            Btn720.Position = new Vector2(325, 225);
-            Btn720.TextureScale = new Vector2(0.5f, 0.5f);
-            Btn720.Text = "720";
-            Btn720.TextOffset = new Vector2(15, 20);
-
-            Btn1080.Position = new Vector2(400, 225);
-            Btn1080.TextureScale = new Vector2(0.6f, 0.5f);
-            Btn1080.Text = "1080";
-            Btn1080.TextOffset = new Vector2(15, 20);
-
-            m_focusManager.Mappings[BtnPause] = new FocusManager.ButtonMapping()
+            _focusManager.Mappings[_btnPause] = new FocusManager.ButtonMapping()
             {
-                Right = Btn480,
+                Right = _btn480,
             };
 
-            m_focusManager.Mappings[Btn480] = new FocusManager.ButtonMapping()
+            _focusManager.Mappings[_btn480] = new FocusManager.ButtonMapping()
             {
-                Right = Btn720,
+                Right = _btn720,
             };
 
-            m_focusManager.Mappings[Btn720] = new FocusManager.ButtonMapping()
+            _focusManager.Mappings[_btn720] = new FocusManager.ButtonMapping()
             {
-                Left = Btn480,
-                Right = Btn1080,
+                Left = _btn480,
+                Right = _btn1080,
             };
 
-            m_focusManager.Mappings[Btn1080] = new FocusManager.ButtonMapping()
+            _focusManager.Mappings[_btn1080] = new FocusManager.ButtonMapping()
             {
-                Left = Btn720,
+                Left = _btn720,
             };
 
-            m_focusManager.SelectedButton = Btn1080;
-            m_resolution = "1920x1080";
+            _focusManager.SelectedButton = _btn1080;
+            _resolution = "1920x1080";
 
             base.Initialize();
-        }
-
-        private void EventOnKeyUp(object sender, GamePad.KeyEventArgs keyEventArgs)
-        {
-            //m_debugText = string.Format("Detected Key: {0}", keyEventArgs.KeyCode);
-            if (keyEventArgs.KeyCode == 82)
-            {
-                m_focusManager.SelectedButton = BtnPause;
-                OnClick(null, new FocusManager.ClickEventArgs() { Button = BtnPause });
-            }
         }
 
         private void OnClick(object sender, FocusManager.ClickEventArgs clickEventArgs)
@@ -125,25 +112,21 @@ namespace SetResolutions
                 return;
             }
 
-            m_focusManager.SelectedButton = clickEventArgs.Button;
+            _focusManager.SelectedButton = clickEventArgs.Button;
 
-            if (clickEventArgs.Button == BtnPause)
+            if (clickEventArgs.Button == _btn480)
             {
+                _resolution = "640x480";
             }
 
-            if (clickEventArgs.Button == Btn480)
+            if (clickEventArgs.Button == _btn720)
             {
-                m_resolution = "640x480";
+                _resolution = "1280x720";
             }
 
-            if (clickEventArgs.Button == Btn720)
+            if (clickEventArgs.Button == _btn1080)
             {
-                m_resolution = "1280x720";
-            }
-
-            if (clickEventArgs.Button == Btn1080)
-            {
-                m_resolution = "1920x1080";
+                _resolution = "1920x1080";
             }
         }
 
@@ -154,24 +137,24 @@ namespace SetResolutions
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            font = Content.Load<SpriteFont>("spriteFont1");
+            _font = Content.Load<SpriteFont>("spriteFont1");
 
-            BtnPause.LoadContent(font,
+            _btnPause.Initialize(_font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
 
-            Btn480.LoadContent(font,
+            _btn480.Initialize(_font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
 
-            Btn720.LoadContent(font,
+            _btn720.Initialize(_font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
 
-            Btn1080.LoadContent(font,
+            _btn1080.Initialize(_font,
                 Content.Load<Texture2D>("Graphics\\ButtonActive"),
                 Content.Load<Texture2D>("Graphics\\ButtonInactive"));
         }
@@ -183,17 +166,9 @@ namespace SetResolutions
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            foreach (ButtonSprite button in _buttons)
             {
-                Exit();
-            }
-
-            // TODO: Add your update logic here
-            m_focusManager.UpdateFocus();
-
-            foreach (ButtonSprite button in m_buttons)
-            {
-                if (button == m_focusManager.SelectedButton)
+                if (button == _focusManager.SelectedButton)
                 {
                     button.ButtonTexture = button.ButtonActive;
                 }
@@ -212,23 +187,28 @@ namespace SetResolutions
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+            _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            _spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, "Hello From MonoGame!", new Vector2(100, 100), Color.White);
-            spriteBatch.DrawString(font, "DPAD: Left+Right - Changes Focus", new Vector2(100, 125), Color.White);
-            spriteBatch.DrawString(font, "BUTTON: O - Switch to Selected Resolution", new Vector2(100, 150), Color.White);
-            spriteBatch.DrawString(font, string.Format("RESOLUTION: {0}", m_resolution), new Vector2(100, 175), Color.White);
+            _spriteBatch.DrawString(_font, "Hello From MonoGame!", new Vector2(100, 100), Color.White);
+            _spriteBatch.DrawString(_font, "DPAD: Left+Right - Changes Focus", new Vector2(100, 125), Color.White);
+            _spriteBatch.DrawString(_font, "BUTTON: O - Switch to Selected Resolution", new Vector2(100, 150), Color.White);
+            _spriteBatch.DrawString(_font, string.Format("RESOLUTION: {0}", _resolution), new Vector2(100, 175), Color.White);
 
-            foreach (ButtonSprite button in m_buttons)
+            foreach (ButtonSprite button in _buttons)
             {
-                button.Draw(spriteBatch);
+                button.Draw(_spriteBatch);
             }
 
-            spriteBatch.End();
+            _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public FocusManager GetFocusManager()
+        {
+            return _focusManager;
         }
     }
 }

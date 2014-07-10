@@ -1,7 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetResolutions", "SetResolutions.csproj", "{1E41A07C-412D-4846-8073-B1875AE27754}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C5C877C-83E9-4BC1-984C-940052D091E7} = {3C5C877C-83E9-4BC1-984C-940052D091E7}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OuyaSdk", "..\OuyaSdk\OuyaSdk.csproj", "{3C5C877C-83E9-4BC1-984C-940052D091E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,10 @@ Global
 		{1E41A07C-412D-4846-8073-B1875AE27754}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E41A07C-412D-4846-8073-B1875AE27754}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E41A07C-412D-4846-8073-B1875AE27754}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{3C5C877C-83E9-4BC1-984C-940052D091E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C5C877C-83E9-4BC1-984C-940052D091E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C5C877C-83E9-4BC1-984C-940052D091E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C5C877C-83E9-4BC1-984C-940052D091E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

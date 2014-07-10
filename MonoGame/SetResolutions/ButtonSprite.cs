@@ -1,20 +1,9 @@
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Input;
 
 namespace SetResolutions
 {
-    class ButtonSprite
+    public class ButtonSprite
     {
         /// <summary>
         /// The position of the sprite
@@ -40,7 +29,7 @@ namespace SetResolutions
         /// <summary>
         /// Set the texture references
         /// </summary>
-        public void LoadContent(
+        public void Initialize(
             SpriteFont font,
             Texture2D buttonActive,
             Texture2D buttonInactive)
