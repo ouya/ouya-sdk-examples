@@ -36,6 +36,9 @@ namespace SetResolutions
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
 
+            Window.Holder.SetFixedSize(_graphics.PreferredBackBufferWidth,
+                    _graphics.PreferredBackBufferHeight);
+
             _focusManager.OnClick += OnClick;
         }
 
@@ -98,7 +101,7 @@ namespace SetResolutions
                 Left = _btn720,
             };
 
-            _focusManager.SelectedButton = _btn1080;
+            _focusManager.SelectedButton = _btn720;
             _resolution = "1920x1080";
 
             base.Initialize();
@@ -117,16 +120,28 @@ namespace SetResolutions
             if (clickEventArgs.Button == _btn480)
             {
                 _resolution = "640x480";
+                _graphics.PreferredBackBufferWidth = 640;
+                _graphics.PreferredBackBufferHeight = 480;
+                Window.Holder.SetFixedSize(_graphics.PreferredBackBufferWidth,
+                    _graphics.PreferredBackBufferHeight);
             }
 
             if (clickEventArgs.Button == _btn720)
             {
                 _resolution = "1280x720";
+                _graphics.PreferredBackBufferWidth = 1280;
+                _graphics.PreferredBackBufferHeight = 720;
+                Window.Holder.SetFixedSize(_graphics.PreferredBackBufferWidth,
+                    _graphics.PreferredBackBufferHeight);
             }
 
             if (clickEventArgs.Button == _btn1080)
             {
                 _resolution = "1920x1080";
+                _graphics.PreferredBackBufferWidth = 1920;
+                _graphics.PreferredBackBufferHeight = 1080;
+                Window.Holder.SetFixedSize(_graphics.PreferredBackBufferWidth,
+                    _graphics.PreferredBackBufferHeight);
             }
         }
 
