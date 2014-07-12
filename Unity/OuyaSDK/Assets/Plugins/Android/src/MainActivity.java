@@ -78,7 +78,7 @@ public class MainActivity extends OuyaUnityActivity
 
 		// Create the View
 		RelativeLayout mainLayout = new RelativeLayout(this);
-		LayoutParams lp = new LayoutParams (LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		LayoutParams lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mainLayout.setLayoutParams(lp);
 
 		LinearLayout linearLayout = new LinearLayout(this);
