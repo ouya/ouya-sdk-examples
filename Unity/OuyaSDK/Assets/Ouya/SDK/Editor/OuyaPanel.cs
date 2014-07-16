@@ -2530,8 +2530,8 @@ public class OuyaPanel : EditorWindow
     enum Languages
     {
         EnglishUnitedStates,
-        EnglishUnitedAustralia,
-        EnglishUnitedCanada,
+        EnglishAustralia,
+        EnglishCanada,
         EnglishUnitedKingdom,
         German,
         Spanish,
@@ -2551,8 +2551,8 @@ public class OuyaPanel : EditorWindow
     private static LanguageDetails[] LanguageMap =
         {
             new LanguageDetails() { Language = Languages.EnglishUnitedStates, PropertySystemLanguage="en", PropertySystemCountry="US"}, 
-            new LanguageDetails() { Language = Languages.EnglishUnitedAustralia, PropertySystemLanguage="en", PropertySystemCountry="AU"}, 
-            new LanguageDetails() { Language = Languages.EnglishUnitedCanada, PropertySystemLanguage="en", PropertySystemCountry="CA"}, 
+            new LanguageDetails() { Language = Languages.EnglishAustralia, PropertySystemLanguage="en", PropertySystemCountry="AU"}, 
+            new LanguageDetails() { Language = Languages.EnglishCanada, PropertySystemLanguage="en", PropertySystemCountry="CA"}, 
             new LanguageDetails() { Language = Languages.EnglishUnitedKingdom, PropertySystemLanguage="en", PropertySystemCountry="GB"}, 
             new LanguageDetails() { Language = Languages.German, PropertySystemLanguage="de", PropertySystemCountry="de"}, 
             new LanguageDetails() { Language = Languages.Spanish, PropertySystemLanguage="es", PropertySystemCountry="ES"}, 
