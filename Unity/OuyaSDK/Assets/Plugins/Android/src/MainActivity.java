@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.demo.SceneShowUnityInput;
+package tv.ouya.demo.SceneShowProducts;
 
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.sdk.*;

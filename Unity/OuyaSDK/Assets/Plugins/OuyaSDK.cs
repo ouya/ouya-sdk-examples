@@ -32,7 +32,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.13.6";
+    public const string VERSION = "1.0.14.1";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     

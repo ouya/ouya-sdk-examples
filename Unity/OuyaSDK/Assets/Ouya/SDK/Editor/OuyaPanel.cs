@@ -1392,6 +1392,7 @@ public class OuyaPanel : EditorWindow
             "SceneShowJavaScript",
             "SceneShowProducts",
             "SceneShowUnityInput",
+            "VirtualController",
         };
 
     private static int m_selectedAdbMode = 0;
