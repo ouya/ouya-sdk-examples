@@ -6,6 +6,8 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import tv.ouya.console.api.DebugInput;
@@ -69,7 +71,10 @@ public class MainActivity extends OuyaActivity {
 		setContentView(R.layout.activity_main);
 		super.onCreate(savedInstanceState);
 		
-		mOuyaFacade = mOuyaFacade.getInstance();
+		ViewGroup mainLayout = (ViewGroup)this.findViewById(android.R.id.content);		
+		mainLayout.setOnClickListener(mClickListener);
+		
+		mOuyaFacade = OuyaFacade.getInstance();
 		mOuyaFacade.init(this, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 		
 		txtSystem = (TextView)findViewById(R.id.txtSystem);
@@ -176,6 +181,13 @@ public class MainActivity extends OuyaActivity {
 		mWaitToExit = false; //let timer exit
 	}
 	
+	private OnClickListener mClickListener = new OnClickListener() {
+	    public void onClick(View v) {
+	    	txtKeyCode.setText("Click detected");
+	    	txtController.setText("");
+	    }
+	};
+	
 	private void setDrawable(ImageView imageView, int keyCode) {
 		ButtonData data = OuyaController.getButtonData(keyCode);
 		if (null != data) {
@@ -190,7 +202,7 @@ public class MainActivity extends OuyaActivity {
 			InputDevice device = keyEvent.getDevice();
 			if (null != device) {
 				txtKeyCode.setText("Original KeyEvent device=" + device.getName() + " KeyCode=(" + keyEvent.getKeyCode() + ") "
-						+ DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
+						+ DebugInput.debugGetButtonName(keyEvent.getKeyCode())+" source="+keyEvent.getSource());
 			}
 		}
 		return super.dispatchKeyEvent(keyEvent);
@@ -201,7 +213,7 @@ public class MainActivity extends OuyaActivity {
 		DebugInput.debugMotionEvent(motionEvent);
 		return super.dispatchGenericMotionEvent(motionEvent);
 	}
-
+	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		//Log.i(TAG, "onGenericMotionEvent");
