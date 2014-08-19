@@ -1,13 +1,14 @@
 ﻿#if UNITY_ANDROID && !UNITY_EDITOR
-
 using Android.Graphics.Drawables;
 using System;
 using UnityEngine;
+#endif
 
 namespace tv.ouya.console.api
 {
     public class OuyaController
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
         public class ButtonData
         {
             private static IntPtr _jcButtonData = IntPtr.Zero;
@@ -126,6 +127,8 @@ namespace tv.ouya.console.api
         }
 
         private const string LOG_TAG = "OuyaController";
+#endif
+
         public const int AXIS_LS_X = 0;
         public const int AXIS_LS_Y = 1;
         public const int AXIS_RS_X = 11;
@@ -148,6 +151,8 @@ namespace tv.ouya.console.api
         public const int BUTTON_MENU = 82;
 
         public const int MAX_CONTROLLERS = 4;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
 
         private static IntPtr _jcOuyaController = IntPtr.Zero;
         private static IntPtr _jmGetButtonData = IntPtr.Zero;
@@ -327,7 +332,6 @@ namespace tv.ouya.console.api
             }
             AndroidJNI.CallStaticVoidMethod(_jcOuyaController, _jmShowCursor, new jvalue[] { new jvalue() { z = visible } });
         }
+#endif
     }
 }
-
-#endif
