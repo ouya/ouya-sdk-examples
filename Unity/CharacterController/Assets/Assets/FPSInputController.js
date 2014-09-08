@@ -13,9 +13,9 @@ function Awake () {
 function Update () {
 	// Get the input vector from keyboard or analog stick
 #if UNITY_ANDROID && !UNITY_EDITOR
-        var directionVector = new Vector3(OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_RS_X), OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_RS_Y), 0);
+        var directionVector = new Vector3(OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_RS_X), 0, -OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_RS_Y));
 #else
-        var directionVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+        var directionVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 #endif
 	
 	if (directionVector != Vector3.zero) {
