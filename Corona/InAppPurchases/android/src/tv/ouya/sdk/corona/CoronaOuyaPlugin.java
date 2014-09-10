@@ -66,21 +66,8 @@ public class CoronaOuyaPlugin
 				{
 					if (m_enableDebugLogging)
 					{
-						Log.i(TAG, "InitializeTest: Unity has initialized,  constructing TestOuyaFacade");
+						Log.i(TAG, "InitializeTest: Corona has initialized, constructing CoronaOuyaFacade");
 					}
-
-					/*
-					if (null == IOuyaActivity.GetSavedInstanceState())
-					{
-						Log.i(TAG, "InitializeTest: IOuyaActivity.GetSavedInstanceState() == null");
-					}
-					else
-					{
-						Log.i(TAG, "InitializeTest: m_developerId is valid,  constructing TestOuyaFacade");
-						IOuyaActivity.GetCoronaOuyaFacade() = new TestOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-						IOuyaActivity.SetTestOuyaFacade(IOuyaActivity.GetCoronaOuyaFacade());
-					}
-					*/
 					
 					CoronaOuyaFacade coronaOuyaFacade =
 						new CoronaOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
@@ -89,7 +76,6 @@ public class CoronaOuyaPlugin
 					IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
 
 					Log.i(TAG, "CoronaOuyaPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
-					//IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "SendIAPInitComplete", "");
 				}
 			}
 		}

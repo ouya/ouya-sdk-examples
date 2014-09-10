@@ -176,7 +176,6 @@ public class CoronaOuyaFacade
 	private void Init(String developerId)
 	{
 		Log.i(LOG_TAG, "OuyaFacade.init(context, " + developerId + ");");
-		//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "ouyaFacade.init(context, " + developerId + ");");
         ouyaFacade.init(context, developerId);
 
 		// custom-iap-code
@@ -372,13 +371,11 @@ public class CoronaOuyaFacade
 		if (null != m_productListListener)
 		{
 			Log.i(LOG_TAG, "requestProducts m_productListListener is valid");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "requestProducts m_productListListener is valid");
 			ouyaFacade.requestProductList(PRODUCT_IDENTIFIER_LIST, m_productListListener);
 		}
 		else
 		{
 			Log.i(LOG_TAG, "requestProducts m_productListListener is null");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "requestProducts m_productListListener is null");
 		}
     }
 

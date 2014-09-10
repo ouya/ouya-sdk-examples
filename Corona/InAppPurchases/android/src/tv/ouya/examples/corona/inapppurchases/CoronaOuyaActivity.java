@@ -60,10 +60,10 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	/** Called when your application has started. */
 	protected void onCreate(Bundle savedInstanceState) {
 		
-		//make activity accessible to Unity
+		//make activity accessible to Corona
 		IOuyaActivity.SetActivity(this);
 
-		//make bundle accessible to Unity
+		//make bundle accessible to Corona
 		IOuyaActivity.SetSavedInstanceState(savedInstanceState);
 		
 		super.onCreate(savedInstanceState);
@@ -176,13 +176,11 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
     private BroadcastReceiver mMenuAppearingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-			Log.i("Unity", "BroadcastReceiver intent=" + intent.getAction());
+			Log.i(TAG, "BroadcastReceiver intent=" + intent.getAction());
 			if(intent.getAction().equals(OuyaIntent.ACTION_MENUAPPEARING)) {
 				//pause music, free up resources, etc.
 
-				Log.i("Unity", "BroadcastReceiver tell Unity we see the menu appearing");
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "onMenuAppearing", "");
-				Log.i("Unity", "BroadcastReceiver notified Unity onMenuAppearing");
+				Log.i(TAG, "BroadcastReceiver tell Corona we see the menu appearing");
 			}
         }
     };
