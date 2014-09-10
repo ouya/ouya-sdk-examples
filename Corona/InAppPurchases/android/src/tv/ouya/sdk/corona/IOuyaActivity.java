@@ -79,14 +79,14 @@ public class IOuyaActivity
 		m_applicationKey = applicationKey;
 	}
 	
-	protected static CallbacksFetchGamerUUID m_callbacksFetchGamerUUID = null;
-	public static CallbacksFetchGamerUUID GetCallbacksFetchGamerUUID()
+	protected static CallbacksRequestGamerInfo m_callbacksRequestGamerInfo = null;
+	public static CallbacksRequestGamerInfo GetCallbacksRequestGamerInfo()
 	{
-		return m_callbacksFetchGamerUUID;
+		return m_callbacksRequestGamerInfo;
 	}
-	public static void SetCallbacksFetchGamerUUID(CallbacksFetchGamerUUID callbacksFetchGamerUUID)
+	public static void SetCallbacksRequestGamerInfo(CallbacksRequestGamerInfo callbacksRequestGamerInfo)
 	{
-		m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
+		m_callbacksRequestGamerInfo = callbacksRequestGamerInfo;
 	}
 	
 	protected static CallbacksRequestProducts m_callbacksRequestProducts = null;

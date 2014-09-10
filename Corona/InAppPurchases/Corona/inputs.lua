@@ -18,7 +18,7 @@
 --
 -----------------------------------------------------------------------------------------
 
-callbacksFetchGamerUUID = require "callbacksFetchGamerUUID"
+callbacksRequestGamerInfo = require "callbacksRequestGamerInfo"
 callbacksRequestProducts = require "callbacksRequestProducts"
 callbacksRequestPurchase = require "callbacksRequestPurchase"
 callbacksRequestReceipts = require "callbacksRequestReceipts"
@@ -72,10 +72,11 @@ inputs.onKeyEvent = function (event)
 	-- BUTTONS
     
     if (event.keyName == "buttonA" and event.phase == "down" and nil ~= ouyaSDK) then -- OUYA BUTTON_O
-    	if globals.focusButton == globals.btnFetch then
-    		globals.txtStatus.text = "Fetching Gamer UUID...";
+    	if globals.focusButton == globals.btnGamerInfo then
+    		globals.txtStatus.text = "Request Gamer Info...";
     		globals.txtGamerUUID.text = "Gamer UUID:";
-    		ouyaSDK.asyncLuaOuyaFetchGamerUUID(callbacksFetchGamerUUID.onSuccess, callbacksFetchGamerUUID.onFailure, callbacksFetchGamerUUID.onCancel);
+    		globals.txtGamerUsername.text = "Gamer Username:";
+    		ouyaSDK.asyncLuaOuyaRequestGamerInfo(callbacksRequestGamerInfo.onSuccess, callbacksRequestGamerInfo.onFailure, callbacksRequestGamerInfo.onCancel);
     	elseif globals.focusButton == globals.btnProducts then
     		globals.getProducts = { };
     		ui.displayProductList();

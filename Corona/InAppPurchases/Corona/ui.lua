@@ -52,10 +52,11 @@ end
 
 ui.displayProductList = function ()
 	ui.clearProductText();
+	ui.clearReceiptText();
 	if globals.getProducts ~= nil then
 		for i=1,#globals.getProducts do
-				print ("displayProductList: identifier=" .. globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " priceInCents=" .. globals.getProducts[i].priceInCents);
-				local label = globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " priceInCents=" .. globals.getProducts[i].priceInCents;
+				print ("displayProductList: identifier=" .. globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " localPrice=" .. globals.getProducts[i].localPrice);
+				local label = "Product: " .. globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " localPrice=" .. globals.getProducts[i].localPrice;
 				local txtProduct = display.newText(label, globals.centerX - 200, 425 + i * 30, "Helvetica", 24);
 				if (1 + globals.selectedProduct) == i then
 					txtProduct:setTextColor(255, 255, 255);
@@ -78,11 +79,12 @@ ui.clearReceiptText = function ()
 end
 
 ui.displayReceiptList = function ()
+	ui.clearProductText();
 	ui.clearReceiptText();
 	if globals.getReceipts ~= nil then
 		for i=1,#globals.getReceipts do
-				print ("displayReceiptList: identifier=" .. globals.getReceipts[i].identifier); -- .. " name=" .. getReceipts[i].name .. " priceInCents=" .. getReceipts[i].priceInCents);
-				local label = globals.getReceipts[i].identifier .. " name="; -- .. getReceipts[i].name .. " priceInCents=" .. getReceipts[i].priceInCents;
+				print ("displayReceiptList: identifier=" .. globals.getReceipts[i].identifier .. " localPrice=" .. globals.getReceipts[i].localPrice);
+				local label = "Receipt: " .. globals.getReceipts[i].identifier .. " localPrice=" .. globals.getReceipts[i].localPrice;
 				local txtReceipt = display.newText(label, globals.centerX - 200, 425 + i * 30, "Helvetica", 24);
 				txtReceipt:setTextColor(255, 127, 0);
 				globals.receiptTextList[#globals.receiptTextList + 1] = txtReceipt;

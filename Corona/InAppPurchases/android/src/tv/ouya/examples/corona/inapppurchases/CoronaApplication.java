@@ -54,7 +54,7 @@ public class CoronaApplication extends android.app.Application {
 			// Add a module named "myTests" to Lua having the following functions.
 			luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
 				new AsyncLuaOuyaSetDeveloperId(),
-				new AsyncLuaOuyaFetchGamerUUID(),
+				new AsyncLuaOuyaRequestGamerInfo(),
 				new AsyncLuaOuyaRequestProducts(),
 				new AsyncLuaOuyaRequestPurchase(),
 				new AsyncLuaOuyaRequestReceipts(),

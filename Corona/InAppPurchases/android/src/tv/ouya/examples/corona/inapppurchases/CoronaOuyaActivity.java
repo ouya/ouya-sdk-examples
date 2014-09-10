@@ -230,7 +230,7 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 			{
 				switch (requestCode) {
 					case CoronaOuyaFacade.GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-						coronaOuyaFacade.fetchGamerUUID();
+						coronaOuyaFacade.requestGamerInfo();
 						break;
 					case CoronaOuyaFacade.PURCHASE_AUTHENTICATION_ACTIVITY_ID:
 						coronaOuyaFacade.restartInterruptedPurchase();

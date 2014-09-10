@@ -51,7 +51,7 @@ public class CoronaOuyaPlugin
 			{
 				if (m_enableDebugLogging)
 				{
-					Log.i(TAG, "OuyaUnityPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
+					Log.i(TAG, "CoronaOuyaPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
 				}
 				return;
 			}
@@ -88,7 +88,7 @@ public class CoronaOuyaPlugin
 					//make facade accessible by activity
 					IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
 
-					Log.i(TAG, "OuyaUnityPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
+					Log.i(TAG, "CoronaOuyaPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
 					//IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "SendIAPInitComplete", "");
 				}
 			}
@@ -118,38 +118,38 @@ public class CoronaOuyaPlugin
 		return "";
 	}
 
-	public static void fetchGamerUUID()
+	public static void requestGamerInfo()
 	{
 		try
 		{
-			Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID");
+			Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo");
 
 			if (!m_enableIAP)
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID IAP is disabled");
+				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo IAP is disabled");
 				return;
 			}
 
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: CoronaOuyaFacade is null");
+				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.fetchGamerUUID: CoronaOuyaFacade is valid");
+				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo: CoronaOuyaFacade is valid");
 				
 				if (m_developerId == "") {
-					Log.i(TAG, "OuyaUnityPlugin.m_developerId is not set");
+					Log.i(TAG, "CoronaOuyaPlugin.m_developerId is not set");
 				} else {
-					Log.i(TAG, "OuyaUnityPlugin.m_developerId valid: " + m_developerId);
+					Log.i(TAG, "CoronaOuyaPlugin.m_developerId valid: " + m_developerId);
 				}
 				
-				IOuyaActivity.GetCoronaOuyaFacade().fetchGamerUUID();
+				IOuyaActivity.GetCoronaOuyaFacade().requestGamerInfo();
 			}
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "OuyaUnityPlugin: fetchGamerUUID exception: " + ex.toString());
+			Log.i(TAG, "CoronaOuyaPlugin: requestGamerInfo exception: " + ex.toString());
 		}
 	}
 
@@ -157,27 +157,27 @@ public class CoronaOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "OuyaUnityPlugin.getProductsAsync");
+			Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync");
 
 			if (!m_enableIAP)
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync IAP is disabled");
+				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync IAP is disabled");
 				return;
 			}
 
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: CoronaOuyaFacade is null");
+				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getProductsAsync: CoronaOuyaFacade is valid");
+				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync: CoronaOuyaFacade is valid");
 				IOuyaActivity.GetCoronaOuyaFacade().requestProducts();
 			}
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
+			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
 	}
 
@@ -258,19 +258,19 @@ public class CoronaOuyaPlugin
 		
 			if (!m_enableIAP)
 			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync IAP is disabled");
+				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync IAP is disabled");
 				return "";
 			}
 
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: CoronaOuyaFacade is null");
+				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.requestPurchaseAsync: CoronaOuyaFacade is valid");
-				Product product = new Product();
-				product.setIdentifier(identifier);
+				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync: CoronaOuyaFacade is valid");
+				Product product = new Product(identifier, "", 0, 0, "", 0, 0, "", "", Product.Type.ENTITLEMENT);
+				
 				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);
 			}
 		}
@@ -285,27 +285,27 @@ public class CoronaOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync");
+			Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync");
 
 			if (!m_enableIAP)
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync IAP is disabled");
+				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync IAP is disabled");
 				return;
 			}
 
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is null");
+				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "OuyaUnityPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
+				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
 				IOuyaActivity.GetCoronaOuyaFacade().requestReceipts();
 			}
 		}
 		catch (Exception ex) 
 		{
-			Log.i(TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
+			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
 	}
 }

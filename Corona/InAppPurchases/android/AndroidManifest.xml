@@ -41,5 +41,10 @@
 				<category android:name="tv.ouya.intent.category.GAME" />
 			</intent-filter>
 		</activity>
+		
+		<!-- Corona content provider required to access this app's local files. -->
+		<provider android:name="com.ansca.corona.storage.FileContentProvider"
+		          android:authorities="tv.ouya.examples.corona.inapppurchases.files"
+		          android:exported="true" />
 	</application>
 </manifest>

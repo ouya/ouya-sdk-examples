@@ -31,12 +31,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 //import android.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
-import tv.ouya.console.api.*;
-import tv.ouya.console.internal.util.Strings;
-
-import com.google.gson.Gson;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -48,6 +42,12 @@ import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.util.*;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import tv.ouya.console.api.*;
+import tv.ouya.console.internal.util.Strings;
 
 public class CoronaOuyaFacade
 {
@@ -134,8 +134,8 @@ public class CoronaOuyaFacade
 	//android context
 	private Context context;
 
-	// Custom-iap-code, listener for fetching gamer uuid
-	CancelIgnoringOuyaResponseListener<String> m_fetchGamerUUIDListener = null;
+	// Custom-iap-code, listener for requesting gamer info
+	CancelIgnoringOuyaResponseListener<GamerInfo> m_requestGamerInfoListener = null;
 
 	// Custom-iap-code, listener for getting products
 	OuyaResponseListener<ArrayList<Product>> m_productListListener = null;
@@ -180,24 +180,26 @@ public class CoronaOuyaFacade
         ouyaFacade.init(context, developerId);
 
 		// custom-iap-code
-		m_fetchGamerUUIDListener = new CancelIgnoringOuyaResponseListener<String>() {
+        m_requestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
             @Override
-            public void onSuccess(String result) {
-				/*
-                new AlertDialog.Builder(IapSampleActivity.this)
-                        .setTitle(getString(R.string.alert_title))
-                        .setMessage(result)
-                        .setPositiveButton(R.string.ok, null)
-                        .show();
-				*/
-				Log.i(LOG_TAG, "m_fetchGamerUUIDListener FetchGamerUUIDSuccessListener=" + result);
+            public void onSuccess(GamerInfo info) {
 				
-				IOuyaActivity.GetCallbacksFetchGamerUUID().onSuccess(result);
+            	JSONObject json = new JSONObject();
+				try {
+					json.put("uuid", info.getUuid());
+					json.put("username", info.getUsername());
+				} catch (JSONException e1) {
+				}
+				String jsonData = json.toString();
+            	
+				Log.i(LOG_TAG, "m_requestGamerInfoListener requestGamerUUIDSuccessListener=" + jsonData);
+				
+				IOuyaActivity.GetCallbacksRequestGamerInfo().onSuccess(jsonData);
             }
 
             @Override
             public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-                Log.w(LOG_TAG, "fetch gamer UUID error (code " + errorCode + ": " + errorMessage + ")");
+                Log.w(LOG_TAG, "request gamer info error (code " + errorCode + ": " + errorMessage + ")");
                 boolean wasHandledByAuthHelper =
                         OuyaAuthenticationHelper.
                                 handleError(
@@ -209,28 +211,28 @@ public class CoronaOuyaFacade
                                         new OuyaResponseListener<Void>() {
                                             @Override
                                             public void onSuccess(Void result) {
-                                                fetchGamerUUID();   // Retry the fetch if the error was handled.
+                                                requestGamerInfo();   // Retry the request if the error was handled.
                                             }
 
                                             @Override
                                             public void onFailure(int errorCode, String errorMessage,
                                                                   Bundle optionalData) {
-                                                //showError("Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-												Log.i(LOG_TAG, "Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-												IOuyaActivity.GetCallbacksFetchGamerUUID().onFailure(errorCode, errorMessage);
+                                                //showError("Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+												Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+												IOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
                                             }
 
                                             @Override
                                             public void onCancel() {
-                                                //showError("Unable to fetch gamer UUID");
-												Log.i(LOG_TAG, "m_fetchGamerUUIDListener FetchGamerUUIDCancelListener");
-												IOuyaActivity.GetCallbacksFetchGamerUUID().onCancel();
+                                                //showError("Unable to request gamer info");
+												Log.i(LOG_TAG, "m_requestGamerInfoListener RequestGamerInfoCancelListener");
+												IOuyaActivity.GetCallbacksRequestGamerInfo().onCancel();
                                             }
                                         });
 
                 if (!wasHandledByAuthHelper) {
-					Log.i(LOG_TAG, "Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-					IOuyaActivity.GetCallbacksFetchGamerUUID().onFailure(errorCode, errorMessage);
+					Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+					IOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
                 }
             }
         };
@@ -249,8 +251,26 @@ public class CoronaOuyaFacade
 
 				//send each item in the list
 				if (null != mProductList) {
-					Gson gson = new Gson();
-					String jsonData = gson.toJson(mProductList);
+					
+					JSONArray jarray = new JSONArray();
+					for (Product product : mProductList)
+					{
+						JSONObject json = new JSONObject();
+						try {
+							json.put("currencyCode", product.getCurrencyCode());
+							json.put("description", product.getDescription());
+							json.put("identifier", product.getIdentifier());
+							json.put("localPrice", product.getLocalPrice());
+							json.put("name", product.getName());
+							json.put("originalPrice", product.getOriginalPrice());
+							json.put("percentOff", product.getPercentOff());
+							json.put("developerName", product.getDeveloperName());
+							jarray.put(mProductList.indexOf(product), json);
+						} catch (JSONException e1) {
+						}
+					}
+					
+					String jsonData = jarray.toString();
 					
 					Log.i(LOG_TAG, "m_productListListener ProductListListener jsonData=" + jsonData);
 					IOuyaActivity.GetCallbacksRequestProducts().onSuccess(jsonData);
@@ -289,7 +309,7 @@ public class CoronaOuyaFacade
         if(resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-                    fetchGamerUUID();
+                    requestGamerInfo();
                     break;
                 case PURCHASE_AUTHENTICATION_ACTIVITY_ID:
                     restartInterruptedPurchase();
@@ -362,19 +382,17 @@ public class CoronaOuyaFacade
 		}
     }
 
-    public void fetchGamerUUID() {
+    public void requestGamerInfo() {
 
 		//custom-iap-code
-		if (null != m_fetchGamerUUIDListener)
+		if (null != m_requestGamerInfoListener)
 		{
-			Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is valid");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "fetchGamerUUID m_fetchGamerUUIDListener is valid");
-			ouyaFacade.requestGamerUuid(m_fetchGamerUUIDListener);
+			Log.i(LOG_TAG, "requestGamerInfo m_requestGamerInfoListener is valid");
+			ouyaFacade.requestGamerInfo(m_requestGamerInfoListener);
 		}
 		else
 		{
-			Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is null");
-			//UnityPlayer.UnitySendMessage("OuyaGameObject", "DebugLog", "fetchGamerUUID m_fetchGamerUUIDListener is null");
+			Log.i(LOG_TAG, "requestGamerInfo m_requestGamerInfoListener is null");
 		}        
     }
 
@@ -523,8 +541,25 @@ public class CoronaOuyaFacade
 
 			// custom-iap-code
 			if(mReceiptList != null) {
-				Gson gson = new Gson();
-				String jsonData = gson.toJson(mReceiptList);
+				
+				JSONArray jarray = new JSONArray();
+				for (Receipt receipt : mReceiptList)
+				{
+					JSONObject json = new JSONObject();
+					try {
+						json.put("identifier", receipt.getIdentifier());
+						json.put("purchaseDate", receipt.getPurchaseDate());
+						json.put("gamer", receipt.getGamer());
+						json.put("uuid", receipt.getUuid());
+						json.put("localPrice", receipt.getLocalPrice());
+						json.put("currency", receipt.getCurrency());
+						json.put("generatedDate", receipt.getGeneratedDate());
+						jarray.put(mReceiptList.indexOf(receipt), json);
+					} catch (JSONException e1) {
+					}
+				}
+				
+				String jsonData = jarray.toString();
 				
 				Log.i(LOG_TAG, "ReceiptListener ReceiptListListener jsonData=" + jsonData);
 				IOuyaActivity.GetCallbacksRequestReceipts().onSuccess(jsonData);
@@ -680,16 +715,38 @@ public class CoronaOuyaFacade
 
 			if (null != product)
 			{
-				Gson gson = new Gson();
-				String jsonData = gson.toJson(product);
+				JSONObject json = new JSONObject();
+				try {
+					json.put("currencyCode", product.getCurrencyCode());
+					json.put("description", product.getDescription());
+					json.put("identifier", product.getIdentifier());
+					json.put("localPrice", product.getLocalPrice());
+					json.put("name", product.getName());
+					json.put("originalPrice", product.getOriginalPrice());
+					json.put("percentOff", product.getPercentOff());
+					json.put("developerName", product.getDeveloperName());
+				} catch (JSONException e1) {
+				}
+				String jsonData = json.toString();
 
 				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
 				IOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
 			}
 			else if (null != storedProduct)
 			{
-				Gson gson = new Gson();
-				String jsonData = gson.toJson(storedProduct);
+				JSONObject json = new JSONObject();
+				try {
+					json.put("currencyCode", storedProduct.getCurrencyCode());
+					json.put("description", storedProduct.getDescription());
+					json.put("identifier", storedProduct.getIdentifier());
+					json.put("localPrice", storedProduct.getLocalPrice());
+					json.put("name", storedProduct.getName());
+					json.put("originalPrice", storedProduct.getOriginalPrice());
+					json.put("percentOff", storedProduct.getPercentOff());
+					json.put("developerName", storedProduct.getDeveloperName());
+				} catch (JSONException e1) {
+				}
+				String jsonData = json.toString();
 
 				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
 				IOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
