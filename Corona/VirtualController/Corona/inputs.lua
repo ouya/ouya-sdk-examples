@@ -21,47 +21,43 @@
 globals = require "globals"
 helpers = require "helpers"
 
+local OuyaController = {}
+
+OuyaController.AXIS_LS_X = 0;
+OuyaController.AXIS_LS_Y = 1;
+OuyaController.AXIS_RS_X = 11;
+OuyaController.AXIS_RS_Y = 14;
+OuyaController.AXIS_L2 = 17;
+OuyaController.AXIS_R2 = 18;
+
+OuyaController.BUTTON_O = 96;
+OuyaController.BUTTON_U = 99;
+OuyaController.BUTTON_Y = 100;
+OuyaController.BUTTON_A = 97;
+OuyaController.BUTTON_L1 = 102;
+OuyaController.BUTTON_R1 = 103;
+OuyaController.BUTTON_L3 = 106;
+OuyaController.BUTTON_R3 = 107;
+OuyaController.BUTTON_DPAD_UP = 19;
+OuyaController.BUTTON_DPAD_DOWN = 20;
+OuyaController.BUTTON_DPAD_RIGHT = 22;
+OuyaController.BUTTON_DPAD_LEFT = 21;
+OuyaController.BUTTON_MENU = 82;
+
+OuyaController.MAX_CONTROLLERS = 4;
+
 local inputs = {}
 
--- Called when an axis event has been received.
-inputs.onAxisEvent = function (event)
-	--print("===== onKeyEvent ======")
+
+inputs.onGenericMotionEvent = function (playerNum, axis, val)
+	--print("inputs.onGenericMotionEvent: playerNum=" .. tostring(playerNum) .. " axis=" .. tostring(axis) .. " val=" .. tostring(val));
 	
-    if (nil == globals.controllers) then
-    	print("controllers not found")
-    	return false;
-    else
-    	--print("controllers found")
-    end
-    
-	if event.device then
-		--print( event.axis.descriptor .. ": Normalized Value = " .. tostring(event.normalizedValue) )
-		--print("### device.descriptor = " .. tostring(event.device.descriptor))
-		--print("### device.type = " .. tostring(event.device.type))
-		--print("### device.productName = " .. tostring(event.device.productName))
-		--print("### device.aliasName = " .. tostring(event.device.aliasName))
-		--print("### device.androidDeviceId = " .. tostring(event.device.androidDeviceId))
-		--print("### device.permanentStringId = " .. tostring(event.device.permanentStringId))
-		--print("### device.canVibrate = " .. tostring(event.device.canVibrate))
-		--print("### device.isConnected = " .. tostring(event.device.isConnected))
-	else
-		print("### device = nil")
+	if playerNum < 0 or playerNum > OuyaController.MAX_CONTROLLERS then
 		return false;
 	end
-	
-	local index = 1
-	
-	if (tostring(event.device.descriptor) == "Joystick 1") then
-		index = 1;
-	elseif (tostring(event.device.descriptor) == "Joystick 2") then
-		index = 2;
-	elseif (tostring(event.device.descriptor) == "Joystick 3") then
-		index = 3;
-	elseif (tostring(event.device.descriptor) == "Joystick 4") then
-		index = 4;
-	end
-	
-	
+
+	local index = playerNum + 1;
+
 	local controller = globals.controllers[index]
     if (nil == controller) then
     	print("controller not found")
@@ -70,16 +66,16 @@ inputs.onAxisEvent = function (event)
     	--print("controller found")
     end
     
-    
 	local AXIS_SCALER = 10;
+	local DEAD_ZONE = 0.3;
 	
-	local valAxis = event.normalizedValue;
-	if (math.abs(valAxis) < 0.3) then
+	local valAxis = val;
+	if (math.abs(valAxis) < DEAD_ZONE) then
 		valAxis = 0;
 	elseif (valAxis < 0) then
-		valAxis = (valAxis + 0.3) / 0.7;
+		valAxis = (valAxis + DEAD_ZONE) / 0.7;
 	elseif (valAxis > 0) then
-		valAxis = (valAxis - 0.3) / 0.7;
+		valAxis = (valAxis - DEAD_ZONE) / 0.7;
 	end
 	
 	--rotate input by N degrees to match image
@@ -88,7 +84,7 @@ inputs.onAxisEvent = function (event)
      local valCos = math.cos(radians);
      local valSin = math.sin(radians);
 	
-	if (event.axis.number == 1) then
+	if (axis == OuyaController.AXIS_LS_X) then
 		--print("LX found x=" .. tostring(controller.x))
 		
 		controller.inputLeftStickX = valAxis;
@@ -105,7 +101,7 @@ inputs.onAxisEvent = function (event)
 		controller.leftStickActive.y = newY;
 	end
 	
-	if (event.axis.number == 2) then
+	if (axis == OuyaController.AXIS_LS_Y) then
 		--print("LY found")
 		
 		controller.inputLeftStickY = valAxis;
@@ -122,7 +118,7 @@ inputs.onAxisEvent = function (event)
 		controller.leftStickActive.y = newY;
 	end
 	
-	if (event.axis.number == 4) then
+	if (axis == OuyaController.AXIS_RS_X) then
 		--print("RX found")
 		
 		controller.inputRightStickX = valAxis;
@@ -139,7 +135,7 @@ inputs.onAxisEvent = function (event)
 		controller.rightStickActive.y = newY;
 	end
 	
-	if (event.axis.number == 5) then
+	if (axis == OuyaController.AXIS_RS_Y) then
 		--print("RY found")
 		
 		controller.inputRightStickY = valAxis;
@@ -156,22 +152,132 @@ inputs.onAxisEvent = function (event)
 		controller.rightStickActive.y = newY;
 	end
 
-	if (event.axis.number == 3) then
-		--print("LT found")
+	if axis == OuyaController.AXIS_L2 then
+		if valAxis > DEAD_ZONE then
+			--print("LT found")
+			helpers.spriteFadeAuto(true, controller.leftTrigger);
+		else
+			helpers.spriteFadeAuto(false, controller.leftTrigger);
+		end
 	end
 	
-		if (event.axis.number == 6) then
-		--print("RT found")
+	if axis == OuyaController.AXIS_R2 then
+		if valAxis > DEAD_ZONE then
+			--print("RT found")
+			helpers.spriteFadeAuto(true, controller.rightTrigger);
+		else
+			helpers.spriteFadeAuto(false, controller.rightTrigger);
+		end
 	end
-	
-	
---print("what=" .. tostring(event.axis.descriptor))
-	
+
+end
+
+inputs.updateVisibility = function (playerNum, button, phase)
+	if playerNum < 0 or playerNum > OuyaController.MAX_CONTROLLERS then
+		return false;
+	end
+
+	local index = playerNum + 1;
+
+	local controller = globals.controllers[index]
+    if (nil == controller) then
+    	print("controller not found")
+    	return false;
+    else
+    	--print("controller found")
+    end
+
+    -- set the joystick name
+    --controller.txtLabel.text = tostring(event.device.displayName);
+
+    --DPADS
+    if (button == OuyaController.BUTTON_DPAD_DOWN) then
+    	helpers.spriteFadeAuto(phase, controller.dpadDown)
+    end
+    
+    if (button == OuyaController.BUTTON_DPAD_LEFT) then
+    	helpers.spriteFadeAuto(phase, controller.dpadLeft)
+    end
+    
+    if (button == OuyaController.BUTTON_DPAD_RIGHT) then
+    	helpers.spriteFadeAuto(phase, controller.dpadRight)
+    end
+    
+    if (button == OuyaController.BUTTON_DPAD_UP) then
+    	helpers.spriteFadeAuto(phase, controller.dpadUp)
+    end
+    
+    --end of DPADS
+    
+    --STICK BUTTONS
+    if (button == OuyaController.BUTTON_L3) then
+    	helpers.spriteFadeAuto(phase, controller.leftStickActive)
+    	helpers.spriteFadeAutoInv(phase, controller.leftStickInactive)
+    end
+
+	if (button == OuyaController.BUTTON_R3) then
+    	helpers.spriteFadeAuto(phase, controller.rightStickActive)
+    	helpers.spriteFadeAutoInv(phase, controller.rightStickInactive)
+    end
+    --end of STICK BUTTONS
+
+    -- BUTTONS
+    
+    if (button == OuyaController.BUTTON_U) then
+    	helpers.spriteFadeAuto(phase, controller.buttonU)
+    end
+    
+    if (button == OuyaController.BUTTON_O) then
+    	helpers.spriteFadeAuto(phase, controller.buttonO)
+    end
+    
+    if (button == OuyaController.BUTTON_A) then
+    	helpers.spriteFadeAuto(phase, controller.buttonA)
+    end
+    
+    if (button == OuyaController.BUTTON_Y) then
+    	helpers.spriteFadeAuto(phase, controller.buttonY)
+    end
+    
+    if (button == OuyaController.BUTTON_L1) then
+    	helpers.spriteFadeAuto(phase, controller.leftBumper)
+    end
+    
+    if (button == OuyaController.BUTTON_R1) then
+    	helpers.spriteFadeAuto(phase, controller.rightBumper)
+    end
+    
+    -- End of BUTTONS
+end
+
+inputs.onKeyDown = function (playerNum, button)
+	--print("inputs.onKeyDown: playerNum=" .. tostring(playerNum) .. " button=" .. tostring(button));
+	inputs.updateVisibility(playerNum, button, true);
+end
+
+inputs.onKeyUp = function (playerNum, button)
+	--print("inputs.onKeyUp: playerNum=" .. tostring(playerNum) .. " button=" .. tostring(button));
+	inputs.updateVisibility(playerNum, button, false);
+end
+
+
+if nil ~= ouyaSDK then
+	ouyaSDK.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
+end
+
+-- Called when an axis event has been received.
+inputs.onAxisEvent = function (event)
+	--print("===== onKeyEvent ======")
+	return false;	
 end
 
 -- Called when a key event has been received.
 inputs.onKeyEvent = function (event)
 	--print("===== onKeyEvent ======")
+
+	if true then
+		return false
+	end
 	
     if (nil == globals.controllers) then
     	print("controllers not found")

@@ -30,31 +30,29 @@ end
 
 -- Fade out the sprite alpha over 500ms
 helpers.spriteFadeOut = function (spriteObj)
-	spriteObj.alpha = 1;
 	transition.to(spriteObj, { time=500, alpha=0 })
 end
 
 -- Fade in the sprite alpha over 500ms
 helpers.spriteFadeIn = function (spriteObj)
-	spriteObj.alpha = 0;
 	transition.to(spriteObj, { time=500, alpha=1 })
 end
 
 -- Auto fade the sprite based on the phase, fade In if down, fade out if up
 helpers.spriteFadeAuto = function (phase, spriteObj)
-    	if (phase == "down") then
+    	if phase then
     		helpers.spriteFadeIn(spriteObj)
-    	elseif (phase == "up") then
+    	else
     		helpers.spriteFadeOut(spriteObj)    	
     	end
 end
 
 -- Invert auto fade the sprite based on the phase, fade In if up, fade out if down
 helpers.spriteFadeAutoInv = function (phase, spriteObj)
-    	if (phase == "up") then
-    		helpers.spriteFadeIn(spriteObj)
-    	elseif (phase == "down") then
-    		helpers.spriteFadeOut(spriteObj)    	
+    	if phase then
+    		helpers.spriteFadeOut(spriteObj)
+    	else
+    		helpers.spriteFadeIn(spriteObj)    	
     	end
 end
 

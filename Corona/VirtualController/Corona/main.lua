@@ -32,7 +32,7 @@ globals.controllers =
 };
 
 -- Add the key event listener.
-Runtime:addEventListener( "key", inputs.onKeyEvent )
+--Runtime:addEventListener( "key", inputs.onKeyEvent )
 
 -- Add the axis event listener.
-Runtime:addEventListener( "axis", inputs.onAxisEvent )
+--Runtime:addEventListener( "axis", inputs.onAxisEvent )

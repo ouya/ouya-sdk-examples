@@ -18,7 +18,15 @@
 --
 -----------------------------------------------------------------------------------------
 
+local DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+
 helpers = require "helpers"
+
+if nil ~= ouyaSDK then
+	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
+	ouyaSDK.ouyaSetDeveloperId(DEVELOPER_ID);
+	--ouyaSDK.ouyaInitInput(callbackAxis, callbackButton);
+end
 
 local ui = {}
 
@@ -37,7 +45,7 @@ ui.createController = function (player, x, y, xScale, yScale)
 		inputRightStickY = 0,
 	
 		--also the render order	
-        controller = display.newImage("cutter.png"),
+        controller = display.newImage("controller.png"),
 		buttonA = display.newImage("a.png"),
         buttonO = display.newImage("o.png"),
 		buttonU = display.newImage("u.png"),
