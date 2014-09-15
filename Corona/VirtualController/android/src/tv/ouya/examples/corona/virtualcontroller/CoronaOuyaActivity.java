@@ -52,9 +52,9 @@ import tv.ouya.console.api.*;
  * activity is displayed and will persist after the activity is destroyed. The name of this class must be set in the
  * AndroidManifest.xml file's "application" tag or else an instance of this class will not be created on startup.
  */
-public class MainActivity extends com.ansca.corona.CoronaActivity {
+public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	
-	private final String TAG = "MainActivity";
+	private final String TAG = CoronaOuyaActivity.class.getSimpleName();
 	
 	private boolean m_waitToExit = true;
 	

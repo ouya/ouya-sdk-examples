@@ -1,4 +1,4 @@
-package tv.ouya.console.api;
+package tv.ouya.examples.corona.virtualcontroller;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,22 +7,23 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.ansca.corona.CoronaEnvironment;
 import com.ansca.corona.input.CoronaKeyEvent;
 
 import tv.ouya.console.api.*;
 import tv.ouya.sdk.corona.CallbacksOuyaInput;
 import tv.ouya.sdk.corona.IOuyaActivity;
 
-public class OuyaInputView extends View {
+public class CoronaOuyaInputView extends View {
 	
-	private static final String TAG = OuyaInputView.class.getSimpleName();
+	private static final String TAG = CoronaOuyaInputView.class.getSimpleName();
 	private Activity mActivity = null;
 
-	public OuyaInputView(Context context) {
+	public CoronaOuyaInputView(Context context) {
 		super(context);
-		//Log.i(TAG, "OuyaInputView(Context)");
+		//Log.i(TAG, "CoronaOuyaInputView(Context)");
 		
-		mActivity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		mActivity = CoronaEnvironment.getCoronaActivity();
 		OuyaInputMapper.init(mActivity);
 		
 		this.setFocusable(true);

@@ -29,7 +29,7 @@
 	             android:debuggable="true">
 		
 		<!-- The main Corona activity that runs the Corona project. -->
-		<activity android:name="MainActivity"
+		<activity android:name="CoronaOuyaActivity"
 		          android:screenOrientation="landscape"
 		          android:configChanges="keyboardHidden|orientation|screenSize"
 		          android:label="CoronaVirtualController"

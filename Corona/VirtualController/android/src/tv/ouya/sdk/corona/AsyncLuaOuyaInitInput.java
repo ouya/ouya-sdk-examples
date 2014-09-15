@@ -22,7 +22,7 @@ import com.ansca.corona.input.ViewInputHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import tv.ouya.console.api.OuyaInputView;
+import tv.ouya.examples.corona.virtualcontroller.CoronaOuyaInputView;
 
 import android.app.Activity;
 import android.util.Log;
@@ -76,17 +76,9 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 		return 0;
 	}
 	
-	private OuyaInputView mInputView = null;
+	private CoronaOuyaInputView mInputView = null;
 	
 	private void disableInput() {
-		
-		
-		Log.i(TAG, "**********");
-		Log.i(TAG, "**********");
-		Log.i(TAG, "**********");
-		Log.i(TAG, "DISABLE INPUT");
-		Log.i(TAG, "**********");
-		Log.i(TAG, "**********");
 		
 		Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		
@@ -198,7 +190,7 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
     				try {
     					Log.i(TAG, "Construct OuyaInputView");
     					if (null == mInputView) {
-    						mInputView = new OuyaInputView(activity.getApplicationContext());
+    						mInputView = new CoronaOuyaInputView(activity.getApplicationContext());
     						
     						mInputView.setLayoutParams(new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
