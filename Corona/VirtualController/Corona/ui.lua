@@ -25,7 +25,6 @@ helpers = require "helpers"
 if nil ~= ouyaSDK then
 	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
 	ouyaSDK.ouyaSetDeveloperId(DEVELOPER_ID);
-	--ouyaSDK.ouyaInitInput(callbackAxis, callbackButton);
 end
 
 local ui = {}
@@ -47,6 +46,7 @@ ui.createController = function (player, x, y, xScale, yScale)
 		--also the render order	
         controller = display.newImage("controller.png"),
 		buttonA = display.newImage("a.png"),
+		buttonMenu = display.newImage("menu.png"),
         buttonO = display.newImage("o.png"),
 		buttonU = display.newImage("u.png"),
         buttonY = display.newImage("y.png"),
@@ -67,6 +67,7 @@ ui.createController = function (player, x, y, xScale, yScale)
 	};
 	
 	helpers.updateSprite(spriteObj.buttonA, x, y, xScale, yScale, 0);
+	helpers.updateSprite(spriteObj.buttonMenu, x, y, xScale, yScale, 0);
 	helpers.updateSprite(spriteObj.buttonO, x, y, xScale, yScale, 0);
 	helpers.updateSprite(spriteObj.buttonU, x, y, xScale, yScale, 0);
 	helpers.updateSprite(spriteObj.buttonY, x, y, xScale, yScale, 0);
