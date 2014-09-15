@@ -63,6 +63,7 @@ ui.createController = function (player, x, y, xScale, yScale)
         rightStickInactive = display.newImage("r_stick.png"),
         rightStickActive = display.newImage("thumbr.png"),
         
+        checkForName = true;
         txtLabel = display.newText("Unknown", x - 100, y + 250, "Helvetica", 48);
 	};
 	

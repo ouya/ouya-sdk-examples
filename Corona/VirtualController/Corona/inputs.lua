@@ -41,6 +41,12 @@ inputs.onGenericMotionEvent = function (playerNum, axis, val)
     else
     	--print("controller found")
     end
+
+    -- set the joystick name
+    if controller.checkForName then
+    	controller.checkForName = false;
+    	ouyaSDK.asyncLuaOuyaGetControllerName(inputs.setControllerName, playerNum);
+    end
     
 	local AXIS_SCALER = 10;
 	local DEAD_ZONE = 0.3;
@@ -164,7 +170,10 @@ inputs.updateVisibility = function (playerNum, button, phase)
     end
 
     -- set the joystick name
-    --controller.txtLabel.text = tostring(event.device.displayName);
+    if controller.checkForName then
+    	controller.checkForName = false;
+    	ouyaSDK.asyncLuaOuyaGetControllerName(inputs.setControllerName, playerNum);
+    end
 
     --DPADS
     if (button == OuyaController.BUTTON_DPAD_DOWN) then
@@ -248,57 +257,15 @@ if nil ~= ouyaSDK then
 	ouyaSDK.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
 end
 
--- Called when an axis event has been received.
-inputs.onAxisEvent = function (event)
-	--print("===== onKeyEvent ======")
-	return false;	
-end
 
--- Called when a key event has been received.
-inputs.onKeyEvent = function (event)
-	--print("===== onKeyEvent ======")
+inputs.setControllerName = function (playerNum, name)
 
-	if true then
-		return false
-	end
-	
-    if (nil == globals.controllers) then
-    	print("controllers not found")
-    	return false;
-    else
-    	--print("controllers found")
-    end
-    
-    --print("Key '" .. event.keyName .. "' has key code: " .. tostring(event.nativeKeyCode) .. " phase: " .. event.phase);
-	
-	if event.device then
-		--print("### device.displayName = " .. tostring(event.device.displayName))
-		--print("### device.descriptor = " .. tostring(event.device.descriptor))
-		--print("### device.type = " .. tostring(event.device.type))
-		--print("### device.productName = " .. tostring(event.device.productName))
-		--print("### device.aliasName = " .. tostring(event.device.aliasName))
-		--print("### device.androidDeviceId = " .. tostring(event.device.androidDeviceId))
-		--print("### device.permanentStringId = " .. tostring(event.device.permanentStringId))
-		--print("### device.canVibrate = " .. tostring(event.device.canVibrate))
-		--print("### device.isConnected = " .. tostring(event.device.isConnected))
-	else
-		print("### device = nil")
+	if playerNum < 0 or playerNum > OuyaController.MAX_CONTROLLERS then
 		return false;
 	end
-	
-	local index = 1
-	
-	if (tostring(event.device.descriptor) == "Joystick 1") then
-		index = 1;
-	elseif (tostring(event.device.descriptor) == "Joystick 2") then
-		index = 2;
-	elseif (tostring(event.device.descriptor) == "Joystick 3") then
-		index = 3;
-	elseif (tostring(event.device.descriptor) == "Joystick 4") then
-		index = 4;
-	end
 
-	
+	local index = playerNum + 1;
+
 	local controller = globals.controllers[index]
     if (nil == controller) then
     	print("controller not found")
@@ -306,83 +273,9 @@ inputs.onKeyEvent = function (event)
     else
     	--print("controller found")
     end
-    
-    -- set the joystick name
-    controller.txtLabel.text = tostring(event.device.displayName);
-    
-	--System Button / Pause Menu
-    if (event.keyName == "menu") then
-    	if (event.phase == "up") then
-    		print ("menu button detected")
-    	end
-    end
-	
-	--DPADS
-    if (event.keyName == "down") then
-    	helpers.spriteFadeAuto(event.phase, controller.dpadDown)
-    end
-    
-    if (event.keyName == "left") then
-    	helpers.spriteFadeAuto(event.phase, controller.dpadLeft)
-    end
-    
-    if (event.keyName == "right") then
-    	helpers.spriteFadeAuto(event.phase, controller.dpadRight)
-    end
-    
-    if (event.keyName == "up") then
-    	helpers.spriteFadeAuto(event.phase, controller.dpadUp)
-    end
-    
-    --end of DPADS
-    
-    if (event.keyName == "leftJoystickButton") then
-    	helpers.spriteFadeAuto(event.phase, controller.leftStickActive)
-    	helpers.spriteFadeAutoInv(event.phase, controller.leftStickInactive)
-    end
 
-	-- BUTTONS
-
-    if (event.keyName == "rightJoystickButton") then
-    	helpers.spriteFadeAuto(event.phase, controller.rightStickActive)
-    	helpers.spriteFadeAutoInv(event.phase, controller.rightStickInactive)
-    end
-    
-    if (event.keyName == "buttonX") then
-    	helpers.spriteFadeAuto(event.phase, controller.buttonU)
-    end
-    
-    if (event.keyName == "buttonA") then
-    	helpers.spriteFadeAuto(event.phase, controller.buttonO)
-    end
-    
-    if (event.keyName == "buttonB") then
-    	helpers.spriteFadeAuto(event.phase, controller.buttonA)
-    end
-    
-    if (event.keyName == "buttonY") then
-    	helpers.spriteFadeAuto(event.phase, controller.buttonY)
-    end
-    
-    if (event.keyName == "leftShoulderButton1") then
-    	helpers.spriteFadeAuto(event.phase, controller.leftBumper)
-    end
-    
-    if (event.keyName == "leftShoulderButton2") then
-    	helpers.spriteFadeAuto(event.phase, controller.leftTrigger)
-    end
-    
-    if (event.keyName == "rightShoulderButton1") then
-    	helpers.spriteFadeAuto(event.phase, controller.rightBumper)
-    end
-    
-    if (event.keyName == "rightShoulderButton2") then
-    	helpers.spriteFadeAuto(event.phase, controller.rightTrigger)
-    end
-    
-    -- End of BUTTONS
-	
-	return false
+	controller.txtLabel.text = tostring(name);
 end
+
 
 return inputs;
