@@ -52,8 +52,7 @@ import tv.ouya.console.api.*;
  * activity is displayed and will persist after the activity is destroyed. The name of this class must be set in the
  * AndroidManifest.xml file's "application" tag or else an instance of this class will not be created on startup.
  */
-public class MainActivity extends CoronaOuyaActivity {
-//public class MainActivity extends com.ansca.corona.CoronaActivity {
+public class MainActivity extends com.ansca.corona.CoronaActivity {
 	
 	private final String TAG = "MainActivity";
 	
@@ -87,21 +86,6 @@ public class MainActivity extends CoronaOuyaActivity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		/*
-		// load the raw resource for the application key
-		try {
-			InputStream inputStream = getResources().openRawResource(R.raw.key);
-			byte[] applicationKey = new byte[inputStream.available()];
-			inputStream.read(applicationKey);
-			inputStream.close();
-			IOuyaActivity.SetApplicationKey(applicationKey);
-			
-			Log.i(TAG, "***Loaded signing key*********");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
 
 		// Init the controller
 		OuyaController.init(context);
@@ -152,93 +136,6 @@ public class MainActivity extends CoronaOuyaActivity {
 		super.onDestroy();
 		m_waitToExit = false;
 	}
-	
-	/*
-	
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		//Log.i(TAG, "dispatchKeyEvent " + keyEvent.getClass().getName());
-		if (keyEvent.getClass().getName() == "com.ansca.corona.input.CoronaKeyEvent") {
-			//eat the extra event
-			return true;
-		}
-		Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode() + " " + DebugInput.debugGetButtonName(keyEvent.getKeyCode()) + " action="+keyEvent.getAction()+" source="+keyEvent.getSource());
-        return super.dispatchKeyEvent(keyEvent);
-	}
-	
-	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		return super.dispatchGenericMotionEvent(motionEvent);
-	}
-	*/
-	
-	///*
-	@Override
-	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		//DebugInput.debugMotionEvent(motionEvent);
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());	    
-	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
-	    	return true;
-	    }
-	    
-	    CallbacksOuyaInput input = IOuyaActivity.GetCallbacksOuyaInput();
-	    if (null != input) {
-	    	
-	    	input.onGenericMotionEvent(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-	    	input.onGenericMotionEvent(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-	    	input.onGenericMotionEvent(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-	    	input.onGenericMotionEvent(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-	    	input.onGenericMotionEvent(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
-	    	input.onGenericMotionEvent(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
-	    }
-	    
-		return true;
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
-	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	return true;
-	    }
-
-		int action = keyEvent.getAction();
-		//dispatchKeyEventNative(playerNum, keyCode, action);
-		
-		CallbacksOuyaInput input = IOuyaActivity.GetCallbacksOuyaInput();
-	    if (null != input) {	
-	    	input.onKeyUp(playerNum, keyCode);
-	    }
-		
-		return true;
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
-	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	return true;
-	    }
-
-		int action = keyEvent.getAction();
-		//dispatchKeyEventNative(playerNum, keyCode, action);
-		
-		CallbacksOuyaInput input = IOuyaActivity.GetCallbacksOuyaInput();
-	    if (null != input) {	
-	    	input.onKeyDown(playerNum, keyCode);
-	    }
-		
-		return true;
-	}
-	//*/
 
     /**
      * Broadcast listener to handle re-requesting the receipts when a user has re-authenticated

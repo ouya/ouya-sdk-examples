@@ -22,7 +22,6 @@ import com.ansca.corona.input.ViewInputHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import tv.ouya.console.api.OuyaInputOnKeyListener;
 import tv.ouya.console.api.OuyaInputView;
 
 import android.app.Activity;
@@ -30,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 
 /**
@@ -198,22 +198,31 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
     				try {
     					Log.i(TAG, "Construct OuyaInputView");
     					if (null == mInputView) {
-    						/*
     						mInputView = new OuyaInputView(activity.getApplicationContext());
+    						
+    						mInputView.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT));
     					
-	    					Log.i(TAG, "Add OuyaInputView to frame layout");
+	    					Log.i(TAG, "Find frame layout");
 	    					FrameLayout fm = getFrameLayout(activity);
 	    					if (null != fm) {
+	    						Log.i(TAG, "Add OuyaInputView to frame layout");
 	    						fm.addView(mInputView);
+	    						
+	    						Log.i(TAG, "Request focus for OuyaInputView");
+	    						mInputView.requestFocus();
+	    					} else {
+	    						Log.i(TAG, "Filed to find frame layout");
 	    					}
-	    					*/
+	    					
 							
 							//view.setOnClickListener(inputView);
 							//view.setOnDragListener(inputView);
 							//view.setOnGenericMotionListener(inputView);
 							//view.setOnHoverListener(inputView);
 							//view.setOnKeyListener(mInputView);
-	    					view.setOnKeyListener(new OuyaInputOnKeyListener());
+	    					//view.setOnKeyListener(new OuyaInputOnKeyListener());
 							//view.setOnLongClickListener(inputView);
 							//view.setOnTouchListener(inputView);
     					}

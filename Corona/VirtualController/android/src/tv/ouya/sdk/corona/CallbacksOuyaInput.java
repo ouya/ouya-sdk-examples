@@ -140,7 +140,7 @@ public class CallbacksOuyaInput {
 	
 	public void onKeyUp(final int playerNum, final int button) {
 		
-		Log.i(TAG, "onKeyUp playerNum=" + playerNum + " button="+button);
+		//Log.i(TAG, "onKeyUp playerNum=" + playerNum + " button="+button);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -186,7 +186,7 @@ public class CallbacksOuyaInput {
 
 	public void onKeyDown(final int playerNum, final int button) {
 		
-		Log.i(TAG, "onKeyDown playerNum=" + playerNum + " button="+button);
+		//Log.i(TAG, "onKeyDown playerNum=" + playerNum + " button="+button);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
