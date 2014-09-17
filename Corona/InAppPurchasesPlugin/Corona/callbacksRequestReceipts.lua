@@ -31,7 +31,7 @@ callbacksRequestReceipts.onSuccess = function (jsonData)
 		print("onSuccessRequestReceipts: (empty)");
 	else
         print("onSuccessRequestReceipts: jsonData=" .. jsonData);
-        getReceipts = json.decode(jsonData);
+        globals.getReceipts = json.decode(jsonData);
 		ui.displayReceiptList();
 	end
 end

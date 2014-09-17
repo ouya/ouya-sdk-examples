@@ -24,13 +24,14 @@ globals.centerX = 0;
 
 globals.txtHello = nil;
 globals.txtStatus = nil;
+globals.txtGamerUsername = nil;
 globals.txtGamerUUID = nil;
 globals.txtInstructions = nil;
 
 globals.btnProducts = nil;
 globals.btnPurchase = nil;
 globals.btnReceipts = nil;
-globals.btnFetch = nil;
+globals.btnGamerInfo = nil;
 globals.btnPause = nil;
 
 globals.selectedProduct = 0;

@@ -19,7 +19,7 @@ package tv.ouya.sdk.corona;
 import android.util.Log;
 
 
-public class CallbacksFetchGamerUUID {
+public class CallbacksRequestGamerInfo {
 	
 	private int m_luaStackIndexOnSuccess = 1;
 	private int m_luaReferenceKeyOnSuccess = 0;
@@ -32,7 +32,7 @@ public class CallbacksFetchGamerUUID {
 	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
 	
-	public CallbacksFetchGamerUUID(com.naef.jnlua.LuaState luaState) {
+	public CallbacksRequestGamerInfo(com.naef.jnlua.LuaState luaState) {
 		
 		setupCallbackOnSuccess(luaState);
 		setupCallbackOnFailure(luaState);
@@ -87,9 +87,9 @@ public class CallbacksFetchGamerUUID {
 		m_luaReferenceKeyOnCancel = luaState.ref(com.naef.jnlua.LuaState.REGISTRYINDEX);
 	}
 	
-	public void onSuccess(final String gamerUUID) {
+	public void onSuccess(final String jsonData) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onSuccess=" + gamerUUID);
+		Log.i("CallbacksRequestGamerInfo", "onSuccess=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -114,7 +114,7 @@ public class CallbacksFetchGamerUUID {
 							luaState.unref(com.naef.jnlua.LuaState.REGISTRYINDEX, m_luaReferenceKeyOnSuccess);
 							
 							// pass as argument
-							luaState.pushString(gamerUUID);
+							luaState.pushString(jsonData);
 							
 							luaState.call(1, 0);
 						}
@@ -132,7 +132,7 @@ public class CallbacksFetchGamerUUID {
 	
 	public void onFailure(final int errorCode, final String errorMessage) {
 		
-		Log.i("CallbacksFetchGamerUUID", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
+		Log.i("CallbacksRequestGamerInfo", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
@@ -178,7 +178,7 @@ public class CallbacksFetchGamerUUID {
 	
 	public void onCancel() {
 		
-		Log.i("CallbacksFetchGamerUUID", "onCancel");
+		Log.i("CallbacksRequestGamerInfo", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {

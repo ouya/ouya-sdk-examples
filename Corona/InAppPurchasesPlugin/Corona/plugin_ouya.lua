@@ -57,16 +57,16 @@ plugin_ouya.ouyaSetDeveloperId = function(developerId)
 	plugin_ouya.initialized = true;
 end
 
--- Invoke IAP Fetch Gamer UUID and provide callbacks
-plugin_ouya.asyncLuaOuyaFetchGamerUUID = function(onSuccess, onFailure, onCancel)
+-- Invoke IAP Request Gamer Info and provide callbacks
+plugin_ouya.asyncLuaOuyaRequestGamerInfo = function(onSuccess, onFailure, onCancel)
 	if ouyaSDK == nil then
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
 	plugin_ouya.initialize();
 	
-	print ("plugin_ouya.asyncLuaOuyaFetchGamerUUID");
-	ouyaSDK.asyncLuaOuyaFetchGamerUUID(onSuccess, onFailure, onCancel);
+	print ("plugin_ouya.asyncLuaOuyaRequestGamerInfo");
+	ouyaSDK.asyncLuaOuyaRequestGamerInfo(onSuccess, onFailure, onCancel);
 end
 
 -- Invoke IAP Request Products, provide callbacks, and a table of product identifiers

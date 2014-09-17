@@ -25,14 +25,14 @@ package tv.ouya.sdk.corona;
  * You must never manipulate the Lua state from another thread or else race conditions and exceptions that
  * can crash the application can occur. This example demonstrates how to do this in a thread safe manner.
  */
-public class AsyncLuaOuyaFetchGamerUUID implements com.naef.jnlua.NamedJavaFunction {
+public class AsyncLuaOuyaRequestGamerInfo implements com.naef.jnlua.NamedJavaFunction {
 	/**
 	 * Gets the name of the Lua function as it would appear in the Lua script.
 	 * @return Returns the name of the custom Lua function.
 	 */
 	@Override
 	public String getName() {
-		return "asyncLuaOuyaFetchGamerUUID";
+		return "asyncLuaOuyaRequestGamerInfo";
 	}
 	
 	/**
@@ -46,13 +46,13 @@ public class AsyncLuaOuyaFetchGamerUUID implements com.naef.jnlua.NamedJavaFunct
 	@Override
 	public int invoke(com.naef.jnlua.LuaState luaState) {
 		
-		CallbacksFetchGamerUUID callbacks = new CallbacksFetchGamerUUID(luaState);
+		CallbacksRequestGamerInfo callbacks = new CallbacksRequestGamerInfo(luaState);
 		
 		// store for access
-		IOuyaActivity.SetCallbacksFetchGamerUUID(callbacks);
+		IOuyaActivity.SetCallbacksRequestGamerInfo(callbacks);
 		
 		// invoke service
-		CoronaOuyaPlugin.fetchGamerUUID();
+		CoronaOuyaPlugin.requestGamerInfo();
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;

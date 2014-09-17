@@ -91,7 +91,6 @@
             <mkdir dir="libs" />
             <copy file="${CoronaEnterpriseDir}/Corona/android/lib/Corona/libs/JNLua.jar" todir="libs" />
             <copy file="${CoronaEnterpriseDir}/Corona/android/lib/Corona/libs/Corona.jar" todir="libs" />
-            <copy file="../libs/gson-2.2.2.jar" todir="libs" />
             <copy file="../libs/ouya-sdk.jar" todir="libs" />
         </sequential>
     </macrodef>

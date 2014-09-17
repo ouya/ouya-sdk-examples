@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="OuyaCoronaTest" default="help">
+<project name="SimpleLuaExtension" default="help">
 
     <!-- The local.properties file is created and updated by the 'android' tool.
          It contains the path to the SDK. It should *NOT* be checked into
          Version Control Systems. -->
-    <property file="${user.dir}/local.properties" />
+    <property file="local.properties" />
 
     <!-- The ant.properties file can be created by you. It is only edited by the
          'android' tool to add properties to it.
@@ -26,7 +26,7 @@
          application and should be checked into Version Control Systems.
 
          -->
-    <property file="${user.dir}/ant.properties" />
+    <property file="ant.properties" />
 
     <!-- The project.properties file is created and updated by the 'android'
          tool, as well as ADT.
@@ -57,7 +57,7 @@
             -post-build
             -pre-clean
     -->
-    <import file="${user.dir}/custom_rules.xml" optional="true" />
+    <import file="custom_rules.xml" optional="true" />
 
     <!-- Import the actual build file.
 
@@ -97,7 +97,6 @@
             <env key="CORONA_ASSETS_DIR" value="${basedir}/../Corona"/>
             <env key="CORONA_TARGET_RESOURCES_DIR" value="${basedir}/assets"/>
             <env key="CORONA_TARGET_EXECUTABLE_DIR" value="${basedir}/assets"/>
-            <env key="BUNDLE_ID" value="com.mycompany.app"/>
 		</exec>
     </target>
 

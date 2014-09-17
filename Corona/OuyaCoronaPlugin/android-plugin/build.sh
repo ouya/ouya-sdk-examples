@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ------------------------------------------------------------------------------------------
-# Builds an APK from the command line.
+# Builds the sample project from the command line.
 #
 # You must provide the path to the root Android SDK directory by doing one of the following:
 # 1) Provide the path as a comman line argument. For example:  build.sh <MyAndroidSdkPath>
@@ -79,11 +79,6 @@ checkError
 
 "$SDK_PATH/tools/android" update lib-project -p "$CORONA_PATH/Corona/android/lib/Corona"
 checkError
-
-# Uncomment if using facebook
-# "$SDK_PATH/tools/android" update lib-project -p "$CORONA_PATH/Corona/android/lib/facebook/facebook"
-# checkError
-
 
 echo "Using Corona Enterprise Dir: $CORONA_PATH"
 

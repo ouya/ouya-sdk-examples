@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 import tv.ouya.console.api.OuyaController;
-import tv.ouya.sdk.corona.AsyncLuaOuyaFetchGamerUUID;
+import tv.ouya.sdk.corona.AsyncLuaOuyaRequestGamerInfo;
 import tv.ouya.sdk.corona.AsyncLuaOuyaRequestProducts;
 import tv.ouya.sdk.corona.AsyncLuaOuyaRequestPurchase;
 import tv.ouya.sdk.corona.AsyncLuaOuyaRequestReceipts;
@@ -54,7 +54,7 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		// Add a module named "myTests" to Lua having the following functions.
 		luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
 			new AsyncLuaOuyaSetDeveloperId(),
-			new AsyncLuaOuyaFetchGamerUUID(),
+			new AsyncLuaOuyaRequestGamerInfo(),
 			new AsyncLuaOuyaRequestProducts(),
 			new AsyncLuaOuyaRequestPurchase(),
 			new AsyncLuaOuyaRequestReceipts(),

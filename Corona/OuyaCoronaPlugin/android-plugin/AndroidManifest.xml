@@ -42,6 +42,11 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
+		<!-- Corona content provider required to access this app's local files. -->
+		<provider android:name="com.ansca.corona.storage.FileContentProvider"
+		          android:authorities="tv.ouya.examples.corona.inapppurchases.files"
+		          android:exported="true" />
 		
 		<!-- Other Corona activities that can be launched by the main Corona activity. -->
 		<activity android:name="com.ansca.corona.CameraActivity"
