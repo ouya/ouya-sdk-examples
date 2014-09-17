@@ -18,66 +18,69 @@
 --
 -----------------------------------------------------------------------------------------
 
-callbacksFetchGamerUUID = require "callbacksFetchGamerUUID"
+callbacksRequestGamerInfo = require "callbacksRequestGamerInfo"
 callbacksRequestProducts = require "callbacksRequestProducts"
 callbacksRequestPurchase = require "callbacksRequestPurchase"
 callbacksRequestReceipts = require "callbacksRequestReceipts"
-globals = require "globals"
+OuyaController = require "OuyaController"
+
 plugin_ouya = require "plugin_ouya"
+globals = require "globals"
 ui = require "ui"
 
 local inputs = {}
 
--- Called when a key event has been received.
-inputs.onKeyEvent = function (event)
-	--print("===== onKeyEvent ======")
-	
-	if event.device == nil then
-		print("### device = nil")
+
+inputs.onGenericMotionEvent = function (playerNum, axis, val)
+end
+
+
+inputs.onKeyDown = function (playerNum, button)
+end
+
+
+inputs.onKeyUp = function (playerNum, button)
+
+	if playerNum < 0 or playerNum > OuyaController.MAX_CONTROLLERS then
 		return false;
 	end
 	    
-	--System Button / Pause Menu
-    if (event.keyName == "menu" and event.phase == "up") then
+    if (button == OuyaController.BUTTON_MENU) then
 		globals.txtStatus.text = "Pause Detected";
     	ui.setButtonFocus(globals.btnPause);
     end
-	
-	--DPADS
-	if (event.keyName == "left" and event.phase == "down") then
+
+	if (button == OuyaController.BUTTON_DPAD_LEFT) then
 		ui.setButtonFocus(globals.focusButton.btnLeft);
     end
     
-    if (event.keyName == "right" and event.phase == "down") then
+    if (button == OuyaController.BUTTON_DPAD_RIGHT) then
 		ui.setButtonFocus(globals.focusButton.btnRight);
     end
     
     if (globals.focusButton == globals.btnProducts or globals.focusButton == globals.btnPurchase) then
-	    if (event.keyName == "up" and event.phase == "down") then
+	    if (button == OuyaController.BUTTON_DPAD_UP) then
 			if #globals.getProducts > 1 then
 				globals.selectedProduct = (globals.selectedProduct + #globals.getProducts - 1) % #globals.getProducts;
 				ui.displayProductList();
 			end
 	    end
 	    
-	    if (event.keyName == "down" and event.phase == "down") then
+	    if (button == OuyaController.BUTTON_DPAD_DOWN) then
 			if #globals.getProducts > 1 then
 				globals.selectedProduct = (globals.selectedProduct + 1) % #globals.getProducts;
 				ui.displayProductList();
 			end
 	    end
     end
-        
-    --end of DPADS
     
-	-- BUTTONS
-    
-    if (event.keyName == "buttonA" and event.phase == "down" and nil ~= plugin_ouya) then -- OUYA BUTTON_O
-    	if globals.focusButton == globals.btnFetch then
-    		globals.txtStatus.text = "Fetching Gamer UUID...";
+    if (button == OuyaController.BUTTON_O and nil ~= plugin_ouya) then
+    	if globals.focusButton == globals.btnGamerInfo then
+    		globals.txtStatus.text = "Request Gamer Info...";
     		globals.txtGamerUUID.text = "Gamer UUID:";
+			globals.txtGamerUsername.text = "Gamer Username:";
     		print "Accessing plugin_ouya...";
-    		plugin_ouya.asyncLuaOuyaFetchGamerUUID(callbacksFetchGamerUUID.onSuccess, callbacksFetchGamerUUID.onFailure, callbacksFetchGamerUUID.onCancel);
+    		plugin_ouya.asyncLuaOuyaRequestGamerInfo(callbacksRequestGamerInfo.onSuccess, callbacksRequestGamerInfo.onFailure, callbacksRequestGamerInfo.onCancel);
     	elseif globals.focusButton == globals.btnProducts then
     		globals.getProducts = { };
     		ui.displayProductList();
@@ -102,10 +105,15 @@ inputs.onKeyEvent = function (event)
     		plugin_ouya.asyncLuaOuyaRequestReceipts(callbacksRequestReceipts.onSuccess, callbacksRequestReceipts.onFailure, callbacksRequestReceipts.onCancel);	
     	end
     end
-       
-    -- End of BUTTONS
-	
+       	
 	return false
+
 end
+
+
+if nil ~= plugin_ouya and nil ~= plugin_ouya.asyncLuaOuyaInitInput then
+	plugin_ouya.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
+end
+
 
 return inputs;

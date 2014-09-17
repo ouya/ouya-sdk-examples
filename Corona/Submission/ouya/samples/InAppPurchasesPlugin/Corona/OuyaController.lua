@@ -14,31 +14,34 @@
 
 -----------------------------------------------------------------------------------------
 --
--- globals.lua
+-- OuyaController.lua
 --
 -----------------------------------------------------------------------------------------
 
-local globals = {}
+local OuyaController = {}
 
-globals.centerX = 0;
 
-globals.txtHello = nil;
-globals.txtStatus = nil;
-globals.txtGamerUsername = nil;
-globals.txtGamerUUID = nil;
-globals.txtInstructions = nil;
+OuyaController.AXIS_LS_X = 0;
+OuyaController.AXIS_LS_Y = 1;
+OuyaController.AXIS_RS_X = 11;
+OuyaController.AXIS_RS_Y = 14;
+OuyaController.AXIS_L2 = 17;
+OuyaController.AXIS_R2 = 18;
 
-globals.btnProducts = nil;
-globals.btnPurchase = nil;
-globals.btnReceipts = nil;
-globals.btnGamerInfo = nil;
-globals.btnPause = nil;
+OuyaController.BUTTON_O = 96;
+OuyaController.BUTTON_U = 99;
+OuyaController.BUTTON_Y = 100;
+OuyaController.BUTTON_A = 97;
+OuyaController.BUTTON_L1 = 102;
+OuyaController.BUTTON_R1 = 103;
+OuyaController.BUTTON_L3 = 106;
+OuyaController.BUTTON_R3 = 107;
+OuyaController.BUTTON_DPAD_UP = 19;
+OuyaController.BUTTON_DPAD_DOWN = 20;
+OuyaController.BUTTON_DPAD_RIGHT = 22;
+OuyaController.BUTTON_DPAD_LEFT = 21;
+OuyaController.BUTTON_MENU = 82;
 
-globals.selectedProduct = 0;
-globals.getProducts = { };
-globals.productTextList = { };
+OuyaController.MAX_CONTROLLERS = 4;
 
-globals.getReceipts = { };
-globals.receiptTextList = { };
-
-return globals;
+return OuyaController;

@@ -11,34 +11,19 @@
 -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
-
------------------------------------------------------------------------------------------
+ 
+ -----------------------------------------------------------------------------------------
 --
--- globals.lua
+-- config.lua
 --
 -----------------------------------------------------------------------------------------
-
-local globals = {}
-
-globals.centerX = 0;
-
-globals.txtHello = nil;
-globals.txtStatus = nil;
-globals.txtGamerUsername = nil;
-globals.txtGamerUUID = nil;
-globals.txtInstructions = nil;
-
-globals.btnProducts = nil;
-globals.btnPurchase = nil;
-globals.btnReceipts = nil;
-globals.btnGamerInfo = nil;
-globals.btnPause = nil;
-
-globals.selectedProduct = 0;
-globals.getProducts = { };
-globals.productTextList = { };
-
-globals.getReceipts = { };
-globals.receiptTextList = { };
-
-return globals;
+ 
+application =
+{
+	content =
+	{
+		width = 1920,
+		height = 1080,
+		scale = "letterbox", 
+	},
+} 

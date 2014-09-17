@@ -14,46 +14,46 @@
 
 -----------------------------------------------------------------------------------------
 --
--- callbacksRequestReceipts.lua
+-- callbacksRequestProducts.lua
 --
 -----------------------------------------------------------------------------------------
 
 globals = require "globals"
 json = require "json"
 
-local callbacksRequestReceipts = {}
+local callbacksRequestProducts = {}
 
-callbacksRequestReceipts.onSuccess = function (jsonData)
-	globals.txtStatus.text = "onSuccessRequestReceipts";
+callbacksRequestProducts.onSuccess = function (jsonData)
+	globals.txtStatus.text = "onSuccessRequestProducts";
 	if jsonData == nil then
-        print("onSuccessRequestReceipts: (nil)");
+        print("onSuccessRequestProducts: (nil)");
 	elseif jsonData == "" then
-		print("onSuccessRequestReceipts: (empty)");
+		print("onSuccessRequestProducts: (empty)");
 	else
-        print("onSuccessRequestReceipts: jsonData=" .. jsonData);
-        globals.getReceipts = json.decode(jsonData);
-		ui.displayReceiptList();
+        print("onSuccessRequestProducts: jsonData=" .. jsonData);
+        globals.getProducts = json.decode(jsonData);
+		ui.displayProductList();
 	end
 end
 
-callbacksRequestReceipts.onFailure = function (errorCode, errorMessage)
-	globals.txtStatus.text = "onFailureRequestReceipts";
+callbacksRequestProducts.onFailure = function (errorCode, errorMessage)
+	globals.txtStatus.text = "onFailureRequestProducts";
 	if errorCode == nil then
-        print("onFailureRequestReceipts: errorCode=(nil)");
+        print("onFailureRequestProducts: errorCode=(nil)");
 	else
-        print("onFailureRequestReceipts: errorCode=" .. errorCode);
+        print("onFailureRequestProducts: errorCode=" .. errorCode);
 	end
 	
 	if errorMessage == nil then
-        print("onFailureRequestReceipts: errorMessage=(nil)");
+        print("onFailureRequestProducts: errorMessage=(nil)");
 	else
-        print("onFailureRequestReceipts: errorMessage=" .. errorMessage);
+        print("onFailureRequestProducts: errorMessage=" .. errorMessage);
 	end
 end
 
-callbacksRequestReceipts.onCancel = function ()
-	globals.txtStatus.text = "onCancelRequestReceipts";
-	print("onCancelRequestReceipts");
+callbacksRequestProducts.onCancel = function ()
+	globals.txtStatus.text = "onCancelRequestProducts";
+	print("onCancelRequestProducts");
 end
 
-return callbacksRequestReceipts;
+return callbacksRequestProducts;
