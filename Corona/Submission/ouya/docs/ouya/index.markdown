@@ -205,9 +205,10 @@ In addition, you must add an intent filter to the `android` table within `build.
 
 ## Support
 
-More support is available from the inneractive team:
+Support is available from the OUYA team, online hangouts, and the community forums:
 
 * [http://www.ouya.tv](http://www.ouya.tv)
 * [OUYA Forums](http://forums.ouya.tv/categories/corona-on-ouya)
 * [Corona Forums](http://forums.coronalabs.com/forum/627-ouya/)
+* [OUYA Office Hours](https://github.com/ouya/docs/blob/master/developer_support.md)
 * [tgraupmann@ouya.tv](mailto:tgraupmann@ouya.tv)
