@@ -8,14 +8,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 import tv.ouya.console.api.OuyaController;
-import tv.ouya.sdk.corona.AsyncLuaOuyaRequestGamerInfo;
-import tv.ouya.sdk.corona.AsyncLuaOuyaRequestProducts;
-import tv.ouya.sdk.corona.AsyncLuaOuyaRequestPurchase;
-import tv.ouya.sdk.corona.AsyncLuaOuyaRequestReceipts;
-import tv.ouya.sdk.corona.AsyncLuaOuyaSetDeveloperId;
-import tv.ouya.sdk.corona.CoronaOuyaPlugin;
-import tv.ouya.sdk.corona.IOuyaActivity;
 
+import tv.ouya.sdk.corona.*;
 
 public class LuaLoader implements com.naef.jnlua.JavaFunction {
 	
@@ -53,6 +47,8 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		
 		// Add a module named "myTests" to Lua having the following functions.
 		luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
+			new AsyncLuaOuyaGetControllerName(),
+			new AsyncLuaOuyaInitInput(),
 			new AsyncLuaOuyaSetDeveloperId(),
 			new AsyncLuaOuyaRequestGamerInfo(),
 			new AsyncLuaOuyaRequestProducts(),
@@ -86,24 +82,6 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		public void onLoaded(com.ansca.corona.CoronaRuntime runtime) {
 			
 			Log.i(LOG_TAG, "CoronaRuntimeEventHandler.onLoaded");
-			
-			/*
-			// Fetch the Lua state from the runtime.
-			com.naef.jnlua.LuaState luaState = runtime.getLuaState();
-			
-			// Add a module named "myTests" to Lua having the following functions.
-			luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
-				new AsyncLuaOuyaSetDeveloperId(),
-				new AsyncLuaOuyaFetchGamerUUID(),
-				new AsyncLuaOuyaRequestProducts(),
-				new AsyncLuaOuyaRequestPurchase(),
-				new AsyncLuaOuyaRequestReceipts(),
-			};
-			luaState.register("ouyaSDK", luaFunctions);
-			luaState.pop(1);
-			*/
-			
-			//initializeOUYA();
 		}
 		
 		/**

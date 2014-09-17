@@ -18,12 +18,14 @@
 --
 -----------------------------------------------------------------------------------------
 
+
+local ouya = require("plugin.ouya") -- load the ouya plugin
+
 globals = require "globals"
 helpers = require "helpers"
 inputs = require "inputs"
 ui = require "ui"
 
-local ouya = require("plugin.ouya") -- load the ouya plugin
 
 globals.centerX = display.contentCenterX;
 
@@ -48,6 +50,3 @@ globals.btnGamerInfo.btnLeft = globals.btnReceipts;
 globals.btnPause.btnLeft = globals.btnGamerInfo;
 
 ui.setButtonFocus (globals.btnProducts);
-
--- Add the key event listener.
-Runtime:addEventListener( "key", inputs.onKeyEvent )

@@ -105,5 +105,17 @@ plugin_ouya.asyncLuaOuyaRequestReceipts = function(onSuccess, onFailure, onCance
 	ouyaSDK.asyncLuaOuyaRequestReceipts(onSuccess, onFailure, onCancel)
 end
 
+-- subscribe to input events with callbacks
+plugin_ouya.asyncLuaOuyaInitInput = function(onGenericMotionEvent, onKeyDown, onKeyUp)
+	if ouyaSDK == nil then
+		print "ouyaSDK named java functions are not initialized";
+		return;
+	end
+	plugin_ouya.initialize();
+	
+	print ("plugin_ouya.asyncLuaOuyaInitInput");
+	ouyaSDK.asyncLuaOuyaInitInput(onGenericMotionEvent, onKeyDown, onKeyUp)
+end
+
 -- Return the Ouya library from the require() 
 return plugin_ouya
