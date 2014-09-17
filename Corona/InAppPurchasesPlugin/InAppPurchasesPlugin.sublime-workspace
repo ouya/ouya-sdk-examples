@@ -12,10 +12,10 @@
 	"buffers":
 	[
 		{
-			"file": "Corona/plugin_ouya.lua",
+			"file": "Corona/inputs.lua",
 			"settings":
 			{
-				"buffer_size": 3594,
+				"buffer_size": 4673,
 				"line_ending": "Unix"
 			}
 		},
@@ -63,7 +63,7 @@
 			"file": "Corona/globals.lua",
 			"settings":
 			{
-				"buffer_size": 1242,
+				"buffer_size": 1278,
 				"line_ending": "Unix"
 			}
 		},
@@ -76,18 +76,10 @@
 			}
 		},
 		{
-			"file": "Corona/inputs.lua",
-			"settings":
-			{
-				"buffer_size": 4508,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "Corona/main.lua",
 			"settings":
 			{
-				"buffer_size": 2488,
+				"buffer_size": 2519,
 				"line_ending": "Unix"
 			}
 		},
@@ -124,6 +116,8 @@
 	},
 	"file_history":
 	[
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/OuyaCoronaPlugin/simulator-plugin/plugin_ouya.lua",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/Corona/build.settings",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/local.properties",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/project.properties",
@@ -151,6 +145,15 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"fetch",
+			"asyncLuaOuyaInitInput",
+			"plugin_ouya",
+			"nil ~= plugin_ouya",
+			"plugin_ouya",
+			"asyncLuaOuyaInitInput",
+			"ouyaSDK",
+			"fetch",
+			"uuid",
 			"setControllername",
 			"BUTTON_L2",
 			"iap",
@@ -181,32 +184,31 @@
 	"groups":
 	[
 		{
-			"selected": 10,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Corona/plugin_ouya.lua",
+					"file": "Corona/inputs.lua",
 					"settings":
 					{
-						"buffer_size": 3594,
+						"buffer_size": 4673,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								4549,
+								4549
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 899.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -346,15 +348,15 @@
 					"file": "Corona/globals.lua",
 					"settings":
 					{
-						"buffer_size": 1242,
+						"buffer_size": 1278,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1083,
+								1071
 							]
 						],
 						"settings":
@@ -396,18 +398,18 @@
 				},
 				{
 					"buffer": 8,
-					"file": "Corona/inputs.lua",
+					"file": "Corona/main.lua",
 					"settings":
 					{
-						"buffer_size": 4508,
+						"buffer_size": 2519,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								2519,
+								2519
 							]
 						],
 						"settings":
@@ -422,32 +424,6 @@
 				},
 				{
 					"buffer": 9,
-					"file": "Corona/main.lua",
-					"settings":
-					{
-						"buffer_size": 2488,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
 					"file": "Corona/ui.lua",
 					"settings":
 					{

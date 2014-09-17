@@ -1,0 +1,206 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"BUTTON_D",
+				"BUTTON_DPAD_DOWN"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "simulator-plugin/plugin_ouya.lua",
+			"settings":
+			{
+				"buffer_size": 4358,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/OuyaCoronaPlugin/simulator-plugin/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/Corona/build.settings",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/local.properties",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/project.properties",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/build_easy.sh",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/proguard-project.txt",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/build.sh",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/install_easy.sh",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/AndroidManifest.xml",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/build.xml",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchases/Corona/callbacksFetchGamerUUID.lua"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"fetch",
+			"asyncLuaOuyaInitInput",
+			"plugin_ouya",
+			"nil ~= plugin_ouya",
+			"plugin_ouya",
+			"asyncLuaOuyaInitInput",
+			"ouyaSDK",
+			"fetch",
+			"uuid",
+			"setControllername",
+			"BUTTON_L2",
+			"iap",
+			"getReceipts",
+			"fetch",
+			"uuid",
+			"fetch",
+			"Fetch",
+			"UUID",
+			"gamer",
+			"fetch",
+			"priceInCent",
+			"priceInCente"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "simulator-plugin/plugin_ouya.lua",
+					"settings":
+					{
+						"buffer_size": 4358,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4358,
+								4358
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1109.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}
