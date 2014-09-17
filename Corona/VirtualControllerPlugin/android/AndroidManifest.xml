@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="tv.ouya.examples.corona.virtualcontroller"
+          android:versionCode="1"
+          android:versionName="1.0"
+	      android:installLocation="auto">
+	<!--
+	 Set the minimum and target Android API levels here to inform the app store what OS versions this app supports.
+	 Set the "minSdkVersion" to at least API level 8 (aka: Android 2.2 "Froyo") which is the minimum Corona supports.
+	 Set the "targetSdkVersion" to the API level that you compile with. Set to a high level to avoid compatibility mode.
+	 -->
+	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16"/>
+	
+	<!-- Informs the app store that this app requires OpenGL ES 1.1 as a minimum. Required by Corona. -->
+	<uses-feature android:glEsVersion="0x00010001"/>
+	
+	<!-- Informs the app store what features are required or are optional for this app. -->
+	<!-- Setting the telephony feature to not required allows this app to be installed by devices that are not phones. -->
+	<uses-feature android:name="android.hardware.telephony" android:required="false"/>
+	
+	<!--
+	 Provides information about this app.
+	 The "name" attribute should be set to the name of the class that extends/inherits from the Application class.
+	 The "label" attribute sets the name of the application as how it is shown to the end-user.
+	 -->
+	<application android:name="CoronaApplication"
+	             android:label="CoronaVirtualController"
+	             android:hardwareAccelerated="true"
+	             android:debuggable="true">
+		
+		<!-- The main Corona activity that runs the Corona project. -->
+		<activity android:name="com.ansca.corona.CoronaActivity"
+		          android:screenOrientation="landscape"
+		          android:configChanges="keyboardHidden|orientation|screenSize"
+		          android:label="CoronaVirtualController"
+		          android:launchMode="singleTask"
+		          android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="tv.ouya.intent.category.GAME" />
+			</intent-filter>
+		</activity>
+		
+		<!-- Corona content provider required to access this app's local files. -->
+		<provider android:name="com.ansca.corona.storage.FileContentProvider"
+		          android:authorities="tv.ouya.examples.corona.virtualcontroller.files"
+		          android:exported="true" />
+	</application>
+</manifest>
