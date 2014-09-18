@@ -53,6 +53,3 @@ globals.btnGamerInfo.btnLeft = globals.btnReceipts;
 globals.btnPause.btnLeft = globals.btnGamerInfo;
 
 ui.setButtonFocus (globals.btnProducts);
-
--- Add the key event listener.
-Runtime:addEventListener( "key", inputs.onKeyEvent )

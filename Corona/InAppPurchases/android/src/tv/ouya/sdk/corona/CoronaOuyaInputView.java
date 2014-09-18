@@ -1,4 +1,4 @@
-package tv.ouya.examples.corona.virtualcontroller;
+package tv.ouya.sdk.corona;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +11,6 @@ import com.ansca.corona.CoronaEnvironment;
 import com.ansca.corona.input.CoronaKeyEvent;
 
 import tv.ouya.console.api.*;
-import tv.ouya.sdk.corona.CallbacksOuyaInput;
-import tv.ouya.sdk.corona.IOuyaActivity;
 
 public class CoronaOuyaInputView extends View {
 	

@@ -146,7 +146,7 @@ public class CoronaOuyaFacade
 		{
 			this.context = context;
 
-			Log.i(LOG_TAG, "Init(" + developerId + ");");
+			//Log.i(LOG_TAG, "Init(" + developerId + ");");
 
 			ouyaFacade = OuyaFacade.getInstance();
 

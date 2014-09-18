@@ -22,71 +22,76 @@ callbacksRequestGamerInfo = require "callbacksRequestGamerInfo"
 callbacksRequestProducts = require "callbacksRequestProducts"
 callbacksRequestPurchase = require "callbacksRequestPurchase"
 callbacksRequestReceipts = require "callbacksRequestReceipts"
+OuyaController = require "OuyaController"
+
 globals = require "globals"
 ui = require "ui"
 
 local inputs = {}
 
--- Called when a key event has been received.
-inputs.onKeyEvent = function (event)
-	--print("===== onKeyEvent ======")
-	
-	if event.device == nil then
-		print("### device = nil")
+
+inputs.onGenericMotionEvent = function (playerNum, axis, val)
+end
+
+
+inputs.onKeyDown = function (playerNum, button)
+end
+
+
+inputs.onKeyUp = function (playerNum, button)
+
+	if playerNum < 0 or playerNum > OuyaController.MAX_CONTROLLERS then
 		return false;
 	end
 	    
-	--System Button / Pause Menu
-    if (event.keyName == "menu" and event.phase == "up") then
+    if (button == OuyaController.BUTTON_MENU) then
 		globals.txtStatus.text = "Pause Detected";
     	ui.setButtonFocus(globals.btnPause);
     end
-	
-	--DPADS
-	if (event.keyName == "left" and event.phase == "down") then
+
+	if (button == OuyaController.BUTTON_DPAD_LEFT) then
 		ui.setButtonFocus(globals.focusButton.btnLeft);
     end
     
-    if (event.keyName == "right" and event.phase == "down") then
+    if (button == OuyaController.BUTTON_DPAD_RIGHT) then
 		ui.setButtonFocus(globals.focusButton.btnRight);
     end
     
     if (globals.focusButton == globals.btnProducts or globals.focusButton == globals.btnPurchase) then
-	    if (event.keyName == "up" and event.phase == "down") then
+	    if (button == OuyaController.BUTTON_DPAD_UP) then
 			if #globals.getProducts > 1 then
 				globals.selectedProduct = (globals.selectedProduct + #globals.getProducts - 1) % #globals.getProducts;
 				ui.displayProductList();
 			end
 	    end
 	    
-	    if (event.keyName == "down" and event.phase == "down") then
+	    if (button == OuyaController.BUTTON_DPAD_DOWN) then
 			if #globals.getProducts > 1 then
 				globals.selectedProduct = (globals.selectedProduct + 1) % #globals.getProducts;
 				ui.displayProductList();
 			end
 	    end
     end
-        
-    --end of DPADS
     
-	-- BUTTONS
-    
-    if (event.keyName == "buttonA" and event.phase == "down" and nil ~= ouyaSDK) then -- OUYA BUTTON_O
+    if (button == OuyaController.BUTTON_O and nil ~= ouyaSDK) then
     	if globals.focusButton == globals.btnGamerInfo then
     		globals.txtStatus.text = "Request Gamer Info...";
     		globals.txtGamerUUID.text = "Gamer UUID:";
-    		globals.txtGamerUsername.text = "Gamer Username:";
+			globals.txtGamerUsername.text = "Gamer Username:";
+    		print "Accessing ouyaSDK...";
     		ouyaSDK.asyncLuaOuyaRequestGamerInfo(callbacksRequestGamerInfo.onSuccess, callbacksRequestGamerInfo.onFailure, callbacksRequestGamerInfo.onCancel);
     	elseif globals.focusButton == globals.btnProducts then
     		globals.getProducts = { };
     		ui.displayProductList();
     		globals.txtStatus.text = "Requesting products...";
     		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
+			print "Accessing ouyaSDK...";
     		ouyaSDK.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, products);
     	elseif globals.focusButton == globals.btnPurchase then
     		if #globals.getProducts > 1 and globals.selectedProduct < #globals.getProducts then
 	    		globals.txtStatus.text = "Requesting purchase: " .. globals.getProducts[globals.selectedProduct + 1].name;
 	    		local purchasable = globals.getProducts[globals.selectedProduct + 1].identifier;
+				print "Accessing ouyaSDK...";
 	    		ouyaSDK.asyncLuaOuyaRequestPurchase(callbacksRequestPurchase.onSuccess, callbacksRequestPurchase.onFailure, callbacksRequestPurchase.onCancel, purchasable);
     		else
     			globals.txtStatus.text = "Select a product for purchase...";
@@ -95,13 +100,19 @@ inputs.onKeyEvent = function (event)
     		globals.getReceipts = { };
     		ui.displayReceiptList();
     		globals.txtStatus.text = "Requesting receipts...";
+    		print "Accessing ouyaSDK...";
     		ouyaSDK.asyncLuaOuyaRequestReceipts(callbacksRequestReceipts.onSuccess, callbacksRequestReceipts.onFailure, callbacksRequestReceipts.onCancel);	
     	end
     end
-       
-    -- End of BUTTONS
-	
+       	
 	return false
+
 end
+
+
+if nil ~= ouyaSDK and nil ~= ouyaSDK.asyncLuaOuyaInitInput then
+	ouyaSDK.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
+end
+
 
 return inputs;

@@ -118,4 +118,14 @@ public class IOuyaActivity
 	{
 		m_callbacksRequestReceipts = callbacksRequestReceipts;
 	}
+	
+	protected static CallbacksOuyaInput m_callbacksOuyaInput = null;
+	public static CallbacksOuyaInput GetCallbacksOuyaInput()
+	{
+		return m_callbacksOuyaInput;
+	}
+	public static void SetCallbacksOuyaInput(CallbacksOuyaInput callbacksOuyaInput)
+	{
+		m_callbacksOuyaInput = callbacksOuyaInput;
+	}
 }
