@@ -1,11 +1,16 @@
 # ouya.*
 
-> __Type__              plugin.ouya<br/>
-> __Revision__          002<br/>
-> __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork<br/>
-> __See also__          [Marketplace](http://www.coronalabs.com/store/plugin)<br/>
-> __Availability__      Basic, Pro, Enterprise<br/>
-> __Platforms__			 Android
+> __Type__              plugin.ouya
+
+> __Revision__          002
+
+> __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
+
+> __See also__          [Marketplace](http://www.coronalabs.com/store/plugin)
+
+> __Availability__      Basic, Pro, Enterprise
+
+> __Platforms__	         Android
 
 
 ## Overview
