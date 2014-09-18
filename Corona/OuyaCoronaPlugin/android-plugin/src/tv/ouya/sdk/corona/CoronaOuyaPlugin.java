@@ -51,7 +51,7 @@ public class CoronaOuyaPlugin
 			{
 				if (m_enableDebugLogging)
 				{
-					Log.i(TAG, "CoronaOuyaPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
+					Log.w(TAG, "CoronaOuyaPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
 				}
 				return;
 			}
@@ -75,7 +75,7 @@ public class CoronaOuyaPlugin
 					//make facade accessible by activity
 					IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
 
-					Log.i(TAG, "CoronaOuyaPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
+					Log.i(TAG, "CoronaOuyaPlugin.Initialization Complete.");
 				}
 			}
 		}
@@ -94,7 +94,7 @@ public class CoronaOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "setDeveloperId developerId: " + developerId);
+			//Log.i(TAG, "setDeveloperId developerId: " + developerId);
 			m_developerId = developerId;
 		}
 		catch (Exception ex) 

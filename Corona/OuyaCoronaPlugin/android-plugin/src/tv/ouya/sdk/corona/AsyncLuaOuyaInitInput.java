@@ -16,7 +16,6 @@
 
 package tv.ouya.sdk.corona;
 
-import com.ansca.corona.graphics.opengl.CoronaGLSurfaceView;
 import com.ansca.corona.input.ViewInputHandler;
 
 import java.lang.reflect.Field;
@@ -26,7 +25,6 @@ import java.lang.reflect.Method;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -42,6 +40,9 @@ import android.widget.LinearLayout;
 public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 	
 	public static final String TAG = "AsyncLuaOuyaInitInput";
+	
+	// Custom input view detects input to send axis and button events to Lua
+	private CoronaOuyaInputView mInputView = null;
 	
 	/**
 	 * Gets the name of the Lua function as it would appear in the Lua script.
@@ -69,195 +70,50 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 		IOuyaActivity.SetCallbacksOuyaInput(callbacks);
 		
 		// disable built-in input
-		disableInput();
+		disableBuiltInCoronaInput();
+		
+		// add Corona OUYA Input View to layout
+		addCoronaOuyaInputView();
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;
 	}
 	
-	private CoronaOuyaInputView mInputView = null;
-	
-	private void disableInput() {
+	private void disableBuiltInCoronaInput() {
 		
 		Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		
 		//disable standard Corona input
-		debugLayout(activity);
-		
-		///*
 		Field[] fs = com.ansca.corona.CoronaActivity.class.getDeclaredFields();
 		for (Field field : fs) {
 			if (null != field) {
 				//Log.i(TAG, "Field="+field.getClass().getName());
 				field.setAccessible(true);
 				try {
-					Log.i(TAG, "Field name="+field.getName()+ " type="+field.getType().getName());
+					//Log.i(TAG, "Field name="+field.getName()+ " type="+field.getType().getName());
 					
 					if (field.getType().getName().equals("com.ansca.corona.input.ViewInputHandler")) {
-						Log.i(TAG, "Found ViewInputHandler");
+						//Log.i(TAG, "Found ViewInputHandler");
 						field.setAccessible(true);
-						//field.set(activity, null);
 						
-						Log.i(TAG, "Get ViewInputHandler");
+						//Log.i(TAG, "Get ViewInputHandler");
 						ViewInputHandler view = (ViewInputHandler)field.get(activity);
 						if (null != view) {
-							Log.i(TAG, "Got the view handler");
-							debugViewInputHandler(view);
+							//Log.i(TAG, "Got the view handler");
+							unsubscribeViewInputHandler(view);
 						} else {
-							Log.i(TAG, "Didn't get the view handler");
+							Log.w(TAG, "Didn't get the view handler");
 						}
-						
 					}
-					
 				} catch (java.lang.Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
-		
-		Method[] ms = com.ansca.corona.CoronaActivity.class.getDeclaredMethods();
-		for (Method method : ms) {
-			if (null != method) {
-				//Log.i(TAG, "Field="+field.getClass().getName());
-				//field.setAccessible(true);
-				try {
-					Log.i(TAG, "Method name="+method.getName());
-					
-				} catch (java.lang.Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-		//*/
 	}
 	
-	private FrameLayout getFrameLayout(final Activity activity) {
-		if (null != activity.getWindow() &&
-        	null != activity.getWindow().getDecorView()) {
-	        View view = activity.getWindow().getDecorView().findViewById(android.R.id.content);
-	        if (null != view) {
-	        	if (view.getClass().getName().equals("android.widget.FrameLayout")) {
-	        		return (FrameLayout)view;
-	        	}
-	        }
-        }
-		return null;
-	}
-	
-	
-	private void debugLayout(final Activity activity) {
-		if (null != activity.getWindow() &&
-        	null != activity.getWindow().getDecorView()) {
-	        View view = activity.getWindow().getDecorView().findViewById(android.R.id.content);
-	        debugChildren(view);
-        }
-	}
-	
-	private void debugFrameLayoutChildren(FrameLayout fm) {
-		if (null != fm) {
-			Log.i(TAG, "Found FrameLayout: name="+fm.getId()+" children="+fm.getChildCount());
-			for (int index = 0; index < fm.getChildCount(); ++index) {
-				View child = fm.getChildAt(index);
-				debugChildren(child);
-			}
-    	} else {
-    		Log.i(TAG, "Not a FrameLayout");	
-    	}
-	}
-	
-	private void debugAbsoluteLayoutChildren(AbsoluteLayout fm) {
-		if (null != fm) {
-			Log.i(TAG, "Found AbsoluteLayout: name="+fm.getId()+" children="+fm.getChildCount());
-			for (int index = 0; index < fm.getChildCount(); ++index) {
-				View child = fm.getChildAt(index);
-				debugChildren(child);
-			}
-    	} else {
-    		Log.i(TAG, "Not a FrameLayout");	
-    	}
-	}
-	
-	private void debugCoronaGLSurfaceView(final CoronaGLSurfaceView view) {
-		
-		final Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
-		
-		if (null != view) {
-    		activity.runOnUiThread(new Runnable() {
-    			@Override
-    			public void run() {
-    				// *** We are now running in the main UI thread. ***
-    				try {
-    					Log.i(TAG, "Construct OuyaInputView");
-    					if (null == mInputView) {
-    						mInputView = new CoronaOuyaInputView(activity.getApplicationContext());
-    						
-    						mInputView.setLayoutParams(new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.MATCH_PARENT));
-    					
-	    					Log.i(TAG, "Find frame layout");
-	    					FrameLayout fm = getFrameLayout(activity);
-	    					if (null != fm) {
-	    						Log.i(TAG, "Add OuyaInputView to frame layout");
-	    						fm.addView(mInputView);
-	    						
-	    						Log.i(TAG, "Request focus for OuyaInputView");
-	    						mInputView.requestFocus();
-	    					} else {
-	    						Log.i(TAG, "Filed to find frame layout");
-	    					}
-	    					
-							
-							//view.setOnClickListener(inputView);
-							//view.setOnDragListener(inputView);
-							//view.setOnGenericMotionListener(inputView);
-							//view.setOnHoverListener(inputView);
-							//view.setOnKeyListener(mInputView);
-	    					//view.setOnKeyListener(new OuyaInputOnKeyListener());
-							//view.setOnLongClickListener(inputView);
-							//view.setOnTouchListener(inputView);
-    					}
-					}
-					catch (Exception ex) {
-						ex.printStackTrace();
-					}
-    			}
-    		});
-    	}
-	}
-	
-	private void debugViewInputHandler(ViewInputHandler inputHandler) {
-		Log.i(TAG, "debugViewInputHandler");
-		if (null == inputHandler) {
-			return;
-		}
-	
-		Field[] fs = ViewInputHandler.class.getDeclaredFields();
-		for (Field field : fs) {
-			if (null != field) {
-				Log.i(TAG, "Field="+field.getClass().getName());
-				field.setAccessible(true);
-				try {
-					Log.i(TAG, "Field name="+field.getName()+ " type="+field.getType().getName());
-					if (field.getType().getName().equals("com.ansca.corona.input.ViewInputHandler$EventHandler")) {
-						Object handler = field.get(inputHandler);
-						if (null != handler) {
-							Log.i(TAG, "Found event handler");
-							debugEventHandler(handler);
-						} else {
-							Log.i(TAG, "Failed to get event handler");
-						}
-					}
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	private void debugEventHandler(Object eventHandler) {
-		Log.i(TAG, "debugEventHandler");
+	private void unsubscribeEventHandler(Object eventHandler) {
+		//Log.i(TAG, "unsubscribeEventHandler");
 		if (null == eventHandler) {
 			return;
 		}
@@ -265,21 +121,38 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 		try {
 			Method unsubscribe = eventHandler.getClass().getMethod("unsubscribe");
 			if (null != unsubscribe) {
-				Log.i(TAG, "Found unsubscribe");
+				//Log.i(TAG, "Found unsubscribe");
 				unsubscribe.invoke(eventHandler, new Object[0]);
 			} else {
-				Log.i(TAG, "Failed to find unsubscribe");
+				Log.w(TAG, "Failed to find unsubscribe method");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		Method[] ms = eventHandler.getClass().getMethods();
-		for (Method method : ms) {
-			if (null != method) {
+	}
+	
+	private void unsubscribeViewInputHandler(ViewInputHandler inputHandler) {
+		//Log.i(TAG, "unsubscribeViewInputHandler");
+		if (null == inputHandler) {
+			return;
+		}
+	
+		Field[] fs = ViewInputHandler.class.getDeclaredFields();
+		for (Field field : fs) {
+			if (null != field) {
+				//Log.i(TAG, "Field="+field.getClass().getName());
+				field.setAccessible(true);
 				try {
-					Log.i(TAG, "Method="+method.getName());
-					method.setAccessible(true);
+					//Log.i(TAG, "Field name="+field.getName()+ " type="+field.getType().getName());
+					if (field.getType().getName().equals("com.ansca.corona.input.ViewInputHandler$EventHandler")) {
+						Object handler = field.get(inputHandler);
+						if (null != handler) {
+							//Log.i(TAG, "Found event handler");
+							unsubscribeEventHandler(handler);
+						} else {
+							Log.w(TAG, "Failed to get event handler");
+						}
+					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -287,21 +160,55 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 		}
 	}
 	
-	private void debugChildren(View view) {
-		if (null != view) {
-        	Log.i(TAG, "Found view: type="+view.getClass().getName()+" id="+view.getId());
-        	if (view.getClass().getName().equals("android.widget.FrameLayout")) {
-        		debugFrameLayoutChildren((FrameLayout)view);
-        	}
-        	if (view.getClass().getName().equals("android.widget.AbsoluteLayout")) {
-        		debugAbsoluteLayoutChildren((AbsoluteLayout)view);
-        	}
-        	if (view.getClass().getName().equals("com.ansca.corona.graphics.opengl.CoronaGLSurfaceView")) {
-        		debugCoronaGLSurfaceView((CoronaGLSurfaceView)view);
-        	}
-        	
-        } else {
-        	Log.i(TAG, "No view to find");
+	// find the main frame layout from the layout content
+	private FrameLayout getFrameLayout(final Activity activity) {
+		if (null != activity.getWindow() &&
+        	null != activity.getWindow().getDecorView()) {
+	        View view = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+	        if (null != view) {
+	        	if (view instanceof android.widget.FrameLayout) {
+	        		return (FrameLayout)view;
+	        	}
+	        }
         }
+		return null;
+	}
+	
+	private void addCoronaOuyaInputView() {
+		//Log.i(TAG, "addCoronaOuyaInputView");
+		
+		final Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				// *** We are now running in the main UI thread. ***
+				try {
+					//Log.i(TAG, "Construct CoronaOuyaInputView");
+					if (null == mInputView) {
+						mInputView = new CoronaOuyaInputView(activity.getApplicationContext());
+						
+						mInputView.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT));
+					
+    					//Log.i(TAG, "Find frame layout");
+    					FrameLayout fm = getFrameLayout(activity);
+    					if (null != fm) {
+    						//Log.i(TAG, "Add OuyaInputView to frame layout");
+    						fm.addView(mInputView);
+    						
+    						//Log.i(TAG, "Request focus for OuyaInputView");
+    						mInputView.requestFocus();
+    					} else {
+    						Log.w(TAG, "Filed to find frame layout");
+    					}
+					}
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 	}
 }

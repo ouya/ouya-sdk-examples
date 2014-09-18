@@ -52,7 +52,7 @@ plugin_ouya.ouyaSetDeveloperId = function(developerId)
 		return;
 	end
 	
-	print ("plugin_ouya.ouyaSetDeveloperId (" .. developerId .. ")");
+	--print ("plugin_ouya.ouyaSetDeveloperId (" .. developerId .. ")");
 	ouyaSDK.ouyaSetDeveloperId(developerId);
 	plugin_ouya.initialized = true;
 end
