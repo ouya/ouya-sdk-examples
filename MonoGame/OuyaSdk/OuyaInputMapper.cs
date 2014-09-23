@@ -123,6 +123,12 @@ namespace OuyaSdk
                 return;
             }
 
+            if (activity == IntPtr.Zero)
+            {
+                Log.Error(LOG_TAG, "activity is not initialized");
+                return;
+            }
+
             JNIEnv.CallStaticVoidMethod(_jcOuyaInputMapper, _jmInit, new JValue(activity));
         }
 

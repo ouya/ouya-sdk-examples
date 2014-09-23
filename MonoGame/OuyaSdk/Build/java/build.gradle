@@ -1,0 +1,44 @@
+apply plugin: 'android-library'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.+'
+    }
+}
+
+dependencies {
+    // OUYA SDK
+    compile files('../../Jars/ouya-sdk.jar')
+}
+
+android {
+    compileSdkVersion 16
+    buildToolsVersion '19.1'
+
+    defaultConfig {
+        ndk {
+            moduleName 'lib-ouya-ndk'
+            stl 'stlport_static'
+            cFlags '-Wno-error=format-security'
+            ldLibs 'c', 'm', 'log'
+        }
+    }
+}
+
+task copyJar(dependsOn: ':java:build', type: Copy) {
+	from new File(project(':java').buildDir, 'bundles/release/classes.jar')
+	into '../../Jars'
+	rename {'MonoGameOuyaPlugin.jar'}
+}
+
+task copyLibs(dependsOn: ':java:build', type: Copy) {
+	from(new File(project(':java').buildDir, 'ndk/release/lib')) {
+		include '**/*.so'
+	}
+	into '../../libs'
+}
+
+task copyFiles(dependsOn: ['copyJar', 'copyLibs'])

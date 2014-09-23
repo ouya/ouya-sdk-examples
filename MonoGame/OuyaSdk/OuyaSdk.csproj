@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebugInput.cs" />
+    <Compile Include="OuyaInputView.cs" />
     <Compile Include="OuyaActivity.cs" />
     <Compile Include="OuyaInputMapper.cs" />
     <Compile Include="OuyaController.cs" />
@@ -53,6 +54,10 @@
   <ItemGroup>
     <None Include="Jars\AboutJars.txt" />
     <None Include="Additions\AboutAdditions.txt" />
+    <EmbeddedNativeLibrary Include="libs\armeabi-v7a\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="libs\armeabi\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="libs\mips\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="libs\x86\lib-ouya-ndk.so" />
   </ItemGroup>
   <ItemGroup>
     <TransformFile Include="Transforms\Metadata.xml" />
@@ -61,6 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedJar Include="Jars\ouya-sdk.jar" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedJar Include="Jars\MonoGameOuyaPlugin.jar" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.Bindings.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
