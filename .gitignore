@@ -93,3 +93,10 @@ Android/AndroidExit/gen/
 Unity/CharacterController/Library/
 Unity/CharacterController/Temp/
 Android/HelloWorldNative/Tegra-Android/
+MonoGame/OuyaSdk/bin/
+MonoGame/VirtualController/XnbContentProject/XnbContentProject/bin/
+Xamarin/InputView/bin/
+Xamarin/InputView/XamarinOuyaPlugin/obj/
+Xamarin/InputView/XamarinOuyaPlugin/bin/
+Xamarin/InputView/obj/
+MonoGame/VirtualController/XnbContentProject/XnbContentProject/obj/
