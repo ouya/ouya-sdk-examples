@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Android InputView</string>
+    <string name="hello_world">Check your adb logcat as Java should be logging motion and key events</string>
+
+</resources>
