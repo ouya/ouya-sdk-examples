@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputView", "InputView.csproj", "{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameOuyaPlugin", "MonoGameOuyaPlugin\MonoGameOuyaPlugin.csproj", "{02686415-6BD8-45E7-8E38-45B103CAAF7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02686415-6BD8-45E7-8E38-45B103CAAF7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02686415-6BD8-45E7-8E38-45B103CAAF7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02686415-6BD8-45E7-8E38-45B103CAAF7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02686415-6BD8-45E7-8E38-45B103CAAF7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = InputView.csproj
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

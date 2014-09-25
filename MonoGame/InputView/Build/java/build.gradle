@@ -1,0 +1,24 @@
+apply plugin: 'android-library'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.+'
+    }
+}
+
+android {
+    compileSdkVersion 16
+    buildToolsVersion '19.1'
+
+    defaultConfig {
+    }
+}
+
+task copyJar(dependsOn: ':java:build', type: Copy) {
+	from new File(project(':java').buildDir, 'bundles/release/classes.jar')
+	into '../../MonoGameOuyaPlugin/Jars'
+	rename {'MonoGameOuyaPlugin.jar'}
+}
