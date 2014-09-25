@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputView", "InputView.csproj", "{7BC4CAF7-1BA6-462C-8C7B-28BA221B10D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinOuyaPlugin", "XamarinOuyaPlugin\XamarinOuyaPlugin.csproj", "{7130C9E8-1BF8-4BB6-903A-68C36DE88E05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7130C9E8-1BF8-4BB6-903A-68C36DE88E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7130C9E8-1BF8-4BB6-903A-68C36DE88E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7130C9E8-1BF8-4BB6-903A-68C36DE88E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7130C9E8-1BF8-4BB6-903A-68C36DE88E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BC4CAF7-1BA6-462C-8C7B-28BA221B10D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BC4CAF7-1BA6-462C-8C7B-28BA221B10D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BC4CAF7-1BA6-462C-8C7B-28BA221B10D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BC4CAF7-1BA6-462C-8C7B-28BA221B10D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = InputView.csproj
+	EndGlobalSection
+EndGlobal
