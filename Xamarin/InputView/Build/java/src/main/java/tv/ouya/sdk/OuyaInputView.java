@@ -39,7 +39,10 @@ public class OuyaInputView extends View {
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
 			content.addView(this);
 			Log.i(TAG, "Added OuyaInputView to content");
+
+			setFocusable(true);
 			requestFocus();
+			Log.i(TAG, "Give the custom view focus");
 		} else {
 			Log.e(TAG, "Activity is null");
 		}

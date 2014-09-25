@@ -17,3 +17,4 @@ armeabi.meta
 armeabi-v7a.meta
 mips.meta
 x86.meta
+!gradle-wrapper.jar
