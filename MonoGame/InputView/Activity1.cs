@@ -24,14 +24,15 @@ namespace InputView
         {
             base.OnCreate(bundle);
 
+            Game1.Activity = this;
+            var g = new Game1();
+            SetContentView(g.Window);
+
             using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this, ApplicationContext))
             {
                 // do nothing
             }
 
-            Game1.Activity = this;
-            var g = new Game1();
-            SetContentView(g.Window);
             g.Run();
         }
     }
