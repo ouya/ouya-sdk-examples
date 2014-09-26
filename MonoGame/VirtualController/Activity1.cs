@@ -5,6 +5,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Util;
 using Android.Views;
+using System.Threading;
 using OuyaSdk;
 
 namespace VirtualController
@@ -19,7 +20,7 @@ namespace VirtualController
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
     [IntentFilter(new[] { Intent.ActionMain }
         , Categories = new[] { Intent.CategoryLauncher, OuyaIntent.CategoryGame })]
-    public class Activity1 : OuyaActivity
+    public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
         private const string TAG = "Activity1";
 
@@ -32,66 +33,23 @@ namespace VirtualController
             Game1.Activity = this;
             m_game = new Game1();
             SetContentView(m_game.Window);
+
+            using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this, ApplicationContext))
+            {
+                // do nothing
+            }
+
             m_game.Run();
+
+            ThreadStart ts = new ThreadStart(m_game.InputWorker);
+            Thread thread = new Thread(ts);
+            thread.Start();
         }
 
-        public override bool OnGenericMotionEvent(MotionEvent motionEvent)
+        protected override void OnDestroy()
         {
-            int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.DeviceId);
-            if (playerNum >= 0 && playerNum < 4 &&
-                null != m_game &&
-                null != m_game.Controllers &&
-                playerNum < m_game.Controllers.Count)
-            {
-                m_game.Controllers[playerNum].Axis[OuyaController.AXIS_LS_X] =
-                    motionEvent.GetAxisValue((Axis) OuyaController.AXIS_LS_X);
-                m_game.Controllers[playerNum].Axis[OuyaController.AXIS_LS_Y] =
-                    motionEvent.GetAxisValue((Axis) OuyaController.AXIS_LS_Y);
-                m_game.Controllers[playerNum].Axis[OuyaController.AXIS_RS_X] =
-                    motionEvent.GetAxisValue((Axis) OuyaController.AXIS_RS_X);
-                m_game.Controllers[playerNum].Axis[OuyaController.AXIS_RS_Y] =
-                    motionEvent.GetAxisValue((Axis) OuyaController.AXIS_RS_Y);
-                m_game.Controllers[playerNum].Axis[OuyaController.AXIS_L2] =
-                    motionEvent.GetAxisValue((Axis) OuyaController.AXIS_L2);
-                m_game.Controllers[playerNum].Axis[OuyaController.AXIS_R2] =
-                    motionEvent.GetAxisValue((Axis) OuyaController.AXIS_R2);
-                base.OnGenericMotionEvent(motionEvent);
-            }
-            return true;
-        }
-
-        public override bool OnKeyDown(Keycode keyCode, KeyEvent keyEvent)
-        {
-            //Log.Info(TAG, "OnKeyDown=" + (int)keyCode);
-            int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.DeviceId);
-            if (playerNum >= 0 && playerNum < 4 &&
-                null != m_game &&
-                null != m_game.Controllers &&
-                playerNum < m_game.Controllers.Count)
-            {
-                m_game.Controllers[playerNum].Button[(int) keyCode] = true;
-
-                if ((int) keyCode == OuyaController.BUTTON_MENU)
-                {
-                    Log.Info(TAG, "Menu Detected=" + (int) keyCode);
-                    m_game.Controllers[playerNum].TimerMenuDetected = DateTime.Now + TimeSpan.FromSeconds(1);
-                }
-            }
-            return true;
-        }
-
-        public override bool OnKeyUp(Keycode keyCode, KeyEvent keyEvent)
-        {
-            //Log.Info(TAG, "OnKeyUp=" + (int)keyCode);
-            int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.DeviceId);
-            if (playerNum >= 0 && playerNum < 4 &&
-                null != m_game &&
-                null != m_game.Controllers &&
-                playerNum < m_game.Controllers.Count)
-            {
-                m_game.Controllers[playerNum].Button[(int)keyCode] = false;
-            }
-            return true;
+            base.OnDestroy();
+            m_game.m_waitForExit = false;
         }
     }
 }

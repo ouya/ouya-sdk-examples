@@ -26,9 +26,9 @@ import android.widget.FrameLayout;
 import tv.ouya.console.api.*;
 
 public class OuyaInputView extends View {
-	
+
 	private static final String TAG = OuyaInputView.class.getSimpleName();
-	
+
 	private Activity mActivity = null;
 
 	static {
@@ -50,12 +50,15 @@ public class OuyaInputView extends View {
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
 			content.addView(this);
 			Log.i(TAG, "Added OuyaInputView to content");
+
+			setFocusable(true);
 			requestFocus();
+			Log.i(TAG, "Give the OuyaInputView focus");
 		} else {
 			Log.e(TAG, "Activity is null");
 		}
 	}
-	
+
 	public void shutdown() {
 		if (null != mActivity) {
 			OuyaInputMapper.shutdown(mActivity);
@@ -66,7 +69,7 @@ public class OuyaInputView extends View {
 
 	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
     public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
-    
+
 	/**
 	 * Dispatch KeyEvents to the OuyaInputMapper. The remapped input will
 	 * return to the activity with onGenericMotionEvent, onKeyDown, and onKeyUp
@@ -79,7 +82,7 @@ public class OuyaInputView extends View {
 	 */
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "dispatchKeyEvent");
+		//Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
 		if (null == mActivity) {
 			return false;
 		}
@@ -89,7 +92,7 @@ public class OuyaInputView extends View {
             return super.dispatchKeyEvent(keyEvent);
         }
 	}
-	
+
 	/**
 	 * Dispatch MotionEvents to the OuyaInputMapper. The remapped input will
 	 * return to the activity with onGenericMotionEvent, onKeyDown, and onKeyUp
@@ -102,7 +105,7 @@ public class OuyaInputView extends View {
 	 */
 	@Override
 	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "dispatchGenericMotionEvent");
+		//Log.i(TAG, "dispatchGenericMotionEvent");
 		if (null == mActivity) {
 			return false;
 		}
@@ -112,17 +115,17 @@ public class OuyaInputView extends View {
             return super.dispatchGenericMotionEvent(motionEvent);
         }
     }
-    
+
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "onGenericMotionEvent");
+		//Log.i(TAG, "onGenericMotionEvent");
 		//DebugInput.debugMotionEvent(motionEvent);
-		
+
 		if (null == mActivity) {
 			return false;
 		}
 
-		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());	    
+		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
 	    if (playerNum < 0) {
 	    	Log.e(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
 	    	return true;
@@ -139,13 +142,13 @@ public class OuyaInputView extends View {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
-		
+		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
+
 		if (null == mActivity) {
 			return false;
 		}
 
-		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
+		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
 	    if (playerNum < 0) {
 	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
 	    	return true;
@@ -155,16 +158,16 @@ public class OuyaInputView extends View {
 		dispatchKeyEventNative(playerNum, keyCode, action);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
-		
+		//Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
+
 		if (null == mActivity) {
 			return false;
 		}
 
-		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
+		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
 	    if (playerNum < 0) {
 	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
 	    	return true;

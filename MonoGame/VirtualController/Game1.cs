@@ -29,6 +29,8 @@ namespace VirtualController
         private string m_label = string.Empty; 
         private List<Texture2D> m_controllerButtons = new List<Texture2D>();
 
+        public bool m_waitForExit = true;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -36,8 +38,8 @@ namespace VirtualController
             Content.RootDirectory = "Content";
 
             graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
         }
 
@@ -78,7 +80,7 @@ namespace VirtualController
 
         private void SetDrawable(out Texture2D button, int keyCode)
         {
-            OuyaController.ButtonData buttonData;
+            OuyaController.ButtonData buttonData = null;
             buttonData = OuyaController.getButtonData(keyCode);
             if (null == buttonData)
             {
@@ -103,7 +105,7 @@ namespace VirtualController
 
         private void SetLabel(out string label, int keyCode)
         {
-            OuyaController.ButtonData buttonData;
+            OuyaController.ButtonData buttonData = null;
             buttonData = OuyaController.getButtonData(keyCode);
             if (null == buttonData)
             {
@@ -230,6 +232,28 @@ namespace VirtualController
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void InputWorker()
+        {
+            while (m_waitForExit)
+            {
+                OuyaSdk.OuyaInput.UpdateInputFrame();
+                if (m_clearFrame)
+                {
+                    m_clearFrame = false;
+                    OuyaSdk.OuyaInput.ClearButtonStates();
+
+                }
+                Thread.Sleep(1);
+            }
+        }
+
+        private bool m_clearFrame = true;
+        protected override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            m_clearFrame = true;
         }
     }
 }

@@ -34,8 +34,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
-    <Reference Include="MonoGame.Framework">
-      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Android\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>MonoGame\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK" />
     <Reference Include="System" />
@@ -44,12 +45,11 @@
   <ItemGroup>
     <Compile Include="DebugInput.cs" />
     <Compile Include="OuyaInputView.cs" />
-    <Compile Include="OuyaActivity.cs" />
     <Compile Include="OuyaInputMapper.cs" />
     <Compile Include="OuyaController.cs" />
     <Compile Include="OuyaIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VirtualController.cs" />
+    <Compile Include="OuyaInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Jars\AboutJars.txt" />

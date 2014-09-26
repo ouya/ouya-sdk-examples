@@ -5,8 +5,13 @@ using OuyaSdk;
 
 namespace VirtualController
 {
-    public class VirtualControllerSprite : OuyaSdk.VirtualController
+    public class VirtualControllerSprite
     {
+        /// <summary>
+        /// The controller index
+        /// </summary>
+        public int Index = 0;
+
         /// <summary>
         /// Scale axis graphics but this amount
         /// </summary>
@@ -37,6 +42,8 @@ namespace VirtualController
         public Texture2D RightStickInactive = null;
 
         private float DeadZone = 0.25f;
+
+        private DateTime m_timerMenuDetected = DateTime.MinValue;
 
         /// <summary>
         /// Set the texture references
@@ -104,7 +111,12 @@ namespace VirtualController
 
             #region MENU
 
-            if (TimerMenuDetected > DateTime.Now)
+            if (OuyaInput.GetButtonDown(Index, OuyaController.BUTTON_MENU))
+            {
+                m_timerMenuDetected = DateTime.Now + TimeSpan.FromSeconds(1);
+                Draw(spriteBatch, ButtonMenu);
+            }
+            else if (m_timerMenuDetected > DateTime.Now)
             {
                 Draw(spriteBatch, ButtonMenu);
             }
@@ -113,22 +125,22 @@ namespace VirtualController
 
             #region DPADS
 
-            if (IsPressed(OuyaController.BUTTON_DPAD_DOWN))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_DOWN))
             {
                 Draw(spriteBatch, DpadDown);
             }
 
-            if (IsPressed(OuyaController.BUTTON_DPAD_LEFT))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_LEFT))
             {
                 Draw(spriteBatch, DpadLeft);
             }
 
-            if (IsPressed(OuyaController.BUTTON_DPAD_RIGHT))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_RIGHT))
             {
                 Draw(spriteBatch, DpadRight);
             }
 
-            if (IsPressed(OuyaController.BUTTON_DPAD_UP))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_UP))
             {
                 Draw(spriteBatch, DpadUp);
             }
@@ -137,32 +149,32 @@ namespace VirtualController
 
             #region Buttons
 
-            if (IsPressed(OuyaController.BUTTON_A))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_A))
             {
                 Draw(spriteBatch, ButtonA);
             }
 
-            if (IsPressed(OuyaController.BUTTON_O))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_O))
             {
                 Draw(spriteBatch, ButtonO);
             }
 
-            if (IsPressed(OuyaController.BUTTON_U))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_U))
             {
                 Draw(spriteBatch, ButtonU);
             }
 
-            if (IsPressed(OuyaController.BUTTON_Y))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_Y))
             {
                 Draw(spriteBatch, ButtonY);
             }
 
-            if (IsPressed(OuyaController.BUTTON_L1))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_L1))
             {
                 Draw(spriteBatch, LeftBumper);
             }
 
-            if (IsPressed(OuyaController.BUTTON_R1))
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_R1))
             {
                 Draw(spriteBatch, RightBumper);
             }
@@ -171,12 +183,12 @@ namespace VirtualController
 
             #region Triggers
 
-            if (GetAxis(OuyaController.AXIS_L2) > DeadZone)
+            if (OuyaInput.GetAxis(Index, OuyaController.AXIS_L2) > DeadZone)
             {
                 Draw(spriteBatch, LeftTrigger);
             }
 
-            if (GetAxis(OuyaController.AXIS_R2) > DeadZone)
+            if (OuyaInput.GetAxis(Index, OuyaController.AXIS_R2) > DeadZone)
             {
                 Draw(spriteBatch, RightTrigger);
             }
@@ -191,9 +203,9 @@ namespace VirtualController
             float cos = (float)Math.Cos(radians);
             float sin = (float)Math.Sin(radians);
 
-            Vector2 input = new Vector2(GetAxis(OuyaController.AXIS_LS_X), GetAxis(OuyaController.AXIS_LS_Y));
+            Vector2 input = new Vector2(OuyaInput.GetAxis(Index, OuyaController.AXIS_LS_X), OuyaInput.GetAxis(Index, OuyaController.AXIS_LS_Y));
 
-            if (IsPressed(OuyaController.BUTTON_L3) ||
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_L3) ||
                 Math.Abs(input.X) > DeadZone ||
                 Math.Abs(input.Y) > DeadZone)
             {
@@ -205,9 +217,9 @@ namespace VirtualController
             }
 
             //rotate by same degrees
-            input = new Vector2(GetAxis(OuyaController.AXIS_RS_X), GetAxis(OuyaController.AXIS_RS_Y));
+            input = new Vector2(OuyaInput.GetAxis(Index, OuyaController.AXIS_RS_X), OuyaInput.GetAxis(Index, OuyaController.AXIS_RS_Y));
 
-            if (IsPressed(OuyaController.BUTTON_R3) ||
+            if (OuyaInput.GetButton(Index, OuyaController.BUTTON_R3) ||
                 Math.Abs(input.X) > DeadZone ||
                 Math.Abs(input.Y) > DeadZone)
             {

@@ -154,6 +154,8 @@ namespace OuyaSdk
         public static int BUTTON_DPAD_LEFT = 21;
         public static int BUTTON_MENU = 82;
 
+        public static int MAX_CONTROLLERS = 4;
+
         static OuyaController()
         {
             try
@@ -164,6 +166,7 @@ namespace OuyaSdk
                     if (_jcOuyaController != IntPtr.Zero)
                     {
                         Log.Info(LOG_TAG, string.Format("Found {0} class", strName));
+                        _jcOuyaController = JNIEnv.NewGlobalRef(_jcOuyaController);
                     }
                     else
                     {
@@ -171,7 +174,23 @@ namespace OuyaSdk
                         return;
                     }
                 }
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error(LOG_TAG, string.Format("Exception loading JNI - {0}", ex));
+            }
+        }
 
+        public IntPtr Instance
+        {
+            get { return _instance; }
+            set { _instance = value; }
+        }
+
+        private static void InitJNI()
+        {
+            try
+            {
                 {
                     string strMethod = "init";
                     _jmInit = JNIEnv.GetStaticMethodID(_jcOuyaController, strMethod, "(Landroid/content/Context;)V");
@@ -248,14 +267,10 @@ namespace OuyaSdk
             }
         }
 
-        public IntPtr Instance
-        {
-            get { return _instance; }
-            set { _instance = value; }
-        }
-
         public static void init(IntPtr context)
         {
+            InitJNI();
+
             if (_jmInit == IntPtr.Zero)
             {
                 Log.Error(LOG_TAG, "_jmInit is not initialized");
@@ -267,6 +282,8 @@ namespace OuyaSdk
 
         public static int getPlayerNumByDeviceId(int deviceId)
         {
+            InitJNI();
+
             if (_jcOuyaController == IntPtr.Zero)
             {
                 Log.Error(LOG_TAG, "_jcOuyaController is not initialized");
@@ -282,6 +299,8 @@ namespace OuyaSdk
 
         public static OuyaController getControllerByDeviceId(int deviceId)
         {
+            InitJNI();
+
             if (_jcOuyaController == IntPtr.Zero)
             {
                 Log.Error(LOG_TAG, "_jcOuyaController is not initialized");
@@ -305,6 +324,8 @@ namespace OuyaSdk
 
         public String getDeviceName()
         {
+            InitJNI();
+
             if (_instance == IntPtr.Zero)
             {
                 Log.Error(LOG_TAG, "_instance is not initialized");
@@ -328,6 +349,8 @@ namespace OuyaSdk
 
         public static ButtonData getButtonData(int button)
         {
+            InitJNI();
+
             if (_jcOuyaController == IntPtr.Zero)
             {
                 Log.Error(LOG_TAG, "_jcOuyaController is not initialized");
