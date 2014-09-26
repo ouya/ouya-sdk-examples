@@ -1,10 +1,8 @@
 MonoGame/InAppPurchases/bin/*
 MonoGame/InAppPurchases/obj/*
-!MonoGame/InAppPurchases/MonoGame.Framework.dll
 !MonoGame/InAppPurchases/Ouya.Console.Api.dll
 MonoGame/SetResolutions/bin/*
 MonoGame/SetResolutions/obj/*
-!MonoGame/SetResolutions/libs/MonoGame.Framework.dll
 MonoGame/VirtualController/bin/*
 MonoGame/VirtualController/obj/*
 Android/AndroidKeyLogger/
@@ -105,3 +103,5 @@ MonoGame/InputView/bin/
 MonoGame/InputView/MonoGameOuyaPlugin/bin/
 MonoGame/InputView/MonoGameOuyaPlugin/obj/
 MonoGame/InputView/obj/
+!MonoGame.Framework.dll
+!Lidgren.Network.dll
