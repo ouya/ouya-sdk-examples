@@ -19,7 +19,6 @@ package tv.ouya.sdk;
 import tv.ouya.console.api.DebugInput;
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.console.api.OuyaInputMapper;
-import tv.ouya.examples.android.virtualcontroller.ControllerView;
 import tv.ouya.examples.android.virtualcontroller.R;
 import android.app.Activity;
 import android.content.Context;
@@ -58,7 +57,7 @@ public class OuyaInputView extends View {
     private void init() {
 		Activity activity = ((Activity)getContext());		
 		if (null != activity) {			
-			mControllerViews = new ControllerView[4];
+			mControllerViews = new View[4];
 	        mControllerViews[0] = activity.findViewById(R.id.controllerView1);
 	        mControllerViews[1] = activity.findViewById(R.id.controllerView2);
 	        mControllerViews[2] = activity.findViewById(R.id.controllerView3);
