@@ -105,3 +105,4 @@ MonoGame/InputView/MonoGameOuyaPlugin/obj/
 MonoGame/InputView/obj/
 !MonoGame.Framework.dll
 !Lidgren.Network.dll
+Android/VirtualControllerView/bin/
