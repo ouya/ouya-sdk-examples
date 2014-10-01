@@ -18,7 +18,10 @@ package tv.ouya.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.util.Log;
+import android.view.Display;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -386,11 +389,55 @@ public class OuyaUnityPlugin
 		return result;
 	}
 
-	public static void setSafeArea(float percentage)
+	private static int getDisplayWidth() {
+		Activity activity = IOuyaActivity.GetActivity();
+		WindowManager windowManager = activity.getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		return size.x;
+	}
+
+	private static int getDisplayHeight() {
+		Activity activity = IOuyaActivity.GetActivity();
+		WindowManager windowManager = activity.getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		return size.y;
+	}
+
+	private static void updateSafeArea(float progress) {
+		// bring in by %
+		float percent = 0.07f;
+		float ratio = 1 - (1 - progress) * percent;
+		float halfRatio = 1 - (1 - progress) * percent * 0.5f;
+		float maxWidth = getDisplayWidth();
+		float maxHeight = getDisplayHeight();
+		Activity activity = IOuyaActivity.GetActivity();
+		FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
+		LayoutParams layout = content.getLayoutParams();
+		layout.width = (int)(maxWidth * ratio);
+		layout.height = (int)(maxHeight * ratio);
+		content.setLayoutParams(layout);
+		content.setX(maxWidth - maxWidth * halfRatio);
+		content.setY(maxHeight - maxHeight * halfRatio);
+	}
+
+	public static void setSafeArea(final float percentage)
 	{
 		try
 		{
 			Log.i(LOG_TAG, "OuyaUnityPlugin.setSafeArea: "+percentage);
+			Activity activity = IOuyaActivity.GetActivity();
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{
+					updateSafeArea(percentage);
+				}
+			};
+			activity.runOnUiThread(runnable);			
 		}
 		catch (Exception ex)
 		{
