@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+        background-color:CornflowerBlue
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="htmlCanvas" width="1920" height="1080"></canvas>
+    <script>
+
+      var OuyaController = {
+		AXIS_LS_X: 0,
+		AXIS_LS_Y: 1,
+		AXIS_RS_X: 11,
+		AXIS_RS_Y: 14,
+		AXIS_L2: 17,
+		AXIS_R2: 18,
+		BUTTON_O: 96,
+		BUTTON_U: 99,
+		BUTTON_Y: 100,
+		BUTTON_A: 97,
+		BUTTON_L1: 102,
+		BUTTON_R1: 103,
+		BUTTON_L3: 106,
+		BUTTON_R3: 107,
+		BUTTON_DPAD_UP: 19,
+		BUTTON_DPAD_DOWN: 20,
+		BUTTON_DPAD_RIGHT: 22,
+		BUTTON_DPAD_LEFT: 21,
+		BUTTON_MENU: 82,
+		MAX_CONTROLLERS: 4};
+
+      function initAxises() {
+      	var axises = {
+			AXIS_LS_X: 0,
+			AXIS_LS_Y: 0,
+			AXIS_RS_X: 0,
+			AXIS_RS_Y: 0,
+			AXIS_L2: 0,
+			AXIS_R2: 0
+			};
+		return axises;
+      }
+
+      function initButtons() {
+      	var buttons = {
+			BUTTON_O: false,
+			BUTTON_U: false,
+			BUTTON_Y: false,
+			BUTTON_A: false,
+			BUTTON_L1: false,
+			BUTTON_R1: false,
+			BUTTON_L3: false,
+			BUTTON_R3: false,
+			BUTTON_DPAD_UP: false,
+			BUTTON_DPAD_DOWN: false,
+			BUTTON_DPAD_RIGHT: false,
+			BUTTON_DPAD_LEFT: false,
+			BUTTON_MENU: false
+			};
+		return buttons;
+      }
+
+      function initController(playerNum) {
+      	var controller = Object();
+      	controller.axises = initAxises();
+      	controller.buttons = initButtons();
+      	controller.playerNum = playerNum;
+      	return controller;
+      }
+
+      var controllers = Array(initController(0), initController(1), initController(2), initController(3));
+      function getController(playerNum) {
+      	if (playerNum < 0 ||
+      		playerNum > OuyaController.MAX_CONTROLLERS) {
+      		return undefined;
+      	}
+      	return controllers[playerNum];
+      }
+
+      function loadImage(path) {
+		  var image = new Image();
+		  image.src = path;
+		  return image;
+      }
+
+      var DEAD_ZONE = 0.25;
+
+      function displayController(images, playerNum, x, y) {
+      	var controller = getController(playerNum);
+      	if (controller == undefined) {
+      		return;
+      	}
+		width = 336;
+		height = 336;
+		context.drawImage(images.controller, x, y, width, height);
+		if (controller.buttons.BUTTON_A) {
+			context.drawImage(images.a, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_DPAD_DOWN) {
+			context.drawImage(images.dpad_down, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_DPAD_LEFT) {
+			context.drawImage(images.dpad_left, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_DPAD_RIGHT) {
+			context.drawImage(images.dpad_right, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_DPAD_UP) {
+			context.drawImage(images.dpad_up, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_L1) {
+			context.drawImage(images.lb, x, y, width, height);
+		}
+		if (controller.axises.AXIS_L2 > DEAD_ZONE) {
+			context.drawImage(images.lt, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_L3) {
+			context.drawImage(images.thumbl, x, y, width, height);
+		} else {
+			context.drawImage(images.l_stick, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_MENU) {
+			context.drawImage(images.menu, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_O) {
+			context.drawImage(images.o, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_R1) {
+			context.drawImage(images.rb, x, y, width, height);
+		}
+		if (controller.axises.AXIS_R2 > DEAD_ZONE) {
+			context.drawImage(images.rt, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_L3) {
+			context.drawImage(images.thumbr, x, y, width, height);
+		} else {
+			context.drawImage(images.r_stick, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_U) {
+			context.drawImage(images.u, x, y, width, height);
+		}
+		if (controller.buttons.BUTTON_Y) {
+			context.drawImage(images.y, x, y, width, height);
+		}
+      };
+
+      var canvas = document.getElementById('htmlCanvas');
+      var context = canvas.getContext('2d');
+
+      var images = {
+        a: loadImage('a.png'),
+		controller: loadImage('controller.png'),
+		dpad_down: loadImage('dpad_down.png'),
+		dpad_left: loadImage('dpad_left.png'),
+		dpad_right: loadImage('dpad_right.png'),
+		dpad_up: loadImage('dpad_up.png'),
+		lb: loadImage('lb.png'),
+		lt: loadImage('lt.png'),
+		l_stick: loadImage('l_stick.png'),
+		menu: loadImage('menu.png'),
+		o: loadImage('o.png'),
+		rb: loadImage('rb.png'),
+		rt: loadImage('rt.png'),
+		r_stick: loadImage('r_stick.png'),
+		thumbl: loadImage('thumbl.png'),
+		thumbr: loadImage('thumbr.png'),
+		u: loadImage('u.png'),
+		y: loadImage('y.png')
+      };
+
+      function showController(playerNum) {
+		switch(playerNum)
+		{
+		case 0:
+	  		displayController(images, 0, 400, 100);
+	  		break;
+	  	case 1:
+	  		displayController(images, 1, 1200, 100);
+	  		break;
+	  	case 2:
+	  		displayController(images, 2, 400, 600);
+	  		break;
+	  	case 3:
+	  		displayController(images, 3, 1200, 600);
+	  		break;
+	  	}
+      }
+
+      function showControllers() {
+		showController(0);
+		showController(1);
+		showController(2);
+		showController(3);
+      }
+
+      function showControllers() {
+	  		showController(0);
+	  		showController(1);
+	  		showController(2);
+	  		showController(3);
+      }
+
+      function updateController(controller, button, pressed) {
+      	switch (button) {
+      	case OuyaController.BUTTON_O:
+      		controller.buttons.BUTTON_O = pressed;
+      		break;
+		case OuyaController.BUTTON_U:
+      		controller.buttons.BUTTON_U = pressed;
+      		break;
+		case OuyaController.BUTTON_Y:
+      		controller.buttons.BUTTON_Y = pressed;
+      		break;
+		case OuyaController.BUTTON_A:
+      		controller.buttons.BUTTON_A = pressed;
+      		break;
+		case OuyaController.BUTTON_L1:
+      		controller.buttons.BUTTON_L1 = pressed;
+      		break;
+		case OuyaController.BUTTON_R1:
+      		controller.buttons.BUTTON_R1 = pressed;
+      		break;
+		case OuyaController.BUTTON_L3:
+      		controller.buttons.BUTTON_L3 = pressed;
+      		break;
+		case OuyaController.BUTTON_R3:
+      		controller.buttons.BUTTON_R3 = pressed;
+      		break;
+		case OuyaController.BUTTON_DPAD_UP:
+      		controller.buttons.BUTTON_DPAD_UP = pressed;
+      		break;
+		case OuyaController.BUTTON_DPAD_DOWN:
+      		controller.buttons.BUTTON_DPAD_DOWN = pressed;
+      		break;
+		case OuyaController.BUTTON_DPAD_RIGHT:
+      		controller.buttons.BUTTON_DPAD_RIGHT = pressed;
+      		break;
+		case OuyaController.BUTTON_DPAD_LEFT:
+      		controller.buttons.BUTTON_DPAD_LEFT = pressed;
+      		break;
+		case OuyaController.BUTTON_MENU:
+      		controller.buttons.BUTTON_MENU = pressed;
+      		break;
+      	}
+      }
+
+      function onGenericMotionEvent(playerNum, axis, val) {
+      	var controller = getController(playerNum);
+      	if (controller == undefined) {
+      		return;
+      	}
+      	controller.axises.axis = val;
+      	switch (axis) {
+      	case OuyaController.AXIS_LS_X:
+      		controller.axises.AXIS_LS_X = val;
+      		break;
+		case OuyaController.AXIS_LS_Y:
+      		controller.axises.AXIS_LS_Y = val;
+      		break;
+		case OuyaController.AXIS_RS_X:
+      		controller.axises.AXIS_RS_X = val;
+      		break;
+		case OuyaController.AXIS_RS_Y:
+      		controller.axises.AXIS_RS_Y = val;
+      		break;
+		case OuyaController.AXIS_L2:
+      		controller.axises.AXIS_L2 = val;
+      		break;
+		case OuyaController.AXIS_R2:
+      		controller.axises.AXIS_R2 = val;
+      		break;
+      	}
+      }
+
+      function onKeyDown(playerNum, button) {
+      	var controller = getController(playerNum);
+      	if (controller == undefined) {
+      		return;
+      	}
+		updateController(controller, button, true);
+      }
+
+      function onKeyUp(playerNum, button) {
+      	var controller = getController(playerNum);
+      	if (controller == undefined) {
+      		return;
+      	}
+      	updateController(controller, button, false);
+      }
+
+      setInterval(function(){ showControllers()}, 100);
+
+    </script>
+  </body>
+</html>
