@@ -90,6 +90,7 @@
 		  return image;
       }
 
+      var AXIS_SCALER = 4;
       var DEAD_ZONE = 0.25;
 
       function displayController(images, playerNum, x, y) {
@@ -99,6 +100,7 @@
       	}
 		width = 336;
 		height = 336;
+		context.clearRect(x, y, width, height);
 		context.drawImage(images.controller, x, y, width, height);
 		if (controller.buttons.BUTTON_A) {
 			context.drawImage(images.a, x, y, width, height);
@@ -121,11 +123,29 @@
 		if (controller.axises.AXIS_L2 > DEAD_ZONE) {
 			context.drawImage(images.lt, x, y, width, height);
 		}
+
+		//rotate input by N degrees to match image
+		var degrees = 135;
+		var radians = degrees / 180.0 * 3.14;
+		var cos = Math.cos(radians);
+		var sin = Math.sin(radians);
+
+		var input = Object();
+		input.X = controller.axises.AXIS_LS_X;
+		input.Y = controller.axises.AXIS_LS_Y;
+
 		if (controller.buttons.BUTTON_L3) {
-			context.drawImage(images.thumbl, x, y, width, height);
+			context.drawImage(images.thumbl,
+				x + AXIS_SCALER * (input.X * cos - input.Y * sin),
+				y + AXIS_SCALER * (input.X * sin + input.Y * cos),
+				width, height);
 		} else {
-			context.drawImage(images.l_stick, x, y, width, height);
+			context.drawImage(images.l_stick,
+				x + AXIS_SCALER * (input.X * cos - input.Y * sin),
+				y + AXIS_SCALER * (input.X * sin + input.Y * cos),
+				width, height);
 		}
+
 		if (controller.buttons.BUTTON_MENU) {
 			context.drawImage(images.menu, x, y, width, height);
 		}
@@ -138,11 +158,21 @@
 		if (controller.axises.AXIS_R2 > DEAD_ZONE) {
 			context.drawImage(images.rt, x, y, width, height);
 		}
+
+		input.X = controller.axises.AXIS_RS_X;
+		input.Y = controller.axises.AXIS_RS_Y;
 		if (controller.buttons.BUTTON_L3) {
-			context.drawImage(images.thumbr, x, y, width, height);
+			context.drawImage(images.thumbr,
+				x + AXIS_SCALER * (input.X * cos - input.Y * sin),
+				y + AXIS_SCALER * (input.X * sin + input.Y * cos),
+				width, height);
 		} else {
-			context.drawImage(images.r_stick, x, y, width, height);
+			context.drawImage(images.r_stick,
+				x + AXIS_SCALER * (input.X * cos - input.Y * sin),
+				y + AXIS_SCALER * (input.X * sin + input.Y * cos),
+				width, height);
 		}
+
 		if (controller.buttons.BUTTON_U) {
 			context.drawImage(images.u, x, y, width, height);
 		}
@@ -198,13 +228,6 @@
 		showController(1);
 		showController(2);
 		showController(3);
-      }
-
-      function showControllers() {
-	  		showController(0);
-	  		showController(1);
-	  		showController(2);
-	  		showController(3);
       }
 
       function updateController(controller, button, pressed) {
