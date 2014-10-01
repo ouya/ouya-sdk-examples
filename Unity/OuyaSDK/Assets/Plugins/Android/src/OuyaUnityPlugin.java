@@ -409,7 +409,7 @@ public class OuyaUnityPlugin
 
 	private static void updateSafeArea(float progress) {
 		// bring in by %
-		float percent = 0.07f;
+		float percent = 0.1f;
 		float ratio = 1 - (1 - progress) * percent;
 		float halfRatio = 1 - (1 - progress) * percent * 0.5f;
 		float maxWidth = getDisplayWidth();
