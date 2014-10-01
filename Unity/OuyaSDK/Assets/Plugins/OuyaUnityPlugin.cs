@@ -22,6 +22,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmRequestPurchaseAsync = IntPtr.Zero;
         private static IntPtr _jmGetReceiptsAsync = IntPtr.Zero;
         private static IntPtr _jmIsRunningOnOUYASupportedHardware = IntPtr.Zero;
+        private static IntPtr _jmSetSafeArea = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         static OuyaUnityPlugin()
@@ -34,6 +35,7 @@ namespace tv.ouya.sdk
                     if (_jcOuyaUnityPlugin != IntPtr.Zero)
                     {
                         Debug.Log(string.Format("Found {0} class", strName));
+                        _jcOuyaUnityPlugin = AndroidJNI.NewGlobalRef(_jcOuyaUnityPlugin);
                     }
                     else
                     {
@@ -224,9 +226,215 @@ namespace tv.ouya.sdk
                     }
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                Debug.LogError("Exception finding OuyaUnityPlugin class");
+                Debug.LogError(string.Format("Exception loading JNI - {0}", ex));
+            }
+        }
+
+        private static void JNIFind()
+        {
+            try
+            {
+                {
+                    string strMethod = "<init>";
+                    _jmConstructor = AndroidJNI.GetMethodID(_jcOuyaUnityPlugin, strMethod, "(Landroid/app/Activity;)V");
+                    if (_jmConstructor != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "setDeveloperId";
+                    _jmSetDeveloperId = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
+                    if (_jmSetDeveloperId != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "unityInitialized";
+                    _jmUnityInitialized = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmUnityInitialized != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getGameData";
+                    _jmGetGameData = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
+                    if (_jmGetGameData != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "putGameData";
+                    _jmPutGameData = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;Ljava/lang/String;)V");
+                    if (_jmPutGameData != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "fetchGamerInfo";
+                    _jmFetchGamerInfo = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmFetchGamerInfo != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "addGetProduct";
+                    _jmAddGetProduct = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
+                    if (_jmAddGetProduct != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "debugGetProductList";
+                    _jmDebugGetProductList = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmDebugGetProductList != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "clearGetProductList";
+                    _jmClearGetProductList = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmClearGetProductList != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getProductsAsync";
+                    _jmGetProductsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmGetProductsAsync != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "requestPurchaseAsync";
+                    _jmRequestPurchaseAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
+                    if (_jmRequestPurchaseAsync != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getReceiptsAsync";
+                    _jmGetReceiptsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmGetReceiptsAsync != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "isRunningOnOUYASupportedHardware";
+                    _jmIsRunningOnOUYASupportedHardware = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Z");
+                    if (_jmIsRunningOnOUYASupportedHardware != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "setSafeArea";
+                    _jmSetSafeArea = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(F)V");
+                    if (_jmSetSafeArea != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError(string.Format("Exception loading JNI - {0}", ex));
             }
         }
 
@@ -459,6 +667,22 @@ namespace tv.ouya.sdk
                 return false;
             }
             return AndroidJNI.CallStaticBooleanMethod(_jcOuyaUnityPlugin, _jmIsRunningOnOUYASupportedHardware, new jvalue[0]);
+        }
+
+        public static void setSafeArea(float percentage)
+        {
+            JNIFind();
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmSetSafeArea == IntPtr.Zero)
+            {
+                Debug.LogError("_jmSetSafeArea is not initialized");
+                return;
+            }
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmSetSafeArea, new jvalue[1] {new jvalue() {f = percentage}});
         }
     }
 }

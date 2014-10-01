@@ -32,7 +32,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.14.2";
+    public const string VERSION = "1.0.14.3";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -528,6 +528,18 @@ public static class OuyaSDK
 #else
         return false;
 #endif
+    }
+
+    /// <summary>
+    /// 1f - Safe Area all the way to the edge of the screen
+    /// 0f - Safe Area will use the maximum overscan border
+    /// </summary>
+    /// <param name="percentage"></param>
+    public static void setSafeArea(float percentage)
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        OuyaUnityPlugin.setSafeArea(percentage);
+#endif        
     }
 
     #endregion

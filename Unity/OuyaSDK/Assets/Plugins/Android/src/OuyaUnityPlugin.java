@@ -385,4 +385,16 @@ public class OuyaUnityPlugin
 		}
 		return result;
 	}
+
+	public static void setSafeArea(float percentage)
+	{
+		try
+		{
+			Log.i(LOG_TAG, "OuyaUnityPlugin.setSafeArea: "+percentage);
+		}
+		catch (Exception ex)
+		{
+			Log.e(LOG_TAG, "OuyaUnityPlugin: setSafeArea exception: " + ex.toString());
+		}
+	}
 }

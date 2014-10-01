@@ -1393,6 +1393,7 @@ public class OuyaPanel : EditorWindow
             "SceneShowProducts",
             "SceneShowUnityInput",
             "VirtualController",
+            "SceneSafeArea",
         };
 
     private static int m_selectedAdbMode = 0;
