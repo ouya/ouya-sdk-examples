@@ -2,7 +2,7 @@
 
 > __Type__              plugin.ouya
 
-> __Revision__          002
+> __Revision__          003 (ODK-1.0.14)
 
 > __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
 
