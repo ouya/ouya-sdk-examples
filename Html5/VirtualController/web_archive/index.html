@@ -161,7 +161,7 @@
 
 		input.X = controller.axises.AXIS_RS_X;
 		input.Y = controller.axises.AXIS_RS_Y;
-		if (controller.buttons.BUTTON_L3) {
+		if (controller.buttons.BUTTON_R3) {
 			context.drawImage(images.thumbr,
 				x + AXIS_SCALER * (input.X * cos - input.Y * sin),
 				y + AXIS_SCALER * (input.X * sin + input.Y * cos),
@@ -307,7 +307,12 @@
       	if (controller == undefined) {
       		return;
       	}
-		updateController(controller, button, true);
+      	if (button == OuyaController.BUTTON_MENU) {
+      		updateController(controller, button, true);
+      		setTimeout(function(){ updateController(controller, button, false)}, 1000);
+      	} else {
+			updateController(controller, button, true);
+		}
       }
 
       function onKeyUp(playerNum, button) {
@@ -315,10 +320,15 @@
       	if (controller == undefined) {
       		return;
       	}
-      	updateController(controller, button, false);
+      	if (button == OuyaController.BUTTON_MENU) {
+      		updateController(controller, button, true);
+      		setTimeout(function(){ updateController(controller, button, false)}, 1000);
+      	} else {
+			updateController(controller, button, false);
+		}
       }
 
-      setInterval(function(){ showControllers()}, 100);
+      setInterval(function(){ showControllers()}, 1);
 
     </script>
   </body>
