@@ -72,6 +72,7 @@
       	controller.axises = initAxises();
       	controller.buttons = initButtons();
       	controller.playerNum = playerNum;
+      	controller.redraw = true;
       	return controller;
       }
 
@@ -96,6 +97,11 @@
       function displayController(images, playerNum, x, y) {
       	var controller = getController(playerNum);
       	if (controller == undefined) {
+      		return;
+      	}
+      	if (controller.redraw == true) {
+      		controller.redraw = false;
+      	} else {
       		return;
       	}
 		width = 336;
@@ -231,6 +237,7 @@
       }
 
       function updateController(controller, button, pressed) {
+      	controller.redraw = true;
       	switch (button) {
       	case OuyaController.BUTTON_O:
       		controller.buttons.BUTTON_O = pressed;
@@ -279,7 +286,7 @@
       	if (controller == undefined) {
       		return;
       	}
-      	controller.axises.axis = val;
+      	controller.redraw = true;
       	switch (axis) {
       	case OuyaController.AXIS_LS_X:
       		controller.axises.AXIS_LS_X = val;
@@ -328,7 +335,7 @@
 		}
       }
 
-      setInterval(function(){ showControllers()}, 1);
+	  setTimeout(function(){ setInterval(function(){ showControllers()}, 1) }, 100);
 
     </script>
   </body>
