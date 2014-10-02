@@ -1,4 +1,4 @@
 . ./init.sh
 echo APKTOOL=$APKTOOL
-java -jar $APKTOOL decode ContentShell.apk
-#pause
+"$JDK7/bin/java" -jar $APKTOOL decode ContentShell.apk
+sleep 1
