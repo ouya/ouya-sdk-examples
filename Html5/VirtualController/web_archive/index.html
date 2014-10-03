@@ -337,6 +337,16 @@
 
 	  setTimeout(function(){ setInterval(function(){ showControllers()}, 1) }, 100);
 
+	  context.font="20px Georgia";
+	  // Create gradient
+	  var gradient=context.createLinearGradient(900,0,1100,0);
+	  gradient.addColorStop("0","red");
+	  gradient.addColorStop("0.5","orange");
+	  gradient.addColorStop("1.0","yellow");
+	  // Fill with gradient
+	  context.fillStyle=gradient;
+	  context.fillText("Hello from HTML5!",900,550);
+
     </script>
   </body>
 </html>
