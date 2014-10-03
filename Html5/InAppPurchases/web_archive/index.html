@@ -73,10 +73,13 @@
 		  return image;
       }
 
-      var DEAD_ZONE = 0.25;
+      var OuyaSDK;
 
       var canvas = document.getElementById('htmlCanvas');
       var context = canvas.getContext('2d');
+
+      var developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+      var initPlugin = false;
 
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
@@ -219,6 +222,38 @@
       		break;
       	}
       }
+
+      function onSuccessSetDeveloperId() {
+      	lblStatus = "developer id is set.";
+      	redraw = true;
+      }
+
+      function onFailureSetDeveloperId() {
+	      lblStatus = "failed to set developer id.";
+	      redraw = true;
+	      setTimeout(function(){ initialize() }, 1000);
+      }
+
+      function initialize() {
+      	if (OuyaSDK == undefined) {
+      		lblStatus = "waiting for OuyaSDK...";
+      		redraw = true;
+      		setTimeout(function(){ initialize() }, 1000);
+      		return;
+      	}
+      	if (!initPlugin) {
+      		if (OuyaSDK.setDeveloperId == undefined) {
+      			lblStatus = "waiting for OuyaSDK.setDeveloperId...";
+      			setTimeout(function(){ initialize() }, 1000);
+      			return;
+      		} else {
+      			lblStatus = "setting developerId...";
+      			OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
+      		}
+      	}
+      }
+
+      initialize();
 
 	  setTimeout(function(){ setInterval(function(){ showScene()}, 1) }, 100);
 
