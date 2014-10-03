@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+        background-color:CornflowerBlue
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="htmlCanvas" width="1920" height="1080"></canvas>
+    <script>
+
+      var OuyaController = {
+		AXIS_LS_X: 0,
+		AXIS_LS_Y: 1,
+		AXIS_RS_X: 11,
+		AXIS_RS_Y: 14,
+		AXIS_L2: 17,
+		AXIS_R2: 18,
+		BUTTON_O: 96,
+		BUTTON_U: 99,
+		BUTTON_Y: 100,
+		BUTTON_A: 97,
+		BUTTON_L1: 102,
+		BUTTON_R1: 103,
+		BUTTON_L3: 106,
+		BUTTON_R3: 107,
+		BUTTON_DPAD_UP: 19,
+		BUTTON_DPAD_DOWN: 20,
+		BUTTON_DPAD_RIGHT: 22,
+		BUTTON_DPAD_LEFT: 21,
+		BUTTON_MENU: 82,
+		MAX_CONTROLLERS: 4};
+
+      function initAxises() {
+      	var axises = {
+			AXIS_LS_X: 0,
+			AXIS_LS_Y: 0,
+			AXIS_RS_X: 0,
+			AXIS_RS_Y: 0,
+			AXIS_L2: 0,
+			AXIS_R2: 0
+			};
+		return axises;
+      }
+
+      function initButtons() {
+      	var buttons = {
+			BUTTON_O: false,
+			BUTTON_U: false,
+			BUTTON_Y: false,
+			BUTTON_A: false,
+			BUTTON_L1: false,
+			BUTTON_R1: false,
+			BUTTON_L3: false,
+			BUTTON_R3: false,
+			BUTTON_DPAD_UP: false,
+			BUTTON_DPAD_DOWN: false,
+			BUTTON_DPAD_RIGHT: false,
+			BUTTON_DPAD_LEFT: false,
+			BUTTON_MENU: false
+			};
+		return buttons;
+      }
+
+      function loadImage(path) {
+		  var image = new Image();
+		  image.src = path;
+		  return image;
+      }
+
+      var DEAD_ZONE = 0.25;
+
+      var canvas = document.getElementById('htmlCanvas');
+      var context = canvas.getContext('2d');
+
+      var gamerUsername = "(unknown)";
+      var gamerUuid = "(unknown)";
+
+      var images = {
+        button_active: loadImage('button_active.png'),
+		button_inactive: loadImage('button_inactive.png')
+      };
+
+      function createButton(label, width) {
+      	var button = Object();
+      	button.label = label;
+      	button.width = width;
+      	return button;
+      }
+
+      var buttons = Array(
+      	createButton("Get Products", 150),
+      	createButton("Request Purchase", 200),
+      	createButton("Get Receipts", 150),
+      	createButton("Request Gamer Info", 225),
+      	createButton("Pause", 100)
+      );
+
+      function setupFocus(button, left, right) {
+      	button.left = left;
+      	button.right = right;
+      }
+
+      var btnGetProducts = buttons[0];
+      var btnRequestPurchase = buttons[1];
+      var btnGetReceipts = buttons[2];
+      var btnRequestGamerInfo = buttons[3];
+      var btnPause = buttons[4];
+
+      setupFocus(btnGetProducts, undefined, btnRequestPurchase);
+      setupFocus(btnRequestPurchase, btnGetProducts, btnGetReceipts);
+      setupFocus(btnGetReceipts, btnRequestPurchase, btnRequestGamerInfo);
+      setupFocus(btnRequestGamerInfo, btnGetReceipts, undefined);
+      setupFocus(btnPause, btnRequestGamerInfo, undefined);
+
+      var focus = btnGetProducts;
+
+      var redraw = true;
+
+      function showScene() {
+
+		  if (!redraw) {
+		  	return;
+		  }
+
+		  redraw = false;
+
+		  context.font="20px Georgia";
+		  context.fillStyle = 'white';
+		  context.fillText("Hello from HTML5",100,100);
+
+		  context.fillText("Gamer Username: "+gamerUsername,150,120);
+		  context.fillText("Gamer UUID: "+gamerUuid,150,140);
+
+		  context.fillText("Use DPAD to switch between buttons | Press O to click the button:",100,180);
+
+		  var x = 150;
+		  var y = 240;
+		  var padding = 15;
+
+		  for (i = 0; i < buttons.length; i++) {
+		  	var button = buttons[i];
+		  	if (focus == button) {
+		  		context.drawImage(images.button_active, x-15, y-20, button.width, 30);
+		  	} else {
+		  		context.drawImage(images.button_inactive, x-15, y-20, button.width, 30);
+		  	}
+		  	context.fillText(button.label,x,y);
+		  	x += button.width + padding;
+		  }
+      }
+
+      function clickButton() {
+      	if (btnFocus == btnGetProducts) {
+      	} else if (btnRequestPurchase == btnGetProducts) {
+      	} else if (btnGetReceipts == btnGetProducts) {
+      	} else if (btnRequestGamerInfo == btnGetProducts) {
+      	}
+      }
+
+      function onGenericMotionEvent(playerNum, axis, val) {
+      }
+
+      function onKeyDown(playerNum, button) {
+      }
+
+      function onKeyUp(playerNum, button) {
+      	switch (button) {
+      	case OuyaController.BUTTON_O:
+      		clickButton();
+      		break;
+		case OuyaController.BUTTON_DPAD_UP:
+      		if (focus.up != undefined) {
+      			focus = focus.up;
+      			redraw = true;
+      		}
+      		break;
+		case OuyaController.BUTTON_DPAD_DOWN:
+      		if (focus.down != undefined) {
+      			focus = focus.down;
+      			redraw = true;
+      		}
+      		break;
+		case OuyaController.BUTTON_DPAD_RIGHT:
+      		if (focus.right != undefined) {
+      			focus = focus.right;
+      			redraw = true;
+      		}
+      		break;
+		case OuyaController.BUTTON_DPAD_LEFT:
+      		if (focus.left != undefined) {
+      			focus = focus.left;
+      			redraw = true;
+      		}
+      		break;
+		case OuyaController.BUTTON_MENU:
+      		focus = btnPause;
+      		redraw = true;
+      		break;
+      	}
+      }
+
+	  setTimeout(function(){ setInterval(function(){ showScene()}, 1) }, 100);
+
+    </script>
+  </body>
+</html>
