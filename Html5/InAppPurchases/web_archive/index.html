@@ -119,6 +119,9 @@
 
       var developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
+      var products = Object();
+      var purchasable = Object();
+
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
 
@@ -207,13 +210,13 @@
       		lblStatus = "requesting products...";
       		redraw = true;
       		if (OuyaSDK.requestProducts != undefined) {
-      		    OuyaSDK.requestProducts(onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+      		    OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
       		}
       	} else if (focus == btnRequestPurchase) {
       		lblStatus = "requesting purchase...";
       		redraw = true;
       		if (OuyaSDK.requestPurchase != undefined) {
-      		    OuyaSDK.requestPurchase(onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+      		    OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
       		}
       	} else if (focus == btnGetReceipts) {
       		lblStatus = "requesting receipts...";
