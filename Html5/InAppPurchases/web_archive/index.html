@@ -120,19 +120,25 @@
 
       var focus = btnGetProducts;
 
+      var lblStatus = "page loaded";
+
       var redraw = true;
 
       function showScene() {
 
 		  if (!redraw) {
 		  	return;
+		  } else {
+		  	redraw = false;
 		  }
 
-		  redraw = false;
+		  context.clearRect(0, 0, 1920, 1080);
 
 		  context.font="20px Georgia";
 		  context.fillStyle = 'white';
 		  context.fillText("Hello from HTML5",100,100);
+
+		  context.fillText("Status: "+lblStatus, 300, 100);
 
 		  context.fillText("Gamer Username: "+gamerUsername,150,120);
 		  context.fillText("Gamer UUID: "+gamerUuid,150,140);
@@ -156,10 +162,18 @@
       }
 
       function clickButton() {
-      	if (btnFocus == btnGetProducts) {
-      	} else if (btnRequestPurchase == btnGetProducts) {
-      	} else if (btnGetReceipts == btnGetProducts) {
-      	} else if (btnRequestGamerInfo == btnGetProducts) {
+      	if (focus == btnGetProducts) {
+      		lblStatus = "requesting products...";
+      		redraw = true;
+      	} else if (focus == btnRequestPurchase) {
+      		lblStatus = "requesting purchase...";
+      		redraw = true;
+      	} else if (focus == btnGetReceipts) {
+      		lblStatus = "requesting receipts...";
+      		redraw = true;
+      	} else if (focus == btnRequestGamerInfo) {
+      		lblStatus = "requesting gamer info...";
+      		redraw = true;
       	}
       }
 
@@ -200,6 +214,7 @@
       		break;
 		case OuyaController.BUTTON_MENU:
       		focus = btnPause;
+      		lblStatus = "pause detected...";
       		redraw = true;
       		break;
       	}
