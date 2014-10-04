@@ -73,13 +73,54 @@
 		  return image;
       }
 
-      var OuyaSDK;
+      var OuyaSDK = new Object();
+      OuyaSDK.method = "";
+      OuyaSDK.setDeveloperId = function(developerId, onSuccess, onFailure)
+      {
+        OuyaSDK.developerId = developerId;
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.method = "setDeveloperId";
+      };
+      OuyaSDK.initOuyaPlugin = function(onSuccess, onFailure) {
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.invokeInitOuyaPlugin = true;
+      };
+      OuyaSDK.requestGamerInfo = function(onSuccess, onFailure, onCancel) {
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.onCancel = onCancel;
+        OuyaSDK.method = "requestGamerInfo";
+      };
+      OuyaSDK.requestProducts = function(products, onSuccess, onFailure, onCancel) {
+        OuyaSDK.products = products;
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.onCancel = onCancel;
+        OuyaSDK.method = "requestProducts";
+      };
+      OuyaSDK.requestPurchase = function(purchasable, onSuccess, onFailure, onCancel) {
+        OuyaSDK.purchasable = purchasable;
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.onCancel = onCancel;
+        OuyaSDK.method = "requestPurchase";
+      };
+      OuyaSDK.requestReceipts = function(onSuccess, onFailure, onCancel) {
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.onCancel = onCancel;
+        OuyaSDK.method = "requestReceipts";
+      };
 
       var canvas = document.getElementById('htmlCanvas');
       var context = canvas.getContext('2d');
 
       var developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
-      var initPlugin = false;
+
+      var products = Object();
+      var purchasable = Object();
 
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
@@ -168,14 +209,26 @@
       	if (focus == btnGetProducts) {
       		lblStatus = "requesting products...";
       		redraw = true;
+      		if (OuyaSDK.requestProducts != undefined) {
+      		    OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+      		}
       	} else if (focus == btnRequestPurchase) {
       		lblStatus = "requesting purchase...";
       		redraw = true;
+      		if (OuyaSDK.requestPurchase != undefined) {
+      		    OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+      		}
       	} else if (focus == btnGetReceipts) {
       		lblStatus = "requesting receipts...";
       		redraw = true;
+      		if (OuyaSDK.requestReceipts != undefined) {
+      		    OuyaSDK.requestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);
+      		}
       	} else if (focus == btnRequestGamerInfo) {
       		lblStatus = "requesting gamer info...";
+      		if (OuyaSDK.requestGamerInfo != undefined) {
+      		    OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
+      		}
       		redraw = true;
       	}
       }
@@ -223,37 +276,112 @@
       	}
       }
 
+      function onSuccessRequestGamerInfo(gamerInfo) {
+      	lblStatus = "received gamer info.";
+      	redraw = true;
+      }
+
+      function onFailureRequestGamerInfo(errorCode, errorMessage) {
+      	lblStatus = "RequestGamerInfo failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestGamerInfo() {
+        lblStatus = "RequestGamerInfo cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessRequestProducts(products) {
+      	lblStatus = "received products.";
+      	redraw = true;
+      }
+
+      function onFailureRequestProducts(errorCode, errorMessage) {
+      	lblStatus = "RequestProducts failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestProducts() {
+        lblStatus = "RequestProducts cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessRequestPurchase(product) {
+      	lblStatus = "purchase was successful.";
+      	redraw = true;
+      }
+
+      function onFailureRequestPurchase(errorCode, errorMessage) {
+      	lblStatus = "RequestPurchase failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestPurchase() {
+        lblStatus = "RequestPurchase cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessRequestReceipts(receipts) {
+      	lblStatus = "received receipts.";
+      	redraw = true;
+      }
+
+      function onFailureRequestReceipts(errorCode, errorMessage) {
+      	lblStatus = "RequestReceipts failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestReceipts() {
+        lblStatus = "RequestReceipts cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessInitOuyaPlugin() {
+      	lblStatus = "ouya plugin has initialized.";
+      	redraw = true;
+      }
+
+      function onFailureInitOuyaPlugin(errorCode, errorMessage) {
+	      lblStatus = "failed to initialize plugin. " + errorMessage;
+	      redraw = true;
+	      setTimeout(function(){ initOuyaPlugin() }, 1000);
+      }
+
+      function initOuyaPlugin() {
+        if (OuyaSDK.initOuyaPlugin == undefined) {
+            lblStatus = "waiting for OuyaSDK.initOuyaPlugin...";
+            setTimeout(function(){ initOuyaPlugin() }, 1000);
+            return;
+        } else {
+            lblStatus = "initializing plugin...";
+            OuyaSDK.initOuyaPlugin(onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
+        }
+      }
+
       function onSuccessSetDeveloperId() {
       	lblStatus = "developer id is set.";
       	redraw = true;
+      	setTimeout(function(){ initOuyaPlugin() }, 1000);
       }
 
       function onFailureSetDeveloperId() {
 	      lblStatus = "failed to set developer id.";
 	      redraw = true;
-	      setTimeout(function(){ initialize() }, 1000);
+	      setTimeout(function(){ initSetDeveloperId() }, 1000);
       }
 
-      function initialize() {
-      	if (OuyaSDK == undefined) {
-      		lblStatus = "waiting for OuyaSDK...";
-      		redraw = true;
-      		setTimeout(function(){ initialize() }, 1000);
-      		return;
-      	}
-      	if (!initPlugin) {
-      		if (OuyaSDK.setDeveloperId == undefined) {
-      			lblStatus = "waiting for OuyaSDK.setDeveloperId...";
-      			setTimeout(function(){ initialize() }, 1000);
-      			return;
-      		} else {
-      			lblStatus = "setting developerId...";
-      			OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
-      		}
-      	}
+      function initSetDeveloperId() {
+        if (OuyaSDK.setDeveloperId == undefined) {
+            lblStatus = "waiting for OuyaSDK.setDeveloperId...";
+            setTimeout(function(){ initSetDeveloperId() }, 1000);
+            return;
+        } else {
+            lblStatus = "setting developerId...";
+            OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
+        }
       }
 
-      initialize();
+      initSetDeveloperId();
 
 	  setTimeout(function(){ setInterval(function(){ showScene()}, 1) }, 100);
 
