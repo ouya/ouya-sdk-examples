@@ -85,7 +85,7 @@
       OuyaSDK.initOuyaPlugin = function(onSuccess, onFailure) {
         OuyaSDK.onSuccess = onSuccess;
         OuyaSDK.onFailure = onFailure;
-        OuyaSDK.invokeInitOuyaPlugin = true;
+        OuyaSDK.method = "initOuyaPlugin";
       };
       OuyaSDK.requestGamerInfo = function(onSuccess, onFailure, onCancel) {
         OuyaSDK.onSuccess = onSuccess;
@@ -226,10 +226,10 @@
       		}
       	} else if (focus == btnRequestGamerInfo) {
       		lblStatus = "requesting gamer info...";
+      		redraw = true;
       		if (OuyaSDK.requestGamerInfo != undefined) {
       		    OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
       		}
-      		redraw = true;
       	}
       }
 
@@ -350,10 +350,12 @@
       function initOuyaPlugin() {
         if (OuyaSDK.initOuyaPlugin == undefined) {
             lblStatus = "waiting for OuyaSDK.initOuyaPlugin...";
+            redraw = true;
             setTimeout(function(){ initOuyaPlugin() }, 1000);
             return;
         } else {
             lblStatus = "initializing plugin...";
+            redraw = true;
             OuyaSDK.initOuyaPlugin(onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
         }
       }
@@ -373,10 +375,12 @@
       function initSetDeveloperId() {
         if (OuyaSDK.setDeveloperId == undefined) {
             lblStatus = "waiting for OuyaSDK.setDeveloperId...";
+            redraw = true;
             setTimeout(function(){ initSetDeveloperId() }, 1000);
             return;
         } else {
             lblStatus = "setting developerId...";
+            redraw = true;
             OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
         }
       }
