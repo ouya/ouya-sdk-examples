@@ -117,10 +117,9 @@
       var canvas = document.getElementById('htmlCanvas');
       var context = canvas.getContext('2d');
 
-      var developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+      var pluginReady = false;
 
-      var products = Object();
-      var purchasable = Object();
+      var developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
@@ -142,7 +141,8 @@
       	createButton("Request Purchase", 200),
       	createButton("Get Receipts", 150),
       	createButton("Request Gamer Info", 225),
-      	createButton("Pause", 100)
+      	createButton("Pause", 100),
+      	createButton("Exit", 100)
       );
 
       function setupFocus(button, left, right) {
@@ -155,18 +155,25 @@
       var btnGetReceipts = buttons[2];
       var btnRequestGamerInfo = buttons[3];
       var btnPause = buttons[4];
+      var btnExit = buttons[5];
 
       setupFocus(btnGetProducts, undefined, btnRequestPurchase);
       setupFocus(btnRequestPurchase, btnGetProducts, btnGetReceipts);
       setupFocus(btnGetReceipts, btnRequestPurchase, btnRequestGamerInfo);
       setupFocus(btnRequestGamerInfo, btnGetReceipts, undefined);
-      setupFocus(btnPause, btnRequestGamerInfo, undefined);
+      setupFocus(btnPause, btnRequestGamerInfo, btnExit);
+      setupFocus(btnExit, btnPause, undefined);
 
       var focus = btnGetProducts;
 
       var lblStatus = "page loaded";
 
       var redraw = true;
+
+      var jsonProducts = "";
+      var jsonReceipts = "";
+
+      var lblProductIndex = 0;
 
       function showScene() {
 
@@ -203,20 +210,86 @@
 		  	context.fillText(button.label,x,y);
 		  	x += button.width + padding;
 		  }
+
+          if (focus == btnGetProducts ||
+              focus == btnRequestPurchase) {
+              if (jsonProducts != "") {
+                  var jsonObject = JSON.parse(jsonProducts);
+
+                  x = 200;
+                  y = 300;
+                  context.fillText("Products: "+jsonObject.length,x,y);
+                  y += 40;
+
+                  for (var i = 0; i < jsonObject.length; ++i) {
+                    var product = jsonObject[i];
+                    if (product != undefined) {
+                        var name = "";
+                        if (product.name != undefined &&
+                            product.name != null) {
+                            name = product.name;
+                        }
+                        var description = "";
+                        if (product.description != undefined &&
+                            product.description != null) {
+                            description = product.description;
+                        }
+                        var localPrice = "";
+                        if (product.localPrice != undefined &&
+                            product.localPrice != null) {
+                            localPrice = product.localPrice;
+                        }
+                        if (lblProductIndex == i) {
+                            context.fillStyle = 'white';
+                            context.fillText("name="+name+" description="+description+" localPrice="+localPrice,x,y+=20);
+                        } else {
+                            context.fillStyle = 'black';
+                            context.fillText("name="+name+" description="+description+" localPrice="+localPrice,x,y+=20);
+                        }
+                    }
+                  }
+              }
+          }
       }
 
       function clickButton() {
+
+        if (!pluginReady) {
+            lblStatus = "wait for plugin to init...";
+      		redraw = true;
+      		return;
+        }
+
       	if (focus == btnGetProducts) {
+      	    jsonProducts = "";
+      	    lblProductIndex = 0;
       		lblStatus = "requesting products...";
       		redraw = true;
       		if (OuyaSDK.requestProducts != undefined) {
+      		    var products = Array("long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE");
       		    OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
       		}
       	} else if (focus == btnRequestPurchase) {
       		lblStatus = "requesting purchase...";
       		redraw = true;
       		if (OuyaSDK.requestPurchase != undefined) {
-      		    OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+      		    if (jsonProducts != "") {
+                   var jsonObject = JSON.parse(jsonProducts);
+                   if (lblProductIndex >= 0 &&
+                       lblProductIndex < jsonObject.length) {
+                       var product = jsonObject[lblProductIndex];
+                       if (null != product &&
+                           product.name != undefined &&
+                           null != product.identifier) {
+                           var purchasable = product.identifier;
+      		               OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+      		               return;
+                       }
+                   }
+                }
+
+                lblStatus = "select a product first...";
+      		    redraw = true;
       		}
       	} else if (focus == btnGetReceipts) {
       		lblStatus = "requesting receipts...";
@@ -249,12 +322,28 @@
       			focus = focus.up;
       			redraw = true;
       		}
+            if (focus == btnGetProducts ||
+                focus == btnRequestPurchase) {
+                if (jsonProducts != "") {
+                   var jsonObject = JSON.parse(jsonProducts);
+                   lblProductIndex = Math.max(0, Math.min(jsonObject.length-1, lblProductIndex-1));
+                   redraw = true;
+                }
+            }
       		break;
 		case OuyaController.BUTTON_DPAD_DOWN:
       		if (focus.down != undefined) {
       			focus = focus.down;
       			redraw = true;
       		}
+            if (focus == btnGetProducts ||
+                focus == btnRequestPurchase) {
+                if (jsonProducts != "") {
+                   var jsonObject = JSON.parse(jsonProducts);
+                   lblProductIndex = Math.max(0, Math.min(jsonObject.length-1, lblProductIndex+1));
+                   redraw = true;
+                }
+            }
       		break;
 		case OuyaController.BUTTON_DPAD_RIGHT:
       		if (focus.right != undefined) {
@@ -276,8 +365,11 @@
       	}
       }
 
-      function onSuccessRequestGamerInfo(gamerInfo) {
-      	lblStatus = "received gamer info.";
+      function onSuccessRequestGamerInfo(jsonData) {
+      	lblStatus = "received gamer info="+jsonData;
+      	var gamerInfo = JSON.parse(jsonData);
+      	gamerUsername = gamerInfo.username;
+      	gamerUuid = gamerInfo.uuid;
       	redraw = true;
       }
 
@@ -291,8 +383,9 @@
         redraw = true;
       }
 
-      function onSuccessRequestProducts(products) {
-      	lblStatus = "received products.";
+      function onSuccessRequestProducts(jsonData) {
+        jsonProducts = jsonData;
+      	lblStatus = "received products="+jsonData;
       	redraw = true;
       }
 
@@ -306,8 +399,8 @@
         redraw = true;
       }
 
-      function onSuccessRequestPurchase(product) {
-      	lblStatus = "purchase was successful.";
+      function onSuccessRequestPurchase(jsonData) {
+      	lblStatus = "purchase was successful="+jsonData;
       	redraw = true;
       }
 
@@ -321,8 +414,8 @@
         redraw = true;
       }
 
-      function onSuccessRequestReceipts(receipts) {
-      	lblStatus = "received receipts.";
+      function onSuccessRequestReceipts(jsonData) {
+      	lblStatus = "received receipts="+jsonData;
       	redraw = true;
       }
 
@@ -337,6 +430,7 @@
       }
 
       function onSuccessInitOuyaPlugin() {
+      	pluginReady = true;
       	lblStatus = "ouya plugin has initialized.";
       	redraw = true;
       }
