@@ -113,6 +113,11 @@
         OuyaSDK.onCancel = onCancel;
         OuyaSDK.method = "requestReceipts";
       };
+      OuyaSDK.shutdown = function(onSuccess, onFailure) {
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.method = "shutdown";
+      }
 
       var canvas = document.getElementById('htmlCanvas');
       var context = canvas.getContext('2d');
@@ -337,6 +342,12 @@
       		if (OuyaSDK.requestGamerInfo != undefined) {
       		    OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
       		}
+      	} else if (focus == btnExit) {
+      		lblStatus = "quiting application...";
+      		redraw = true;
+      		if (OuyaSDK.shutdown != undefined) {
+      		    OuyaSDK.shutdown(onSuccessShutdown, onFailureShutdown);
+      		}
       	}
       }
 
@@ -512,6 +523,16 @@
             redraw = true;
             OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
         }
+      }
+
+      function onSuccessShutdown() {
+      	lblStatus = "shutdown success.";
+      	redraw = true;
+      }
+
+      function onFailureShutdown(errorCode, errorMessage) {
+      	lblStatus = "Shutdown failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
       }
 
       initSetDeveloperId();
