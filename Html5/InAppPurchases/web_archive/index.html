@@ -250,6 +250,40 @@
                   }
               }
           }
+
+          if (focus == btnGetReceipts) {
+              if (jsonReceipts != "") {
+                  var jsonObject = JSON.parse(jsonReceipts);
+
+                  x = 200;
+                  y = 300;
+                  context.fillText("Receipts: "+jsonObject.length,x,y);
+                  y += 40;
+
+                  for (var i = 0; i < jsonObject.length; ++i) {
+                    var receipt = jsonObject[i];
+                    if (receipt != undefined) {
+                        var identifier = "";
+                        if (receipt.identifier != undefined &&
+                            receipt.identifier != null) {
+                            identifier = receipt.identifier;
+                        }
+                        var generatedDate = "";
+                        if (receipt.generatedDate != undefined &&
+                            receipt.generatedDate != null) {
+                            generatedDate = receipt.generatedDate;
+                        }
+                        var localPrice = "";
+                        if (receipt.localPrice != undefined &&
+                            receipt.localPrice != null) {
+                            localPrice = receipt.localPrice;
+                        }
+                        context.fillStyle = 'white';
+                        context.fillText("identifier="+identifier+" generatedDate="+generatedDate+" localPrice="+localPrice,x,y+=20);
+                    }
+                  }
+              }
+          }
       }
 
       function clickButton() {
@@ -415,6 +449,7 @@
       }
 
       function onSuccessRequestReceipts(jsonData) {
+      	jsonReceipts = jsonData;
       	lblStatus = "received receipts="+jsonData;
       	redraw = true;
       }
