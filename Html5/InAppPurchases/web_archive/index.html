@@ -150,13 +150,13 @@
       }
 
       var buttons = Array(
-      	createButton("Get Products", 150),
-      	createButton("Request Purchase", 200),
-      	createButton("Get Receipts", 150),
-      	createButton("Request Gamer Info", 225),
-      	createButton("Adjust Safe Area", 225),
-      	createButton("Pause", 100),
-      	createButton("Exit", 100)
+      	createButton("Get Products", 145),
+      	createButton("Request Purchase", 190),
+      	createButton("Get Receipts", 145),
+      	createButton("Request Gamer Info", 210),
+      	createButton("Adjust Safe Area", 175),
+      	createButton("Pause", 85),
+      	createButton("Exit", 70)
       );
 
       function setupFocus(button, left, right) {
@@ -397,7 +397,7 @@
               safeAreaAmount = Math.max(0.0, Math.min(1.0, safeAreaAmount+0.1));
               if (oldAmount != safeAreaAmount) {
                 redraw = true;
-                OuyaSDK.setSafeArea(safeAreaAmount);
+                OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
               }
             }
       		break;
@@ -419,7 +419,7 @@
               safeAreaAmount = Math.max(0.0, Math.min(1.0, safeAreaAmount-0.1));
               if (oldAmount != safeAreaAmount) {
                 redraw = true;
-                OuyaSDK.setSafeArea(safeAreaAmount);
+                OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
               }
             }
       		break;
