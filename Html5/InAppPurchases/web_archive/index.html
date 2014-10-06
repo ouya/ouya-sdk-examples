@@ -113,6 +113,12 @@
         OuyaSDK.onCancel = onCancel;
         OuyaSDK.method = "requestReceipts";
       };
+      OuyaSDK.setSafeArea = function(amount, onSuccess, onFailure) {
+        OuyaSDK.safeAreaAmount = amount;
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.method = "setSafeArea";
+      }
       OuyaSDK.shutdown = function(onSuccess, onFailure) {
         OuyaSDK.onSuccess = onSuccess;
         OuyaSDK.onFailure = onFailure;
@@ -128,6 +134,8 @@
 
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
+
+      var safeAreaAmount = 1.0;
 
       var images = {
         button_active: loadImage('button_active.png'),
@@ -146,6 +154,7 @@
       	createButton("Request Purchase", 200),
       	createButton("Get Receipts", 150),
       	createButton("Request Gamer Info", 225),
+      	createButton("Adjust Safe Area", 225),
       	createButton("Pause", 100),
       	createButton("Exit", 100)
       );
@@ -159,14 +168,16 @@
       var btnRequestPurchase = buttons[1];
       var btnGetReceipts = buttons[2];
       var btnRequestGamerInfo = buttons[3];
-      var btnPause = buttons[4];
-      var btnExit = buttons[5];
+      var btnSetSafeArea = buttons[4];
+      var btnPause = buttons[5];
+      var btnExit = buttons[6];
 
       setupFocus(btnGetProducts, undefined, btnRequestPurchase);
       setupFocus(btnRequestPurchase, btnGetProducts, btnGetReceipts);
       setupFocus(btnGetReceipts, btnRequestPurchase, btnRequestGamerInfo);
-      setupFocus(btnRequestGamerInfo, btnGetReceipts, undefined);
-      setupFocus(btnPause, btnRequestGamerInfo, btnExit);
+      setupFocus(btnRequestGamerInfo, btnGetReceipts, btnSetSafeArea);
+      setupFocus(btnSetSafeArea, btnRequestGamerInfo, undefined);
+      setupFocus(btnPause, btnSetSafeArea, btnExit);
       setupFocus(btnExit, btnPause, undefined);
 
       var focus = btnGetProducts;
@@ -215,6 +226,12 @@
 		  	context.fillText(button.label,x,y);
 		  	x += button.width + padding;
 		  }
+
+          if (focus == btnSetSafeArea) {
+              x = 200;
+              y = 300;
+              context.fillText("Use UP and DOWN on the DPAD to adjust the safe area: "+safeAreaAmount, x, y);
+          }
 
           if (focus == btnGetProducts ||
               focus == btnRequestPurchase) {
@@ -375,6 +392,14 @@
                    redraw = true;
                 }
             }
+            if (focus == btnSetSafeArea) {
+              var oldAmount = safeAreaAmount;
+              safeAreaAmount = Math.max(0.0, Math.min(1.0, safeAreaAmount+0.1));
+              if (oldAmount != safeAreaAmount) {
+                redraw = true;
+                OuyaSDK.setSafeArea(safeAreaAmount);
+              }
+            }
       		break;
 		case OuyaController.BUTTON_DPAD_DOWN:
       		if (focus.down != undefined) {
@@ -388,6 +413,14 @@
                    lblProductIndex = Math.max(0, Math.min(jsonObject.length-1, lblProductIndex+1));
                    redraw = true;
                 }
+            }
+            if (focus == btnSetSafeArea) {
+              var oldAmount = safeAreaAmount;
+              safeAreaAmount = Math.max(0.0, Math.min(1.0, safeAreaAmount-0.1));
+              if (oldAmount != safeAreaAmount) {
+                redraw = true;
+                OuyaSDK.setSafeArea(safeAreaAmount);
+              }
             }
       		break;
 		case OuyaController.BUTTON_DPAD_RIGHT:
@@ -523,6 +556,16 @@
             redraw = true;
             OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
         }
+      }
+
+      function onSuccessSetSafeArea() {
+      	lblStatus = "Safe area adjusted.";
+      	redraw = true;
+      }
+
+      function onFailureSafeArea(errorCode, errorMessage) {
+      	lblStatus = "SetSafeArea failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
       }
 
       function onSuccessShutdown() {
