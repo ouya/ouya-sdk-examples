@@ -22,8 +22,10 @@
 
 #include "ODK.h"
 
+#include "Application.h"
 
-const char* g_version = "Mamalade Version: 007";
+
+const char* g_version = "Mamalade Version: 008";
 
 //the controller instances
 VirtualControllerSprite m_controllers[OuyaController_MAX_CONTROLLERS];
@@ -158,7 +160,7 @@ int main()
 		return 0;
 	}
 
-	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+	Application::Init();
 
 	IwGxInit();
 	IwGxSetColClear(0, 0, 0xff, 0xff);
