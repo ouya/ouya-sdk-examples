@@ -18,18 +18,23 @@ files
 {
 	Application.h
 	Application.cpp
-	ApplicationCallbacksFetchGamerUUID.h
-	ApplicationCallbacksFetchGamerUUID.cpp
+	ApplicationCallbacksInitOuyaPlugin.h
+	ApplicationCallbacksInitOuyaPlugin.cpp
+	ApplicationCallbacksRequestGamerInfo.h
+	ApplicationCallbacksRequestGamerInfo.cpp
 	ApplicationCallbacksRequestProducts.h
 	ApplicationCallbacksRequestProducts.cpp
 	ApplicationCallbacksRequestPurchase.h
 	ApplicationCallbacksRequestPurchase.cpp
 	ApplicationCallbacksRequestReceipts.h
 	ApplicationCallbacksRequestReceipts.cpp
-	ApplicationProduct.h
-	ApplicationProduct.cpp
-	ApplicationReceipt.h
-	ApplicationReceipt.cpp
+	ApplicationCallbacksSetDeveloperId.h
+	ApplicationCallbacksSetDeveloperId.cpp
+	..\MarmaladeODK\source\android\ExtensionGamerInfo.cpp
+	..\MarmaladeODK\source\android\ExtensionProduct.cpp
+	..\MarmaladeODK\source\android\ExtensionReceipt.cpp
+	..\MarmaladeODK\source\android\JSONArray.cpp
+	..\MarmaladeODK\source\android\JSONObject.cpp
 	Main.cpp
 	TextButton.h
 	TextButton.cpp
@@ -58,6 +63,5 @@ deployments
     # default version
     name=MarmaladeIAP
     caption="Marmalade IAP"    
-    android-external-jars='lib/android/gson-2.2.2.jar'
     android-pkgname=tv.ouya.sdk.marmalade.inapppurchases
 }

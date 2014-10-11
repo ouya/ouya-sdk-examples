@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 
 import android.app.Activity;
 import android.os.Bundle;
 import com.ideaworks3d.marmalade.LoaderActivity;
 
-public class IOuyaActivity
+public class IMarmaladeOuyaActivity
 {
 	// save reference to the activity
 	protected static LoaderActivity m_activity = null;
@@ -67,6 +67,14 @@ public class IOuyaActivity
 		m_marmaladeOuyaPlugin = marmaladeOuyaPlugin;
 	}
 
+	private static String m_developerId = "";
+	public static String GetDeveloperId() {
+		return m_developerId;
+	}
+	public static void SetDeveloperId(String developerId) {
+		m_developerId = developerId;
+	}
+
 	/*
 	* The application key. This is used to decrypt encrypted receipt responses. This should be replaced with the
 	* application key obtained from the OUYA developers website.
@@ -81,14 +89,24 @@ public class IOuyaActivity
 		m_applicationKey = applicationKey;
 	}
 
-	protected static CallbacksFetchGamerUUID m_callbacksFetchGamerUUID = null;
-	public static CallbacksFetchGamerUUID GetCallbacksFetchGamerUUID()
+	protected static CallbacksInitOuyaPlugin m_callbacksInitOuyaPlugin = null;
+	public static CallbacksInitOuyaPlugin GetCallbacksInitOuyaPlugin()
 	{
-		return m_callbacksFetchGamerUUID;
+		return m_callbacksInitOuyaPlugin;
 	}
-	public static void SetCallbacksFetchGamerUUID(CallbacksFetchGamerUUID callbacksFetchGamerUUID)
+	public static void SetCallbacksInitOuyaPlugin(CallbacksInitOuyaPlugin callback)
 	{
-		m_callbacksFetchGamerUUID = callbacksFetchGamerUUID;
+		m_callbacksInitOuyaPlugin = callback;
+	}
+
+	protected static CallbacksRequestGamerInfo m_callbacksRequestGamerInfo = null;
+	public static CallbacksRequestGamerInfo GetCallbacksRequestGamerInfo()
+	{
+		return m_callbacksRequestGamerInfo;
+	}
+	public static void SetCallbacksRequestGamerInfo(CallbacksRequestGamerInfo callback)
+	{
+		m_callbacksRequestGamerInfo = callback;
 	}
 
 	protected static CallbacksRequestProducts m_callbacksRequestProducts = null;
@@ -96,9 +114,9 @@ public class IOuyaActivity
 	{
 		return m_callbacksRequestProducts;
 	}
-	public static void SetCallbacksRequestProducts(CallbacksRequestProducts callbacksRequestProducts)
+	public static void SetCallbacksRequestProducts(CallbacksRequestProducts callback)
 	{
-		m_callbacksRequestProducts = callbacksRequestProducts;
+		m_callbacksRequestProducts = callback;
 	}
 
 	protected static CallbacksRequestPurchase m_callbacksRequestPurchase = null;
@@ -106,9 +124,9 @@ public class IOuyaActivity
 	{
 		return m_callbacksRequestPurchase;
 	}
-	public static void SetCallbacksRequestPurchase(CallbacksRequestPurchase callbacksRequestPurchase)
+	public static void SetCallbacksRequestPurchase(CallbacksRequestPurchase callback)
 	{
-		m_callbacksRequestPurchase = callbacksRequestPurchase;
+		m_callbacksRequestPurchase = callback;
 	}
 
 	protected static CallbacksRequestReceipts m_callbacksRequestReceipts = null;
@@ -116,8 +134,18 @@ public class IOuyaActivity
 	{
 		return m_callbacksRequestReceipts;
 	}
-	public static void SetCallbacksRequestReceipts(CallbacksRequestReceipts callbacksRequestReceipts)
+	public static void SetCallbacksRequestReceipts(CallbacksRequestReceipts callback)
 	{
-		m_callbacksRequestReceipts = callbacksRequestReceipts;
+		m_callbacksRequestReceipts = callback;
+	}
+
+	protected static CallbacksSetDeveloperId m_callbacksSetDeveloperId = null;
+	public static CallbacksSetDeveloperId GetCallbacksSetDeveloperId()
+	{
+		return m_callbacksSetDeveloperId;
+	}
+	public static void SetCallbacksSetDeveloperId(CallbacksSetDeveloperId callback)
+	{
+		m_callbacksSetDeveloperId = callback;
 	}
 }

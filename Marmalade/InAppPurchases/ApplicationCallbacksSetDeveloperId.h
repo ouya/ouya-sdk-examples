@@ -14,41 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef __PRODUCT_H__
-#define __PRODUCT_H__
+#ifndef __APPLICATTON_CALLBACKS_SET_DEVELOPER_ID_H__
+#define __APPLICATTON_CALLBACKS_SET_DEVELOPER_ID_H__
 
-#include "JSON.h"
+#include <string>
 
-namespace OuyaSDK
+class ApplicationCallbacksSetDeveloperId
 {
-	class Product
-	{
-	public:
-		std::string CurrencyCode;
-		std::string Identifier;
-		std::string Name;
-		int ProductVersionToBundle;
-		float LocalPrice;
-		int PriceInCents;
+public:
 
-		void Init();
+	s3eCallback GetSuccessEvent();
 
-		void ParseJSON(JSONValue* json);
-	};
+	s3eCallback GetFailureEvent();
 
-	// for passing object from extension to application
-	class ExtensionProduct
-	{
-	public:
-		char* CurrencyCode;
-		char* Identifier;
-		char* Name;
-		int ProductVersionToBundle;
-		float LocalPrice;
-		int PriceInCents;
+	void OnSuccess();
 
-		void Init();
-	};
-}
+	void OnFailure(int errorCode, const std::string& errorMessage);
+};
 
 #endif

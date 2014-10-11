@@ -20,16 +20,19 @@ platform JAVA
 files
 {
     (source/android)
-    AsyncCppOuyaFetchGamerUUID.java
+    AsyncCppInitOuyaPlugin.java
+	AsyncCppOuyaRequestGamerInfo.java
     AsyncCppOuyaRequestProducts.java
     AsyncCppOuyaRequestPurchase.java
     AsyncCppOuyaRequestReceipts.java
     AsyncCppOuyaSetDeveloperId.java
-    CallbacksFetchGamerUUID.java
+    CallbacksInitOuyaPlugin.java
+    CallbacksRequestGamerInfo.java
     CallbacksRequestProducts.java
     CallbacksRequestPurchase.java
     CallbacksRequestReceipts.java
-    IOuyaActivity.java
+	CallbacksSetDeveloperId.java
+    IMarmaladeOuyaActivity.java
     MarmaladeOuyaFacade.java
     MarmaladeOuyaPlugin.java
     ODK.java
@@ -38,7 +41,6 @@ files
 librarypath "$MARMALADE_ROOT/s3e/deploy/plugins/android/android.jar"
 librarypath "$MARMALADE_ROOT/s3e/loader/android/s3e_release.jar"
 
-librarypath "libs/gson-2.2.2.jar"
 librarypath "libs/ouya-sdk.jar"
 
 

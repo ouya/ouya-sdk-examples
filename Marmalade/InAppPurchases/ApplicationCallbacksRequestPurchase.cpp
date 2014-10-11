@@ -28,7 +28,7 @@ void RequestPurchaseOnSuccess(s3eRequestPurchaseSuccessEvent* event)
 	if (event)
 	{
 		OuyaSDK::ExtensionProduct eProduct = event->m_product;
-		ApplicationProduct product;
+		OuyaSDK::Product product;
 		product.Init();
 		product.Copy(eProduct);
 
@@ -81,7 +81,7 @@ s3eCallback ApplicationCallbacksRequestPurchase::GetCancelEvent()
 	return (s3eCallback)RequestPurchaseOnCancel;
 }
 
-void ApplicationCallbacksRequestPurchase::OnSuccess(const ApplicationProduct& product)
+void ApplicationCallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
 {
 	IwTrace(DEFAULT, ("OnSuccess"));
 

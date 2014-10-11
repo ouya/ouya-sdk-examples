@@ -24,70 +24,52 @@ extern void ODKTerminate();
 // code is oftern build standalone, outside the main loader build.
 #if defined I3D_OS_IPHONE || defined I3D_OS_OSX || defined I3D_OS_LINUX || defined I3D_OS_WINDOWS
 
-static void OuyaController_startOfFrame_wrap()
+static int OuyaPlugin_getAxis_wrap(int deviceId, int axis)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_startOfFrame"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_startOfFrame, 0);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_getAxis"));
+    return (int)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_getAxis, 2, deviceId, axis);
 }
 
-static bool OuyaController_selectControllerByPlayer_wrap(int playerNum)
+static bool OuyaPlugin_isPressed_wrap(int deviceId, int keyCode)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_selectControllerByPlayer"));
-    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_selectControllerByPlayer, 1, playerNum);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_isPressed"));
+    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_isPressed, 2, deviceId, keyCode);
 }
 
-static bool OuyaController_selectControllerByDeviceID_wrap(int deviceID)
+static bool OuyaPlugin_isPressedDown_wrap(int deviceId, int keyCode)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_selectControllerByDeviceID"));
-    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_selectControllerByDeviceID, 1, deviceID);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_isPressedDown"));
+    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_isPressedDown, 2, deviceId, keyCode);
 }
 
-static int OuyaController_getAxisValue_wrap(int axis)
+static bool OuyaPlugin_isPressedUp_wrap(int deviceId, int keyCode)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_getAxisValue"));
-    return (int)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_getAxisValue, 1, axis);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_isPressedUp"));
+    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_isPressedUp, 2, deviceId, keyCode);
 }
 
-static bool OuyaController_getButton_wrap(int button)
+static void OuyaPlugin_clearButtonStates_wrap()
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_getButton"));
-    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_getButton, 1, button);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_clearButtonStates"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_clearButtonStates, 0);
 }
 
-static bool OuyaController_buttonPressedThisFrame_wrap(int button)
+static const char* OuyaPlugin_getDeviceName_wrap(int playerNum)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_buttonPressedThisFrame"));
-    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_buttonPressedThisFrame, 1, button);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_getDeviceName"));
+    return (const char*)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_getDeviceName, 1, playerNum);
 }
 
-static bool OuyaController_buttonReleasedThisFrame_wrap(int button)
+static void OuyaPlugin_initOuyaPlugin_wrap(s3eCallback onSuccess, s3eCallback onFailure)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_buttonReleasedThisFrame"));
-    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_buttonReleasedThisFrame, 1, button);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_initOuyaPlugin"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_initOuyaPlugin, 2, onSuccess, onFailure);
 }
 
-static bool OuyaController_buttonChangedThisFrame_wrap(int button)
+static void OuyaPlugin_asyncOuyaRequestGamerInfo_wrap(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_buttonChangedThisFrame"));
-    return (bool)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_buttonChangedThisFrame, 1, button);
-}
-
-static int OuyaController_getPlayerNum_wrap()
-{
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaController_getPlayerNum"));
-    return (int)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaController_getPlayerNum, 0);
-}
-
-static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId)
-{
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncSetDeveloperId"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 1, developerId);
-}
-
-static void OuyaPlugin_asyncOuyaFetchGamerUUID_wrap(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
-{
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaFetchGamerUUID"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaFetchGamerUUID, 3, onSuccess, onFailure, onCancel);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncOuyaRequestGamerInfo"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestGamerInfo, 3, onSuccess, onFailure, onCancel);
 }
 
 static void OuyaPlugin_asyncOuyaRequestProducts_wrap(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
@@ -108,51 +90,53 @@ static void OuyaPlugin_asyncOuyaRequestReceipts_wrap(s3eCallback onSuccess, s3eC
     s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestReceipts, 3, onSuccess, onFailure, onCancel);
 }
 
-#define OuyaController_startOfFrame OuyaController_startOfFrame_wrap
-#define OuyaController_selectControllerByPlayer OuyaController_selectControllerByPlayer_wrap
-#define OuyaController_selectControllerByDeviceID OuyaController_selectControllerByDeviceID_wrap
-#define OuyaController_getAxisValue OuyaController_getAxisValue_wrap
-#define OuyaController_getButton OuyaController_getButton_wrap
-#define OuyaController_buttonPressedThisFrame OuyaController_buttonPressedThisFrame_wrap
-#define OuyaController_buttonReleasedThisFrame OuyaController_buttonReleasedThisFrame_wrap
-#define OuyaController_buttonChangedThisFrame OuyaController_buttonChangedThisFrame_wrap
-#define OuyaController_getPlayerNum OuyaController_getPlayerNum_wrap
-#define OuyaPlugin_asyncSetDeveloperId OuyaPlugin_asyncSetDeveloperId_wrap
-#define OuyaPlugin_asyncOuyaFetchGamerUUID OuyaPlugin_asyncOuyaFetchGamerUUID_wrap
+static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncSetDeveloperId"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 3, developerId, onSuccess, onFailure);
+}
+
+#define OuyaPlugin_getAxis OuyaPlugin_getAxis_wrap
+#define OuyaPlugin_isPressed OuyaPlugin_isPressed_wrap
+#define OuyaPlugin_isPressedDown OuyaPlugin_isPressedDown_wrap
+#define OuyaPlugin_isPressedUp OuyaPlugin_isPressedUp_wrap
+#define OuyaPlugin_clearButtonStates OuyaPlugin_clearButtonStates_wrap
+#define OuyaPlugin_getDeviceName OuyaPlugin_getDeviceName_wrap
+#define OuyaPlugin_initOuyaPlugin OuyaPlugin_initOuyaPlugin_wrap
+#define OuyaPlugin_asyncOuyaRequestGamerInfo OuyaPlugin_asyncOuyaRequestGamerInfo_wrap
 #define OuyaPlugin_asyncOuyaRequestProducts OuyaPlugin_asyncOuyaRequestProducts_wrap
 #define OuyaPlugin_asyncOuyaRequestPurchase OuyaPlugin_asyncOuyaRequestPurchase_wrap
 #define OuyaPlugin_asyncOuyaRequestReceipts OuyaPlugin_asyncOuyaRequestReceipts_wrap
+#define OuyaPlugin_asyncSetDeveloperId OuyaPlugin_asyncSetDeveloperId_wrap
 
 #endif
 
 void ODKRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[14];
-    funcPtrs[0] = (void*)OuyaController_startOfFrame;
-    funcPtrs[1] = (void*)OuyaController_selectControllerByPlayer;
-    funcPtrs[2] = (void*)OuyaController_selectControllerByDeviceID;
-    funcPtrs[3] = (void*)OuyaController_getAxisValue;
-    funcPtrs[4] = (void*)OuyaController_getButton;
-    funcPtrs[5] = (void*)OuyaController_buttonPressedThisFrame;
-    funcPtrs[6] = (void*)OuyaController_buttonReleasedThisFrame;
-    funcPtrs[7] = (void*)OuyaController_buttonChangedThisFrame;
-    funcPtrs[8] = (void*)OuyaController_getPlayerNum;
-    funcPtrs[9] = (void*)OuyaPlugin_asyncSetDeveloperId;
-    funcPtrs[10] = (void*)OuyaPlugin_asyncOuyaFetchGamerUUID;
-    funcPtrs[11] = (void*)OuyaPlugin_asyncOuyaRequestProducts;
-    funcPtrs[12] = (void*)OuyaPlugin_asyncOuyaRequestPurchase;
-    funcPtrs[13] = (void*)OuyaPlugin_asyncOuyaRequestReceipts;
+    void* funcPtrs[12];
+    funcPtrs[0] = (void*)OuyaPlugin_getAxis;
+    funcPtrs[1] = (void*)OuyaPlugin_isPressed;
+    funcPtrs[2] = (void*)OuyaPlugin_isPressedDown;
+    funcPtrs[3] = (void*)OuyaPlugin_isPressedUp;
+    funcPtrs[4] = (void*)OuyaPlugin_clearButtonStates;
+    funcPtrs[5] = (void*)OuyaPlugin_getDeviceName;
+    funcPtrs[6] = (void*)OuyaPlugin_initOuyaPlugin;
+    funcPtrs[7] = (void*)OuyaPlugin_asyncOuyaRequestGamerInfo;
+    funcPtrs[8] = (void*)OuyaPlugin_asyncOuyaRequestProducts;
+    funcPtrs[9] = (void*)OuyaPlugin_asyncOuyaRequestPurchase;
+    funcPtrs[10] = (void*)OuyaPlugin_asyncOuyaRequestReceipts;
+    funcPtrs[11] = (void*)OuyaPlugin_asyncSetDeveloperId;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[14] = { 0 };
+    int flags[12] = { 0 };
 
     /*
      * Register the extension
      */
-    s3eEdkRegister("ODK", funcPtrs, sizeof(funcPtrs), flags, ODKInit, ODKTerminate, 0);
+s3eEdkRegister("ODK", funcPtrs, sizeof(funcPtrs), flags, ODKInit, ODKTerminate, 0);
 }
 
 #if !defined S3E_BUILD_S3ELOADER

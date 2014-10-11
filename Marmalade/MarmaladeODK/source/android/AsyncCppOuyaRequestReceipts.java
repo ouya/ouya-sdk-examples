@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 
 public class AsyncCppOuyaRequestReceipts {
@@ -24,7 +24,7 @@ public class AsyncCppOuyaRequestReceipts {
 		CallbacksRequestReceipts callbacks = new CallbacksRequestReceipts();
 
 		// store for access
-		IOuyaActivity.SetCallbacksRequestReceipts(callbacks);
+		IMarmaladeOuyaActivity.SetCallbacksRequestReceipts(callbacks);
 
 		// invoke service
 		MarmaladeOuyaPlugin.getReceiptsAsync();

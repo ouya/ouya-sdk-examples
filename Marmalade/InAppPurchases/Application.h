@@ -23,6 +23,9 @@ class Application
 {
 public:
 	static UI m_ui;
+	
+	static void Init();
+	static void InitOuyaPlugin();
 };
 
 #endif

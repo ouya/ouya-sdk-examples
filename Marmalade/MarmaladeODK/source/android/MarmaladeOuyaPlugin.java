@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.ODK;
-
+package tv.ouya.sdk.marmalade;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import java.util.ArrayList;
 
 import java.io.File;
 
@@ -29,267 +29,135 @@ import tv.ouya.console.api.*;
 
 public class MarmaladeOuyaPlugin
 {
-	private static final String TAG = "MarmaladeOuyaPlugin";
-
-	// the developer id is sent from marmalade code
-	private static String m_developerId = "";
-
-	// For debugging enable logging for testing
-	private static final Boolean m_enableDebugLogging = false;
+	private static final String TAG = MarmaladeOuyaPlugin.class.getSimpleName();
 
 	public MarmaladeOuyaPlugin() {
 	}
 
 	// most of the java functions that are called, need the ouya facade initialized
-	public static void Initialize()
+	public static void InitializePlugin()
 	{
-		try
+		try		
 		{
-			if (null == IOuyaActivity.GetActivity())
+			if (null == IMarmaladeOuyaActivity.GetActivity())
 			{
-				if (m_enableDebugLogging)
-				{
-					Log.i(TAG, "MarmaladeOuyaPlugin.Initialize: IOuyaActivity.GetActivity() is null");
-				}
+				Log.e(TAG, "InitializePlugin: activity is null");
 				return;
 			}
 
-			if (null == IOuyaActivity.GetMarmaladeOuyaFacade())
+			//wait to read the application key
+			if (null == IMarmaladeOuyaActivity.GetApplicationKey())
 			{
-				//wait to read the application key
-				if (null == IOuyaActivity.GetApplicationKey())
-				{
-				}
-				else
-				{
-					if (m_enableDebugLogging)
-					{
-						Log.i(TAG, "Initialize: constructing MarmaladeOuyaFacade");
-					}
+				Log.e(TAG, "InitializePlugin: application key is null");
+				return;
+			}
+			else
+			{
+				MarmaladeOuyaFacade marmaladeOuyaFacade =
+					new MarmaladeOuyaFacade(IMarmaladeOuyaActivity.GetActivity(), IMarmaladeOuyaActivity.GetSavedInstanceState(), IMarmaladeOuyaActivity.GetDeveloperId(), IMarmaladeOuyaActivity.GetApplicationKey());
+					
+				//make facade accessible by activity
+				IMarmaladeOuyaActivity.SetMarmaladeOuyaFacade(marmaladeOuyaFacade);
 
-					MarmaladeOuyaFacade marmaladeOuyaFacade =
-						new MarmaladeOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-
-					//make facade accessible by activity
-					IOuyaActivity.SetMarmaladeOuyaFacade(marmaladeOuyaFacade);
-
-					Log.i(TAG, "MarmaladeOuyaPlugin.Initialize: Complete");
-				}
+				Log.i(TAG, "InitializePlugin Complete.");
 			}
 		}
-		catch (Exception ex)
+		catch (Exception ex) 
 		{
-			Log.i(TAG, "Initialize: Exception: " + ex.toString());
+			Log.i(TAG, "InitializePlugin: exception: " + ex.toString());
 		}
 	}
-
-	public static String getDeveloperId()
+	
+	public static void setDeveloperId(String developerId)
 	{
-		return m_developerId;
-	}
+		CallbacksSetDeveloperId callbacks = IMarmaladeOuyaActivity.GetCallbacksSetDeveloperId();		
 
-	public static String setDeveloperId(String developerId)
-	{
-		try
-		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "setDeveloperId developerId: " + developerId);
-			}
-			m_developerId = developerId;
-		}
-		catch (Exception ex)
-		{
+		try {
+			IMarmaladeOuyaActivity.SetDeveloperId(developerId);
+			callbacks.onSuccess();
+		} catch (Exception ex) {
 			Log.i(TAG, "setDeveloperId exception: " + ex.toString());
-		}
-		return "";
-	}
-
-	public static void fetchGamerUUID()
-	{
-		try
-		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "MarmaladeOuyaPlugin.fetchGamerUUID");
-			}
-
-			if (null == IOuyaActivity.GetMarmaladeOuyaFacade())
-			{
-				Log.i(TAG, "MarmaladeOuyaPlugin.fetchGamerUUID: MarmaladeOuyaFacade is null");
-			}
-			else
-			{
-				if (m_enableDebugLogging) {
-					Log.i(TAG, "MarmaladeOuyaPlugin.fetchGamerUUID: MarmaladeOuyaFacade is valid");
-				}
-
-				if (m_developerId == "") {
-					Log.i(TAG, "MarmaladeOuyaPlugin.m_developerId is not set");
-				} else {
-					if (m_enableDebugLogging) {
-						Log.i(TAG, "MarmaladeOuyaPlugin.m_developerId valid: " + m_developerId);
-					}
-				}
-
-				IOuyaActivity.GetMarmaladeOuyaFacade().fetchGamerUUID();
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(TAG, "MarmaladeOuyaPlugin: fetchGamerUUID exception: " + ex.toString());
+			callbacks.onFailure(0, "Failed to set developer id.");
 		}
 	}
 
-	public static void getProductsAsync()
+	public static void requestGamerInfo()
 	{
 		try
 		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "MarmaladeOuyaPlugin.getProductsAsync");
+			Log.i(TAG, "requestGamerInfo");
+
+			if (null == IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade())
+			{
+				Log.i(TAG, "requestGamerInfo: MarmaladeOuyaFacade is null");
+				return;
 			}
 
-			if (null == IOuyaActivity.GetMarmaladeOuyaFacade())
-			{
-				Log.i(TAG, "MarmaladeOuyaPlugin.getProductsAsync: MarmaladeOuyaFacade is null");
-			}
-			else
-			{
-				if (m_enableDebugLogging) {
-					Log.i(TAG, "MarmaladeOuyaPlugin.getProductsAsync: MarmaladeOuyaFacade is valid");
-				}
-				IOuyaActivity.GetMarmaladeOuyaFacade().requestProducts();
-			}
+			IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade().requestGamerInfo();
 		}
-		catch (Exception ex)
+		catch (Exception ex) 
 		{
-			Log.i(TAG, "MarmaladeOuyaPlugin: getProductsAsync exception: " + ex.toString());
+			Log.i(TAG, "requestGamerInfo exception: " + ex.toString());
 		}
 	}
 
-	public static void clearGetProductList()
+	public static void requestProductListAsync(ArrayList<Purchasable> products)
 	{
 		try
 		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "clearGetProductList");
+			Log.i(TAG, "MarmaladeOuyaPlugin.getProductsAsync");
+
+			if (null == IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade())
+			{
+				Log.e(TAG, "getProductsAsync: MarmaladeOuyaFacade is null");
+				return;
 			}
 
-			MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST.clear();
+			IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade().requestProducts(products);
 		}
-		catch (Exception ex)
+		catch (Exception ex) 
 		{
-			Log.i(TAG, "clearGetProductList exception: " + ex.toString());
+			Log.i(TAG, "getProductsAsync exception: " + ex.toString());
 		}
 	}
 
-	public static void addGetProduct(String productId)
+	public static void requestPurchaseAsync(Product product)
 	{
 		try
 		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "addGetProduct productId: " + productId);
+			Log.i(TAG, "requestPurchaseAsync identifier: " + product.getIdentifier());
+		
+			if (null == IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade())
+			{
+				Log.e(TAG, "requestPurchaseAsync: MarmaladeOuyaFacade is null");
+				return;
 			}
 
-			boolean found = false;
-			for (Purchasable purchasable : MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				//Log.i(TAG, "addGetProduct " + purchasable.getProductId() + "==" + productId);
-				if (purchasable.getProductId().equals(productId))
-				{
-					//Log.i(TAG, "addGetProduct equals: " + purchasable.getProductId() + "==" + productId + "=" + purchasable.getProductId().equals(productId));
-					found = true;
-					break;
-				}
-			}
-			if (found)
-			{
-				//Log.i(TAG, "addGetProduct found productId: " + productId);
-			}
-			else
-			{
-				//Log.i(TAG, "addGetProduct added productId: " + productId);
-				Purchasable newPurchasable = new Purchasable(new String(productId));
-				MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST.add(newPurchasable);
-			}
+			IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade().requestPurchase(product);
 		}
-		catch (Exception ex)
+		catch (Exception ex) 
 		{
-			Log.i(TAG, "addGetProduct exception: " + ex.toString());
+			Log.i(TAG, "requestPurchaseAsync: exception: " + ex.toString());
 		}
-	}
-
-	public static void debugGetProductList()
-	{
-		try
-		{
-			int count = 0;
-			for (Purchasable purchasable : MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				++count;
-			}
-			Log.i(TAG, "debugProductList MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST has " + count + " elements");
-			for (Purchasable purchasable : MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				Log.i(TAG, "debugProductList MarmaladeOuyaFacade.PRODUCT_IDENTIFIER_LIST has: " + purchasable.getProductId());
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(TAG, "debugProductList exception: " + ex.toString());
-		}
-	}
-
-	public static String requestPurchaseAsync(String identifier)
-	{
-		try
-		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "requestPurchaseAsync identifier: " + identifier);
-			}
-
-			if (null == IOuyaActivity.GetMarmaladeOuyaFacade())
-			{
-				Log.i(TAG, "MarmaladeOuyaPlugin.requestPurchaseAsync: MarmaladeOuyaFacade is null");
-			}
-			else
-			{
-				if (m_enableDebugLogging) {
-					Log.i(TAG, "MarmaladeOuyaPlugin.requestPurchaseAsync: MarmaladeOuyaFacade is valid");
-				}
-				Product product = new Product();
-				product.setIdentifier(identifier);
-				IOuyaActivity.GetMarmaladeOuyaFacade().requestPurchase(product);
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(TAG, "requestPurchaseAsync exception: " + ex.toString());
-		}
-		return "";
 	}
 
 	public static void getReceiptsAsync()
 	{
 		try
 		{
-			if (m_enableDebugLogging) {
-				Log.i(TAG, "MarmaladeOuyaPlugin.getReceiptsAsync");
+			Log.i(TAG, "getReceiptsAsync");
+
+			if (null == IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade())
+			{
+				Log.e(TAG, "getReceiptsAsync: MarmaladeOuyaFacade is null");
+				return;
 			}
 
-			if (null == IOuyaActivity.GetMarmaladeOuyaFacade())
-			{
-				Log.i(TAG, "MarmaladeOuyaPlugin.getReceiptsAsync: MarmaladeOuyaFacade is null");
-			}
-			else
-			{
-				if (m_enableDebugLogging) {
-					Log.i(TAG, "MarmaladeOuyaPlugin.getReceiptsAsync: MarmaladeOuyaFacade is valid");
-				}
-				IOuyaActivity.GetMarmaladeOuyaFacade().requestReceipts();
-			}
+			IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade().requestReceipts();
 		}
-		catch (Exception ex)
+		catch (Exception ex) 
 		{
-			Log.i(TAG, "MarmaladeOuyaPlugin: getProductsAsync exception: " + ex.toString());
+			Log.e(TAG, "getReceiptsAsync: exception: " + ex.toString());
 		}
 	}
 }

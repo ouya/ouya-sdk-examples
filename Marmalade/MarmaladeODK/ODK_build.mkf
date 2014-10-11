@@ -67,23 +67,26 @@ if {{defined S3E_ANDROID}}
 {
     files
     {
-        ["source"]
-        (use_first_found, source/android, source/generic)
-        ODK_platform.cpp
-        #Add any android-specific files here
-        CallbacksFetchGamerUUID.cpp
+		["source"]
+		(use_first_found, source/android, source/generic)
+		ODK_platform.cpp
+		#Add any android-specific files here
 		CallbackSingleton.cpp
+		CallbacksInitOuyaPlugin.cpp
+		CallbacksRequestGamerInfo.cpp
 		CallbacksRequestProducts.cpp
 		CallbacksRequestPurchase.cpp
 		CallbacksRequestReceipts.cpp
-		JSON.cpp
-		JsonUtil.cpp
-		JSONValue.cpp
+		CallbacksSetDeveloperId.cpp
+		ExtensionGamerInfo.cpp
+		ExtensionProduct.cpp
+		ExtensionReceipt.cpp
+		JSONArray.cpp
+		JsonObject.cpp
+		OuyaController.cpp
 		ODK_register.cpp
 		ODK.cpp
 		PluginOuya.cpp
-		Product.cpp
-		Receipt.cpp
     }
 }
 

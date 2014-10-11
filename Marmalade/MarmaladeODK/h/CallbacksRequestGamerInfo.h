@@ -14,35 +14,37 @@
  * limitations under the License.
  */
 
-#ifndef __CALLBACKS_FETCH_GAMER_UUID_H__
-#define __CALLBACKS_FETCH_GAMER_UUID_H__
+#ifndef __CALLBACKS_REQUEST_GAMER_INFO_H__
+#define __CALLBACKS_REQUEST_GAMER_INFO_H__
+
+#include "ExtensionGamerInfo.h"
 
 #include "s3eTypes.h"
 
 #include <string>
 
-typedef struct s3eFetchGamerUuidSuccessEvent
+typedef struct s3eRequestGamerInfoSuccessEvent
 {
-	char m_gamerUUID[256];
-} s3eFetchGamerUuidSuccessEvent;
+	OuyaSDK::ExtensionGamerInfo m_gamerInfo;
+} s3eRequestGamerInfoSuccessEvent;
 
-typedef struct s3eFetchGamerUuidFailureEvent
+typedef struct s3eRequestGamerInfoFailureEvent
 {
 	int m_errorCode;
 	char m_errorMessage[1024];
-} s3eFetchGamerUuidFailureEvent;
+} s3eRequestGamerInfoFailureEvent;
 
-typedef struct s3eFetchGamerUuidCancelEvent
+typedef struct s3eRequestGamerInfoCancelEvent
 {
-} s3eFetchGamerUuidCancelEvent;
+} s3eRequestGamerInfoCancelEvent;
 
-class CallbacksFetchGamerUUID
+class CallbacksRequestGamerInfo
 {
 public:
 
 	void RegisterCallbacks(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
-	void OnSuccess(const std::string& gamerUUID);
+	void OnSuccess(const OuyaSDK::GamerInfo& gamerInfo);
 
 	void OnFailure(int errorCode, const std::string& errorMessage);
 
@@ -55,9 +57,9 @@ private:
 	s3eCallback m_onCancel;
 
 	//event data sent to callbacks can't be temporary
-	s3eFetchGamerUuidSuccessEvent m_dataFetchGamerUuidSuccessEvent;
-	s3eFetchGamerUuidFailureEvent m_dataFetchGamerUuidFailureEvent;
-	s3eFetchGamerUuidCancelEvent m_dataFetchGamerUuidCancelEvent;
+	s3eRequestGamerInfoSuccessEvent m_dataRequestGamerInfoSuccessEvent;
+	s3eRequestGamerInfoFailureEvent m_dataRequestGamerInfoFailureEvent;
+	s3eRequestGamerInfoCancelEvent m_dataRequestGamerInfoCancelEvent;
 
 	void RegisterCallback(s3eCallback callback, s3eCallback* savedCallback, int callbackType);
 };

@@ -5,6 +5,7 @@
 #include "IwResManager.h"
 #include "Iw2D.h"
 
+#include <ctime>
 #include <map>
 #include <string>
 #include <vector>
@@ -43,6 +44,7 @@ public:
     CIw2DImage* RightTrigger;
     CIw2DImage* RightStickActive;
     CIw2DImage* RightStickInactive;
+	CIw2DImage* Menu;
 
 	// axis values
 	std::map<int, float> m_axisValues;
@@ -74,8 +76,9 @@ public:
         CIw2DImage* leftStickActive,
         CIw2DImage* rightStickActive,
         CIw2DImage* buttonU,
-        CIw2DImage* buttonY);
-
+        CIw2DImage* buttonY,
+		CIw2DImage* buttonMenu);
+	
 	// Check for input
 	void HandleInput();
 
@@ -84,11 +87,14 @@ public:
 
 private:
 
-	bool HandleAxis(int axis);
-	bool HandleButtonPressed(int button);
+	std::clock_t _timerMenuDetected;
+
+	std::clock_t _timerGetName;
 
 	float GetAxis(int axis);
-	bool ButtonPressed(int button);
+	bool GetButton(int button);
+	bool GetButtonDown(int button);
+	bool GetButtonUp(int button);
 
 	// Render an image with error checking
 	void Render(CIw2DImage* image);

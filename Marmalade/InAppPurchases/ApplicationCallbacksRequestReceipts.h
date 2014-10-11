@@ -32,7 +32,7 @@ public:
 
 	s3eCallback GetCancelEvent();
 
-	void OnSuccess(const std::vector<ApplicationReceipt>& receipts);
+	void OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts);
 
 	void OnFailure(int errorCode, const std::string& errorMessage);
 

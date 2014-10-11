@@ -61,25 +61,13 @@ void CallbacksRequestPurchase::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_PURCHASE_ON_CANCEL);
 }
 
-void CopyStringProduct2(std::string source, char** destination)
-{
-	const char* str = source.c_str();
-	*destination = new char[strlen(str)];
-	sprintf(*destination, "%s", str);
-}
-
 void CallbacksRequestPurchase::OnSuccess(const OuyaSDK::Product& product)
 {
 	IwTrace(ODK, ("OnSuccess"));
 
 	OuyaSDK::ExtensionProduct eProduct;
 	eProduct.Init();
-	CopyStringProduct2(product.CurrencyCode, &eProduct.CurrencyCode);
-	CopyStringProduct2(product.Identifier, &eProduct.Identifier);
-	CopyStringProduct2(product.Name, &eProduct.Name);
-	eProduct.ProductVersionToBundle = product.ProductVersionToBundle;
-	eProduct.LocalPrice = product.LocalPrice;
-	eProduct.PriceInCents = product.PriceInCents;
+	eProduct.Copy(product);
 	m_product = eProduct;
 
 	s3eRequestPurchaseSuccessEvent event;

@@ -61,13 +61,6 @@ void CallbacksRequestReceipts::RegisterCallbacks(s3eCallback onSuccess, s3eCallb
 	RegisterCallback(onCancel, &m_onCancel, S3E_ODK_CALLBACKS_REQUEST_RECEIPTS_ON_CANCEL);
 }
 
-void CopyStringReceipt(std::string source, char** destination)
-{
-	const char* str = source.c_str();
-	*destination = new char[strlen(str)];
-	sprintf(*destination, "%s", str);
-}
-
 void CallbacksRequestReceipts::OnSuccess(const std::vector<OuyaSDK::Receipt>& receipts)
 {
 	IwTrace(ODK, ("OnSuccess"));
@@ -82,14 +75,7 @@ void CallbacksRequestReceipts::OnSuccess(const std::vector<OuyaSDK::Receipt>& re
 			OuyaSDK::Receipt receipt = receipts[index];
 			OuyaSDK::ExtensionReceipt eReceipt;
 			eReceipt.Init();
-			CopyStringReceipt(receipt.Currency, &eReceipt.Currency);
-			CopyStringReceipt(receipt.Gamer, &eReceipt.Gamer);
-			CopyStringReceipt(receipt.GeneratedDate, &eReceipt.GeneratedDate);
-			CopyStringReceipt(receipt.Identifier, &eReceipt.Identifier);
-			CopyStringReceipt(receipt.Uuid, &eReceipt.Uuid);
-			CopyStringReceipt(receipt.PurchaseDate, &eReceipt.PurchaseDate);
-			eReceipt.LocalPrice = receipt.LocalPrice;
-			eReceipt.PriceInCents = receipt.PriceInCents;
+			eReceipt.Copy(receipt);
 			m_receipts[index] = eReceipt;
 		}
 	}

@@ -14,44 +14,34 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 import android.util.Log;
+import java.util.ArrayList;
+import tv.ouya.console.api.*;
 
 
 public class AsyncCppOuyaRequestProducts {
 
-	static final String LOG_TAG = "AsyncCppOuyaRequestProducts";
+	static final String LOG_TAG = AsyncCppOuyaRequestProducts.class.getSimpleName();
 
-	public static void invoke(String[] products) {
+	public static void invoke(String[] productArray) {
 
 		Log.i(LOG_TAG, "Java: AsyncCppOuyaRequestProducts");
 
-		//clear the list of products
-		MarmaladeOuyaPlugin.clearGetProductList();
+		ArrayList<Purchasable> products = new ArrayList<Purchasable>();
 
-		if (null == products) {
-			Log.i(LOG_TAG, "Java: Products=null");
-			return;
+		for (String productId : productArray) {
+			Purchasable purchasable = new Purchasable(productId);
+			products.add(purchasable);
 		}
-
-		Log.i(LOG_TAG, "Java: Products Length=" + products.length);
-
-		for (String product : products) {
-			Log.i(LOG_TAG, "Java: Product: " + product);
-			// add to the product list
-			MarmaladeOuyaPlugin.addGetProduct(product);
-		}
-
-		//show added products
-		MarmaladeOuyaPlugin.debugGetProductList();
 
 		CallbacksRequestProducts callbacks = new CallbacksRequestProducts();
 
 		// store for access
-		IOuyaActivity.SetCallbacksRequestProducts(callbacks);
+		IMarmaladeOuyaActivity.SetCallbacksRequestProducts(callbacks);
 
 		// invoke service
-		MarmaladeOuyaPlugin.getProductsAsync();
+		MarmaladeOuyaPlugin.requestProductListAsync(products);
 	}
 }

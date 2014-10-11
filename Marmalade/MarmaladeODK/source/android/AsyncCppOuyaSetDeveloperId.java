@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 
 import android.util.Log;
@@ -22,15 +22,15 @@ import android.util.Log;
 
 public class AsyncCppOuyaSetDeveloperId {
 
-	static final String LOG_TAG = "AsyncCppOuyaSetDeveloperId";
+	static final String LOG_TAG = AsyncCppOuyaSetDeveloperId.class.getSimpleName();
 
 	public static void invoke(String developerId) {
-		try {
-			Log.i(LOG_TAG, "Java: " + LOG_TAG + "(" + developerId + ");");
-			MarmaladeOuyaPlugin.setDeveloperId(developerId);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
+
+		CallbacksSetDeveloperId callbacks = new CallbacksSetDeveloperId();
+
+		// store for access
+		IMarmaladeOuyaActivity.SetCallbacksSetDeveloperId(callbacks);
+
+		MarmaladeOuyaPlugin.setDeveloperId(developerId);
 	}
 }

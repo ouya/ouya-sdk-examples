@@ -51,9 +51,13 @@
 #define	OuyaController_BUTTON_L3 		106	
 
 typedef enum s3eOdkFnCallbackType {
-	S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_SUCCESS,
-	S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_FAILURE,
-	S3E_ODK_CALLBACKS_FETCH_GAMER_UUID_ON_CANCEL,    
+	S3E_ODK_CALLBACKS_SET_DEVELOPER_ID_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_SET_DEVELOPER_ID_ON_FAILURE,	
+	S3E_ODK_CALLBACKS_INIT_OUYA_PLUGIN_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_INIT_OUYA_PLUGIN_ON_FAILURE,
+	S3E_ODK_CALLBACKS_REQUEST_GAMER_INFO_ON_SUCCESS,
+	S3E_ODK_CALLBACKS_REQUEST_GAMER_INFO_ON_FAILURE,
+	S3E_ODK_CALLBACKS_REQUEST_GAMER_INFO_ON_CANCEL,    
 	S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_SUCCESS,
 	S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_FAILURE,
 	S3E_ODK_CALLBACKS_REQUEST_PRODUCTS_ON_CANCEL,
@@ -74,33 +78,29 @@ S3E_BEGIN_C_DECL
  */
 s3eBool ODKAvailable();
 
-void OuyaController_startOfFrame();
+int OuyaPlugin_getAxis(int deviceId, int axis);
 
-bool OuyaController_selectControllerByPlayer(int playerNum);
+bool OuyaPlugin_isPressed(int deviceId, int keyCode);
 
-bool OuyaController_selectControllerByDeviceID(int deviceID);
+bool OuyaPlugin_isPressedDown(int deviceId, int keyCode);
 
-int OuyaController_getAxisValue(int axis);
+bool OuyaPlugin_isPressedUp(int deviceId, int keyCode);
 
-bool OuyaController_getButton(int button);
+void OuyaPlugin_clearButtonStates();
 
-bool OuyaController_buttonPressedThisFrame(int button);
+const char* OuyaPlugin_getDeviceName(int playerNum);
 
-bool OuyaController_buttonReleasedThisFrame(int button);
+void OuyaPlugin_initOuyaPlugin(s3eCallback onSuccess, s3eCallback onFailure);
 
-bool OuyaController_buttonChangedThisFrame(int button);
-
-int OuyaController_getPlayerNum();
-
-void OuyaPlugin_asyncSetDeveloperId(const char* developerId);
-
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+void OuyaPlugin_asyncOuyaRequestGamerInfo(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
 void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
 void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
 void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
+
+void OuyaPlugin_asyncSetDeveloperId(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure);
 
 S3E_END_C_DECL
 

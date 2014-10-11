@@ -16,9 +16,10 @@ REM
 
 pushd
 cd build_odk_android_java\classes
-javap -s com.ODK.CallbacksFetchGamerUUID
-javap -s com.ODK.CallbacksRequestProducts
-javap -s com.ODK.CallbacksRequestPurchase
-javap -s com.ODK.CallbacksRequestReceipts
+javap -s tv.ouya.sdk.marmalade.CallbacksRequestGamerInfo
+javap -s tv.ouya.sdk.marmalade.CallbacksRequestProducts
+javap -s tv.ouya.sdk.marmalade.CallbacksRequestPurchase
+javap -s tv.ouya.sdk.marmalade.CallbacksRequestReceipts
+javap -s tv.ouya.sdk.marmalade.IMarmaladeOuyaActivity
 popd
 pause

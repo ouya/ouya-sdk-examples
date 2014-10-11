@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-package com.ODK;
+#include "ApplicationGamerInfo.h"
 
+void ApplicationGamerInfo::ApplicationGamerInfo::Init()
+{
+	Username = "";
+	Uuid = "";
+}
 
-public class AsyncCppOuyaFetchGamerUUID {
-
-	public static void invoke() {
-
-		CallbacksFetchGamerUUID callbacks = new CallbacksFetchGamerUUID();
-
-		// store for access
-		IOuyaActivity.SetCallbacksFetchGamerUUID(callbacks);
-
-		// invoke service
-		MarmaladeOuyaPlugin.fetchGamerUUID();
+void ApplicationGamerInfo::Copy(const OuyaSDK::ExtensionGamerInfo& gamerInfo)
+{
+	if (gamerInfo.Username)
+	{
+		Username = gamerInfo.Username;
+	}
+	else
+	{
+		Username = "";
+	}
+	if (gamerInfo.Uuid)
+	{
+		Uuid = gamerInfo.Uuid;
+	}
+	else
+	{
+		Uuid = "";
 	}
 }

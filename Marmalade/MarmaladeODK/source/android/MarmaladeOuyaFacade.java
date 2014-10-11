@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.ODK;
-
+package tv.ouya.sdk.marmalade;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -32,12 +31,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 //import android.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
-import tv.ouya.console.api.*;
-import tv.ouya.console.internal.util.Strings;
-
-import com.google.gson.Gson;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -50,25 +43,19 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.util.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import tv.ouya.console.api.*;
+import tv.ouya.console.internal.util.Strings;
+
 public class MarmaladeOuyaFacade
 {
     /**
      * The tag for log messages
      */
 
-    private static final String LOG_TAG = "MarmaladeOuyaFacade";
-
-	// For debugging enable logging for testing
-	private static final Boolean m_enableDebugLogging = false;
-
-    /*
-     * Before this app will run, you must define some purchasable items on the developer website. Once
-     * you have defined those items, put their Product IDs in the List below.
-     * <p/>
-     * The Product IDs below are those in our developer account. You should change them.
-     */
-
-	public static ArrayList<Purchasable> PRODUCT_IDENTIFIER_LIST = new ArrayList<Purchasable>(0);
+    private static final String LOG_TAG = MarmaladeOuyaFacade.class.getSimpleName();
 
     /**
      * The saved instance state key for products
@@ -81,7 +68,7 @@ public class MarmaladeOuyaFacade
      */
 
     private static final String RECEIPTS_INSTANCE_STATE_KEY = "Receipts";
-
+	
     /**
      * The ID used to track the activity started by an authentication intent during a purchase.
      */
@@ -113,7 +100,7 @@ public class MarmaladeOuyaFacade
      */
 
     private final Map<String, Product> mOutstandingPurchaseRequests = new HashMap<String, Product>();
-
+	
     /**
      * Broadcast listener to handle re-requesting the receipts when a user has re-authenticated
      */
@@ -138,8 +125,8 @@ public class MarmaladeOuyaFacade
 	//android context
 	private Context context;
 
-	// Custom-iap-code, listener for fetching gamer uuid
-	CancelIgnoringOuyaResponseListener<String> m_fetchGamerUUIDListener = null;
+	// Custom-iap-code, listener for requesting gamer info
+	CancelIgnoringOuyaResponseListener<GamerInfo> m_requestGamerInfoListener = null;
 
 	// Custom-iap-code, listener for getting products
 	OuyaResponseListener<ArrayList<Product>> m_productListListener = null;
@@ -150,7 +137,7 @@ public class MarmaladeOuyaFacade
 		{
 			this.context = context;
 
-			Log.i(LOG_TAG, "Init(" + developerId + ");");
+			//Log.i(LOG_TAG, "Init(" + developerId + ");");
 
 			ouyaFacade = OuyaFacade.getInstance();
 
@@ -179,61 +166,63 @@ public class MarmaladeOuyaFacade
 
 	private void Init(String developerId)
 	{
-		Log.i(LOG_TAG, "init(context, " + developerId + ");");
+		Log.i(LOG_TAG, "OuyaFacade.init(context, " + developerId + ");");
         ouyaFacade.init(context, developerId);
 
 		// custom-iap-code
-		m_fetchGamerUUIDListener = new CancelIgnoringOuyaResponseListener<String>() {
+        m_requestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
             @Override
-            public void onSuccess(String result) {
-				/*
-                new AlertDialog.Builder(IapSampleActivity.this)
-                        .setTitle(getString(R.string.alert_title))
-                        .setMessage(result)
-                        .setPositiveButton(R.string.ok, null)
-                        .show();
-				*/
-				Log.i(LOG_TAG, "m_fetchGamerUUIDListener FetchGamerUUIDSuccessListener=" + result);
-
-				IOuyaActivity.GetCallbacksFetchGamerUUID().onSuccess(result);
+            public void onSuccess(GamerInfo info) {
+				
+            	JSONObject json = new JSONObject();
+				try {
+					json.put("uuid", info.getUuid());
+					json.put("username", info.getUsername());
+				} catch (JSONException e1) {
+				}
+				String jsonData = json.toString();
+            	
+				Log.i(LOG_TAG, "m_requestGamerInfoListener requestGamerUUIDSuccessListener=" + jsonData);
+				
+				IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onSuccess(jsonData);
             }
 
             @Override
             public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-                Log.w(LOG_TAG, "fetch gamer UUID error (code " + errorCode + ": " + errorMessage + ")");
+                Log.w(LOG_TAG, "request gamer info error (code " + errorCode + ": " + errorMessage + ")");
                 boolean wasHandledByAuthHelper =
                         OuyaAuthenticationHelper.
                                 handleError(
-										//custom iap code
-										IOuyaActivity.GetActivity(), errorCode, errorMessage,
+										//custom iap code										
+										IMarmaladeOuyaActivity.GetActivity(), errorCode, errorMessage,
 
                                         //IapSampleActivity.this, errorCode, errorMessage,
                                         optionalData, GAMER_UUID_AUTHENTICATION_ACTIVITY_ID,
                                         new OuyaResponseListener<Void>() {
                                             @Override
                                             public void onSuccess(Void result) {
-                                                fetchGamerUUID();   // Retry the fetch if the error was handled.
+                                                requestGamerInfo();   // Retry the request if the error was handled.
                                             }
 
                                             @Override
                                             public void onFailure(int errorCode, String errorMessage,
                                                                   Bundle optionalData) {
-                                                //showError("Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-												Log.i(LOG_TAG, "Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-												IOuyaActivity.GetCallbacksFetchGamerUUID().onFailure(errorCode, errorMessage);
+                                                //showError("Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+												Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+												IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
                                             }
 
                                             @Override
                                             public void onCancel() {
-                                                //showError("Unable to fetch gamer UUID");
-												Log.i(LOG_TAG, "m_fetchGamerUUIDListener FetchGamerUUIDCancelListener");
-												IOuyaActivity.GetCallbacksFetchGamerUUID().onCancel();
+                                                //showError("Unable to request gamer info");
+												Log.i(LOG_TAG, "m_requestGamerInfoListener RequestGamerInfoCancelListener");
+												IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onCancel();
                                             }
                                         });
 
                 if (!wasHandledByAuthHelper) {
-					Log.i(LOG_TAG, "Unable to fetch gamer UUID (error " + errorCode + ": " + errorMessage + ")");
-					IOuyaActivity.GetCallbacksFetchGamerUUID().onFailure(errorCode, errorMessage);
+					Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+					IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
                 }
             }
         };
@@ -252,15 +241,33 @@ public class MarmaladeOuyaFacade
 
 				//send each item in the list
 				if (null != mProductList) {
-					Gson gson = new Gson();
-					String jsonData = gson.toJson(mProductList);
-
+					
+					JSONArray jarray = new JSONArray();
+					for (Product product : mProductList)
+					{
+						JSONObject json = new JSONObject();
+						try {
+							json.put("currencyCode", product.getCurrencyCode());
+							json.put("description", product.getDescription());
+							json.put("identifier", product.getIdentifier());
+							json.put("localPrice", product.getLocalPrice());
+							json.put("name", product.getName());
+							json.put("originalPrice", product.getOriginalPrice());
+							json.put("percentOff", product.getPercentOff());
+							json.put("developerName", product.getDeveloperName());
+							jarray.put(mProductList.indexOf(product), json);
+						} catch (JSONException e1) {
+						}
+					}
+					
+					String jsonData = jarray.toString();
+					
 					Log.i(LOG_TAG, "m_productListListener ProductListListener jsonData=" + jsonData);
-					IOuyaActivity.GetCallbacksRequestProducts().onSuccess(jsonData);
+					IMarmaladeOuyaActivity.GetCallbacksRequestProducts().onSuccess(jsonData);
 				} else {
 					//send the complete message
 					Log.i(LOG_TAG, "RequestProducts, no data to send");
-					IOuyaActivity.GetCallbacksRequestProducts().onSuccess("");
+					IMarmaladeOuyaActivity.GetCallbacksRequestProducts().onSuccess("");
 				}
 
 			}
@@ -270,15 +277,15 @@ public class MarmaladeOuyaFacade
 				// Your app probably wants to do something more sophisticated than popping a Toast. This is
 				// here to tell you that your app needs to handle this case: if your app doesn't display
 				// something, the user won't know of the failure.
-				//Toast.makeText(IOuyaActivity.GetActivity(), "Could not fetch product information (error " + errorCode + ": " + errorMessage + ")", Toast.LENGTH_LONG).show();
+				//Toast.makeText(IMarmaladeOuyaActivity.GetActivity(), "Could not fetch product information (error " + errorCode + ": " + errorMessage + ")", Toast.LENGTH_LONG).show();
 
 				Log.i(LOG_TAG, "Unable to request products (error " + errorCode + ": " + errorMessage + ")");
-				IOuyaActivity.GetCallbacksRequestProducts().onFailure(errorCode, errorMessage);
+				IMarmaladeOuyaActivity.GetCallbacksRequestProducts().onFailure(errorCode, errorMessage);
 			}
-
+			
 			@Override
 			public void onCancel() {
-				IOuyaActivity.GetCallbacksRequestProducts().onCancel();
+				IMarmaladeOuyaActivity.GetCallbacksRequestProducts().onCancel();
 			}
 		};
 	}
@@ -292,7 +299,7 @@ public class MarmaladeOuyaFacade
         if(resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-                    fetchGamerUUID();
+                    requestGamerInfo();
                     break;
                 case PURCHASE_AUTHENTICATION_ACTIVITY_ID:
                     restartInterruptedPurchase();
@@ -350,14 +357,12 @@ public class MarmaladeOuyaFacade
     /**
      * Get the list of products the user can purchase from the server.
      */
-    public void requestProducts() {
+    public void requestProducts(ArrayList<Purchasable> products) {
 		//custom-iap-code
 		if (null != m_productListListener)
 		{
-			if (m_enableDebugLogging) {
-				Log.i(LOG_TAG, "requestProducts m_productListListener is valid");
-			}
-			ouyaFacade.requestProductList(PRODUCT_IDENTIFIER_LIST, m_productListListener);
+			Log.i(LOG_TAG, "requestProducts m_productListListener is valid");
+			ouyaFacade.requestProductList(products, m_productListListener);
 		}
 		else
 		{
@@ -365,20 +370,18 @@ public class MarmaladeOuyaFacade
 		}
     }
 
-    public void fetchGamerUUID() {
+    public void requestGamerInfo() {
 
 		//custom-iap-code
-		if (null != m_fetchGamerUUIDListener)
+		if (null != m_requestGamerInfoListener)
 		{
-			if (m_enableDebugLogging) {
-				Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is valid");
-			}
-			ouyaFacade.requestGamerUuid(m_fetchGamerUUIDListener);
+			Log.i(LOG_TAG, "requestGamerInfo m_requestGamerInfoListener is valid");
+			ouyaFacade.requestGamerInfo(m_requestGamerInfoListener);
 		}
 		else
 		{
-			Log.i(LOG_TAG, "fetchGamerUUID m_fetchGamerUUIDListener is null");
-		}
+			Log.i(LOG_TAG, "requestGamerInfo m_requestGamerInfoListener is null");
+		}        
     }
 
     /**
@@ -405,7 +408,6 @@ public class MarmaladeOuyaFacade
         JSONObject purchaseRequest = new JSONObject();
         purchaseRequest.put("uuid", uniqueId);
         purchaseRequest.put("identifier", product.getIdentifier());
-        purchaseRequest.put("testing", "true"); // This value is only needed for testing, not setting it results in a live purchase
         String purchaseRequestJson = purchaseRequest.toString();
 
         byte[] keyBytes = new byte[16];
@@ -437,7 +439,7 @@ public class MarmaladeOuyaFacade
 
 		//custom-iap-code
 		Log.i(LOG_TAG, "requestPurchase(" + product.getIdentifier() + ")");
-
+        
 		ouyaFacade.requestPurchase(purchasable, new PurchaseListener(product));
     }
 
@@ -478,7 +480,7 @@ public class MarmaladeOuyaFacade
             }
 			catch (ParseException e)
 			{
-				IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
+				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
 				return;
 
             }
@@ -494,25 +496,25 @@ public class MarmaladeOuyaFacade
                     }
 					catch (IOException ioe)
 					{
-						IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + ioe);
+						IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + ioe);
 						return;
 
                     }
                 }
 				else
 				{
-					IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
+					IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
 					return;
                 }
             }
 			catch (GeneralSecurityException e)
 			{
-				IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "GeneralSecurityException: " + e);
+				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "GeneralSecurityException: " + e);
 				return;
             }
 			catch (IOException e)
 			{
-				IOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + e);
+				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + e);
 				return;
             }
             Collections.sort(receipts, new Comparator<Receipt>() {
@@ -526,14 +528,31 @@ public class MarmaladeOuyaFacade
 
 			// custom-iap-code
 			if(mReceiptList != null) {
-				Gson gson = new Gson();
-				String jsonData = gson.toJson(mReceiptList);
-
+				
+				JSONArray jarray = new JSONArray();
+				for (Receipt receipt : mReceiptList)
+				{
+					JSONObject json = new JSONObject();
+					try {
+						json.put("identifier", receipt.getIdentifier());
+						json.put("purchaseDate", receipt.getPurchaseDate());
+						json.put("gamer", receipt.getGamer());
+						json.put("uuid", receipt.getUuid());
+						json.put("localPrice", receipt.getLocalPrice());
+						json.put("currency", receipt.getCurrency());
+						json.put("generatedDate", receipt.getGeneratedDate());
+						jarray.put(mReceiptList.indexOf(receipt), json);
+					} catch (JSONException e1) {
+					}
+				}
+				
+				String jsonData = jarray.toString();
+				
 				Log.i(LOG_TAG, "ReceiptListener ReceiptListListener jsonData=" + jsonData);
-				IOuyaActivity.GetCallbacksRequestReceipts().onSuccess(jsonData);
+				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onSuccess(jsonData);
 			} else {
 				Log.i(LOG_TAG, "ReceiptListener ReceiptListListener jsonData=(empty)");
-				IOuyaActivity.GetCallbacksRequestReceipts().onSuccess("");
+				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onSuccess("");
 			}
         }
 
@@ -552,7 +571,7 @@ public class MarmaladeOuyaFacade
         @Override
         public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
             Log.w(LOG_TAG, "Request Receipts error (code " + errorCode + ": " + errorMessage + ")");
-            IOuyaActivity.GetCallbacksRequestReceipts().onFailure(errorCode, errorMessage);
+            IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(errorCode, errorMessage);
         }
 
         /**
@@ -563,7 +582,7 @@ public class MarmaladeOuyaFacade
         public void onCancel()
 		{
 			Log.i(LOG_TAG, "ReceiptListener Invoke ReceiptListCancelListener");
-			IOuyaActivity.GetCallbacksRequestReceipts().onCancel();
+			IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onCancel();
 		}
     }
 
@@ -683,19 +702,41 @@ public class MarmaladeOuyaFacade
 
 			if (null != product)
 			{
-				Gson gson = new Gson();
-				String jsonData = gson.toJson(product);
+				JSONObject json = new JSONObject();
+				try {
+					json.put("currencyCode", product.getCurrencyCode());
+					json.put("description", product.getDescription());
+					json.put("identifier", product.getIdentifier());
+					json.put("localPrice", product.getLocalPrice());
+					json.put("name", product.getName());
+					json.put("originalPrice", product.getOriginalPrice());
+					json.put("percentOff", product.getPercentOff());
+					json.put("developerName", product.getDeveloperName());
+				} catch (JSONException e1) {
+				}
+				String jsonData = json.toString();
 
 				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
-				IOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
+				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
 			}
 			else if (null != storedProduct)
 			{
-				Gson gson = new Gson();
-				String jsonData = gson.toJson(storedProduct);
+				JSONObject json = new JSONObject();
+				try {
+					json.put("currencyCode", storedProduct.getCurrencyCode());
+					json.put("description", storedProduct.getDescription());
+					json.put("identifier", storedProduct.getIdentifier());
+					json.put("localPrice", storedProduct.getLocalPrice());
+					json.put("name", storedProduct.getName());
+					json.put("originalPrice", storedProduct.getOriginalPrice());
+					json.put("percentOff", storedProduct.getPercentOff());
+					json.put("developerName", storedProduct.getDeveloperName());
+				} catch (JSONException e1) {
+				}
+				String jsonData = json.toString();
 
 				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
-				IOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
+				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
 			}
         }
 
@@ -715,7 +756,7 @@ public class MarmaladeOuyaFacade
         public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
 
 			// custom iap-code
-			OuyaPurchaseHelper.suspendPurchase(IOuyaActivity.GetActivity(), mProduct.getIdentifier());
+			OuyaPurchaseHelper.suspendPurchase(IMarmaladeOuyaActivity.GetActivity(), mProduct.getIdentifier());
 
             //OuyaPurchaseHelper.suspendPurchase(IapSampleActivity.this, mProduct.getIdentifier());
 
@@ -724,7 +765,7 @@ public class MarmaladeOuyaFacade
                             handleError(
 
 									// custom iap-code
-									IOuyaActivity.GetActivity(), errorCode, errorMessage,
+									IMarmaladeOuyaActivity.GetActivity(), errorCode, errorMessage,
 
                                     //IapSampleActivity.this, errorCode, errorMessage,
                                     optionalData, PURCHASE_AUTHENTICATION_ACTIVITY_ID,
@@ -740,7 +781,7 @@ public class MarmaladeOuyaFacade
                                         public void onFailure(int errorCode, String errorMessage,
                                                               Bundle optionalData)
 										{
-											IOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
+											IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
 											return;
                                         }
 
@@ -748,7 +789,7 @@ public class MarmaladeOuyaFacade
                                         public void onCancel()
 										{
 											Log.i(LOG_TAG, "PurchaseListener PurchaseCancelListener=");
-											IOuyaActivity.GetCallbacksRequestPurchase().onCancel();
+											IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onCancel();
 											return;
                                         }
                                     });
@@ -756,8 +797,8 @@ public class MarmaladeOuyaFacade
 
             if(!wasHandledByAuthHelper)
 			{
-				IOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
-				return;
+				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
+				return;				
             }
         }
 
@@ -771,7 +812,7 @@ public class MarmaladeOuyaFacade
 			//showError("Purchase was cancelled");
 
 			Log.i(LOG_TAG, "PurchaseListener Invoke PurchaseCancelListener");
-			IOuyaActivity.GetCallbacksRequestPurchase().onCancel();
+			IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onCancel();
 		}
     }
 }

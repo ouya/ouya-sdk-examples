@@ -9,8 +9,15 @@ CIwMaterial
 
 CIwMaterial
 {
-	name "cutter"
-	texture0 "cutter.png"
+	name "menu"
+	texture0 "menu.png"
+	colAmbient {255 255 255}
+}
+
+CIwMaterial
+{
+	name "controller"
+	texture0 "controller.png"
 	colAmbient {255 255 255}
 }
 

@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
+
+import tv.ouya.console.api.*;
 
 
 public class AsyncCppOuyaRequestPurchase {
 
-	public static void invoke(String purchasable) {
+	public static void invoke(String identifier) {
 
 		CallbacksRequestPurchase callbacks = new CallbacksRequestPurchase();
 
-		callbacks.m_purchasable = purchasable;
+		callbacks.m_purchasable = identifier;
 
 		// store for access
-		IOuyaActivity.SetCallbacksRequestPurchase(callbacks);
+		IMarmaladeOuyaActivity.SetCallbacksRequestPurchase(callbacks);
+
+		Product product = new Product(identifier, "", 0, 0, "", 0, 0, "", "", Product.Type.ENTITLEMENT);
 
 		// invoke service
-		MarmaladeOuyaPlugin.requestPurchaseAsync(callbacks.m_purchasable);
+		MarmaladeOuyaPlugin.requestPurchaseAsync(product);
 	}
 }

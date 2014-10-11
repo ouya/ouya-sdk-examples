@@ -17,18 +17,20 @@
 #ifndef __UI_H__
 #define __UI_H__
 
-#include "ApplicationProduct.h"
-#include "ApplicationReceipt.h"
+#include "ExtensionProduct.h"
+#include "ExtensionReceipt.h"
 #include "TextButton.h"
 #include "TextLabel.h"
 
 #include <string>
 #include <vector>
 
-class ApplicationCallbacksFetchGamerUUID;
+class ApplicationCallbacksInitOuyaPlugin;
+class ApplicationCallbacksRequestGamerInfo;
 class ApplicationCallbacksRequestProducts;
 class ApplicationCallbacksRequestPurchase;
 class ApplicationCallbacksRequestReceipts;
+class ApplicationCallbacksSetDeveloperId;
 
 class UI
 {
@@ -46,7 +48,9 @@ public:
 
 	void HandleInput();
 
-	void SetGamerUUID(const std::string& gamerUUID);
+	void SetUsername(const std::string& username);
+
+	void SetGamerUUID(const std::string& uuid);
 
 	void SetMessage(const std::string& message);
 
@@ -56,23 +60,25 @@ public:
 
 	void ClearReceipts();
 
-	void AddProduct(ApplicationProduct product);
+	void AddProduct(const OuyaSDK::Product& product);
 
-	void AddReceipt(ApplicationReceipt receipt);
+	void AddReceipt(const OuyaSDK::Receipt& receipt);
 
-	ApplicationCallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+	ApplicationCallbacksInitOuyaPlugin* m_callbacksInitOuyaPlugin;
+	ApplicationCallbacksRequestGamerInfo* m_callbacksRequestGamerInfo;
 	ApplicationCallbacksRequestProducts* m_callbacksRequestProducts;
 	ApplicationCallbacksRequestPurchase* m_callbacksRequestPurchase;
 	ApplicationCallbacksRequestReceipts* m_callbacksRequestReceipts;
+	ApplicationCallbacksSetDeveloperId* m_callbacksSetDeveloperId;
 
 private:
 
 	std::vector<std::string> m_productIds;
 
-	std::vector<ApplicationProduct> m_pendingProducts;
+	std::vector<OuyaSDK::Product> m_pendingProducts;
 	std::vector<TextButton*> m_products;
 
-	std::vector<ApplicationReceipt> m_pendingReceipts;
+	std::vector<OuyaSDK::Receipt> m_pendingReceipts;
 	std::vector<TextButton*> m_receipts;
 
 	TextButton* m_selectedProduct;
@@ -81,15 +87,14 @@ private:
 
 	bool m_uiChanged;
 
-	std::vector<int> m_pressed;
-
 	TextButton m_uiRequestGamerUUID;
 	TextButton m_uiRequestProducts;
 	TextButton m_uiRequestPurchase;
 	TextButton m_uiRequestReceipts;
 	TextButton m_uiPause;
 	
-	TextLabel m_uiLabelFetch;
+	TextLabel m_uiLabelUsername;
+	TextLabel m_uiLabelGamerUuid;
 	TextLabel m_uiLabelDirections;
 	TextLabel m_uiLabelMessage;
 
@@ -97,8 +102,6 @@ private:
 
 	void RenderThreadInitProducts();
 	void RenderThreadInitReceipts();
-
-	bool ButtonReleased(int keyCode);
 };
 
 #endif

@@ -21,7 +21,7 @@
 #include <vector>
 
 class _jclass;
-class CallbacksFetchGamerUUID;
+class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
@@ -43,9 +43,9 @@ namespace OuyaSDK
 
 		void SetApp(struct android_app* app);
 
-		void AsyncSetDeveloperId(const std::string& developerId);
+		void AsyncInitOuyaPlugin();
 
-		void AsyncOuyaFetchGamerUUID();
+		void AsyncOuyaRequestGamerInfo();
 
 		void AsyncOuyaRequestProducts(const std::vector<std::string>& productIds);
 
@@ -53,14 +53,18 @@ namespace OuyaSDK
 
 		void AsyncOuyaRequestReceipts();
 
+		void AsyncSetDeveloperId(const std::string& developerId);
+
 	private:
 
 		// cached references
-		jclass jc_AsyncCppOuyaSetDeveloperId;
-		jclass jc_AsyncCppOuyaFetchGamerUUID;
+		jclass jc_IMarmaladeOuyaActivity;
+		jclass jc_AsyncCppInitOuyaPlugin;
+		jclass jc_AsyncCppOuyaRequestGamerInfo;
 		jclass jc_AsyncCppOuyaRequestProducts;
 		jclass jc_AsyncCppOuyaRequestPurchase;
 		jclass jc_AsyncCppOuyaRequestReceipts;
+		jclass jc_AsyncCppOuyaSetDeveloperId;
 	};
 }
 

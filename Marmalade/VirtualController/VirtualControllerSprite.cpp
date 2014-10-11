@@ -4,6 +4,8 @@
 
 #include <math.h>
 
+#define LOG_TAG "VirtualControllerSprite.cpp"
+
 #define AXIS_SCALER 4.0f
 
 #define DEADZONE 0.25f
@@ -31,6 +33,7 @@ VirtualControllerSprite::VirtualControllerSprite()
     RightTrigger = NULL;
     RightStickActive = NULL;
     RightStickInactive = NULL;
+	Menu = NULL;
 }
 
 void VirtualControllerSprite::Initialize(
@@ -51,7 +54,8 @@ void VirtualControllerSprite::Initialize(
 	CIw2DImage* leftStickActive,
 	CIw2DImage* rightStickActive,
 	CIw2DImage* buttonU,
-	CIw2DImage* buttonY)
+	CIw2DImage* buttonY,
+	CIw2DImage* buttonMenu)
 {
 	DeviceName = "Unknown";
 
@@ -74,139 +78,98 @@ void VirtualControllerSprite::Initialize(
     RightTrigger = rightTrigger;
     RightStickActive = rightStickActive;
     RightStickInactive = rightStickInactive;
-}
-
-bool VirtualControllerSprite::HandleAxis(int axis)
-{
-	float val = OuyaController_getAxisValue(axis) / 256.0f;
-	m_axisValues[axis] = val;
-	return val;
+	Menu = buttonMenu;
 }
 
 float VirtualControllerSprite::GetAxis(int axis)
 {
-	std::map<int, float>::iterator iter = m_axisValues.find(axis);
-	if (iter == m_axisValues.end())
-	{
-		return 0;
-	}
-	else
-	{
-		return m_axisValues[axis];
-	}
+	int val = OuyaPlugin_getAxis(PlayerIndex, axis);
+	float result = *(reinterpret_cast<float*>(&val));
+	//IwTrace(LOG_TAG, ("axis=%d val=%f", axis, result));
+	return result;
 }
 
-bool VirtualControllerSprite::HandleButtonPressed(int button)
+bool VirtualControllerSprite::GetButton(int button)
 {
-	if (OuyaController_getButton(button))
-	{
-		// not found
-		if (std::find(m_pressed.begin(), m_pressed.end(), button) == m_pressed.end())
-		{
-			m_pressed.push_back(button);
-		}
-		return true;
-	}
-	else
-	{
-		std::vector<int>::iterator lookup = std::find(m_pressed.begin(), m_pressed.end(), button);
-		// found
-		if (lookup != m_pressed.end())
-		{
-			m_pressed.erase(lookup);
-		}
-		
-		return false;
-	}
+	bool val = OuyaPlugin_isPressed(PlayerIndex, button);
+	//IwTrace(LOG_TAG, ("button=%d val=%s", button, val ? "true" : "false"));
+	return val;
 }
 
-bool VirtualControllerSprite::ButtonPressed(int button)
+bool VirtualControllerSprite::GetButtonDown(int button)
 {
-	// not found
-	if (std::find(m_pressed.begin(), m_pressed.end(), button) == m_pressed.end())
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	bool val = OuyaPlugin_isPressedDown(PlayerIndex, button);
+	//IwTrace(LOG_TAG, ("button=%d val=%s", button, val ? "true" : "false"));
+	return val;
+}
+
+bool VirtualControllerSprite::GetButtonUp(int button)
+{
+	bool val = OuyaPlugin_isPressedUp(PlayerIndex, button);
+	//IwTrace(LOG_TAG, ("button=%d val=%s", button, val ? "true" : "false"));
+	return val;
 }
 
 void VirtualControllerSprite::HandleInput()
 {
-	HandleAxis(OuyaController_AXIS_LS_X);
-	HandleAxis(OuyaController_AXIS_LS_Y);
-	HandleAxis(OuyaController_AXIS_RS_X);
-	HandleAxis(OuyaController_AXIS_RS_Y);
-	HandleAxis(OuyaController_AXIS_L2);
-	HandleAxis(OuyaController_AXIS_R2);
-	
-	HandleButtonPressed(OuyaController_BUTTON_DPAD_UP);
-	HandleButtonPressed(OuyaController_BUTTON_DPAD_DOWN);
-	HandleButtonPressed(OuyaController_BUTTON_DPAD_LEFT);
-	HandleButtonPressed(OuyaController_BUTTON_DPAD_RIGHT);
-	
-	//HandleButtonPressed(OuyaController_BUTTON_MENU);
+	if (GetButtonUp(OuyaController_BUTTON_MENU))
+	{
+		_timerMenuDetected = std::clock();
+	}
 
-	HandleButtonPressed(OuyaController_BUTTON_O);
-	HandleButtonPressed(OuyaController_BUTTON_A);
-	HandleButtonPressed(OuyaController_BUTTON_U);
-	HandleButtonPressed(OuyaController_BUTTON_Y);
-	
-	HandleButtonPressed(OuyaController_BUTTON_L1);
-	HandleButtonPressed(OuyaController_BUTTON_R1);
-	HandleButtonPressed(OuyaController_BUTTON_L2);
-	HandleButtonPressed(OuyaController_BUTTON_R2);
-	HandleButtonPressed(OuyaController_BUTTON_R3);
-	HandleButtonPressed(OuyaController_BUTTON_L3);
+	/*
+	if (PlayerIndex == 0)
+	{
+		IwTrace(LOG_TAG, ("duration=%d", (std::clock() - _timerMenuDetected)));
+	}
+	*/
 }
 
 void VirtualControllerSprite::Render()
 {
 	Render(Controller);
 
-	if (ButtonPressed(OuyaController_BUTTON_A))
+	if (GetButton(OuyaController_BUTTON_A))
 	{
 		Render(ButtonA);
 	}
 
-	if (ButtonPressed(OuyaController_BUTTON_O))
+	if (GetButton(OuyaController_BUTTON_O))
 	{
 		Render(ButtonO);
 	}
 
-    if (ButtonPressed(OuyaController_BUTTON_U))
+    if (GetButton(OuyaController_BUTTON_U))
 	{
 		Render(ButtonU);
 	}
 
-	if (ButtonPressed(OuyaController_BUTTON_Y))
+	if (GetButton(OuyaController_BUTTON_Y))
 	{
 		Render(ButtonY);
 	}
 
-	if (ButtonPressed(OuyaController_BUTTON_DPAD_DOWN))
+	if (GetButton(OuyaController_BUTTON_DPAD_DOWN))
 	{
 		Render(DpadDown);
 	}
 
-    if (ButtonPressed(OuyaController_BUTTON_DPAD_LEFT))
+    if (GetButton(OuyaController_BUTTON_DPAD_LEFT))
 	{
 		Render(DpadLeft);
 	}
 
-	if (ButtonPressed(OuyaController_BUTTON_DPAD_RIGHT))
+	if (GetButton(OuyaController_BUTTON_DPAD_RIGHT))
 	{
 		Render(DpadRight);
 	}
 
-    if (ButtonPressed(OuyaController_BUTTON_DPAD_UP))
+    if (GetButton(OuyaController_BUTTON_DPAD_UP))
 	{
 		Render(DpadUp);
 	}	
 	
-	if (ButtonPressed(OuyaController_BUTTON_L1))
+	if (GetButton(OuyaController_BUTTON_L1))
 	{
 		Render(LeftBumper);
 	}
@@ -226,10 +189,10 @@ void VirtualControllerSprite::Render()
 	float y = GetAxis(OuyaController_AXIS_LS_Y);
 
 	CIwFVec2 pos;
-	pos.x = AXIS_SCALER * x * valCos - y * valSin;
-	pos.y = AXIS_SCALER * x * valSin + y * valCos;
+	pos.x = AXIS_SCALER * (x * valCos - y * valSin);
+	pos.y = AXIS_SCALER * (x * valSin + y * valCos);
 
-    if (ButtonPressed(OuyaController_BUTTON_L3))
+    if (GetButton(OuyaController_BUTTON_L3))
 	{
 		Render(LeftStickActive, pos);
 	}
@@ -238,7 +201,7 @@ void VirtualControllerSprite::Render()
 		Render(LeftStickInactive, pos);
 	}
 
-	if (ButtonPressed(OuyaController_BUTTON_R1))
+	if (GetButton(OuyaController_BUTTON_R1))
 	{
 		Render(RightBumper);
 	}
@@ -251,17 +214,27 @@ void VirtualControllerSprite::Render()
 	x = GetAxis(OuyaController_AXIS_RS_X);
 	y = GetAxis(OuyaController_AXIS_RS_Y);
 
-	pos.x = AXIS_SCALER * x * valCos - y * valSin;
-	pos.y = AXIS_SCALER * x * valSin + y * valCos;
+	pos.x = AXIS_SCALER * (x * valCos - y * valSin);
+	pos.y = AXIS_SCALER * (x * valSin + y * valCos);
 
-	if (ButtonPressed(OuyaController_BUTTON_R3))
+	if (GetButton(OuyaController_BUTTON_R3))
 	{
 		Render(RightStickActive, pos);
 	}
 	else
 	{
 		Render(RightStickInactive, pos);
-	}    
+	}
+
+	if ((std::clock() - _timerMenuDetected) < CLOCKS_PER_SEC)
+	{
+		Render(Menu, pos);
+	}
+
+	if ((std::clock() - _timerGetName) > (10*CLOCKS_PER_SEC))
+	{
+		DeviceName = OuyaPlugin_getDeviceName(PlayerIndex);
+	}
 
 	if (DeviceName.c_str())
 	{

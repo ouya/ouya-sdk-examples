@@ -17,7 +17,7 @@
 #ifndef __APPLICATTON_CALLBACKS_REQUEST_PURCHASE_H__
 #define __APPLICATTON_CALLBACKS_REQUEST_PURCHASE_H__
 
-#include "ApplicationProduct.h"
+#include "ExtensionProduct.h"
 
 #include <string>
 
@@ -31,7 +31,7 @@ public:
 
 	s3eCallback GetCancelEvent();
 
-	void OnSuccess(const ApplicationProduct& product);
+	void OnSuccess(const OuyaSDK::Product& product);
 
 	void OnFailure(int errorCode, const std::string& errorMessage);
 

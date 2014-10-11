@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 
 import android.util.Log;

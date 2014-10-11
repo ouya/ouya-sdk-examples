@@ -23,7 +23,7 @@
 #include "ODK.h"
 
 
-const char* g_version = "Mamalade Version: 005";
+const char* g_version = "Mamalade Version: 007";
 
 //the controller instances
 VirtualControllerSprite m_controllers[OuyaController_MAX_CONTROLLERS];
@@ -32,9 +32,8 @@ VirtualControllerSprite m_controllers[OuyaController_MAX_CONTROLLERS];
 void setupTextures()
 {
 	IwGetResManager()->LoadGroup("tiles.group");
-
 	CIw2DImage* a = NULL;
-	CIw2DImage* cutter = NULL;
+	CIw2DImage* controller = NULL;
 	CIw2DImage* dpad_down = NULL;
 	CIw2DImage* dpad_left = NULL;
 	CIw2DImage* dpad_right = NULL;
@@ -50,9 +49,10 @@ void setupTextures()
 	CIw2DImage* thumbr = NULL;
 	CIw2DImage* u = NULL;
 	CIw2DImage* y = NULL;
+	CIw2DImage* menu = NULL;
 	
 	a = Iw2DCreateImageResource("a");
-	cutter = Iw2DCreateImageResource("cutter");
+	controller = Iw2DCreateImageResource("controller");
 	dpad_down = Iw2DCreateImageResource("dpad_down");
 	dpad_left = Iw2DCreateImageResource("dpad_left");
 	dpad_right = Iw2DCreateImageResource("dpad_right");
@@ -68,6 +68,7 @@ void setupTextures()
 	thumbr = Iw2DCreateImageResource("thumbr");
 	u = Iw2DCreateImageResource("u");
 	y = Iw2DCreateImageResource("y");
+	menu = Iw2DCreateImageResource("menu");
 
 	m_controllers[0].Position = CIwFVec2(400, 150);
 	m_controllers[1].Position = CIwFVec2(1000, 150);
@@ -79,7 +80,7 @@ void setupTextures()
 		m_controllers[index].Initialize(
 			index,
 			a,
-			cutter,
+			controller,
 			dpad_down,
 			dpad_left,
 			dpad_right,
@@ -94,7 +95,8 @@ void setupTextures()
 			thumbl,
 			thumbr,
 			u,
-			y);
+			y,
+			menu);
 	}
 }
 
@@ -119,20 +121,18 @@ void destroyTextures()
 		delete m_controllers[index].RightTrigger;
 		delete m_controllers[index].RightStickActive;
 		delete m_controllers[index].RightStickInactive;
+		delete m_controllers[index].Menu;
 	}
 }
 
 void handleInput()
 {
-	OuyaController_startOfFrame();
-
 	for (int index = 0; index < OuyaController_MAX_CONTROLLERS; ++index)
 	{
-		if (OuyaController_selectControllerByPlayer(index))
-		{
-			m_controllers[index].HandleInput();
-		}
+		m_controllers[index].HandleInput();
 	}
+
+	OuyaPlugin_clearButtonStates();
 }
 
 void render()
@@ -173,9 +173,9 @@ int main()
 
 	while (!s3eDeviceCheckQuitRequest())
 	{
-		handleInput();
-
 		render();
+
+		handleInput();
 
 		// keep polling for input, don't kill the CPU
 		s3eDeviceYield(0);

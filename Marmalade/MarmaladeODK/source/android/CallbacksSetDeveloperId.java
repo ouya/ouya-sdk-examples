@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 
 import android.util.Log;
 
 
-public class CallbacksFetchGamerUUID {
+public class CallbacksSetDeveloperId {
 
-	private final String LOG_TAG  = "CallbacksFetchGamerUUID";
+	private final String LOG_TAG  = CallbacksSetDeveloperId.class.getSimpleName();
 
-	public native void CallbacksFetchGamerUUIDOnSuccess(String gamerUUID);
-	public native void CallbacksFetchGamerUUIDOnFailure(int errorCode, String errorMessage);
-	public native void CallbacksFetchGamerUUIDOnCancel();
+	public native void CallbacksSetDeveloperIdOnSuccess();
+	public native void CallbacksSetDeveloperIdOnFailure(int errorCode, String errorMessage);
 
-	public void onSuccess(final String gamerUUID) {
-		Log.i(LOG_TAG, "onSuccess=" + gamerUUID);
-		CallbacksFetchGamerUUIDOnSuccess(gamerUUID);
+	public void onSuccess() {
+		Log.i(LOG_TAG, "onSuccess");
+		CallbacksSetDeveloperIdOnSuccess();
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
 		Log.i(LOG_TAG, "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
-		CallbacksFetchGamerUUIDOnFailure(errorCode, errorMessage);
-	}
-
-	public void onCancel() {
-		Log.i(LOG_TAG, "onCancel");
-		CallbacksFetchGamerUUIDOnCancel();
+		CallbacksSetDeveloperIdOnFailure(errorCode, errorMessage);
 	}
 }

@@ -17,11 +17,12 @@
 #ifndef __CALLBACKS_REQUEST_RECEIPTS_H__
 #define __CALLBACKS_REQUEST_RECEIPTS_H__
 
-#include "Receipt.h"
+#include "ExtensionReceipt.h"
 
 #include "s3eTypes.h"
 
 #include <string>
+#include <vector>
 
 typedef struct s3eRequestReceiptsSuccessEvent
 {

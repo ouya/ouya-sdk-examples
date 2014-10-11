@@ -19,10 +19,12 @@
 
 #include <string>
 
-class CallbacksFetchGamerUUID;
+class CallbacksInitOuyaPlugin;
+class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
+class CallbacksSetDeveloperId;
 
 namespace OuyaSDK
 {
@@ -40,10 +42,12 @@ namespace OuyaSDK
 
 		void RegisterNativeMethods();
 
-		CallbacksFetchGamerUUID* m_callbacksFetchGamerUUID;
+		CallbacksInitOuyaPlugin* m_callbacksInitOuyaPlugin;
+		CallbacksRequestGamerInfo* m_callbacksRequestGamerInfo;
 		CallbacksRequestProducts* m_callbacksRequestProducts;
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;
+		CallbacksSetDeveloperId* m_callbacksSetDeveloperId;
 	};
 };
 

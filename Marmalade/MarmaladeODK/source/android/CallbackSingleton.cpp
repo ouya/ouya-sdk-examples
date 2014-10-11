@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-#include "CallbacksFetchGamerUUID.h"
 #include "CallbackSingleton.h"
+#include "CallbacksRequestGamerInfo.h"
+#include "CallbacksInitOuyaPlugin.h"
 #include "CallbacksRequestProducts.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
+#include "CallbacksSetDeveloperId.h"
+#include "ExtensionGamerInfo.h"
+#include "ExtensionProduct.h"
+#include "ExtensionReceipt.h"
+#include "JSONArray.h"
+#include "JSONObject.h"
 
 #include "ODK_internal.h"
 #include "s3eEdk.h"
@@ -28,6 +35,9 @@
 #include <jni.h>
 #include <stdio.h>
 #include <string>
+
+using namespace org_json_JSONObject;
+using namespace org_json_JSONArray;
 
 #define APP_NAME "MarmaladeODK_callbacks"
 
@@ -49,18 +59,22 @@ namespace OuyaSDK
 	{
 		CallbackSingleton::m_instance = this;
 
-		m_callbacksFetchGamerUUID = new CallbacksFetchGamerUUID();
+		m_callbacksInitOuyaPlugin = new CallbacksInitOuyaPlugin();
+		m_callbacksRequestGamerInfo = new CallbacksRequestGamerInfo();
 		m_callbacksRequestProducts = new CallbacksRequestProducts();
 		m_callbacksRequestPurchase = new CallbacksRequestPurchase();
 		m_callbacksRequestReceipts = new CallbacksRequestReceipts();
+		m_callbacksSetDeveloperId = new CallbacksSetDeveloperId();
 	}
 
 	CallbackSingleton::~CallbackSingleton()
 	{
-		delete m_callbacksFetchGamerUUID;
+		delete m_callbacksInitOuyaPlugin;
+		delete m_callbacksRequestGamerInfo;
 		delete m_callbacksRequestProducts;
 		delete m_callbacksRequestPurchase;
 		delete m_callbacksRequestReceipts;
+		delete m_callbacksSetDeveloperId;
 	}
 
 	CallbackSingleton* CallbackSingleton::GetInstance()
@@ -75,90 +89,109 @@ namespace OuyaSDK
 
 	extern "C"
 	{
-		//com.ODK.CallbacksFetchGamerUUID.CallbacksFetchGamerUUIDOnSuccess
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess(JNIEnv* env, jobject thiz, jstring gamerUUID)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess(JNIEnv* env, jobject thiz)
 		{
-			LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess***********");
+			LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess***********");
 
-			std::string strGamerUUID = env->GetStringUTFChars(gamerUUID, NULL);
-
-			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess: Returned to C: %s", strGamerUUID.c_str());
-			//LOGI(buffer);
-
-			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			CallbacksInitOuyaPlugin* callback = CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin;
 			if (callback)
 			{
-				callback->OnSuccess(strGamerUUID);
+				callback->OnSuccess();
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
-			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			CallbacksInitOuyaPlugin* callback = CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin;
 			if (callback)
 			{
 				callback->OnFailure(errorCode, strErrorMessage);
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel(JNIEnv* env, jobject thiz)
+		//com.ODK.CallbacksRequestGamerInfo.CallbacksRequestGamerInfoOnSuccess
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel***********");
+			LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess***********");
+
+			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel: Returned to C");
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
 
-			CallbacksFetchGamerUUID* callback = CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID;
+			JSONObject jsonObject = JSONObject(strJsonData.c_str());
+
+			// Parse example data
+			OuyaSDK::GamerInfo newGamerInfo;
+			newGamerInfo.ParseJSON(jsonObject);
+
+			CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
+			if (callback)
+			{
+				callback->OnSuccess(newGamerInfo);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		{
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure***********");
+
+			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+			//char buffer[256];
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//LOGI(buffer);
+
+			CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
+			if (callback)
+			{
+				callback->OnFailure(errorCode, strErrorMessage);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel(JNIEnv* env, jobject thiz)
+		{
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel***********");
+
+			//char buffer[256];
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel: Returned to C");
+			//LOGI(buffer);
+
+			CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
 			if (callback)
 			{
 				callback->OnCancel();
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
 
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
 
-			// Parse example data
-			JSONValue* value = JSON::Parse(strJsonData.c_str());
-
-			if (value == NULL)
-			{
-				LOGI("Parsing JSON Failed");
-				return;
-			}
-
-			if (!value->IsArray())
-			{
-				LOGI("Parsing JSON Failed: Not an array");
-				return;
-			}
-
-			// Retrieve the main object
-			JSONArray data = value->AsArray();
+			JSONArray jsonArray = JSONArray(strJsonData.c_str());
 
 			std::vector<Product> products;
 
-			for (unsigned int i = 0; i < data.size(); i++)
+			for (int i = 0; i < jsonArray.length(); i++)
 			{
 				OuyaSDK::Product newProduct;
-				newProduct.ParseJSON(data[i]);
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				newProduct.ParseJSON(jsonObject);
 
 				products.push_back(newProduct);
 			}
@@ -170,14 +203,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
@@ -187,12 +220,12 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
@@ -202,36 +235,20 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
 
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
 			//LOGI(buffer);
 
-			// Parse example data
-			JSONValue* value = JSON::Parse(strJsonData.c_str());
-
-			if (value == NULL)
-			{
-				LOGI("Parsing JSON Failed");
-				return;
-			}
-
-			if (!value->IsObject())
-			{
-				LOGI("Parsing JSON Failed: Not an object");
-				return;
-			}
-
-			// Retrieve the main object
-			JSONValue data = value->AsObject();
+			JSONObject jsonObject = JSONObject(strJsonData.c_str());
 
 			OuyaSDK::Product product;
-			product.ParseJSON(&data);
+			product.ParseJSON(jsonObject);
 
 			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
 			if (callback)
@@ -240,14 +257,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
@@ -257,12 +274,12 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
@@ -272,42 +289,27 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
-			LOGI("***********Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
+			LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
 
 			std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
 
-			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
-			//LOGI(buffer);
+			std::string buffer = "Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: ";
+			buffer.append(strJsonData);
+			LOGI(buffer.c_str());
 
 			//LOGI("Parsing JSON Data");
 
-			// Parse example data
-			JSONValue* value = JSON::Parse(strJsonData.c_str());
-
-			if (value == NULL)
-			{
-				LOGI("Parsing JSON Failed");
-				return;
-			}
-
-			if (!value->IsArray())
-			{
-				LOGI("Parsing JSON Failed: Not an array");
-				return;
-			}
-
-			// Retrieve the main object
-			JSONArray data = value->AsArray();
+			JSONArray jsonArray = JSONArray(strJsonData.c_str());
 
 			std::vector<Receipt> receipts;
 
-			for (unsigned int i = 0; i < data.size(); i++)
+			for (int i = 0; i < jsonArray.length(); i++)
 			{
 				OuyaSDK::Receipt newReceipt;
-				newReceipt.ParseJSON(data[i]);
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				newReceipt.ParseJSON(jsonObject);
 
 				receipts.push_back(newReceipt);
 			}
@@ -319,14 +321,14 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
 
 			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
 			//LOGI(buffer);
 
 			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
@@ -336,18 +338,46 @@ namespace OuyaSDK
 			}
 		}
 
-		JNIEXPORT void JNICALL Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
 		{
-			//LOGI("***********Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel***********");
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel***********");
 
 			//char buffer[256];
-			//sprintf(buffer, "Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
 			//LOGI(buffer);
 
 			CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
 			if (callback)
 			{
 				callback->OnCancel();
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnSuccess(JNIEnv* env, jobject thiz)
+		{
+			LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnSuccess***********");
+
+			CallbacksSetDeveloperId* callback = CallbackSingleton::GetInstance()->m_callbacksSetDeveloperId;
+			if (callback)
+			{
+				callback->OnSuccess();
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+		{
+			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure***********");
+
+			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+			//char buffer[256];
+			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+			//LOGI(buffer);
+
+			CallbacksSetDeveloperId* callback = CallbackSingleton::GetInstance()->m_callbacksSetDeveloperId;
+			if (callback)
+			{
+				callback->OnFailure(errorCode, strErrorMessage);
 			}
 		}
 	}
@@ -377,12 +407,19 @@ namespace OuyaSDK
 	}
 
 	//
-	// Native Callbacks for FetchGamerUUID
+	// Native Callbacks for InitOuyaPlugin
 	//
 
-	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnSuccess;
-	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnFailure;
-	JNINativeMethod g_nativeCallbacksFetchGamerUUIDOnCancel;
+	JNINativeMethod g_nativeCallbacksInitOuyaPluginOnSuccess;
+	JNINativeMethod g_nativeCallbacksInitOuyaPluginOnFailure;
+
+	//
+	// Native Callbacks for RequestGamerInfo
+	//
+
+	JNINativeMethod g_nativeCallbacksRequestGamerInfoOnSuccess;
+	JNINativeMethod g_nativeCallbacksRequestGamerInfoOnFailure;
+	JNINativeMethod g_nativeCallbacksRequestGamerInfoOnCancel;
 
 	//
 	// Native Callbacks for RequestProducts
@@ -408,60 +445,87 @@ namespace OuyaSDK
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnFailure;
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnCancel;
 
+	//
+	// Native Callbacks for SetDeveloperId
+	//
+
+	JNINativeMethod g_nativeCallbacksSetDeveloperIdOnSuccess;
+	JNINativeMethod g_nativeCallbacksSetDeveloperIdOnFailure;
+
 	void CallbackSingleton::RegisterNativeMethods()
 	{
 		JNIEnv* env = s3eEdkJNIGetEnv();
 
 		//
-		// Register Native Callbacks for FetchGamerUUID
+		// Register Native Callbacks for InitOuyaPlugin
 		//
 
-		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnSuccess", "com/ODK/CallbacksFetchGamerUUID", "(Ljava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnSuccess, &g_nativeCallbacksFetchGamerUUIDOnSuccess);
+		RegisterNativeMethod(env, "CallbacksInitOuyaPluginOnSuccess", "tv/ouya/sdk/marmalade/CallbacksInitOuyaPlugin", "()V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess, &g_nativeCallbacksInitOuyaPluginOnSuccess);
 
-		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnFailure", "com/ODK/CallbacksFetchGamerUUID", "(ILjava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnFailure, &g_nativeCallbacksFetchGamerUUIDOnFailure);
+		RegisterNativeMethod(env, "CallbacksInitOuyaPluginOnFailure", "tv/ouya/sdk/marmalade/CallbacksInitOuyaPlugin", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure, &g_nativeCallbacksInitOuyaPluginOnFailure);
 
-		RegisterNativeMethod(env, "CallbacksFetchGamerUUIDOnCancel", "com/ODK/CallbacksFetchGamerUUID", "()V",
-			(void*)&Java_com_ODK_CallbacksFetchGamerUUID_CallbacksFetchGamerUUIDOnCancel, &g_nativeCallbacksFetchGamerUUIDOnCancel);
+		//
+		// Register Native Callbacks for RequestGamerInfo
+		//
+
+		RegisterNativeMethod(env, "CallbacksRequestGamerInfoOnSuccess", "tv/ouya/sdk/marmalade/CallbacksRequestGamerInfo", "(Ljava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess, &g_nativeCallbacksRequestGamerInfoOnSuccess);
+
+		RegisterNativeMethod(env, "CallbacksRequestGamerInfoOnFailure", "tv/ouya/sdk/marmalade/CallbacksRequestGamerInfo", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure, &g_nativeCallbacksRequestGamerInfoOnFailure);
+
+		RegisterNativeMethod(env, "CallbacksRequestGamerInfoOnCancel", "tv/ouya/sdk/marmalade/CallbacksRequestGamerInfo", "()V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel, &g_nativeCallbacksRequestGamerInfoOnCancel);
 
 		//
 		// Register Native Callbacks for RequestProducts
 		//
 
-		RegisterNativeMethod(env, "CallbacksRequestProductsOnSuccess", "com/ODK/CallbacksRequestProducts", "(Ljava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess, &g_nativeCallbacksRequestProductsOnSuccess);
+		RegisterNativeMethod(env, "CallbacksRequestProductsOnSuccess", "tv/ouya/sdk/marmalade/CallbacksRequestProducts", "(Ljava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess, &g_nativeCallbacksRequestProductsOnSuccess);
 
-		RegisterNativeMethod(env, "CallbacksRequestProductsOnFailure", "com/ODK/CallbacksRequestProducts", "(ILjava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnFailure, &g_nativeCallbacksRequestProductsOnFailure);
+		RegisterNativeMethod(env, "CallbacksRequestProductsOnFailure", "tv/ouya/sdk/marmalade/CallbacksRequestProducts", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnFailure, &g_nativeCallbacksRequestProductsOnFailure);
 
-		RegisterNativeMethod(env, "CallbacksRequestProductsOnCancel", "com/ODK/CallbacksRequestProducts", "()V",
-			(void*)&Java_com_ODK_CallbacksRequestProducts_CallbacksRequestProductsOnCancel, &g_nativeCallbacksRequestProductsOnCancel);
+		RegisterNativeMethod(env, "CallbacksRequestProductsOnCancel", "tv/ouya/sdk/marmalade/CallbacksRequestProducts", "()V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestProducts_CallbacksRequestProductsOnCancel, &g_nativeCallbacksRequestProductsOnCancel);
 
 		//
 		// Register Native Callbacks for RequestPurchase
 		//
 
-		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnSuccess", "com/ODK/CallbacksRequestPurchase", "(Ljava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess, &g_nativeCallbacksRequestPurchaseOnSuccess);
+		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnSuccess", "tv/ouya/sdk/marmalade/CallbacksRequestPurchase", "(Ljava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess, &g_nativeCallbacksRequestPurchaseOnSuccess);
 
-		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnFailure", "com/ODK/CallbacksRequestPurchase", "(ILjava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure, &g_nativeCallbacksRequestPurchaseOnFailure);
+		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnFailure", "tv/ouya/sdk/marmalade/CallbacksRequestPurchase", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure, &g_nativeCallbacksRequestPurchaseOnFailure);
 
-		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnCancel", "com/ODK/CallbacksRequestPurchase", "()V",
-			(void*)&Java_com_ODK_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel, &g_nativeCallbacksRequestPurchaseOnCancel);
+		RegisterNativeMethod(env, "CallbacksRequestPurchaseOnCancel", "tv/ouya/sdk/marmalade/CallbacksRequestPurchase", "()V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel, &g_nativeCallbacksRequestPurchaseOnCancel);
 
 		//
 		// Register Native Callbacks for RequestReceipts
 		//
 
-		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnSuccess", "com/ODK/CallbacksRequestReceipts", "(Ljava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess, &g_nativeCallbacksRequestReceiptsOnSuccess);
+		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnSuccess", "tv/ouya/sdk/marmalade/CallbacksRequestReceipts", "(Ljava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess, &g_nativeCallbacksRequestReceiptsOnSuccess);
 
-		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnFailure", "com/ODK/CallbacksRequestReceipts", "(ILjava/lang/String;)V",
-			(void*)&Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure, &g_nativeCallbacksRequestReceiptsOnFailure);
+		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnFailure", "tv/ouya/sdk/marmalade/CallbacksRequestReceipts", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure, &g_nativeCallbacksRequestReceiptsOnFailure);
 
-		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnCancel", "com/ODK/CallbacksRequestReceipts", "()V",
-			(void*)&Java_com_ODK_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel, &g_nativeCallbacksRequestReceiptsOnCancel);
+		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnCancel", "tv/ouya/sdk/marmalade/CallbacksRequestReceipts", "()V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel, &g_nativeCallbacksRequestReceiptsOnCancel);
+
+		//
+		// Register Native Callbacks for SetDeveloperId
+		//
+
+		RegisterNativeMethod(env, "CallbacksSetDeveloperIdOnSuccess", "tv/ouya/sdk/marmalade/CallbacksSetDeveloperId", "()V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnSuccess, &g_nativeCallbacksSetDeveloperIdOnSuccess);
+
+		RegisterNativeMethod(env, "CallbacksSetDeveloperIdOnFailure", "tv/ouya/sdk/marmalade/CallbacksSetDeveloperId", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure, &g_nativeCallbacksSetDeveloperIdOnFailure);
 	}
 }

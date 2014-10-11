@@ -17,11 +17,12 @@
 #ifndef __CALLBACKS_REQUEST_PRODUCTS_H__
 #define __CALLBACKS_REQUEST_PRODUCTS_H__
 
-#include "Product.h"
+#include "ExtensionProduct.h"
 
 #include "s3eTypes.h"
 
 #include <string>
+#include <vector>
 
 typedef struct s3eRequestProductsSuccessEvent
 {

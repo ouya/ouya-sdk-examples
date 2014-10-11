@@ -20,3 +20,4 @@ MemSizeDebug = 128000000
 MemSize = 128000000
 [GX]
 DataCacheSize = 32768
+[RESMANAGER]ResBuild=1

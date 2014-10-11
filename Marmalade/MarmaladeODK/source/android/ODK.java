@@ -26,7 +26,7 @@ These functions are called via JNI from native code.
  * be overwritten (unless --force is specified) and is intended to be modified.
  */
 
-package com.ODK;
+package tv.ouya.sdk.marmalade;
 
 
 import android.app.Activity;
@@ -41,219 +41,102 @@ import com.ideaworks3d.marmalade.LoaderAPI;
 import com.ideaworks3d.marmalade.LoaderActivity;
 import java.io.IOException;
 import java.io.InputStream;
-import tv.ouya.console.api.OuyaController;
+import tv.ouya.console.api.*;
+import tv.ouya.sdk.marmalade.*;
 
 public class ODK extends LoaderActivity
 {
-	private static final String LOG_TAG = "ODK";
-
-	// stop the thread on exit
-	private static boolean m_waitToExit = true;
-
-	public static ODK 				m_Activity = null;
-	public static OuyaController	m_SelectedController = null;
-    public static boolean			m_bInitialized = false;
+	private static final String TAG = ODK.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
-        Log.i(LOG_TAG, "onCreate" );
+        Log.i(TAG, "onCreate" );
         super.onCreate(savedInstanceState);
-        m_Activity = this;
+
+		IMarmaladeOuyaActivity.SetActivity(this);
+
 		OuyaController.init(this);
 
-		initializeOUYA();
+		OuyaInputMapper.init(this);
     }
 
     @Override
 		protected void onDestroy() {
+
+			Log.i(TAG, "onDestroy" );
 			super.onDestroy();
 
-			// notify threads it's time to exit
-			m_waitToExit = false;
+			OuyaInputMapper.shutdown(this);
 	}
 
-	private void initializeOUYA() {
+	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
+	public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
 
-		Log.i(LOG_TAG, "Initializing OUYA...");
-
-		Log.i(LOG_TAG, "Get application context...");
-		Context context = getApplicationContext();
-
-		Log.i(LOG_TAG, "Load signing key...");
-		// load the application key from assets
-		try {
-			AssetManager assetManager = context.getAssets();
-			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
-			byte[] applicationKey = new byte[inputStream.available()];
-			inputStream.read(applicationKey);
-			inputStream.close();
-			IOuyaActivity.SetApplicationKey(applicationKey);
-
-			Log.i(LOG_TAG, "***Loaded signing key*********");
-		} catch (IOException e) {
-			e.printStackTrace();
+	@Override
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+    	//Log.i(TAG, "dispatchGenericMotionEvent");
+    	//DebugInput.debugMotionEvent(motionEvent);
+		if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
+		    return OuyaInputMapper.dispatchGenericMotionEvent(this, motionEvent);
 		}
+    	return super.dispatchGenericMotionEvent(motionEvent);
+    }
+	
+	@Override
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+	    if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
+	    	return OuyaInputMapper.dispatchKeyEvent(this, keyEvent);
+	    }
+	    return super.dispatchKeyEvent(keyEvent);
+    }
 
-		Log.i(LOG_TAG, "Initialize MarmaladeOuyaPlugin...");
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+		//DebugInput.debugMotionEvent(motionEvent);
 
-		// Initialize the Marmalade OUYA Plugin
-		MarmaladeOuyaPlugin marmaladeOuyaPlugin = new MarmaladeOuyaPlugin();
-		IOuyaActivity.SetMarmaladeOuyaPlugin(marmaladeOuyaPlugin);
+		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());	    
+	    if (playerNum < 0) {
+	    	//Log.w(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
+	    	playerNum = 0;
+	    }
 
-		//make activity accessible to statically
-		IOuyaActivity.SetActivity(this);
-
-		Log.i(LOG_TAG, "Spawn wait thread...");
-
-		// spawn thread to wait to initialize ouya facade
-		Thread timer = new Thread() {
-			public void run() {
-				// wait for developer id to be set
-				while (m_waitToExit) {
-
-					final MarmaladeOuyaPlugin marmaladeOuyaPlugin = IOuyaActivity.GetMarmaladeOuyaPlugin();
-					if (null != marmaladeOuyaPlugin) {
-						if (marmaladeOuyaPlugin.getDeveloperId() != "") {
-							Log.i(LOG_TAG, "Detected developer id initializing...");
-
-							Runnable runnable = new Runnable()
-							{
-								public void run()
-								{
-									Log.i(LOG_TAG, "MarmaladeOuyaPlugin initializing...");
-									marmaladeOuyaPlugin.Initialize();
-								}
-							};
-
-							runOnUiThread(runnable);
-
-							break;
-						}
-					}
-
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-        };
-        timer.start();
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		return true;
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
-	{
-		//Log.i(LOG_TAG, "onKeyDown keyCode="+keyCode);
-		boolean handled = OuyaController.onKeyDown(keyCode, event);
-		return handled || super.onKeyDown(keyCode, event);
+	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
+
+		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
+	    if (playerNum < 0) {
+	    	Log.w(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
+	    	playerNum = 0;
+	    }
+
+		int action = keyEvent.getAction();
+		dispatchKeyEventNative(playerNum, keyCode, action);
+		return true;
 	}
-
-
+	
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event)
-	{
-		//Log.i(LOG_TAG, "onKeyUp keyCode="+keyCode);
-		boolean handled = OuyaController.onKeyUp(keyCode, event);
-		return handled || super.onKeyUp(keyCode, event);
+	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+		//Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
+
+		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
+	    if (playerNum < 0) {
+	    	Log.w(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
+	    	playerNum = 0;
+	    }
+
+		int action = keyEvent.getAction();
+		dispatchKeyEventNative(playerNum, keyCode, action);
+		return true;
 	}
-
-	@Override
-	public boolean onGenericMotionEvent(MotionEvent event)
-	{
-		//Log.i(LOG_TAG, "onGenericMotionEvent");
-		boolean handled = OuyaController.onGenericMotionEvent(event);
-		return handled || super.onGenericMotionEvent(event);
-	}
-
-
-    public void OuyaController_startOfFrame()
-    {
-		//Log.i(LOG_TAG, "OuyaController_startOfFrame");
-        OuyaController.startOfFrame();
-    }
-
-
-    public boolean OuyaController_selectControllerByPlayer(int playerNum)
-    {
-		//Log.i(LOG_TAG, "OuyaController_selectControllerByPlayer playerNum="+playerNum);
-		m_SelectedController = OuyaController.getControllerByPlayer(playerNum);
-        return (m_SelectedController!=null);
-    }
-
-
-    public boolean OuyaController_selectControllerByDeviceID(int deviceID)
-    {
-		//Log.i(LOG_TAG, "OuyaController_selectControllerByDeviceID deviceID="+deviceID);
-        m_SelectedController = OuyaController.getControllerByDeviceId(deviceID);
-        return (m_SelectedController!=null);
-    }
-
-
-    public int OuyaController_getAxisValue(int axis)
-    {
-		//Log.i(LOG_TAG, "OuyaController_getAxisValue axis="+axis);
-		if (m_SelectedController!=null)
-			return (int)(m_SelectedController.getAxisValue(axis)*256.0f);
-		else
-			return 0;
-    }
-
-
-    public boolean OuyaController_getButton(int button)
-    {
-		//Log.i(LOG_TAG, "OuyaController_getButton button="+button);
-        if (m_SelectedController!=null)
-			return m_SelectedController.getButton(button);
-		else
-			return false;
-    }
-
-
-    public boolean OuyaController_buttonPressedThisFrame(int button)
-    {
-		//Log.i(LOG_TAG, "OuyaController_buttonPressedThisFrame button="+button);
-		if (m_SelectedController!=null)
-			return m_SelectedController.buttonPressedThisFrame(button);
-		else
-			return false;
-    }
-
-
-    public boolean OuyaController_buttonReleasedThisFrame(int button)
-    {
-		//Log.i(LOG_TAG, "OuyaController_buttonReleasedThisFrame button="+button);
-        if (m_SelectedController!=null)
-			return m_SelectedController.buttonReleasedThisFrame(button);
-		else
-			return false;
-    }
-
-
-    public boolean OuyaController_buttonChangedThisFrame(int button)
-    {
-		//Log.i(LOG_TAG, "OuyaController_buttonChangedThisFrame button="+button);
-        if (m_SelectedController!=null)
-			return m_SelectedController.buttonChangedThisFrame(button);
-		else
-			return false;
-    }
-
-
-    public int OuyaController_getPlayerNum()
-    {
-		//Log.i(LOG_TAG, "OuyaController_getPlayerNum");
-		if (m_SelectedController!=null)
-			return m_SelectedController.getPlayerNum();
-		else
-			return -1;
-    }
-
-    public void OuyaPlugin_asyncSetDeveloperId(String developerId)
-    {
-		Log.i(LOG_TAG, "OuyaPlugin_asyncSetDeveloperId developerId="+developerId);
-    }
 }

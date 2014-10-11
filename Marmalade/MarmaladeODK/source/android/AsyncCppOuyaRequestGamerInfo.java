@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef __APPLICATION_CALLBACKS_FETCH_GAMER_UUID_H__
-#define __APPLICATION_CALLBACKS_FETCH_GAMER_UUID_H__
+package tv.ouya.sdk.marmalade;
 
-#include <string>
 
-class ApplicationCallbacksFetchGamerUUID
-{
-public:
-	
-	s3eCallback GetSuccessEvent();
+public class AsyncCppOuyaRequestGamerInfo {
 
-	s3eCallback GetFailureEvent();
+	public static void invoke() {
 
-	s3eCallback GetCancelEvent();
+		CallbacksRequestGamerInfo callbacks = new CallbacksRequestGamerInfo();
 
-	void OnSuccess(const std::string& gamerUUID);
+		// store for access
+		IMarmaladeOuyaActivity.SetCallbacksRequestGamerInfo(callbacks);
 
-	void OnFailure(int errorCode, const std::string& errorMessage);
-
-	void OnCancel();
-};
-
-#endif
+		// invoke service
+		MarmaladeOuyaPlugin.requestGamerInfo();
+	}
+}

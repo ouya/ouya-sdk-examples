@@ -25,7 +25,7 @@
 #include "ODK.h"
 
 
-const char* g_version = "Mamalade Version: 072";
+const char* g_version = "Mamalade Version: 074";
 
 
 void render()
@@ -50,8 +50,6 @@ int main()
 		return 0;
 	}
 
-	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
-
 	IwGxInit();
 	IwGxSetColClear(0, 0, 0xff, 0xff);
 	IwResManagerInit();
@@ -62,17 +60,15 @@ int main()
     const int width = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
     const int height = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
 
-	for (int index = 0; index < 10; ++index)
-	{
-		IwTrace(DEFAULT, ("Entering Main loop..."));
-	}
+	Application::Init();
 
 	while (!s3eDeviceCheckQuitRequest())
 	{
 		//IwTrace(DEFAULT, ("Main loop while (!s3eDeviceCheckQuitRequest()"));
 
-		Application::m_ui.HandleInput();
 		render();
+
+		Application::m_ui.HandleInput();
 
 		// keep polling for input, don't kill the CPU
 		s3eDeviceYield(0);

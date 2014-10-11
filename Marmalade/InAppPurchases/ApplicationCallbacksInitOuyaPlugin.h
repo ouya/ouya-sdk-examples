@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef __JSON_UTIL_H__
-#define __JSON_UTIL_H__
+#ifndef __APPLICATION_CALLBACKS_INIT_OUYA_PLUGIN_H__
+#define __APPLICATION_CALLBACKS_INIT_OUYA_PLUGIN_H__
 
-#include "JSON.h"
+#include <string>
 
-class JsonUtil
+class ApplicationCallbacksInitOuyaPlugin
 {
 public:
-	static std::string ParseString(JSONObject item, const std::wstring& fieldName);
-	static int ParseInt(JSONObject item, const std::wstring& fieldName);
-	static float ParseFloat(JSONObject item, const std::wstring& fieldName);
+	
+	s3eCallback GetSuccessEvent();
+
+	s3eCallback GetFailureEvent();
+
+	void OnSuccess();
+
+	void OnFailure(int errorCode, const std::string& errorMessage);
 };
 
 #endif

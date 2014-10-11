@@ -15,5 +15,25 @@
  */
 
 #include "Application.h"
+#include "ApplicationCallbacksInitOuyaPlugin.h"
+#include "ApplicationCallbacksSetDeveloperId.h"
+#include "ODK.h"
 
 UI Application::m_ui = UI();
+
+void Application::Init()
+{
+	Application::m_ui.SetMessage("Setting developer id...");
+
+	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0",
+		Application::m_ui.m_callbacksSetDeveloperId->GetSuccessEvent(),
+		Application::m_ui.m_callbacksSetDeveloperId->GetFailureEvent());
+}
+
+void Application::InitOuyaPlugin()
+{
+	Application::m_ui.SetMessage("Initialize OUYA Plugin...");
+
+	OuyaPlugin_initOuyaPlugin(Application::m_ui.m_callbacksInitOuyaPlugin->GetSuccessEvent(),
+		Application::m_ui.m_callbacksInitOuyaPlugin->GetFailureEvent());
+}

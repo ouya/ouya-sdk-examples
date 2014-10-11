@@ -3,7 +3,10 @@ ResGroupResources:
 		"a" (0x2b606)
 		Size: 451620
 	CIwTexture (0x3521f539)
-		"cutter" (0xf75484dc)
+		"menu" (0x7c9a911a)
+		Size: 451620
+	CIwTexture (0x3521f539)
+		"controller" (0xbf67c809)
 		Size: 451620
 	CIwTexture (0x3521f539)
 		"dpad_down" (0xea8a8b35)
@@ -50,13 +53,16 @@ ResGroupResources:
 	CIwTexture (0x3521f539)
 		"y" (0x2b61e)
 		Size: 451620
-	ResList 'CIwTexture' pos:36 size:7677550
+	ResList 'CIwTexture' pos:36 size:8129170
 
 	CIwMaterial (0x2544f997)
 		"a" (0x2b606)
 		Size: 17
 	CIwMaterial (0x2544f997)
-		"cutter" (0xf75484dc)
+		"menu" (0x7c9a911a)
+		Size: 17
+	CIwMaterial (0x2544f997)
+		"controller" (0xbf67c809)
 		Size: 17
 	CIwMaterial (0x2544f997)
 		"dpad_down" (0xea8a8b35)
@@ -103,7 +109,7 @@ ResGroupResources:
 	CIwMaterial (0x2544f997)
 		"y" (0x2b61e)
 		Size: 17
-	ResList 'CIwMaterial' pos:7677586 size:299
+	ResList 'CIwMaterial' pos:8129206 size:316
 
-ResGroupResources: Wrote 7677853 bytes to CIwResGroup "tiles"
+ResGroupResources: Wrote 8129490 bytes to CIwResGroup "tiles"
 

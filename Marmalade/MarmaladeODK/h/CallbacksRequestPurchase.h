@@ -17,7 +17,7 @@
 #ifndef __CALLBACKS_REQUEST_PURCHASE_H__
 #define __CALLBACKS_REQUEST_PURCHASE_H__
 
-#include "Product.h"
+#include "ExtensionProduct.h"
 
 #include "s3eTypes.h"
 

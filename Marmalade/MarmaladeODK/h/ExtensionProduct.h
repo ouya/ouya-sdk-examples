@@ -14,44 +14,46 @@
  * limitations under the License.
  */
 
-#ifndef __RECEIPT_H__
-#define __RECEIPT_H__
+#ifndef __PRODUCT_H__
+#define __PRODUCT_H__
 
-#include "JSON.h"
+#include "JsonObject.h"
+
+#include <string>
 
 namespace OuyaSDK
 {
-	class Receipt
+	class Product;
+	class ExtensionProduct;
+
+	class Product
 	{
 	public:
-		std::string Currency;
-		std::string Gamer;
-		std::string GeneratedDate;
+		std::string CurrencyCode;
 		std::string Identifier;
-		std::string Uuid;
-		std::string PurchaseDate;
+		std::string Name;
+		int ProductVersionToBundle;
 		float LocalPrice;
 		int PriceInCents;
 
 		void Init();
-
-		void ParseJSON(JSONValue* json);
+		void Copy(const ExtensionProduct& rhs);
+		void ParseJSON(const org_json_JSONObject::JSONObject& jsonObject);
 	};
 
 	// for passing object from extension to application
-	class ExtensionReceipt
+	class ExtensionProduct
 	{
 	public:
-		char* Currency;
-		char* Gamer;
-		char* GeneratedDate;
-		char* Identifier;
-		char* Uuid;
-		char* PurchaseDate;
+		const char* CurrencyCode;
+		const char* Identifier;
+		const char* Name;
+		int ProductVersionToBundle;
 		float LocalPrice;
 		int PriceInCents;
 
 		void Init();
+		void Copy(const Product& rhs);
 	};
 }
 

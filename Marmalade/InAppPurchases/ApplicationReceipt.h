@@ -17,7 +17,7 @@
 #ifndef __APPLICATION_RECEIPT_H__
 #define __APPLICATION_RECEIPT_H__
 
-#include "Receipt.h"
+#include "ExtensionReceipt.h"
 
 #include <string>
 

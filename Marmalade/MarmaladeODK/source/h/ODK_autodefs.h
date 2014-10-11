@@ -11,4 +11,12 @@
 #define S3E_EXT_ODK_NAME "ODK"
 #define S3E_EXT_ODK_HASH 0xb889863
 
+#ifdef S3E_EXT_REGISTER
+#ifndef S3E_EXT_REGISTER_KEY
+#define S3E_EXT_REGISTER_KEY(name, num, key) S3E_EXT_REGISTER(name, num)
+#endif
+S3E_EXT_REGISTER("ODK", 12)
+#else
+
+#endif /* S3E_EXT_REGISTER */
 #endif /* !ODK_AUTODEFS_H */

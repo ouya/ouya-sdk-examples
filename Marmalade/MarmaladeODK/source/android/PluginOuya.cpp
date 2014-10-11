@@ -51,8 +51,10 @@ namespace OuyaSDK
 {
 	PluginOuya::PluginOuya()
 	{
+		jc_IMarmaladeOuyaActivity = NULL;
 		jc_AsyncCppOuyaSetDeveloperId = NULL;
-		jc_AsyncCppOuyaFetchGamerUUID = NULL;
+		jc_AsyncCppInitOuyaPlugin = NULL;
+		jc_AsyncCppOuyaRequestGamerInfo = NULL;
 		jc_AsyncCppOuyaRequestProducts = NULL;
 		jc_AsyncCppOuyaRequestPurchase = NULL;
 		jc_AsyncCppOuyaRequestReceipts = NULL;
@@ -76,29 +78,37 @@ namespace OuyaSDK
 
 	void PluginOuya::CacheClasses(JNIEnv* env)
 	{
-		FindClass(env, "com/ODK/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
+		FindClass(env, "tv/ouya/sdk/marmalade/IMarmaladeOuyaActivity", &jc_IMarmaladeOuyaActivity);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "com/ODK/AsyncCppOuyaFetchGamerUUID", &jc_AsyncCppOuyaFetchGamerUUID);
+		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppInitOuyaPlugin", &jc_AsyncCppInitOuyaPlugin);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "com/ODK/AsyncCppOuyaRequestProducts", &jc_AsyncCppOuyaRequestProducts);
+		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaRequestGamerInfo", &jc_AsyncCppOuyaRequestGamerInfo);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "com/ODK/AsyncCppOuyaRequestPurchase", &jc_AsyncCppOuyaRequestPurchase);
+		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaRequestProducts", &jc_AsyncCppOuyaRequestProducts);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "com/ODK/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
+		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaRequestPurchase", &jc_AsyncCppOuyaRequestPurchase);
+		EXCEPTION_RETURN(env);
+
+		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
+		EXCEPTION_RETURN(env);
+
+		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
 		EXCEPTION_RETURN(env);
 
 		CallbackSingleton::GetInstance()->RegisterNativeMethods();
 	}
 
-	void PluginOuya::AsyncSetDeveloperId(const std::string& developerId)
+	void PluginOuya::AsyncInitOuyaPlugin()
 	{
-		if (!jc_AsyncCppOuyaSetDeveloperId)
+		//LOGI("AsyncInitOuyaPlugin");
+
+		if (!jc_AsyncCppInitOuyaPlugin)
 		{
-			LOGI("jc_AsyncOuyaSetDeveloperId is not initialized");
+			LOGI("jc_AsyncCppInitOuyaPlugin is not initialized");
 			return;
 		}
 
@@ -110,38 +120,30 @@ namespace OuyaSDK
 			return;
 		}
 
-		//std::string buffer = "Developer Id: ";
-		//buffer.append(m_developerId);
-		//LOGI(buffer.c_str());
-
-		//LOGI("Allocate DeveloperId String");
-		jstring developerIdString = env->NewStringUTF(developerId.c_str());
-		EXCEPTION_RETURN(env);
-
 		//LOGI("allocate the object");
-		jobject objSetDeveloperId = env->AllocObject(jc_AsyncCppOuyaSetDeveloperId);
+		jobject objInitOuyaPlugin = env->AllocObject(jc_AsyncCppInitOuyaPlugin);
 		EXCEPTION_RETURN(env);
 
 		//LOGI("get the constructor");
-		jmethodID constructSetDeveloperId = env->GetMethodID(jc_AsyncCppOuyaSetDeveloperId, "<init>", "()V");
+		jmethodID constructor = env->GetMethodID(jc_AsyncCppInitOuyaPlugin, "<init>", "()V");
 		EXCEPTION_RETURN(env);
 
 		//LOGI("construct the object");
-		env->CallVoidMethod(objSetDeveloperId, constructSetDeveloperId);
+		env->CallVoidMethod(objInitOuyaPlugin, constructor);
 		EXCEPTION_RETURN(env);
 
 		//LOGI("get the invoke method");
-		jmethodID invokeSetDeveloperId = env->GetStaticMethodID(jc_AsyncCppOuyaSetDeveloperId, "invoke", "(Ljava/lang/String;)V");
+		jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppInitOuyaPlugin, "invoke", "()V");
 		EXCEPTION_RETURN(env);
 
 		//LOGI("execute the invoke method");
-		env->CallStaticVoidMethod(jc_AsyncCppOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
+		env->CallStaticVoidMethod(jc_AsyncCppInitOuyaPlugin, invokeMethod);
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaFetchGamerUUID()
+	void PluginOuya::AsyncOuyaRequestGamerInfo()
 	{
-		//LOGI("AsyncOuyaFetchGamerUUID");
+		//LOGI("AsyncOuyaRequestGamerInfo");
 
 		JNIEnv* env = s3eEdkJNIGetEnv();
 
@@ -152,11 +154,11 @@ namespace OuyaSDK
 		}
 
 		//LOGI("get the invoke method");
-		jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaFetchGamerUUID, "invoke", "()V");
+		jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaRequestGamerInfo, "invoke", "()V");
 		EXCEPTION_RETURN(env);
 
 		//LOGI("execute the invoke method");
-		env->CallStaticVoidMethod(jc_AsyncCppOuyaFetchGamerUUID, invokeMethod);
+		env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestGamerInfo, invokeMethod);
 		EXCEPTION_RETURN(env);
 	}
 
@@ -238,6 +240,51 @@ namespace OuyaSDK
 
 		//LOGI("execute the invoke method");
 		env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestReceipts, invokeMethod);
+		EXCEPTION_RETURN(env);
+	}
+
+	void PluginOuya::AsyncSetDeveloperId(const std::string& developerId)
+	{
+		if (!jc_AsyncCppOuyaSetDeveloperId)
+		{
+			LOGI("jc_AsyncOuyaSetDeveloperId is not initialized");
+			return;
+		}
+
+		JNIEnv* env = s3eEdkJNIGetEnv();
+
+		if (!env)
+		{
+			LOGI("JNIEnv is invalid");
+			return;
+		}
+
+		//std::string buffer = "Developer Id: ";
+		//buffer.append(m_developerId);
+		//LOGI(buffer.c_str());
+
+		//LOGI("Allocate DeveloperId String");
+		jstring developerIdString = env->NewStringUTF(developerId.c_str());
+		EXCEPTION_RETURN(env);
+
+		//LOGI("allocate the object");
+		jobject objSetDeveloperId = env->AllocObject(jc_AsyncCppOuyaSetDeveloperId);
+		EXCEPTION_RETURN(env);
+
+		//LOGI("get the constructor");
+		jmethodID constructSetDeveloperId = env->GetMethodID(jc_AsyncCppOuyaSetDeveloperId, "<init>", "()V");
+		EXCEPTION_RETURN(env);
+
+		//LOGI("construct the object");
+		env->CallVoidMethod(objSetDeveloperId, constructSetDeveloperId);
+		EXCEPTION_RETURN(env);
+
+		//LOGI("get the invoke method");
+		jmethodID invokeSetDeveloperId = env->GetStaticMethodID(jc_AsyncCppOuyaSetDeveloperId, "invoke", "(Ljava/lang/String;)V");
+		EXCEPTION_RETURN(env);
+
+		//LOGI("execute the invoke method");
+		env->CallStaticVoidMethod(jc_AsyncCppOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
 		EXCEPTION_RETURN(env);
 	}
 }

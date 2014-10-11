@@ -17,7 +17,7 @@
 #ifndef __APPLICATION_PRODUCT_H__
 #define __APPLICATION_PRODUCT_H__
 
-#include "Product.h"
+#include "ExtensionProduct.h"
 
 #include <string>
 

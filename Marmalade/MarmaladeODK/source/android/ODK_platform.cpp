@@ -23,116 +23,146 @@
  * be overwritten (unless --force is specified) and is intended to be modified.
  */
 #include "ODK_internal.h"
-#include "CallbacksFetchGamerUUID.h"
 #include "CallbackSingleton.h"
+#include "CallbacksInitOuyaPlugin.h"
+#include "CallbacksRequestGamerInfo.h"
 #include "CallbacksRequestProducts.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
+#include "CallbacksSetDeveloperId.h"
+#include "JSONArray.h"
+#include "JSONObject.h"
+#include "OuyaController.h"
 #include "PluginOuya.h"
+
+#include <map>
 
 #include "s3eEdk.h"
 #include "s3eEdk_android.h"
 #include <jni.h>
 #include "IwDebug.h"
 
-static jobject g_Obj;
-static jmethodID g_OuyaController_startOfFrame;
-static jmethodID g_OuyaController_selectControllerByPlayer;
-static jmethodID g_OuyaController_selectControllerByDeviceID;
-static jmethodID g_OuyaController_getAxisValue;
-static jmethodID g_OuyaController_getButton;
-static jmethodID g_OuyaController_buttonPressedThisFrame;
-static jmethodID g_OuyaController_buttonReleasedThisFrame;
-static jmethodID g_OuyaController_buttonChangedThisFrame;
-static jmethodID g_OuyaController_getPlayerNum;
+#include <android/log.h>
+#define LOG_TAG "ODK_platform.cpp"
+
+using namespace org_json_JSONObject;
+using namespace org_json_JSONArray;
+using namespace tv_ouya_console_api_OuyaController;
 
 static OuyaSDK::PluginOuya g_pluginOuya;
+
+// use string to send char* to invoker
+static std::string g_tempPluginString;
+
+#define MAX_CONTROLLERS 4
+
+//axis states
+static std::vector< std::map<int, float> > g_axis;
+
+//button states
+static std::vector< std::map<int, bool> > g_button;
+static std::vector< std::map<int, bool> > g_buttonDown;
+static std::vector< std::map<int, bool> > g_buttonUp;
+
+void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
+	jint deviceId,
+	jint axis,
+	jfloat val)
+{
+	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "dispatchGenericMotionEventNative: Device=%d axis=%d val=%f", deviceId, axis, val);
+	if (deviceId < 0 ||
+		deviceId >= MAX_CONTROLLERS)
+	{
+		deviceId = 0;
+	}
+	g_axis[deviceId][axis] = val;
+}
+
+void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
+	jint deviceId,
+	jint keyCode,
+	jint action)
+{
+	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "dispatchKeyEventNative: Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
+	if (deviceId < 0 ||
+		deviceId >= MAX_CONTROLLERS)
+	{
+		deviceId = 0;
+	}
+
+	bool buttonDown = action == 0;
+
+	if (g_button[deviceId][keyCode] != buttonDown)
+	{
+		g_button[deviceId][keyCode] = buttonDown;
+		if (buttonDown)
+		{
+			g_buttonDown[deviceId][keyCode] = true;
+		}
+		else
+		{
+			g_buttonUp[deviceId][keyCode] = true;
+		}
+	}
+}
+
+static JNINativeMethod method_table[] = {
+	{ "dispatchGenericMotionEventNative", "(IIF)V", (void *)dispatchGenericMotionEventNative }
+};
+
+static int method_table_size = sizeof(method_table) / sizeof(method_table[0]);
+
+static JNINativeMethod method_table2[] = {
+	{ "dispatchKeyEventNative", "(III)V", (void *)dispatchKeyEventNative }
+};
+
+static int method_table_size2 = sizeof(method_table2) / sizeof(method_table2[0]);
 
 s3eResult ODKInit_platform()
 {
     // Get the environment from the pointer
     JNIEnv* env = s3eEdkJNIGetEnv();
 
-    jobject obj = NULL;
-	jfieldID field = NULL;
+	for (int index = 0; index < MAX_CONTROLLERS; ++index)
+	{
+		g_axis.push_back(std::map<int, float>());
+		g_button.push_back(std::map<int, bool>());
+		g_buttonDown.push_back(std::map<int, bool>());
+		g_buttonUp.push_back(std::map<int, bool>());
+	}
 
-    // Get the extension class
-    jclass cls = s3eEdkAndroidFindClass("com/ODK/ODK");
-    if (!cls)
-        goto fail;
+	jclass clazz = env->FindClass("tv/ouya/sdk/marmalade/ODK");
+	if (clazz)
+	{
+		jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
+		ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
+		env->DeleteLocalRef(clazz);
+	}
+	else
+	{
+		IwTrace(ODK, ("Failed to find ODK"));
+		goto fail;
+	}
 
-	IwTrace(ODK, ("ODK init Found: com/ODK/ODK"));
+	if (JSONArray::InitJNI(env) == JNI_ERR)
+	{
+		goto fail;
+	}
 
-    field = env->GetStaticFieldID(cls, "m_Activity", "Lcom/ODK/ODK;");
-    if (!field)
-        goto fail;
+	if (JSONObject::InitJNI(env) == JNI_ERR)
+	{
+		goto fail;
+	}
 
-	IwTrace(ODK, ("ODK init Found: GetStaticFieldID"));
+	if (OuyaController::InitJNI(env) == JNI_ERR)
+	{
+		goto fail;
+	}
 
-    obj = env->GetStaticObjectField(cls,field);
-	if (!obj)
-        goto fail;
+	// cache class references
+	g_pluginOuya.CacheClasses(env);
 
-	IwTrace(ODK, ("ODK init Found: GetStaticObjectField "));
-/*
-    // Get its constructor
-    cons = env->GetMethodID(cls, "<init>", "()V");
-    if (!cons)
-        goto fail;
-
-    // Construct the java class
-    obj = env->NewObject(cls, cons);
-    if (!obj)
-        goto fail;
-*/
-    // Get all the extension methods
-    g_OuyaController_startOfFrame = env->GetMethodID(cls, "OuyaController_startOfFrame", "()V");
-    if (!g_OuyaController_startOfFrame)
-        goto fail;
-
-    g_OuyaController_selectControllerByPlayer = env->GetMethodID(cls, "OuyaController_selectControllerByPlayer", "(I)Z");
-    if (!g_OuyaController_selectControllerByPlayer)
-        goto fail;
-
-    g_OuyaController_selectControllerByDeviceID = env->GetMethodID(cls, "OuyaController_selectControllerByDeviceID", "(I)Z");
-    if (!g_OuyaController_selectControllerByDeviceID)
-        goto fail;
-
-    g_OuyaController_getAxisValue = env->GetMethodID(cls, "OuyaController_getAxisValue", "(I)I");
-    if (!g_OuyaController_getAxisValue)
-        goto fail;
-
-    g_OuyaController_getButton = env->GetMethodID(cls, "OuyaController_getButton", "(I)Z");
-    if (!g_OuyaController_getButton)
-        goto fail;
-
-    g_OuyaController_buttonPressedThisFrame = env->GetMethodID(cls, "OuyaController_buttonPressedThisFrame", "(I)Z");
-    if (!g_OuyaController_buttonPressedThisFrame)
-        goto fail;
-
-    g_OuyaController_buttonReleasedThisFrame = env->GetMethodID(cls, "OuyaController_buttonReleasedThisFrame", "(I)Z");
-    if (!g_OuyaController_buttonReleasedThisFrame)
-        goto fail;
-
-    g_OuyaController_buttonChangedThisFrame = env->GetMethodID(cls, "OuyaController_buttonChangedThisFrame", "(I)Z");
-    if (!g_OuyaController_buttonChangedThisFrame)
-        goto fail;
-
-    g_OuyaController_getPlayerNum = env->GetMethodID(cls, "OuyaController_getPlayerNum", "()I");
-    if (!g_OuyaController_getPlayerNum)
-        goto fail;
-
-
-
-    IwTrace(ODK, ("ODK init success"));
-    g_Obj = env->NewGlobalRef(obj);
-    env->DeleteLocalRef(obj);
-    env->DeleteGlobalRef(cls);
-
-    // cache class references
-    g_pluginOuya.CacheClasses(env);
-
-    // Add any platform-specific initialisation code here
+    // Add any platform-specific initialization code here
     return S3E_RESULT_SUCCESS;
 
 fail:
@@ -152,76 +182,119 @@ void ODKTerminate_platform()
     // Add any platform-specific termination code here
 }
 
-void OuyaController_startOfFrame_platform()
+// get axis value, cast float to int for the application bridge
+int OuyaPlugin_getAxis(int deviceId, int axis)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    env->CallVoidMethod(g_Obj, g_OuyaController_startOfFrame);
+	if (deviceId < 0 ||
+		deviceId >= MAX_CONTROLLERS)
+	{
+		deviceId = 0;
+	}
+
+	std::map<int, float>::const_iterator search = g_axis[deviceId].find(axis);
+	float val = 0.0f;
+	if (search != g_axis[deviceId].end())
+	{
+		val = search->second;
+	}
+	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_getAxis: Device=%d axis=%d val=%f", deviceId, axis, val);
+	return *(reinterpret_cast<int*>(&val));
 }
 
-bool OuyaController_selectControllerByPlayer_platform(int playerNum)
+// check if a button is pressed
+bool OuyaPlugin_isPressed(int deviceId, int keyCode)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (bool)env->CallBooleanMethod(g_Obj, g_OuyaController_selectControllerByPlayer, playerNum);
+	if (deviceId < 0 ||
+		deviceId >= MAX_CONTROLLERS)
+	{
+		deviceId = 0;
+	}
+
+	std::map<int, bool>::const_iterator search = g_button[deviceId].find(keyCode);
+	bool val = false;
+	if (search != g_button[deviceId].end())
+	{
+		val = search->second;
+	}
+	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_isPressed: Device=%d KeyCode=%d Action=%d", deviceId, keyCode, val);
+	return val;
 }
 
-bool OuyaController_selectControllerByDeviceID_platform(int deviceID)
+// check if a button was down
+bool OuyaPlugin_isPressedDown(int deviceId, int keyCode)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (bool)env->CallBooleanMethod(g_Obj, g_OuyaController_selectControllerByDeviceID, deviceID);
+	if (deviceId < 0 ||
+		deviceId >= MAX_CONTROLLERS)
+	{
+		deviceId = 0;
+	}
+
+	std::map<int, bool>::const_iterator search = g_buttonDown[deviceId].find(keyCode);
+	if (search != g_buttonDown[deviceId].end())
+	{
+		return search->second;
+	}
+	return false;
 }
 
-int OuyaController_getAxisValue_platform(int axis)
+// check if a button was up
+bool OuyaPlugin_isPressedUp(int deviceId, int keyCode)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (int)env->CallIntMethod(g_Obj, g_OuyaController_getAxisValue, axis);
+	if (deviceId < 0 ||
+		deviceId >= MAX_CONTROLLERS)
+	{
+		deviceId = 0;
+	}
+
+	std::map<int, bool>::const_iterator search = g_buttonUp[deviceId].find(keyCode);
+	if (search != g_buttonUp[deviceId].end())
+	{
+		return search->second;
+	}
+	return false;
 }
 
-bool OuyaController_getButton_platform(int button)
+// clear the button state for detecting up and down
+void OuyaPlugin_clearButtonStates()
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (bool)env->CallBooleanMethod(g_Obj, g_OuyaController_getButton, button);
+	for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
+	{
+		g_buttonDown[deviceId].clear();
+		g_buttonUp[deviceId].clear();
+	}
 }
 
-bool OuyaController_buttonPressedThisFrame_platform(int button)
+const char* OuyaPlugin_getDeviceName(int playerNum)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (bool)env->CallBooleanMethod(g_Obj, g_OuyaController_buttonPressedThisFrame, button);
+	OuyaController* ouyaController = OuyaController::getControllerByPlayer(playerNum);
+	if (NULL != ouyaController)
+	{
+		g_tempPluginString = ouyaController->getDeviceName();
+		ouyaController->Dispose();
+	}
+	else
+	{
+		g_tempPluginString = "Unavailable";
+	}
+	return g_tempPluginString.c_str();
 }
 
-bool OuyaController_buttonReleasedThisFrame_platform(int button)
+void OuyaPlugin_initOuyaPlugin(s3eCallback onSuccess, s3eCallback onFailure)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (bool)env->CallBooleanMethod(g_Obj, g_OuyaController_buttonReleasedThisFrame, button);
+	IwTrace(ODK, ("OuyaPlugin_initOuyaPlugin"));
+
+	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin->RegisterCallbacks(onSuccess, onFailure);
+
+	g_pluginOuya.AsyncInitOuyaPlugin();
 }
 
-bool OuyaController_buttonChangedThisFrame_platform(int button)
+void OuyaPlugin_asyncOuyaRequestGamerInfo(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
 {
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (bool)env->CallBooleanMethod(g_Obj, g_OuyaController_buttonChangedThisFrame, button);
-}
+	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaRequestGamerInfo"));
 
-int OuyaController_getPlayerNum_platform()
-{
-    JNIEnv* env = s3eEdkJNIGetEnv();
-    return (int)env->CallIntMethod(g_Obj, g_OuyaController_getPlayerNum);
-}
+	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo->RegisterCallbacks(onSuccess, onFailure, onCancel);
 
-void OuyaPlugin_asyncSetDeveloperId(const char* developerId)
-{
-	std::string buffer = "OuyaPlugin_asyncSetDeveloperId developerId=";
-	buffer.append(developerId);
-	IwTrace(ODK, (buffer.c_str()));
-
-    g_pluginOuya.AsyncSetDeveloperId(developerId);
-}
-
-void OuyaPlugin_asyncOuyaFetchGamerUUID(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
-{
-	IwTrace(ODK, ("ODK_platform: OuyaPlugin_asyncOuyaFetchGamerUUID"));
-
-	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksFetchGamerUUID->RegisterCallbacks(onSuccess, onFailure, onCancel);
-
-    g_pluginOuya.AsyncOuyaFetchGamerUUID();
+    g_pluginOuya.AsyncOuyaRequestGamerInfo();
 }
 
 void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
@@ -233,37 +306,14 @@ void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback o
 	IwTrace(ODK, (msg.c_str()));
 
 	//convert JSON to product id array
-
-	// Parse example data
-	JSONValue* value = JSON::Parse(productsJson);
-
-	if (value == NULL)
-	{
-		IwTrace(ODK, ("Parsing JSON Failed"));
-		return;
-	}
-
-	if (!value->IsArray())
-	{
-		IwTrace(ODK, ("Parsing JSON Failed: Not an array"));
-		return;
-	}
-
-	// Retrieve the main object
-	JSONArray data = value->AsArray();
+	JSONArray jsonArray = JSONArray(productsJson);
 
 	std::vector<std::string> productIds;
 
-	for (unsigned int i = 0; i < data.size(); i++)
+	for (int i = 0; i < jsonArray.length(); i++)
 	{
-		if (data[i]->IsString())
-		{
-			const std::wstring wstr = data[i]->AsString();
-
-			std::string productId( wstr.begin(), wstr.end() );
-
-			productIds.push_back(productId);
-		}
+		std::string productId = jsonArray.getString(i);
+		productIds.push_back(productId);
 	}
 
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksRequestProducts->RegisterCallbacks(onSuccess, onFailure, onCancel);
@@ -291,4 +341,15 @@ void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFa
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksRequestReceipts->RegisterCallbacks(onSuccess, onFailure, onCancel);
 
 	g_pluginOuya.AsyncOuyaRequestReceipts();
+}
+
+void OuyaPlugin_asyncSetDeveloperId(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure)
+{
+	std::string buffer = "OuyaPlugin_asyncSetDeveloperId developerId=";
+	buffer.append(developerId);
+	IwTrace(ODK, (buffer.c_str()));
+
+	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksSetDeveloperId->RegisterCallbacks(onSuccess, onFailure);
+
+	g_pluginOuya.AsyncSetDeveloperId(developerId);
 }

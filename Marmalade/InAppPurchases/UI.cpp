@@ -15,18 +15,23 @@
  */
 
 #include "Application.h"
-#include "ApplicationCallbacksFetchGamerUUID.h"
+#include "ApplicationCallbacksInitOuyaPlugin.h"
+#include "ApplicationCallbacksRequestGamerInfo.h"
 #include "ApplicationCallbacksRequestProducts.h"
 #include "ApplicationCallbacksRequestPurchase.h"
 #include "ApplicationCallbacksRequestReceipts.h"
+#include "ApplicationCallbacksSetDeveloperId.h"
 #include "CallbackSingleton.h"
 #include "Controller.h"
 #include "ODK.h"
-#include "ApplicationProduct.h"
-#include "Receipt.h"
+#include "ExtensionProduct.h"
+#include "ExtensionReceipt.h"
 #include "UI.h"
 
 #include <algorithm>
+#include <map>
+#include <sstream>
+#include <string>
 
 #include <EGL/egl.h>
 #include <EGL/eglplatform.h>
@@ -39,10 +44,12 @@ UI::UI()
 {
 	m_uiInitialized = false;
 
-	m_callbacksFetchGamerUUID = new ApplicationCallbacksFetchGamerUUID();
+	m_callbacksInitOuyaPlugin = new ApplicationCallbacksInitOuyaPlugin();
+	m_callbacksRequestGamerInfo = new ApplicationCallbacksRequestGamerInfo();
 	m_callbacksRequestProducts = new ApplicationCallbacksRequestProducts();
 	m_callbacksRequestPurchase = new ApplicationCallbacksRequestPurchase();
 	m_callbacksRequestReceipts = new ApplicationCallbacksRequestReceipts();
+	m_callbacksSetDeveloperId = new ApplicationCallbacksSetDeveloperId();
 
 	m_productIds.push_back("long_sword");
 	m_productIds.push_back("sharp_axe");
@@ -68,7 +75,7 @@ void UI::RenderThreadInitProducts()
 			//LOGI(buffer);
 
 			TextButton* txtProduct = new TextButton();
-			ApplicationProduct* newProduct = new ApplicationProduct(m_pendingProducts[index]);
+			OuyaSDK::Product* newProduct = new OuyaSDK::Product(m_pendingProducts[index]);
 			txtProduct->DataContext = newProduct;
 
 			//sprintf(buffer, "Setting up product ui %s", newProduct->Identifier.c_str());
@@ -121,21 +128,17 @@ void UI::RenderThreadInitReceipts()
 	{
 		for (unsigned int index = 0; index < m_pendingReceipts.size(); ++index)
 		{
-			char buffer[1024];
-
-			//sprintf(buffer, "Copy receipt %s", m_pendingReceipts[index].Identifier.c_str());
-			//LOGI(buffer);
-
 			TextButton* txtReceipt = new TextButton();
-			ApplicationReceipt* newReceipt = new ApplicationReceipt(m_pendingReceipts[index]);
+			OuyaSDK::Receipt* newReceipt = new OuyaSDK::Receipt(m_pendingReceipts[index]);
 			txtReceipt->DataContext = newReceipt;
 
-			//sprintf(buffer, "Setting up receipt ui %s", newReceipt->Identifier.c_str());
-			//LOGI(buffer);
-
-			sprintf(buffer, "%s (%.2f)", newReceipt->Identifier.c_str(), newReceipt->LocalPrice);
-			txtReceipt->ActiveText = buffer;
-			txtReceipt->InactiveText = buffer;
+			std::ostringstream buffer;
+			buffer << newReceipt->Identifier;
+			buffer << " " << newReceipt->LocalPrice;
+			buffer << " " << newReceipt->GeneratedDate;
+			buffer << " " << newReceipt->PurchaseDate;
+			txtReceipt->ActiveText = buffer.str();
+			txtReceipt->InactiveText = txtReceipt->ActiveText;
 
 			txtReceipt->Setup(2, 32);
 
@@ -166,7 +169,8 @@ bool UI::InitUI()
 		return true;
 	}
 
-	m_uiLabelFetch.Setup(300, 300, "");
+	m_uiLabelUsername.Setup(300, 280, "");
+	m_uiLabelGamerUuid.Setup(300, 300, "");
 	m_uiLabelDirections.Setup(300, 300, "Directions:");
 	m_uiLabelMessage.Setup(300, 300, "Message:");
 
@@ -196,7 +200,8 @@ bool UI::InitUI()
 	const int w = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
     const int h = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
 
-	m_uiLabelFetch.SetPosition(w*4/5, h/6);
+	m_uiLabelUsername.SetPosition(w*4/5, h/6 - 40);
+	m_uiLabelGamerUuid.SetPosition(w*4/5, h/6);
 	m_uiLabelDirections.SetPosition(w/5, h*2/3);
 	m_uiLabelMessage.SetPosition(w/5 + 25, h*2/3 + 50);
 
@@ -235,7 +240,8 @@ bool UI::HasUIChanged()
 
 void UI::Render()
 {
-	m_uiLabelFetch.Render();
+	m_uiLabelUsername.Render();
+	m_uiLabelGamerUuid.Render();
 	m_uiLabelDirections.Render();
 	m_uiLabelMessage.Render();
 
@@ -258,188 +264,216 @@ void UI::Render()
 
 void UI::HandleInput()
 {
-	OuyaController_startOfFrame();
-
-	if (OuyaController_selectControllerByPlayer(0))
+	std::vector<int> released = std::vector<int>();
+	for (int playerNum = 0; playerNum < OuyaController_MAX_CONTROLLERS; ++playerNum)
 	{
-		//IwTrace(DEFAULT, ("Found controller"));
-
-		if (ButtonReleased(OuyaController_BUTTON_MENU))
+		if (OuyaPlugin_isPressedUp(playerNum, OuyaController_BUTTON_MENU))
 		{
-			if (m_selectedButton &&
-				std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
-			{
-				m_selectedButton->SetActive(false);
-			}
+			released.push_back(OuyaController_BUTTON_MENU);
+		}
+		if (OuyaPlugin_isPressedUp(playerNum, OuyaController_BUTTON_DPAD_DOWN))
+		{
+			released.push_back(OuyaController_BUTTON_DPAD_DOWN);
+		}
+		if (OuyaPlugin_isPressedUp(playerNum, OuyaController_BUTTON_DPAD_LEFT))
+		{
+			released.push_back(OuyaController_BUTTON_DPAD_LEFT);
+		}
+		if (OuyaPlugin_isPressedUp(playerNum, OuyaController_BUTTON_DPAD_RIGHT))
+		{
+			released.push_back(OuyaController_BUTTON_DPAD_RIGHT);
+		}
+		if (OuyaPlugin_isPressedUp(playerNum, OuyaController_BUTTON_DPAD_UP))
+		{
+			released.push_back(OuyaController_BUTTON_DPAD_UP);
+		}
+		if (OuyaPlugin_isPressedUp(playerNum, OuyaController_BUTTON_O))
+		{
+			released.push_back(OuyaController_BUTTON_O);
+		}
+	}
+	OuyaPlugin_clearButtonStates();
 
-			m_selectedButton = &m_uiPause;
-			m_uiPause.SetActive(true);
+	if (std::find(released.begin(), released.end(), OuyaController_BUTTON_MENU) != released.end())
+	{
+		if (m_selectedButton &&
+			std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
+		{
+			m_selectedButton->SetActive(false);
+		}
+
+		m_selectedButton = &m_uiPause;
+		m_uiPause.SetActive(true);
+
+		SetDirections();
+
+		//LOGI("Key event, hack, regaining focus...\r\n");
+		//Application::m_app->activity->callbacks->onWindowFocusChanged(Application::m_app->activity, true);
+		//LOGI("Key event, hack complete***\r\n");
+	}
+
+	if (std::find(released.begin(), released.end(), OuyaController_BUTTON_DPAD_LEFT) != released.end())
+	{
+		if (m_selectedButton &&
+			m_selectedButton->Left)
+		{
+			m_selectedButton->SetActive(false);
+			m_selectedButton = m_selectedButton->Left;
+			m_selectedButton->SetActive(true);
 
 			SetDirections();
-
-			//LOGI("Key event, hack, regaining focus...\r\n");
-			//Application::m_app->activity->callbacks->onWindowFocusChanged(Application::m_app->activity, true);
-			//LOGI("Key event, hack complete***\r\n");
 		}
+	}
 
-		if (ButtonReleased(OuyaController_BUTTON_DPAD_LEFT))
+	if (std::find(released.begin(), released.end(), OuyaController_BUTTON_DPAD_RIGHT) != released.end())
+	{
+		if (m_selectedButton &&
+			m_selectedButton->Right)
 		{
-			if (m_selectedButton &&
-				m_selectedButton->Left)
+			if (std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
 			{
 				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Left;
-				m_selectedButton->SetActive(true);
-
-				SetDirections();
 			}
+			m_selectedButton = m_selectedButton->Right;
+			m_selectedButton->SetActive(true);
+
+			SetDirections();
 		}
+	}
 
-		if (ButtonReleased(OuyaController_BUTTON_DPAD_RIGHT))
+	if (std::find(released.begin(), released.end(), OuyaController_BUTTON_DPAD_UP) != released.end())
+	{
+		if (m_selectedButton &&
+			m_selectedButton->Up)
 		{
-			if (m_selectedButton &&
-				m_selectedButton->Right)
-			{
-				if (std::find(m_products.begin(), m_products.end(), m_selectedButton) == m_products.end())
-				{
-					m_selectedButton->SetActive(false);
-				}
-				m_selectedButton = m_selectedButton->Right;
-				m_selectedButton->SetActive(true);
+			m_selectedButton->SetActive(false);
+			m_selectedButton = m_selectedButton->Up;
+			m_selectedButton->SetActive(true);
 
-				SetDirections();
+			if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
+			{
+				m_selectedProduct = m_selectedButton;
+				m_uiRequestProducts.Left = m_selectedProduct;
+				m_uiRequestPurchase.Left = m_selectedProduct;
 			}
+
+			SetDirections();
 		}
+	}
 
-		if (ButtonReleased(OuyaController_BUTTON_DPAD_UP))
+	if (std::find(released.begin(), released.end(), OuyaController_BUTTON_DPAD_DOWN) != released.end())
+	{
+		if (m_selectedButton &&
+			m_selectedButton->Down)
 		{
-			if (m_selectedButton &&
-				m_selectedButton->Up)
+			m_selectedButton->SetActive(false);
+			m_selectedButton = m_selectedButton->Down;
+			m_selectedButton->SetActive(true);
+
+			if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
 			{
-				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Up;
-				m_selectedButton->SetActive(true);
-
-				if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
-				{
-					m_selectedProduct = m_selectedButton;
-					m_uiRequestProducts.Left = m_selectedProduct;
-					m_uiRequestPurchase.Left = m_selectedProduct;
-				}
-
-				SetDirections();
+				m_selectedProduct = m_selectedButton;
+				m_uiRequestProducts.Left = m_selectedProduct;
+				m_uiRequestPurchase.Left = m_selectedProduct;
 			}
+
+			SetDirections();
 		}
+	}
 
-		if (ButtonReleased(OuyaController_BUTTON_DPAD_DOWN))
+	if (std::find(released.begin(), released.end(), OuyaController_BUTTON_O) != released.end())
+	{
+		if (m_selectedButton)
 		{
-			if (m_selectedButton &&
-				m_selectedButton->Down)
+			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
-				m_selectedButton->SetActive(false);
-				m_selectedButton = m_selectedButton->Down;
-				m_selectedButton->SetActive(true);
 
-				if (std::find(m_products.begin(), m_products.end(), m_selectedButton) != m_products.end())
-				{
-					m_selectedProduct = m_selectedButton;
-					m_uiRequestProducts.Left = m_selectedProduct;
-					m_uiRequestPurchase.Left = m_selectedProduct;
-				}
-
-				SetDirections();
+				SetMessage("Fetching gamer uuid...");
+				OuyaPlugin_asyncOuyaRequestGamerInfo(
+					Application::m_ui.m_callbacksRequestGamerInfo->GetSuccessEvent(),
+					Application::m_ui.m_callbacksRequestGamerInfo->GetFailureEvent(),
+					Application::m_ui.m_callbacksRequestGamerInfo->GetCancelEvent());
 			}
-		}
-
-		if (ButtonReleased(OuyaController_BUTTON_O))
-		{
-			if (m_selectedButton)
+			if (m_selectedButton == &m_uiRequestProducts)
 			{
-				if (m_selectedButton == &m_uiRequestGamerUUID)
-				{
+				ClearProducts();
 
-					SetMessage("Fetching gamer uuid...");
-					OuyaPlugin_asyncOuyaFetchGamerUUID(
-						Application::m_ui.m_callbacksFetchGamerUUID->GetSuccessEvent(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetFailureEvent(),
-						Application::m_ui.m_callbacksFetchGamerUUID->GetCancelEvent());
-				}
-				if (m_selectedButton == &m_uiRequestProducts)
-				{
-					SetMessage("Requesting products...");
+				SetMessage("Requesting products...");
 				
-					// prepare json
-					std::string productsJson = "[";
+				// prepare json
+				std::string productsJson = "[";
 
-					int index = 0;
-					for (std::vector<std::string>::iterator iter = m_productIds.begin(); iter != m_productIds.end(); ++iter)
-					{
-						std::string productId = *iter;
-						if (index == 0)
-						{
-							productsJson.append("\"");
-						}
-						else
-						{
-							productsJson.append(", \"");
-						}
-						productsJson.append(productId);
-						productsJson.append("\"");
-						++index;
-					}
-
-					productsJson.append("]");
-
-					IwTrace(DEFAULT, (productsJson.c_str()));
-
-					OuyaPlugin_asyncOuyaRequestProducts(productsJson.c_str(),
-						Application::m_ui.m_callbacksRequestProducts->GetSuccessEvent(),
-						Application::m_ui.m_callbacksRequestProducts->GetFailureEvent(),
-						Application::m_ui.m_callbacksRequestProducts->GetCancelEvent());
-				}
-				if (m_selectedButton == &m_uiRequestPurchase)
+				int index = 0;
+				for (std::vector<std::string>::iterator iter = m_productIds.begin(); iter != m_productIds.end(); ++iter)
 				{
-					if (NULL == m_selectedProduct)
+					std::string productId = *iter;
+					if (index == 0)
+					{
+						productsJson.append("\"");
+					}
+					else
+					{
+						productsJson.append(", \"");
+					}
+					productsJson.append(productId);
+					productsJson.append("\"");
+					++index;
+				}
+
+				productsJson.append("]");
+
+				IwTrace(DEFAULT, (productsJson.c_str()));
+
+				OuyaPlugin_asyncOuyaRequestProducts(productsJson.c_str(),
+					Application::m_ui.m_callbacksRequestProducts->GetSuccessEvent(),
+					Application::m_ui.m_callbacksRequestProducts->GetFailureEvent(),
+					Application::m_ui.m_callbacksRequestProducts->GetCancelEvent());
+			}
+			if (m_selectedButton == &m_uiRequestPurchase)
+			{
+				if (NULL == m_selectedProduct)
+				{
+					SetMessage("No product selected.");
+				}
+				else
+				{
+					OuyaSDK::Product* product = (OuyaSDK::Product*)m_selectedProduct->DataContext;
+					if (NULL == product)
 					{
 						SetMessage("No product selected.");
 					}
 					else
 					{
-						OuyaSDK::Product* product = (OuyaSDK::Product*)m_selectedProduct->DataContext;
-						if (NULL == product)
-						{
-							SetMessage("No product selected.");
-						}
-						else
-						{
-							SetMessage("Requesting purchase...");
-							OuyaPlugin_asyncOuyaRequestPurchase(product->Identifier.c_str(),
-								Application::m_ui.m_callbacksRequestPurchase->GetSuccessEvent(),
-								Application::m_ui.m_callbacksRequestPurchase->GetFailureEvent(),
-								Application::m_ui.m_callbacksRequestPurchase->GetCancelEvent());
-						}
+						SetMessage("Requesting purchase...");
+						OuyaPlugin_asyncOuyaRequestPurchase(product->Identifier.c_str(),
+							Application::m_ui.m_callbacksRequestPurchase->GetSuccessEvent(),
+							Application::m_ui.m_callbacksRequestPurchase->GetFailureEvent(),
+							Application::m_ui.m_callbacksRequestPurchase->GetCancelEvent());
 					}
 				}
-				if (m_selectedButton == &m_uiRequestReceipts)
-				{
-					SetMessage("Requesting receipts...");
-					OuyaPlugin_asyncOuyaRequestReceipts(
-						Application::m_ui.m_callbacksRequestReceipts->GetSuccessEvent(),
-						Application::m_ui.m_callbacksRequestReceipts->GetFailureEvent(),
-						Application::m_ui.m_callbacksRequestReceipts->GetCancelEvent());
-				}
+			}
+			if (m_selectedButton == &m_uiRequestReceipts)
+			{
+				ClearReceipts();
+
+				SetMessage("Requesting receipts...");
+				OuyaPlugin_asyncOuyaRequestReceipts(
+					Application::m_ui.m_callbacksRequestReceipts->GetSuccessEvent(),
+					Application::m_ui.m_callbacksRequestReceipts->GetFailureEvent(),
+					Application::m_ui.m_callbacksRequestReceipts->GetCancelEvent());
 			}
 		}
 	}
-	else
-	{
-		//IwTrace(DEFAULT, ("Can't find controller"));
-	}
 }
 
-void UI::SetGamerUUID(const std::string& gamerUUID)
+void UI::SetUsername(const std::string& username)
 {
-	m_uiLabelFetch.SetText(gamerUUID);
+	m_uiLabelUsername.SetText(username);
+}
+
+void UI::SetGamerUUID(const std::string& uuid)
+{
+	m_uiLabelGamerUuid.SetText(uuid);
 }
 
 void UI::SetMessage(const std::string& message)
@@ -538,39 +572,12 @@ void UI::ClearReceipts()
 	m_receipts.clear();
 }
 
-void UI::AddProduct(ApplicationProduct product)
+void UI::AddProduct(const OuyaSDK::Product& product)
 {
 	m_pendingProducts.push_back(product);
 }
 
-void UI::AddReceipt(ApplicationReceipt receipt)
+void UI::AddReceipt(const OuyaSDK::Receipt& receipt)
 {
 	m_pendingReceipts.push_back(receipt);
-}
-
-bool UI::ButtonReleased(int button)
-{
-	if (OuyaController_getButton(button))
-	{
-		// not found
-		if (std::find(m_pressed.begin(), m_pressed.end(), button) == m_pressed.end())
-		{
-			m_pressed.push_back(button);
-		}
-		return false;
-	}
-	else
-	{
-		std::vector<int>::iterator lookup = std::find(m_pressed.begin(), m_pressed.end(), button);
-		// found
-		if (lookup != m_pressed.end())
-		{
-			m_pressed.erase(lookup);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
 }
