@@ -21,7 +21,7 @@
 
 UI Application::m_ui = UI();
 
-void Application::Init()
+void Application::SetDeveloperId()
 {
 	Application::m_ui.SetMessage("Setting developer id...");
 

@@ -60,7 +60,7 @@ int main()
     const int width = s3eSurfaceGetInt(S3E_SURFACE_WIDTH);
     const int height = s3eSurfaceGetInt(S3E_SURFACE_HEIGHT);
 
-	Application::Init();
+	Application::SetDeveloperId();
 
 	while (!s3eDeviceCheckQuitRequest())
 	{

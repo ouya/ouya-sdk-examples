@@ -24,7 +24,7 @@ class Application
 public:
 	static UI m_ui;
 	
-	static void Init();
+	static void SetDeveloperId();
 	static void InitOuyaPlugin();
 };
 

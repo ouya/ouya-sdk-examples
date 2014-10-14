@@ -80,5 +80,5 @@ void ApplicationCallbacksSetDeveloperId::OnFailure(int errorCode, const std::str
 	msg.append(errorMessage);
 	Application::m_ui.SetMessage(msg);
 
-	Application::Init();
+	Application::SetDeveloperId();
 }
