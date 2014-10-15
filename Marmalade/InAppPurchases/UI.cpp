@@ -388,7 +388,7 @@ void UI::HandleInput()
 			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
 
-				SetMessage("Fetching gamer uuid...");
+				SetMessage("Fetching gamer info...");
 				OuyaPlugin_asyncOuyaRequestGamerInfo(
 					Application::m_ui.m_callbacksRequestGamerInfo->GetSuccessEvent(),
 					Application::m_ui.m_callbacksRequestGamerInfo->GetFailureEvent(),
