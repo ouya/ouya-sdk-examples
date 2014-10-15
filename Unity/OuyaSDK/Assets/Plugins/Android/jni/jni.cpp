@@ -213,4 +213,22 @@ extern "C"
 			g_buttonUp[deviceId].clear();
 		}
 	}
+
+	// clear the axis values
+	void clearAxes()
+	{
+		for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId) {
+			g_axis[deviceId].clear();
+		}
+	}
+
+	// clear the button values
+	void clearButtons()
+	{
+		for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId) {
+			g_button[deviceId].clear();
+			g_buttonDown[deviceId].clear();
+			g_buttonUp[deviceId].clear();
+		}
+	}
 }

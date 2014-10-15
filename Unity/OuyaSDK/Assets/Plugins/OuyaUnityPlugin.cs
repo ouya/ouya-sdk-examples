@@ -23,6 +23,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmGetReceiptsAsync = IntPtr.Zero;
         private static IntPtr _jmIsRunningOnOUYASupportedHardware = IntPtr.Zero;
         private static IntPtr _jmSetSafeArea = IntPtr.Zero;
+        private static IntPtr _jmClearFocus = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         static OuyaUnityPlugin()
@@ -431,6 +432,20 @@ namespace tv.ouya.sdk
                         return;
                     }
                 }
+
+                {
+                    string strMethod = "clearFocus";
+                    _jmClearFocus = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmClearFocus != IntPtr.Zero)
+                    {
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
             }
             catch (System.Exception ex)
             {
@@ -683,6 +698,22 @@ namespace tv.ouya.sdk
                 return;
             }
             AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmSetSafeArea, new jvalue[1] {new jvalue() {f = percentage}});
+        }
+
+        public static void clearFocus()
+        {
+            JNIFind();
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmClearFocus == IntPtr.Zero)
+            {
+                Debug.LogError("_jmClearFocus is not initialized");
+                return;
+            }
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmClearFocus, new jvalue[0] { });
         }
     }
 }

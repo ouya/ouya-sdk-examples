@@ -22,6 +22,7 @@ import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup.LayoutParams;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -430,14 +431,43 @@ public class OuyaUnityPlugin
 		{
 			Log.i(LOG_TAG, "OuyaUnityPlugin.setSafeArea: "+percentage);
 			Activity activity = IOuyaActivity.GetActivity();
-			Runnable runnable = new Runnable()
-			{
-				public void run()
+			if (null != activity) {
+				Runnable runnable = new Runnable()
 				{
-					updateSafeArea(percentage);
-				}
-			};
-			activity.runOnUiThread(runnable);			
+					public void run()
+					{
+						updateSafeArea(percentage);
+					}
+				};
+				activity.runOnUiThread(runnable);
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.e(LOG_TAG, "OuyaUnityPlugin: setSafeArea exception: " + ex.toString());
+		}
+	}
+
+	public static void clearFocus()
+	{
+		try
+		{
+			Log.i(LOG_TAG, "OuyaUnityPlugin.clearFocus");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						View view = activity.getCurrentFocus();
+						if (null != view) {
+							view.setFocusable(false);
+							view.clearFocus();
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
 		}
 		catch (Exception ex)
 		{

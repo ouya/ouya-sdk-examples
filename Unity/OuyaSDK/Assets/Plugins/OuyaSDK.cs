@@ -32,7 +32,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.14.4";
+    public const string VERSION = "1.0.14.5";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -67,6 +67,14 @@ public static class OuyaSDK
         [DllImport("lib-ouya-ndk")]
         // EXPORT_API void clearButtonStates()
         public static extern void clearButtonStates();
+
+        [DllImport("lib-ouya-ndk")]
+        // EXPORT_API void clearAxes()
+        public static extern void clearAxes();
+
+        [DllImport("lib-ouya-ndk")]
+        // EXPORT_API void clearButtons()
+        public static extern void clearButtons();
     }
 #endif
 
@@ -220,6 +228,16 @@ public static class OuyaSDK
         public static void ClearButtonStates()
         {
             NdkWrapper.clearButtonStates();
+        }
+
+        public static void ClearAxes()
+        {
+            NdkWrapper.clearAxes();
+        }
+
+        public static void ClearButtons()
+        {
+            NdkWrapper.clearButtons();
         }
 
         private static void debugOuyaController(int deviceId, int button)
@@ -540,6 +558,16 @@ public static class OuyaSDK
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.setSafeArea(percentage);
 #endif        
+    }
+
+    /// <summary>
+    /// Clear input focus
+    /// </summary>
+    public static void clearFocus()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        OuyaUnityPlugin.clearFocus();
+#endif
     }
 
     #endregion
