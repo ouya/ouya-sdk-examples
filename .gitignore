@@ -106,3 +106,4 @@ MonoGame/InputView/obj/
 !MonoGame.Framework.dll
 !Lidgren.Network.dll
 Android/VirtualControllerView/bin/
+Android/WebArchive/bin/
