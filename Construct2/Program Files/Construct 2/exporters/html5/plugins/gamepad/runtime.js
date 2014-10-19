@@ -139,12 +139,14 @@ cr.plugins_.gamepad = function(runtime)
 			return defaultMap;
 
 		var controllertoken = "";
-		var id = id_.toLowerCase();
+		if (id_.toLowerCase != undefined) {
+			var id = id_.toLowerCase();
 
-		if (id.indexOf("xbox 360") > -1)
-			controllertoken = "xbox360";
-		else if (id.indexOf("logitech dual action") > -1)
-			controllertoken = "logitechdualaction";
+			if (id.indexOf("xbox 360") > -1)
+				controllertoken = "xbox360";
+			else if (id.indexOf("logitech dual action") > -1)
+				controllertoken = "logitechdualaction";
+		}
 
 		var curmap = curCtrlMap[controllertoken];
 

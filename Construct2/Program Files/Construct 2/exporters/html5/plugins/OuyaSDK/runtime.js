@@ -62,7 +62,7 @@
 
 	navigator["getGamepads"] = function () { return gamepads; }
 
-	onGenericMotionEvent = function(playerNum, axis, val) {
+	var onGenericMotionEvent = function (playerNum, axis, val) {
 		var newAxis = axis;
 		switch (axis)
 		{
@@ -89,7 +89,7 @@
 		gamepads[playerNum].axes[newAxis].value = val;
 	}
 
-	onKeyDown = function(playerNum, button) {
+	var onKeyDown = function (playerNum, button) {
 		var newButton = button;
 		switch (button)
 		{
@@ -112,22 +112,22 @@
 			newButton = 5;
 			break;
 		case OuyaController.BUTTON_L3:
-			newButton = 6;
-			break;
-		case OuyaController.BUTTON_R3:
-			newButton = 7;
-			break;
-		case OuyaController.BUTTON_DPAD_UP:
-			newButton = 8;
-			break;
-		case OuyaController.BUTTON_DPAD_DOWN:
-			newButton = 12;
-			break;
-		case OuyaController.BUTTON_DPAD_LEFT:
 			newButton = 10;
 			break;
-		case OuyaController.BUTTON_DPAD_RIGHT:
+		case OuyaController.BUTTON_R3:
 			newButton = 11;
+			break;
+		case OuyaController.BUTTON_DPAD_UP:
+			newButton = 12;
+			break;
+		case OuyaController.BUTTON_DPAD_DOWN:
+			newButton = 13;
+			break;
+		case OuyaController.BUTTON_DPAD_LEFT:
+			newButton = 14;
+			break;
+		case OuyaController.BUTTON_DPAD_RIGHT:
+			newButton = 15;
 			break;
 		case OuyaController.BUTTON_MENU:
 			newButton = 9;
@@ -138,7 +138,7 @@
 		gamepads[playerNum].buttons[newButton] = true;
 	}
 
-	onKeyUp = function(playerNum, button) {
+	var onKeyUp = function (playerNum, button) {
 		var newButton = button;
 		switch (button)
 		{
@@ -161,22 +161,22 @@
 			newButton = 5;
 			break;
 		case OuyaController.BUTTON_L3:
-			newButton = 6;
-			break;
-		case OuyaController.BUTTON_R3:
-			newButton = 7;
-			break;
-		case OuyaController.BUTTON_DPAD_UP:
-			newButton = 8;
-			break;
-		case OuyaController.BUTTON_DPAD_DOWN:
-			newButton = 12;
-			break;
-		case OuyaController.BUTTON_DPAD_LEFT:
 			newButton = 10;
 			break;
-		case OuyaController.BUTTON_DPAD_RIGHT:
+		case OuyaController.BUTTON_R3:
 			newButton = 11;
+			break;
+		case OuyaController.BUTTON_DPAD_UP:
+			newButton = 12;
+			break;
+		case OuyaController.BUTTON_DPAD_DOWN:
+			newButton = 13;
+			break;
+		case OuyaController.BUTTON_DPAD_LEFT:
+			newButton = 14;
+			break;
+		case OuyaController.BUTTON_DPAD_RIGHT:
+			newButton = 15;
 			break;
 		case OuyaController.BUTTON_MENU:
 			//ignore
