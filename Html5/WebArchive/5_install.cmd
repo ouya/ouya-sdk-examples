@@ -1,2 +1,2 @@
 adb install -r ContentShellSigned.apk
-pause
+if NOT "%1"=="1" pause
