@@ -11,14 +11,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "simulator-plugin/plugin_ouya.lua",
-			"settings":
-			{
-				"buffer_size": 4358,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -44,8 +36,12 @@
 	},
 	"file_history":
 	[
-		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/OuyaCoronaPlugin/simulator-plugin/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/Submission/ouya/samples/VirtualControllerPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/Submission/ouya/samples/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/OuyaCoronaPlugin/samples/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualControllerPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/Corona/build.settings",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/local.properties",
 		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/project.properties",
@@ -73,6 +69,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"developerid",
 			"fetch",
 			"asyncLuaOuyaInitInput",
 			"plugin_ouya",
@@ -112,36 +109,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "simulator-plugin/plugin_ouya.lua",
-					"settings":
-					{
-						"buffer_size": 4358,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4358,
-								4358
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1109.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],

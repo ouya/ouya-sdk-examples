@@ -18,16 +18,22 @@
 --
 -----------------------------------------------------------------------------------------
 
-local DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
-
+callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
 globals = require "globals"
 helpers = require "helpers"
 inputs = require "inputs"
+local json = require "json"
 ui = require "ui"
 
-if nil ~= ouyaSDK then
-	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
-	ouyaSDK.ouyaSetDeveloperId(DEVELOPER_ID);
+if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
+	local data = {
+	[1] = {
+	    ["key"] = "tv.ouya.developer_id",
+	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
+	}};
+	local jsonData = json.encode(data);
+	--print (jsonData);
+	ouyaSDK.initOuyaPlugin(callbacksInitOuyaPlugin.onSuccess, callbacksInitOuyaPlugin.onFailure, jsonData);
 end
 
 globals.centerX = display.contentCenterX;

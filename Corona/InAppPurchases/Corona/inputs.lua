@@ -25,10 +25,10 @@ callbacksRequestReceipts = require "callbacksRequestReceipts"
 OuyaController = require "OuyaController"
 
 globals = require "globals"
+local json = require "json"
 ui = require "ui"
 
 local inputs = {}
-
 
 inputs.onGenericMotionEvent = function (playerNum, axis, val)
 end
@@ -83,10 +83,11 @@ inputs.onKeyUp = function (playerNum, button)
     	elseif globals.focusButton == globals.btnProducts then
     		globals.getProducts = { };
     		ui.displayProductList();
-    		globals.txtStatus.text = "Requesting products...";
+    		globals.txtStatus.text = "Requesting products...";            
     		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
-			print "Accessing ouyaSDK...";
-    		ouyaSDK.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, products);
+			local jsonData = json.encode(products);
+            print "Accessing ouyaSDK...";
+    		ouyaSDK.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, jsonData);
     	elseif globals.focusButton == globals.btnPurchase then
     		if #globals.getProducts > 1 and globals.selectedProduct < #globals.getProducts then
 	    		globals.txtStatus.text = "Requesting purchase: " .. globals.getProducts[globals.selectedProduct + 1].name;

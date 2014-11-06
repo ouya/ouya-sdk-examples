@@ -30,7 +30,7 @@ callbacksRequestProducts.onSuccess = function (jsonData)
 	elseif jsonData == "" then
 		print("onSuccessRequestProducts: (empty)");
 	else
-        print("onSuccessRequestProducts: jsonData=" .. jsonData);
+        --print("onSuccessRequestProducts: jsonData=" .. jsonData);
         globals.getProducts = json.decode(jsonData);
 		ui.displayProductList();
 	end
