@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
 
 using System;
 using UnityEngine;
@@ -17,10 +17,12 @@ namespace Android.Graphics.Drawables
             {
                 {
                     string strName = "android/graphics/drawable/BitmapDrawable";
-                    _jcBitmapDrawable = AndroidJNI.FindClass(strName);
-                    if (_jcBitmapDrawable != IntPtr.Zero)
+                    IntPtr localRef = AndroidJNI.FindClass(strName);
+                    if (localRef != IntPtr.Zero)
                     {
                         Debug.Log(string.Format("Found {0} class", strName));
+                        _jcBitmapDrawable = AndroidJNI.NewGlobalRef(localRef);
+                        AndroidJNI.DeleteLocalRef(localRef);
                     }
                     else
                     {
@@ -75,8 +77,7 @@ namespace Android.Graphics.Drawables
                 Debug.LogError("Failed to get bitmap");
                 return null;
             }
-            Bitmap retVal = new Bitmap();
-            retVal.Instance = result;
+            Bitmap retVal = new Bitmap(result);
             return retVal;
         }
 

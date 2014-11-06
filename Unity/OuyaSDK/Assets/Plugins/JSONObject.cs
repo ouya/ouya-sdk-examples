@@ -1,7 +1,5 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
-
-//#define VERBOSE_LOGGING
-
+﻿//#define VERBOSE_LOGGING
+#if UNITY_ANDROID && !UNITY_EDITOR
 using System;
 #if VERBOSE_LOGGING
 using System.Reflection;
@@ -16,12 +14,15 @@ namespace org.json
 
         private static IntPtr _jcJsonObject = IntPtr.Zero;
         private static IntPtr _jmConstructor = IntPtr.Zero;
+        private static IntPtr _jmConstructor2 = IntPtr.Zero;
         private static IntPtr _jmGetDouble = IntPtr.Zero;
         private static IntPtr _jmGetInt = IntPtr.Zero;
         private static IntPtr _jmGetJsonArray = IntPtr.Zero;
         private static IntPtr _jmGetJsonObject = IntPtr.Zero;
         private static IntPtr _jmGetString = IntPtr.Zero;
         private static IntPtr _jmHas = IntPtr.Zero;
+        private static IntPtr _jmPut = IntPtr.Zero;
+        private static IntPtr _jmToString = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         static JSONObject()
@@ -30,13 +31,14 @@ namespace org.json
             {
                 {
                     string strName = "org/json/JSONObject";
-                    _jcJsonObject = AndroidJNI.FindClass(strName);
-                    if (_jcJsonObject != IntPtr.Zero)
+                    IntPtr localRef = AndroidJNI.FindClass(strName);
+                    if (localRef != IntPtr.Zero)
                     {
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} class", strName));
 #endif
-                        _jcJsonObject = AndroidJNI.NewGlobalRef(_jcJsonObject);
+                        _jcJsonObject = AndroidJNI.NewGlobalRef(localRef);
+                        AndroidJNI.DeleteLocalRef(localRef);
                     }
                     else
                     {
@@ -57,8 +59,24 @@ namespace org.json
             {
                 {
                     string strMethod = "<init>";
-                    _jmConstructor = AndroidJNI.GetMethodID(_jcJsonObject, strMethod, "(Ljava/lang/String;)V");
+                    _jmConstructor = AndroidJNI.GetMethodID(_jcJsonObject, strMethod, "()V");
                     if (_jmConstructor != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "<init>";
+                    _jmConstructor2 = AndroidJNI.GetMethodID(_jcJsonObject, strMethod, "(Ljava/lang/String;)V");
+                    if (_jmConstructor2 != IntPtr.Zero)
                     {
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
@@ -127,7 +145,6 @@ namespace org.json
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
 #endif
-                        //_jmGetJsonObject = AndroidJNI.NewGlobalRef(_jmGetJsonObject);
                     }
                     else
                     {
@@ -167,6 +184,38 @@ namespace org.json
                         return;
                     }
                 }
+
+                {
+                    string strMethod = "toString";
+                    _jmToString = AndroidJNI.GetMethodID(_jcJsonObject, strMethod, "()Ljava/lang/String;");
+                    if (_jmToString != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "put";
+                    _jmPut = AndroidJNI.GetMethodID(_jcJsonObject, strMethod, "(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;");
+                    if (_jmPut != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
             }
             catch (System.Exception ex)
             {
@@ -184,7 +233,7 @@ namespace org.json
             return _instance;
         }
 
-        public JSONObject(string buffer)
+        public JSONObject()
         {
 #if VERBOSE_LOGGING
             Debug.Log(MethodBase.GetCurrentMethod().Name);
@@ -208,8 +257,35 @@ namespace org.json
                 return;
             }
 
+            AndroidJNI.CallVoidMethod(_instance, _jmConstructor, new jvalue[0]);
+        }
+
+        public JSONObject(string buffer)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(MethodBase.GetCurrentMethod().Name);
+#endif
+            JNIFind();
+            if (_jcJsonObject == IntPtr.Zero)
+            {
+                Debug.LogError("_jcJsonObject is not initialized");
+                return;
+            }
+            if (_jmConstructor2 == IntPtr.Zero)
+            {
+                Debug.LogError("_jmConstructor2 is not initialized");
+                return;
+            }
+
+            _instance = AndroidJNI.AllocObject(_jcJsonObject);
+            if (_instance == IntPtr.Zero)
+            {
+                Debug.LogError("Failed to allocate JSONObject");
+                return;
+            }
+
             IntPtr arg1 = AndroidJNI.NewStringUTF(buffer);
-            AndroidJNI.CallVoidMethod(_instance, _jmConstructor, new jvalue[] { new jvalue() { l = arg1 }});
+            AndroidJNI.CallVoidMethod(_instance, _jmConstructor2, new jvalue[] { new jvalue() { l = arg1 } });
             AndroidJNI.DeleteLocalRef(arg1);
         }
 
@@ -386,6 +462,69 @@ namespace org.json
             AndroidJNI.DeleteLocalRef(arg1);
 
             return result;
+        }
+
+        public string toString()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(MethodBase.GetCurrentMethod().Name);
+#endif
+            JNIFind();
+            if (_jcJsonObject == IntPtr.Zero)
+            {
+                Debug.LogError("_jcJsonObject is not initialized");
+                return null;
+            }
+            if (_jmToString == IntPtr.Zero)
+            {
+                Debug.LogError("_jmHas is not initialized");
+                return null;
+            }
+
+            IntPtr retVal = AndroidJNI.CallObjectMethod(_instance, _jmToString, new jvalue[0]);
+            if (retVal == IntPtr.Zero)
+            {
+                Debug.LogError("Failed to get string");
+                return null;
+            }
+
+            string result = AndroidJNI.GetStringUTFChars(retVal);
+            AndroidJNI.DeleteLocalRef(retVal);
+            return result;
+        }
+
+        public JSONObject put(string name, string value)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(MethodBase.GetCurrentMethod().Name);
+#endif
+            JNIFind();
+            if (_jcJsonObject == IntPtr.Zero)
+            {
+                Debug.LogError("_jcJsonObject is not initialized");
+                return null;
+            }
+            if (_jmPut == IntPtr.Zero)
+            {
+                Debug.LogError("_jmPut is not initialized");
+                return null;
+            }
+
+            IntPtr arg1 = AndroidJNI.NewStringUTF(name);
+            IntPtr arg2 = AndroidJNI.NewStringUTF(value);
+            IntPtr retVal = AndroidJNI.CallObjectMethod(_instance, _jmPut, new jvalue[] { new jvalue() { l = arg1 }, new jvalue() { l = arg2 } });
+            AndroidJNI.DeleteLocalRef(arg1);
+            AndroidJNI.DeleteLocalRef(arg2);
+
+            if (retVal == IntPtr.Zero)
+            {
+                Debug.LogError("Put returned null object");
+                return null;
+            }
+
+            JSONObject jsonObject = new JSONObject(retVal);
+
+            return jsonObject;
         }
     }
 }

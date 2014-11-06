@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
 
 //#define VERBOSE_LOGGING
 
@@ -24,13 +24,14 @@ namespace tv.ouya.sdk
             {
                 {
                     string strName = "tv/ouya/sdk/OuyaUnityActivity";
-                    _jcOuyaUnityActivity = AndroidJNI.FindClass(strName);
-                    if (_jcOuyaUnityActivity != IntPtr.Zero)
+                    IntPtr localRef = AndroidJNI.FindClass(strName);
+                    if (localRef != IntPtr.Zero)
                     {
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} class", strName));
 #endif
-                        _jcOuyaUnityActivity = AndroidJNI.NewGlobalRef(_jcOuyaUnityActivity);
+                        _jcOuyaUnityActivity = AndroidJNI.NewGlobalRef(localRef);
+                        AndroidJNI.DeleteLocalRef(localRef);
                     }
                     else
                     {

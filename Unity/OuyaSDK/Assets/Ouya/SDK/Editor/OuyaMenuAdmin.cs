@@ -34,14 +34,21 @@ public class OuyaMenuAdmin : MonoBehaviour
                 "Assets/Ouya/SDK",
                 "Assets/Plugins/Bitmap.cs",
                 "Assets/Plugins/BitmapDrawable.cs",
+                "Assets/Plugins/BitmapFactory.cs",
                 "Assets/Plugins/ByteArrayOutputStream.cs",
                 "Assets/Plugins/DebugInput.cs",
                 "Assets/Plugins/Drawable.cs",
+                "Assets/Plugins/InputStream.cs",
                 "Assets/Plugins/JniHandleOwnership.cs",
                 "Assets/Plugins/JSONArray.cs",
                 "Assets/Plugins/JSONObject.cs",
+                "Assets/Plugins/OutputStream.cs",
+                "Assets/Plugins/OuyaContent.cs",
                 "Assets/Plugins/OuyaController.cs",
+                "Assets/Plugins/OuyaMod.cs",
+                "Assets/Plugins/OuyaModScreenshot.cs",
                 "Assets/Plugins/OuyaSDK.cs",
+                "Assets/Plugins/OuyaUnityActivity.cs",
                 "Assets/Plugins/OuyaUnityPlugin.cs",
                 "Assets/Plugins/UnityPlayer.cs",
                 "Assets/Plugins/Android/AndroidManifest.xml",
@@ -49,7 +56,14 @@ public class OuyaMenuAdmin : MonoBehaviour
                 "Assets/Plugins/Android/jni/Android.mk",
                 "Assets/Plugins/Android/jni/Application.mk",
                 "Assets/Plugins/Android/jni/jni.cpp",
+                "Assets/Plugins/Android/libs/armeabi/lib-ouya-ndk.so",
+                "Assets/Plugins/Android/libs/armeabi/lib-ouya-ndk.so.meta",
+                "Assets/Plugins/Android/libs/armeabi-v7a/lib-ouya-ndk.so",
+                "Assets/Plugins/Android/libs/armeabi-v7a/lib-ouya-ndk.so.meta",
                 "Assets/Plugins/Android/libs/ouya-sdk.jar",
+                "Assets/Plugins/Android/libs/x86/lib-ouya-ndk.so",
+                "Assets/Plugins/Android/libs/x86/lib-ouya-ndk.so.meta",
+                "Assets/Plugins/Android/OuyaUnityPlugin.jar",
                 "Assets/Plugins/Android/res/drawable/app_icon.png",
                 "Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
                 "Assets/Plugins/Android/res/values/strings.xml",
@@ -71,7 +85,7 @@ public class OuyaMenuAdmin : MonoBehaviour
             {
                 "Assets/Ouya/Examples",
             };
-        AssetDatabase.ExportPackage(paths, "OuyaSDK-Examples.unitypackage", ExportPackageOptions.IncludeDependencies | ExportPackageOptions.Recurse | ExportPackageOptions.Interactive);
+        AssetDatabase.ExportPackage(paths, "OuyaSDK-Examples.unitypackage", ExportPackageOptions.Recurse | ExportPackageOptions.Recurse | ExportPackageOptions.Interactive);
         Debug.Log(string.Format("Export OuyaSDK-Examples.unitypackage success in: {0}", Directory.GetCurrentDirectory()));
     }
 
@@ -82,7 +96,7 @@ public class OuyaMenuAdmin : MonoBehaviour
             {
                 "Assets/Ouya/StarterKit",
             };
-        AssetDatabase.ExportPackage(paths, "OuyaSDK-StarterKit.unitypackage", ExportPackageOptions.IncludeDependencies | ExportPackageOptions.Recurse | ExportPackageOptions.Interactive);
+        AssetDatabase.ExportPackage(paths, "OuyaSDK-StarterKit.unitypackage", ExportPackageOptions.Recurse | ExportPackageOptions.Recurse | ExportPackageOptions.Interactive);
         Debug.Log(string.Format("Export OuyaSDK-StarterKit.unitypackage success in: {0}", Directory.GetCurrentDirectory()));
     }
 
@@ -318,12 +332,12 @@ public class OuyaMenuAdmin : MonoBehaviour
     static void BuildApplicationJar()
     {
         string pathClasses = string.Format("{0}/Assets/Plugins/Android/Classes", m_pathUnityProject);
-        OuyaPanel.RunProcess(m_pathJar, pathClasses, string.Format("cvfM OuyaUnityPlugin.jar tv/ {0}", OuyaPanel.GetBundlePrefix()));
+        OuyaPanel.RunProcess(m_pathJar, pathClasses, string.Format("cvfM OuyaUnityPlugin.jar tv/"));
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.OuyaUnityPlugin", "OuyaUnityPlugin");
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.UnityOuyaFacade", "UnityOuyaFacade");
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.IOuyaActivity", "IOuyaActivity");
         OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.OuyaUnityActivity", "OuyaUnityActivity");
-        OuyaPanel.RunProcess(m_pathJavaP, pathClasses, string.Format("-s {0}/{1}", OuyaPanel.GetBundleId().Replace(".", "/"), OuyaPanel.GetMainActivity()), OuyaPanel.GetMainActivity());
+        OuyaPanel.RunProcess(m_pathJavaP, pathClasses, "-s tv.ouya.sdk.MainActivity", "MainActivity");
 
         string pathAppJar = string.Format("{0}/OuyaUnityPlugin.jar", pathClasses);
         string pathDest = string.Format("{0}/Assets/Plugins/Android/OuyaUnityPlugin.jar", m_pathUnityProject);

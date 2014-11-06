@@ -29,10 +29,13 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-public class OuyaShowUnityInput : MonoBehaviour,
+public class OuyaShowUnityInput : MonoBehaviour
+#if UNITY_ANDROID && !UNITY_EDITOR
+    ,
     OuyaSDK.IJoystickCalibrationListener,
     OuyaSDK.IPauseListener, OuyaSDK.IResumeListener,
     OuyaSDK.IMenuAppearingListener
+#endif
 {
     public static int PlayerNum = 0;
 
@@ -179,14 +182,18 @@ public class OuyaShowUnityInput : MonoBehaviour,
         }
     }
 
+#if PERFORMANCE_TEST_MEASURE_LATENCY
     private bool m_waitForExit = true;
     void OnApplicationQuit()
     {
         m_waitForExit = false;
     }
+#endif
     private void OnDestroy()
     {
+#if PERFORMANCE_TEST_MEASURE_LATENCY
         m_waitForExit = false;
+#endif
         OuyaSDK.unregisterJoystickCalibrationListener(this);
         OuyaSDK.unregisterMenuAppearingListener(this);
         OuyaSDK.unregisterPauseListener(this);

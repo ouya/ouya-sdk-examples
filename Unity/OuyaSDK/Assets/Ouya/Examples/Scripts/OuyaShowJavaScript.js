@@ -2,24 +2,29 @@
 
 import System.Collections.Generic;
 
-public class OuyaShowJavaScript extends MonoBehaviour implements
+public class OuyaShowJavaScript extends MonoBehaviour
+#if UNITY_ANDROID && !UNITY_EDITOR
+    implements
     OuyaSDK.IPauseListener,
     OuyaSDK.IResumeListener,
     OuyaSDK.IMenuAppearingListener,
-	OuyaSDK.IFetchGamerInfoListener,
-	OuyaSDK.IGetProductsListener,
-	OuyaSDK.IPurchaseListener,
-	OuyaSDK.IGetReceiptsListener
+	OuyaSDK.IRequestGamerInfoListener,
+	OuyaSDK.IRequestProductsListener,
+	OuyaSDK.IRequestPurchaseListener,
+	OuyaSDK.IRequestReceiptsListener
+#endif
 {
+
+#if UNITY_ANDROID && !UNITY_EDITOR
     function Awake()
     {
         OuyaSDK.registerMenuAppearingListener(this);
         OuyaSDK.registerPauseListener(this);
         OuyaSDK.registerResumeListener(this);
-        OuyaSDK.registerFetchGamerInfoListener(this);
-        OuyaSDK.registerGetProductsListener(this);
-        OuyaSDK.registerPurchaseListener(this);
-        OuyaSDK.registerGetReceiptsListener(this);
+        OuyaSDK.registerRequestGamerInfoListener(this);
+        OuyaSDK.registerRequestProductsListener(this);
+        OuyaSDK.registerRequestPurchaseListener(this);
+        OuyaSDK.registerRequestReceiptsListener(this);
     }
 
     function OnDestroy()
@@ -27,10 +32,10 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
         OuyaSDK.unregisterMenuAppearingListener(this);
         OuyaSDK.unregisterPauseListener(this);
         OuyaSDK.unregisterResumeListener(this);
-        OuyaSDK.unregisterFetchGamerInfoListener(this);
-        OuyaSDK.unregisterGetProductsListener(this);
-        OuyaSDK.unregisterPurchaseListener(this);
-        OuyaSDK.unregisterGetReceiptsListener(this);
+        OuyaSDK.unregisterRequestGamerInfoListener(this);
+        OuyaSDK.unregisterRequestProductsListener(this);
+        OuyaSDK.unregisterRequestPurchaseListener(this);
+        OuyaSDK.unregisterRequestReceiptsListener(this);
     }
 
     public function OuyaMenuAppearing()
@@ -48,20 +53,20 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
         Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
 
-    public function OuyaFetchGamerInfoOnSuccess(uuid : String, username : String)
+    public function RequestGamerInfoOnSuccess(uuid : String, username : String)
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
-    public function OuyaFetchGamerInfoOnFailure(errorCode : int, errorMessage : String)
+    public function RequestGamerInfoOnFailure(errorCode : int, errorMessage : String)
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
-    public function OuyaFetchGamerInfoOnCancel()
+    public function RequestGamerInfoOnCancel()
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
 
-    public function OuyaGetProductsOnSuccess(products : List.<OuyaSDK.Product>)
+    public function RequestProductsOnSuccess(products : List.<OuyaSDK.Product>)
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
 		for (var index : int = 0; index < products.Count; ++index)
@@ -69,29 +74,29 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
 			//product : OuyaSDK.Product in products
         }
     }
-    public function OuyaGetProductsOnFailure(errorCode : int, errorMessage : String)
+    public function RequestProductsOnFailure(errorCode : int, errorMessage : String)
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
-    public function OuyaGetProductsOnCancel()
-    {
-		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
-    }
-
-    public function OuyaPurchaseOnSuccess(product : OuyaSDK.Product)
-    {
-		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
-    }
-    public function OuyaPurchaseOnFailure(errorCode : int, errorMessage : String)
-    {
-		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
-    }
-    public function OuyaPurchaseOnCancel()
+    public function RequestProductsOnCancel()
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
 
-    public function OuyaGetReceiptsOnSuccess(receipts : List.<OuyaSDK.Receipt>)
+    public function RequestPurchaseOnSuccess(product : OuyaSDK.Product)
+    {
+		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+    }
+    public function RequestPurchaseOnFailure(errorCode : int, errorMessage : String)
+    {
+		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+    }
+    public function RequestPurchaseOnCancel()
+    {
+		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+    }
+
+    public function RequestReceiptsOnSuccess(receipts : List.<OuyaSDK.Receipt>)
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
         for (var receipt : OuyaSDK.Receipt in receipts)
@@ -102,12 +107,25 @@ public class OuyaShowJavaScript extends MonoBehaviour implements
                 }
         }
     }
-    public function OuyaGetReceiptsOnFailure(errorCode : int, errorMessage : String)
+    public function RequestReceiptsOnFailure(errorCode : int, errorMessage : String)
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
-    public function OuyaGetReceiptsOnCancel()
+    public function RequestReceiptsOnCancel()
     {
 		Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
     }
+
+    public function OnGUI() {
+        GUILayout.BeginVertical(GUILayout.Height(Screen.height));
+        GUILayout.FlexibleSpace();
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("This is JavaScript! Check out the code for syntax examples.");
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.EndVertical();
+    }
+#endif
 }

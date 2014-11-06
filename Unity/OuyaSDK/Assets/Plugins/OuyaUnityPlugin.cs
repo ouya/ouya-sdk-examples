@@ -1,6 +1,11 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
+﻿//#define VERBOSE_LOGGING
 
+using System.Reflection;
+#if UNITY_ANDROID && !UNITY_EDITOR
+using Android.Graphics;
 using System;
+using System.Collections.Generic;
+using tv.ouya.console.api.content;
 using UnityEngine;
 
 namespace tv.ouya.sdk
@@ -10,21 +15,51 @@ namespace tv.ouya.sdk
         private const string LOG_TAG = "OuyaUnityPlugin";
         private static IntPtr _jcOuyaUnityPlugin = IntPtr.Zero;
         private static IntPtr _jmConstructor = IntPtr.Zero;
-        private static IntPtr _jmSetDeveloperId = IntPtr.Zero;
-        private static IntPtr _jmUnityInitialized = IntPtr.Zero;
+        private static IntPtr _jmInitOuyaPlugin = IntPtr.Zero;
         private static IntPtr _jmGetGameData = IntPtr.Zero;
         private static IntPtr _jmPutGameData = IntPtr.Zero;
-        private static IntPtr _jmFetchGamerInfo = IntPtr.Zero;
-        private static IntPtr _jmAddGetProduct = IntPtr.Zero;
-        private static IntPtr _jmDebugGetProductList = IntPtr.Zero;
-        private static IntPtr _jmClearGetProductList = IntPtr.Zero;
-        private static IntPtr _jmGetProductsAsync = IntPtr.Zero;
-        private static IntPtr _jmRequestPurchaseAsync = IntPtr.Zero;
-        private static IntPtr _jmGetReceiptsAsync = IntPtr.Zero;
+        private static IntPtr _jmRequestGamerInfo = IntPtr.Zero;
+        private static IntPtr _jmRequestProducts = IntPtr.Zero;
+        private static IntPtr _jmRequestPurchase = IntPtr.Zero;
+        private static IntPtr _jmRequestReceipts = IntPtr.Zero;
         private static IntPtr _jmIsRunningOnOUYASupportedHardware = IntPtr.Zero;
         private static IntPtr _jmSetSafeArea = IntPtr.Zero;
         private static IntPtr _jmClearFocus = IntPtr.Zero;
+        private static IntPtr _jmGetOuyaContent = IntPtr.Zero;
+        private static IntPtr _jmSaveOuyaMod = IntPtr.Zero;
+        private static IntPtr _jmGetOuyaContentInstalled = IntPtr.Zero;
+        private static IntPtr _jmGetOuyaContentInstalledResults = IntPtr.Zero;
+        private static IntPtr _jmGetOuyaContentPublished = IntPtr.Zero;
+        private static IntPtr _jmGetOuyaContentPublishedResults = IntPtr.Zero;
+        private static IntPtr _jmContentDelete = IntPtr.Zero;
+        private static IntPtr _jmContentDownload = IntPtr.Zero;
+        private static IntPtr _jmContentPublish = IntPtr.Zero;
+        private static IntPtr _jmContentUnpublish = IntPtr.Zero;
+        private static IntPtr _jmGetFloat = IntPtr.Zero;
+        private static IntPtr _jmGetBitmapArray = IntPtr.Zero;
+        private static IntPtr _jmGetOuyaModScreenshotArray = IntPtr.Zero;
+        private static IntPtr _jmGetStringArray = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
+
+        /// <summary>
+        /// Make one request at a time
+        /// </summary>
+        public static bool m_pendingRequestGamerInfo = false;
+
+        /// <summary>
+        /// Make one request at a time
+        /// </summary>
+        public static bool m_pendingRequestProducts = false;
+
+        /// <summary>
+        /// Make one request at a time
+        /// </summary>
+        public static bool m_pendingRequestPurchase = false;
+
+        /// <summary>
+        /// Make one request at a time
+        /// </summary>
+        public static bool m_pendingRequestReceipts = false;
 
         static OuyaUnityPlugin()
         {
@@ -32,197 +67,18 @@ namespace tv.ouya.sdk
             {
                 {
                     string strName = "tv/ouya/sdk/OuyaUnityPlugin";
-                    _jcOuyaUnityPlugin = AndroidJNI.FindClass(strName);
-                    if (_jcOuyaUnityPlugin != IntPtr.Zero)
+                    IntPtr localRef = AndroidJNI.FindClass(strName);
+                    if (localRef != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} class", strName));
-                        _jcOuyaUnityPlugin = AndroidJNI.NewGlobalRef(_jcOuyaUnityPlugin);
+#endif
+                        _jcOuyaUnityPlugin = AndroidJNI.NewGlobalRef(localRef);
+                        AndroidJNI.DeleteLocalRef(localRef);
                     }
                     else
                     {
                         Debug.LogError(string.Format("Failed to find {0} class", strName));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "<init>";
-                    _jmConstructor = AndroidJNI.GetMethodID(_jcOuyaUnityPlugin, strMethod, "(Landroid/app/Activity;)V");
-                    if (_jmConstructor != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "setDeveloperId";
-                    _jmSetDeveloperId = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
-                    if (_jmSetDeveloperId != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "unityInitialized";
-                    _jmUnityInitialized = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmUnityInitialized != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "getGameData";
-                    _jmGetGameData = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
-                    if (_jmGetGameData != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "putGameData";
-                    _jmPutGameData = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;Ljava/lang/String;)V");
-                    if (_jmPutGameData != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "fetchGamerInfo";
-                    _jmFetchGamerInfo = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmFetchGamerInfo != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "addGetProduct";
-                    _jmAddGetProduct = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
-                    if (_jmAddGetProduct != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "debugGetProductList";
-                    _jmDebugGetProductList = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmDebugGetProductList != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "clearGetProductList";
-                    _jmClearGetProductList = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmClearGetProductList != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "getProductsAsync";
-                    _jmGetProductsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmGetProductsAsync != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-        
-                {
-                    string strMethod = "requestPurchaseAsync";
-                    _jmRequestPurchaseAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
-                    if (_jmRequestPurchaseAsync != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-                
-                {
-                    string strMethod = "getReceiptsAsync";
-                    _jmGetReceiptsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmGetReceiptsAsync != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "isRunningOnOUYASupportedHardware";
-                    _jmIsRunningOnOUYASupportedHardware = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Z");
-                    if (_jmIsRunningOnOUYASupportedHardware != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
                         return;
                     }
                 }
@@ -242,7 +98,9 @@ namespace tv.ouya.sdk
                     _jmConstructor = AndroidJNI.GetMethodID(_jcOuyaUnityPlugin, strMethod, "(Landroid/app/Activity;)V");
                     if (_jmConstructor != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -252,25 +110,13 @@ namespace tv.ouya.sdk
                 }
 
                 {
-                    string strMethod = "setDeveloperId";
-                    _jmSetDeveloperId = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
-                    if (_jmSetDeveloperId != IntPtr.Zero)
+                    string strMethod = "initOuyaPlugin";
+                    _jmInitOuyaPlugin = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
+                    if (_jmInitOuyaPlugin != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "unityInitialized";
-                    _jmUnityInitialized = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmUnityInitialized != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -284,7 +130,9 @@ namespace tv.ouya.sdk
                     _jmGetGameData = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
                     if (_jmGetGameData != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -298,7 +146,9 @@ namespace tv.ouya.sdk
                     _jmPutGameData = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;Ljava/lang/String;)V");
                     if (_jmPutGameData != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -308,11 +158,13 @@ namespace tv.ouya.sdk
                 }
 
                 {
-                    string strMethod = "fetchGamerInfo";
-                    _jmFetchGamerInfo = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmFetchGamerInfo != IntPtr.Zero)
+                    string strMethod = "requestGamerInfo";
+                    _jmRequestGamerInfo = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmRequestGamerInfo != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -322,11 +174,13 @@ namespace tv.ouya.sdk
                 }
 
                 {
-                    string strMethod = "addGetProduct";
-                    _jmAddGetProduct = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
-                    if (_jmAddGetProduct != IntPtr.Zero)
+                    string strMethod = "requestProducts";
+                    _jmRequestProducts = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
+                    if (_jmRequestProducts != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -336,11 +190,13 @@ namespace tv.ouya.sdk
                 }
 
                 {
-                    string strMethod = "debugGetProductList";
-                    _jmDebugGetProductList = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmDebugGetProductList != IntPtr.Zero)
+                    string strMethod = "requestPurchase";
+                    _jmRequestPurchase = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
+                    if (_jmRequestPurchase != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -350,53 +206,13 @@ namespace tv.ouya.sdk
                 }
 
                 {
-                    string strMethod = "clearGetProductList";
-                    _jmClearGetProductList = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmClearGetProductList != IntPtr.Zero)
+                    string strMethod = "requestReceipts";
+                    _jmRequestReceipts = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmRequestReceipts != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "getProductsAsync";
-                    _jmGetProductsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmGetProductsAsync != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "requestPurchaseAsync";
-                    _jmRequestPurchaseAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
-                    if (_jmRequestPurchaseAsync != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
-
-                {
-                    string strMethod = "getReceiptsAsync";
-                    _jmGetReceiptsAsync = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
-                    if (_jmGetReceiptsAsync != IntPtr.Zero)
-                    {
-                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -410,7 +226,9 @@ namespace tv.ouya.sdk
                     _jmIsRunningOnOUYASupportedHardware = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Z");
                     if (_jmIsRunningOnOUYASupportedHardware != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -424,7 +242,9 @@ namespace tv.ouya.sdk
                     _jmSetSafeArea = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(F)V");
                     if (_jmSetSafeArea != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -438,7 +258,233 @@ namespace tv.ouya.sdk
                     _jmClearFocus = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
                     if (_jmClearFocus != IntPtr.Zero)
                     {
+#if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getOuyaContent";
+                    _jmGetOuyaContent = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Ltv/ouya/console/api/content/OuyaContent;");
+                    if (_jmGetOuyaContent != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "saveOuyaMod";
+                    _jmSaveOuyaMod = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;Ltv/ouya/console/api/content/OuyaMod$Editor;)V");
+                    if (_jmSaveOuyaMod != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getOuyaContentInstalled";
+                    _jmGetOuyaContentInstalled = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmGetOuyaContentInstalled != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getOuyaContentInstalledResults";
+                    _jmGetOuyaContentInstalledResults = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()[Ltv/ouya/console/api/content/OuyaMod;");
+                    if (_jmGetOuyaContentInstalledResults != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getOuyaContentPublished";
+                    _jmGetOuyaContentPublished = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
+                    if (_jmGetOuyaContentPublished != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getOuyaContentPublishedResults";
+                    _jmGetOuyaContentPublishedResults = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()[Ltv/ouya/console/api/content/OuyaMod;");
+                    if (_jmGetOuyaContentPublishedResults != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "contentDelete";
+                    _jmContentDelete = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+                    if (_jmContentDelete != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "contentDownload";
+                    _jmContentDownload = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+                    if (_jmContentDownload != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "contentPublish";
+                    _jmContentPublish = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+                    if (_jmContentPublish != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "contentUnpublish";
+                    _jmContentUnpublish = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+                    if (_jmContentUnpublish != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getFloat";
+                    _jmGetFloat = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/Float;)F");
+                    if (_jmGetFloat != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getBitmapArray";
+                    _jmGetBitmapArray = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/util/List;)[Landroid/graphics/Bitmap;");
+                    if (_jmGetBitmapArray != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getOuyaModScreenshotArray";
+                    _jmGetOuyaModScreenshotArray = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/util/List;)[Ltv/ouya/console/api/content/OuyaModScreenshot;");
+                    if (_jmGetOuyaModScreenshotArray != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getStringArray";
+                    _jmGetStringArray = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/util/List;)[Ljava/lang/String;");
+                    if (_jmGetStringArray != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
                     }
                     else
                     {
@@ -455,9 +501,11 @@ namespace tv.ouya.sdk
 
         public OuyaUnityPlugin(IntPtr currentActivity)
         {
+            JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
-                Debug.Log("_jcOuyaUnityPlugin is not initialized");
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return;
             }
             if (_jmConstructor == IntPtr.Zero)
@@ -468,40 +516,32 @@ namespace tv.ouya.sdk
             _instance = AndroidJNI.NewObject(_jcOuyaUnityPlugin, _jmConstructor, new jvalue[] { new jvalue() { l = currentActivity } });
         }
 
-        public static void setDeveloperId(string developerId)
+        public static void initOuyaPlugin(string jsonData)
         {
-            if (_jcOuyaUnityPlugin == IntPtr.Zero)
-            {
-                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
-                return;
-            }
-            if (_jmSetDeveloperId == IntPtr.Zero)
-            {
-                Debug.LogError("_jmSetDeveloperId is not initialized");
-                return;
-            }
-            IntPtr arg1 = AndroidJNI.NewStringUTF(developerId);
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmSetDeveloperId, new jvalue[] { new jvalue() { l = arg1 } });
-            AndroidJNI.DeleteLocalRef(arg1);
-        }
+            JNIFind();
 
-        public static void unityInitialized()
-        {
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return;
             }
-            if (_jmUnityInitialized == IntPtr.Zero)
+            if (_jmInitOuyaPlugin == IntPtr.Zero)
             {
-                Debug.LogError("_jmUnityInitialized is not initialized");
+                Debug.LogError("_jmInitOuyaPlugin is not initialized");
                 return;
             }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmUnityInitialized, new jvalue[0]);
+            IntPtr arg1 = AndroidJNI.NewStringUTF(jsonData);
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmInitOuyaPlugin, new jvalue[] { new jvalue() { l = arg1 } });
+            AndroidJNI.DeleteLocalRef(arg1);
         }
 
         public static string getGameData(string key)
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
@@ -528,6 +568,11 @@ namespace tv.ouya.sdk
 
         public static void putGameData(string key, string val)
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
@@ -545,132 +590,129 @@ namespace tv.ouya.sdk
             AndroidJNI.DeleteLocalRef(arg2);
         }
 
-        public static void fetchGamerInfo()
+        public static void requestGamerInfo()
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return;
             }
-            if (_jmFetchGamerInfo == IntPtr.Zero)
+            if (_jmRequestGamerInfo == IntPtr.Zero)
             {
-                Debug.LogError("_jmFetchGamerInfo is not initialized");
+                Debug.LogError("_jmRequestGamerInfo is not initialized");
                 return;
             }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmFetchGamerInfo, new jvalue[0]);
+
+            // Make one request at a time
+            if (m_pendingRequestGamerInfo)
+            {
+                return;
+            }
+            m_pendingRequestGamerInfo = true;
+
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmRequestGamerInfo, new jvalue[0]);
         }
 
-        public static void addGetProduct()
+        public static void requestProducts(string jsonData)
         {
-            if (_jcOuyaUnityPlugin == IntPtr.Zero)
-            {
-                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
-                return;
-            }
-            if (_jmAddGetProduct == IntPtr.Zero)
-            {
-                Debug.LogError("_jmAddGetProduct is not initialized");
-                return;
-            }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmAddGetProduct, new jvalue[0]);
-        }
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
 
-        public static void addGetProduct(string identifier)
-        {
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return;
             }
-            if (_jmAddGetProduct == IntPtr.Zero)
-            {
-                Debug.LogError("_jmAddGetProduct is not initialized");
-                return;
-            }
-            IntPtr arg1 = AndroidJNI.NewStringUTF(identifier);
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmAddGetProduct, new jvalue[] { new jvalue() { l = arg1 } });
-            AndroidJNI.DeleteLocalRef(arg1);
-        }
-
-        public static void debugGetProductList()
-        {
-            if (_jcOuyaUnityPlugin == IntPtr.Zero)
-            {
-                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
-                return;
-            }
-            if (_jmDebugGetProductList == IntPtr.Zero)
-            {
-                Debug.LogError("_jmDebugGetProductList is not initialized");
-                return;
-            }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmDebugGetProductList, new jvalue[0]);
-        }
-
-        public static void clearGetProductList()
-        {
-            if (_jcOuyaUnityPlugin == IntPtr.Zero)
-            {
-                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
-                return;
-            }
-            if (_jmClearGetProductList == IntPtr.Zero)
-            {
-                Debug.LogError("_jmClearGetProductList is not initialized");
-                return;
-            }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmClearGetProductList, new jvalue[0]);
-        }
-
-        public static void getProductsAsync()
-        {
-            if (_jcOuyaUnityPlugin == IntPtr.Zero)
-            {
-                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
-                return;
-            }
-            if (_jmGetProductsAsync == IntPtr.Zero)
+            if (_jmRequestProducts == IntPtr.Zero)
             {
                 Debug.LogError("_jmGetProductsAsync is not initialized");
                 return;
             }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmGetProductsAsync, new jvalue[0]);
-        }
 
-        public static void requestPurchaseAsync(string identifier)
-        {
-            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            // Make one request at a time
+            if (m_pendingRequestProducts)
             {
-                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return;
             }
-            if (_jmRequestPurchaseAsync == IntPtr.Zero)
-            {
-                Debug.LogError("_jmRequestPurchaseAsync is not initialized");
-                return;
-            }
-            IntPtr arg1 = AndroidJNI.NewStringUTF(identifier);
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmRequestPurchaseAsync, new jvalue[] { new jvalue() { l = arg1 } });
+            m_pendingRequestProducts = true;
+
+            IntPtr arg1 = AndroidJNI.NewStringUTF(jsonData);
+            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmRequestProducts, new jvalue[] { new jvalue() { l = arg1 } });
             AndroidJNI.DeleteLocalRef(arg1);
         }
 
-        public static void getReceiptsAsync()
+        public static void requestPurchase(string identifier)
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return;
             }
-            if (_jmGetReceiptsAsync == IntPtr.Zero)
+            if (_jmRequestPurchase == IntPtr.Zero)
             {
-                Debug.LogError("_jmGetReceiptsAsync is not initialized");
+                Debug.LogError("_jmRequestPurchase is not initialized");
                 return;
             }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmGetReceiptsAsync, new jvalue[0]);
+            
+            // Make one request at a time
+            if (m_pendingRequestPurchase)
+            {
+                return;
+            }
+            m_pendingRequestPurchase = true;
+
+            IntPtr arg1 = AndroidJNI.NewStringUTF(identifier);
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmRequestPurchase, new jvalue[] { new jvalue() { l = arg1 } });
+            AndroidJNI.DeleteLocalRef(arg1);
+        }
+
+        public static void requestReceipts()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmRequestReceipts == IntPtr.Zero)
+            {
+                Debug.LogError("_jmRequestReceipts is not initialized");
+                return;
+            }
+
+            // Make one request at a time
+            if (m_pendingRequestReceipts)
+            {
+                return;
+            }
+            m_pendingRequestReceipts = true;
+
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmRequestReceipts, new jvalue[0]);
         }
 
         public static bool isRunningOnOUYASupportedHardware()
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
@@ -686,7 +728,11 @@ namespace tv.ouya.sdk
 
         public static void setSafeArea(float percentage)
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
             JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
@@ -702,7 +748,11 @@ namespace tv.ouya.sdk
 
         public static void clearFocus()
         {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
             JNIFind();
+
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
@@ -715,6 +765,445 @@ namespace tv.ouya.sdk
             }
             AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmClearFocus, new jvalue[0] { });
         }
+
+        public static OuyaContent getOuyaContent()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetOuyaContent == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContent is not initialized");
+                return null;
+            }
+            IntPtr retVal = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetOuyaContent, new jvalue[0] { });
+            if (retVal == IntPtr.Zero)
+            {
+                Debug.LogError("GetOuyaContent returned null");
+                return null;
+            }
+            IntPtr globalPtr = AndroidJNI.NewGlobalRef(retVal);
+            AndroidJNI.DeleteLocalRef(retVal);
+            return new OuyaContent(globalPtr);
+        }
+
+        public static void saveOuyaMod(OuyaMod ouyaMod, OuyaMod.Editor editor)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmSaveOuyaMod == IntPtr.Zero)
+            {
+                Debug.LogError("_jmSaveOuyaMod is not initialized");
+                return;
+            }
+
+            IntPtr arg1 = ouyaMod.GetInstance();
+            IntPtr arg2 = editor.GetInstance();
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmSaveOuyaMod, new jvalue[] { new jvalue() { l = arg1 }, new jvalue() { l = arg2 } });
+        }
+
+        public static void getOuyaContentInstalled()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmGetOuyaContentInstalled == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContentInstalled is not initialized");
+                return;
+            }
+
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmGetOuyaContentInstalled, new jvalue[0] { });
+        }
+
+        public static List<OuyaMod> getOuyaContentInstalledResults()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetOuyaContentInstalledResults == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContentInstalledResults is not initialized");
+                return null;
+            }
+
+            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetOuyaContentInstalledResults, new jvalue[0] { });
+            if (result == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContentInstalledResults returned null");
+                return null;
+            }
+
+            List<OuyaMod> ouyaMods = new List<OuyaMod>();
+            IntPtr[] resultArray = AndroidJNI.FromObjectArray(result);
+            foreach (IntPtr ptr in resultArray)
+            {
+                IntPtr globalRef = AndroidJNI.NewGlobalRef(ptr);
+                AndroidJNI.DeleteLocalRef(ptr);
+                OuyaMod ouyaMod = new OuyaMod(globalRef);
+                ouyaMods.Add(ouyaMod);
+            }
+            AndroidJNI.DeleteLocalRef(result);
+            return ouyaMods;
+        }
+
+        public static void getOuyaContentPublished(OuyaContent.SortMethod sortMethod)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmGetOuyaContentPublished == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContentPublished is not initialized");
+                return;
+            }
+
+            String strSortMethod = sortMethod.ToString();
+            //Debug.Log(string.Format("SortMethod={0}", strSortMethod));
+            IntPtr arg1 = AndroidJNI.NewStringUTF(strSortMethod);
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmGetOuyaContentPublished, new jvalue[] { new jvalue() { l = arg1 } });
+            AndroidJNI.DeleteLocalRef(arg1);
+        }
+
+        public static List<OuyaMod> getOuyaContentPublishedResults()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetOuyaContentPublishedResults == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContentPublishedResults is not initialized");
+                return null;
+            }
+
+            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetOuyaContentPublishedResults, new jvalue[0] { });
+            if (result == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaContentPublishedResults returned null");
+                return null;
+            }
+
+            List<OuyaMod> ouyaMods = new List<OuyaMod>();
+            IntPtr[] resultArray = AndroidJNI.FromObjectArray(result);
+            foreach (IntPtr ptr in resultArray)
+            {
+                IntPtr globalRef = AndroidJNI.NewGlobalRef(ptr);
+                AndroidJNI.DeleteLocalRef(ptr);
+                OuyaMod ouyaMod = new OuyaMod(globalRef);
+                ouyaMods.Add(ouyaMod);
+            }
+            AndroidJNI.DeleteLocalRef(result);
+            return ouyaMods;
+        }
+
+        public static void contentDelete(OuyaMod ouyaMod)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmContentDelete == IntPtr.Zero)
+            {
+                Debug.LogError("_jmContentDelete is not initialized");
+                return;
+            }
+
+            IntPtr arg1 = ouyaMod.GetInstance();
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmContentDelete, new jvalue[] { new jvalue() { l = arg1 } });
+        }
+
+        public static void contentPublish(OuyaMod ouyaMod)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmContentPublish == IntPtr.Zero)
+            {
+                Debug.LogError("_jmContentPublish is not initialized");
+                return;
+            }
+
+            IntPtr arg1 = ouyaMod.GetInstance();
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmContentPublish, new jvalue[] { new jvalue() { l = arg1 } });
+        }
+
+        public static void contentUnpublish(OuyaMod ouyaMod)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmContentUnpublish == IntPtr.Zero)
+            {
+                Debug.LogError("_jmContentUnpublish is not initialized");
+                return;
+            }
+
+            IntPtr arg1 = ouyaMod.GetInstance();
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmContentUnpublish, new jvalue[] { new jvalue() { l = arg1 } });
+        }
+
+        public static void contentDownload(OuyaMod ouyaMod)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+            if (_jmContentDownload == IntPtr.Zero)
+            {
+                Debug.LogError("_jmContentDownload is not initialized");
+                return;
+            }
+
+            IntPtr arg1 = ouyaMod.GetInstance();
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmContentDownload, new jvalue[] { new jvalue() { l = arg1 } });
+        }
+
+        public static float getFloat(IntPtr f)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return 0;
+            }
+            if (_jmGetFloat == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetFloat is not initialized");
+                return 0;
+            }
+
+            IntPtr arg1 = f;
+            return AndroidJNI.CallStaticFloatMethod(_jcOuyaUnityPlugin, _jmGetFloat, new jvalue[] { new jvalue() { l = arg1 } });
+        }
+
+        public static List<Bitmap> getBitmapList(IntPtr list)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetBitmapArray == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetBitmapArray is not initialized");
+                return null;
+            }
+
+            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetBitmapArray, new jvalue[] { new jvalue() { l = list } });
+            if (result == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetBitmapArray returned null");
+                return null;
+            }
+
+            List<Bitmap> items = new List<Bitmap>();
+
+#if VERBOSE_LOGGING
+            Debug.Log("Invoking AndroidJNI.FromObjectArray...");
+#endif
+            IntPtr[] resultArray = AndroidJNI.FromObjectArray(result);
+#if VERBOSE_LOGGING
+            Debug.Log("Invoked AndroidJNI.FromObjectArray.");
+#endif
+
+            foreach (IntPtr ptr in resultArray)
+            {
+#if VERBOSE_LOGGING
+                Debug.Log("Found Bitmap making Global Ref...");
+#endif
+                IntPtr globalRef = AndroidJNI.NewGlobalRef(ptr);
+                AndroidJNI.DeleteLocalRef(ptr);
+#if VERBOSE_LOGGING
+                Debug.Log("Made global ref for Bitmap.");
+#endif
+                Bitmap item = new Bitmap(globalRef);
+#if VERBOSE_LOGGING
+                Debug.Log("Deleting old bitmap reference...");
+#endif
+                items.Add(item);
+            }
+#if VERBOSE_LOGGING
+            Debug.Log("Deleting bitmap list reference...");
+#endif
+            AndroidJNI.DeleteLocalRef(result);
+            return items;
+        }
+
+        public static List<OuyaModScreenshot> getOuyaModScreenshotList(IntPtr list)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetOuyaModScreenshotArray == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaModScreenshotArray is not initialized");
+                return null;
+            }
+
+            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetOuyaModScreenshotArray, new jvalue[] { new jvalue() { l = list } });
+            if (result == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetOuyaModScreenshotArray returned null");
+                return null;
+            }
+
+            List<OuyaModScreenshot> items = new List<OuyaModScreenshot>();
+
+#if VERBOSE_LOGGING
+            Debug.Log("Invoking AndroidJNI.FromObjectArray...");
+#endif
+
+            IntPtr[] resultArray = AndroidJNI.FromObjectArray(result);
+            AndroidJNI.DeleteLocalRef(result);
+
+#if VERBOSE_LOGGING
+            Debug.Log("Invoked AndroidJNI.FromObjectArray.");
+#endif
+
+            foreach (IntPtr ptr in resultArray)
+            {
+#if VERBOSE_LOGGING
+                Debug.Log("Found Bitmap making Global Ref...");
+#endif
+                IntPtr globalRef = AndroidJNI.NewGlobalRef(ptr);
+                AndroidJNI.DeleteLocalRef(ptr);
+#if VERBOSE_LOGGING
+                Debug.Log("Made global ref for Bitmap.");
+#endif
+                OuyaModScreenshot item = new OuyaModScreenshot(globalRef);
+#if VERBOSE_LOGGING
+                Debug.Log("Deleting old local ref...");
+#endif
+                items.Add(item);
+            }
+#if VERBOSE_LOGGING
+            Debug.Log("Deleting OuyaModScreenshot list reference...");
+#endif
+            return items;
+        }
+
+        public static List<string> getStringList(IntPtr list)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetStringArray == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetStringArray is not initialized");
+                return null;
+            }
+
+            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetStringArray, new jvalue[] { new jvalue() { l = list } });
+            if (result == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetStringArray returned null");
+                return null;
+            }
+
+            List<string> items = new List<string>();
+            IntPtr[] resultArray = AndroidJNI.FromObjectArray(result);
+            AndroidJNI.DeleteLocalRef(result);
+            foreach (IntPtr ptr in resultArray)
+            {
+                string item = AndroidJNI.GetStringUTFChars(ptr);
+                AndroidJNI.DeleteLocalRef(ptr);
+                items.Add(item);
+            }
+            return items;
+        }
+
     }
 }
 

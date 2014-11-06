@@ -21,17 +21,15 @@ using tv.ouya.console.api;
 #endif
 using UnityEngine;
 
-public class OuyaShowProducts : MonoBehaviour,
+public class OuyaShowProducts : MonoBehaviour
+#if UNITY_ANDROID && !UNITY_EDITOR
+    ,
     OuyaSDK.IPauseListener, OuyaSDK.IResumeListener,
-    OuyaSDK.IFetchGamerInfoListener,
-    OuyaSDK.IGetProductsListener, OuyaSDK.IPurchaseListener, OuyaSDK.IGetReceiptsListener,
+    OuyaSDK.IRequestGamerInfoListener,
+    OuyaSDK.IRequestProductsListener, OuyaSDK.IRequestPurchaseListener, OuyaSDK.IRequestReceiptsListener,
     OuyaSDK.IMenuAppearingListener
+#endif
 {
-    /// <summary>
-    /// Handle focusing items
-    /// </summary>
-    private FocusManager m_focusManager = new FocusManager();
-
     /// <summary>
     /// The products to display for purchase
     /// </summary>
@@ -42,6 +40,23 @@ public class OuyaShowProducts : MonoBehaviour,
         "__DECLINED__THIS_PURCHASE",
     };
 
+#if UNITY_ANDROID && !UNITY_EDITOR
+
+    /// <summary>
+    /// Handle focusing items
+    /// </summary>
+    private FocusManager m_focusManager = new FocusManager();
+
+    /// <summary>
+    /// Show the current state
+    /// </summary>
+    private string m_state = string.Empty;
+
+    /// <summary>
+    /// Show the current status
+    /// </summary>
+    private string m_status = string.Empty;
+
     /// <summary>
     /// The gamer UUID
     /// </summary>
@@ -50,7 +65,7 @@ public class OuyaShowProducts : MonoBehaviour,
     /// <summary>
     /// The gamer User Name
     /// </summary>
-    private string m_gamerUserName = string.Empty;
+    private string m_gamerUsername = string.Empty;
 
     /// <summary>
     /// A key to store game data
@@ -65,67 +80,68 @@ public class OuyaShowProducts : MonoBehaviour,
     /// <summary>
     /// Buttons
     /// </summary>
-    private object m_btnGetGamerInfo = new object();
     private object m_btnPutGameData = new object();
     private object m_btnGetGameData = new object();
-    private object m_btnGetProducts = new object();
-    private object m_btnGetReceipts = new object();
+    private object m_btnRequestGamerInfo = new object();
+    private object m_btnRequestProducts = new object();
+    private object m_btnRequestReceipts = new object();
 
     void Awake()
     {
         OuyaSDK.registerMenuAppearingListener(this);
         OuyaSDK.registerPauseListener(this);
         OuyaSDK.registerResumeListener(this);
-        OuyaSDK.registerFetchGamerInfoListener(this);
-        OuyaSDK.registerGetProductsListener(this);
-        OuyaSDK.registerPurchaseListener(this);
-        OuyaSDK.registerGetReceiptsListener(this);
+        OuyaSDK.registerRequestGamerInfoListener(this);
+        OuyaSDK.registerRequestProductsListener(this);
+        OuyaSDK.registerRequestPurchaseListener(this);
+        OuyaSDK.registerRequestReceiptsListener(this);
     }
     void OnDestroy()
     {
         OuyaSDK.unregisterMenuAppearingListener(this);
         OuyaSDK.unregisterPauseListener(this);
         OuyaSDK.unregisterResumeListener(this);
-        OuyaSDK.unregisterFetchGamerInfoListener(this);
-        OuyaSDK.unregisterGetProductsListener(this);
-        OuyaSDK.unregisterPurchaseListener(this);
-        OuyaSDK.unregisterGetReceiptsListener(this);
+        OuyaSDK.unregisterRequestGamerInfoListener(this);
+        OuyaSDK.unregisterRequestProductsListener(this);
+        OuyaSDK.unregisterRequestPurchaseListener(this);
+        OuyaSDK.unregisterRequestReceiptsListener(this);
     }
 
     public void OuyaMenuAppearing()
     {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+        m_status = "OUYA Menu is appearing";
     }
 
     public void OuyaOnPause()
     {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+        m_state = "Detected Pause";
     }
 
     public void OuyaOnResume()
     {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+        m_state = "Detected Resume";
     }
 
-    public void OuyaFetchGamerInfoOnSuccess(string gamerUUID, string gamerUserName)
+    public void RequestGamerInfoOnSuccess(OuyaSDK.GamerInfo gamerInfo)
     {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
-        m_gamerUUID = gamerUUID;
-        m_gamerUserName = gamerUserName;
+        m_status = "RequestGamerInfoOnSuccess";
+        m_gamerUsername = gamerInfo.username;
+        m_gamerUUID = gamerInfo.uuid;
     }
 
-    public void OuyaFetchGamerInfoOnFailure(int errorCode, string errorMessage)
+    public void RequestGamerInfoOnFailure(int errorCode, string errorMessage)
     {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+        m_status = string.Format("RequestGamerInfoOnFailure: error={0} errorMessage={1}", errorCode, errorMessage);
     }
 
-    public void OuyaFetchGamerInfoOnCancel()
+    public void RequestGamerInfoOnCancel()
     {
-        Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().ToString());
+        m_status = "RequestGamerInfoOnCancel";
     }
 
-    public void OuyaGetProductsOnSuccess(List<OuyaSDK.Product> products)
+    public void RequestProductsOnSuccess(List<OuyaSDK.Product> products)
     {
+        m_status = "RequestProductsOnSuccess";
         m_products.Clear();
         for (int index = 0; index < products.Count; ++index)
         {
@@ -133,12 +149,12 @@ public class OuyaShowProducts : MonoBehaviour,
             // Get Products Right goes to the first element
             if (index == 0)
             {
-                m_focusManager.Mappings[m_btnGetProducts].Right = product;
+                m_focusManager.Mappings[m_btnRequestProducts].Right = product;
             }
             // Products left goes back to the GetProducts button
             m_focusManager.Mappings[product] = new FocusManager.ButtonMapping()
             {
-                Left = m_btnGetProducts
+                Left = m_btnRequestProducts
             };
             // Product down goes to the next element
             if ((index + 1) < products.Count)
@@ -154,33 +170,34 @@ public class OuyaShowProducts : MonoBehaviour,
         }
     }
 
-    public void OuyaGetProductsOnFailure(int errorCode, string errorMessage)
+    public void RequestProductsOnFailure(int errorCode, string errorMessage)
     {
-        Debug.LogError(string.Format("OuyaGetProductsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
+        m_status = string.Format("RequestProductsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage);
     }
 
-    public void OuyaGetProductsOnCancel()
+    public void RequestProductsOnCancel()
     {
-        Debug.LogError("OuyaGetProductsOnCancel:");
+        m_status = "RequestProductsOnCancel";
     }
 
-    public void OuyaPurchaseOnSuccess(OuyaSDK.Product product)
+    public void RequestPurchaseOnSuccess(OuyaSDK.Product product)
     {
-        
+        m_status = string.Format("RequestPurchaseOnSuccess: {0}", product.identifier);
     }
 
-    public void OuyaPurchaseOnFailure(int errorCode, string errorMessage)
+    public void RequestPurchaseOnFailure(int errorCode, string errorMessage)
     {
-        Debug.LogError(string.Format("OuyaPurchaseOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
+        m_status = string.Format("RequestPurchaseOnFailure: error={0} errorMessage={1}", errorCode, errorMessage);
     }
 
-    public void OuyaPurchaseOnCancel()
+    public void RequestPurchaseOnCancel()
     {
-        Debug.LogError("OuyaPurchaseOnCancel:");
+        m_status = "RequestPurchaseOnCancel";
     }
 
-    public void OuyaGetReceiptsOnSuccess(List<OuyaSDK.Receipt> receipts)
+    public void RequestReceiptsOnSuccess(List<OuyaSDK.Receipt> receipts)
     {
+        m_status = "RequestReceiptsOnSuccess";
         m_receipts.Clear();
         foreach (OuyaSDK.Receipt receipt in receipts)
         {
@@ -188,14 +205,26 @@ public class OuyaShowProducts : MonoBehaviour,
         }
     }
 
-    public void OuyaGetReceiptsOnFailure(int errorCode, string errorMessage)
+    public void RequestReceiptsOnFailure(int errorCode, string errorMessage)
     {
-        Debug.LogError(string.Format("OuyaGetReceiptsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
+        m_status = string.Format("RequestReceiptsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage);
     }
 
-    public void OuyaGetReceiptsOnCancel()
+    public void RequestReceiptsOnCancel()
     {
-        Debug.LogError("OuyaGetReceiptsOnCancel:");
+        m_status = "RequestReceiptsOnCancel";
+    }
+
+    public bool GetButtonUp(int button)
+    {
+        for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index)
+        {
+            if (OuyaSDK.OuyaInput.GetButtonUp(index, button))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     #region Data containers
@@ -208,7 +237,6 @@ public class OuyaShowProducts : MonoBehaviour,
 
     #region Presentation
 
-#if UNITY_ANDROID && !UNITY_EDITOR
     private void OnGUI()
     {
         try
@@ -225,6 +253,16 @@ public class OuyaShowProducts : MonoBehaviour,
             GUILayout.Label(OuyaSDK.isIAPInitComplete() ? "IAP is initialized" : "IAP initializing...");
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            GUILayout.Label(string.Format("State: {0}", m_state));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            GUILayout.Label(string.Format("Status: {0}", m_status));
+            GUILayout.EndHorizontal();
+
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
 
@@ -235,20 +273,21 @@ public class OuyaShowProducts : MonoBehaviour,
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
-            GUILayout.Label(string.Format("Gamer User Name: {0}", m_gamerUserName));
+            GUILayout.Label(string.Format("Gamer User Name: {0}", m_gamerUsername));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
-            if (m_focusManager.SelectedButton == m_btnGetGamerInfo)
+            if (m_focusManager.SelectedButton == m_btnRequestGamerInfo)
             {
                 GUI.backgroundColor = Color.red;
             }
-            if (GUILayout.Button("Get Gamer Info", GUILayout.Height(40)) ||
-                (m_focusManager.SelectedButton == m_btnGetGamerInfo &&
-                OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_O)))
+            if (GUILayout.Button("Request Gamer Info", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btnRequestGamerInfo &&
+                GetButtonUp(OuyaController.BUTTON_O)))
             {
-                OuyaSDK.fetchGamerInfo();
+                m_status = "Requesting gamer info...";
+                OuyaSDK.requestGamerInfo();
             }
             GUI.backgroundColor = oldColor;
             GUILayout.EndHorizontal();
@@ -264,7 +303,7 @@ public class OuyaShowProducts : MonoBehaviour,
             }
             if (GUILayout.Button("Put Game Data", GUILayout.Height(40)) ||
                 (m_focusManager.SelectedButton == m_btnPutGameData &&
-                OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_O)))
+                GetButtonUp(OuyaController.BUTTON_O)))
             {
                 OuyaSDK.putGameData(KEY_PUT_GAME_DATA, "This is a test!!!!");
             }
@@ -276,7 +315,7 @@ public class OuyaShowProducts : MonoBehaviour,
             }
             if (GUILayout.Button("Get Game Data", GUILayout.Height(40)) ||
                 (m_focusManager.SelectedButton == m_btnGetGameData &&
-                OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_O)))
+                GetButtonUp(OuyaController.BUTTON_O)))
             {
                 m_gameData = OuyaSDK.getGameData(KEY_PUT_GAME_DATA);
             }
@@ -294,13 +333,13 @@ public class OuyaShowProducts : MonoBehaviour,
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
-            if (m_focusManager.SelectedButton == m_btnGetProducts)
+            if (m_focusManager.SelectedButton == m_btnRequestProducts)
             {
                 GUI.backgroundColor = Color.red;
             }
-            if (GUILayout.Button("Get Products", GUILayout.Height(40)) ||
-                (m_focusManager.SelectedButton == m_btnGetProducts &&
-                OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_O)))
+            if (GUILayout.Button("Request Products", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btnRequestProducts &&
+                GetButtonUp(OuyaController.BUTTON_O)))
             {
                 List<OuyaSDK.Purchasable> productIdentifierList =
                     new List<OuyaSDK.Purchasable>();
@@ -312,7 +351,8 @@ public class OuyaShowProducts : MonoBehaviour,
                     productIdentifierList.Add(purchasable);
                 }
 
-                OuyaSDK.requestProductList(productIdentifierList);
+                m_status = "Requesting products...";
+                OuyaSDK.requestProducts(productIdentifierList);
             }
             GUI.backgroundColor = oldColor;
             GUILayout.FlexibleSpace();
@@ -321,21 +361,24 @@ public class OuyaShowProducts : MonoBehaviour,
             foreach (OuyaSDK.Product product in m_products)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Space(400);
+                GUILayout.Space(500);
 
                 GUILayout.Label(string.Format("Name={0}", product.name));
                 GUILayout.Label(string.Format("Price={0}", product.localPrice));
                 GUILayout.Label(string.Format("Identifier={0}", product.identifier));
 
+                GUILayout.FlexibleSpace();
+
                 if (m_focusManager.SelectedButton == product)
                 {
                     GUI.backgroundColor = Color.red;
                 }
-                if (GUILayout.Button("Purchase") ||
+                if (GUILayout.Button("Request Purchase") ||
                     (m_focusManager.SelectedButton == product &&
-                    OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_O)))
+                    GetButtonUp(OuyaController.BUTTON_O)))
                 {
-                    Debug.Log(string.Format("Purchase Identifier: {0}", product.identifier));
+                    m_status = "Requesting purchase...";
+                    //Debug.Log(string.Format("Purchase Identifier: {0}", product.identifier));
                     OuyaSDK.Purchasable purchasable = new OuyaSDK.Purchasable();
                     purchasable.productId = product.identifier;
                     OuyaSDK.requestPurchase(purchasable);
@@ -354,15 +397,16 @@ public class OuyaShowProducts : MonoBehaviour,
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
-            if (m_focusManager.SelectedButton == m_btnGetReceipts)
+            if (m_focusManager.SelectedButton == m_btnRequestReceipts)
             {
                 GUI.backgroundColor = Color.red;
             }
-            if (GUILayout.Button("Get Receipts", GUILayout.Height(40)) ||
-                (m_focusManager.SelectedButton == m_btnGetReceipts &&
-                OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_O)))
+            if (GUILayout.Button("Request Receipts", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btnRequestReceipts &&
+                GetButtonUp(OuyaController.BUTTON_O)))
             {
-                OuyaSDK.requestReceiptList();
+                m_status = "Requesting receipts...";
+                OuyaSDK.requestReceipts();
             }
             GUI.backgroundColor = oldColor;
             GUILayout.EndHorizontal();
@@ -372,7 +416,7 @@ public class OuyaShowProducts : MonoBehaviour,
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(400);
 
-                GUILayout.Label(string.Format("Price={0}", receipt.priceInCents));
+                GUILayout.Label(string.Format("LocalPrice={0}", receipt.localPrice));
                 GUILayout.Label(string.Format("Identifier={0}", receipt.identifier));
 
                 GUILayout.EndHorizontal();
@@ -382,7 +426,6 @@ public class OuyaShowProducts : MonoBehaviour,
         {
         }
     }
-#endif
 
     #endregion
 
@@ -390,57 +433,55 @@ public class OuyaShowProducts : MonoBehaviour,
 
     void Start()
     {
-        m_focusManager.Mappings[m_btnGetGamerInfo] = new FocusManager.ButtonMapping()
+        m_focusManager.Mappings[m_btnRequestGamerInfo] = new FocusManager.ButtonMapping()
         {
             Down = m_btnPutGameData
         };
         m_focusManager.Mappings[m_btnPutGameData] = new FocusManager.ButtonMapping()
         {
-            Up = m_btnGetGamerInfo,
+            Up = m_btnRequestGamerInfo,
             Right = m_btnGetGameData,
-            Down = m_btnGetProducts
+            Down = m_btnRequestProducts
         };
         m_focusManager.Mappings[m_btnGetGameData] = new FocusManager.ButtonMapping()
         {
-            Up = m_btnGetGamerInfo,
+            Up = m_btnRequestGamerInfo,
             Left = m_btnPutGameData,
-            Down = m_btnGetProducts
+            Down = m_btnRequestProducts
         };
-        m_focusManager.Mappings[m_btnGetProducts] = new FocusManager.ButtonMapping()
+        m_focusManager.Mappings[m_btnRequestProducts] = new FocusManager.ButtonMapping()
         {
             Up = m_btnPutGameData,
-            Down = m_btnGetReceipts
+            Down = m_btnRequestReceipts
         };
-        m_focusManager.Mappings[m_btnGetReceipts] = new FocusManager.ButtonMapping()
+        m_focusManager.Mappings[m_btnRequestReceipts] = new FocusManager.ButtonMapping()
         {
-            Up = m_btnGetProducts
+            Up = m_btnRequestProducts
         };
 
         // set default selection
-        m_focusManager.SelectedButton = m_btnGetGamerInfo;
+        m_focusManager.SelectedButton = m_btnRequestGamerInfo;
     }
 
-#if UNITY_ANDROID && !UNITY_EDITOR
     private void Update()
     {
-        if (OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_DPAD_DOWN))
+        if (GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
         {
             m_focusManager.FocusDown();
         }
-        if (OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_DPAD_LEFT))
+        if (GetButtonUp(OuyaController.BUTTON_DPAD_LEFT))
         {
             m_focusManager.FocusLeft();
         }
-        if (OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_DPAD_RIGHT))
+        if (GetButtonUp(OuyaController.BUTTON_DPAD_RIGHT))
         {
             m_focusManager.FocusRight();
         }
-        if (OuyaSDK.OuyaInput.GetButtonDown(0, OuyaController.BUTTON_DPAD_UP))
+        if (GetButtonUp(OuyaController.BUTTON_DPAD_UP))
         {
             m_focusManager.FocusUp();
         }
     }
-#endif
 
     public class FocusManager
     {
@@ -501,4 +542,5 @@ public class OuyaShowProducts : MonoBehaviour,
     }
 
     #endregion
+#endif
 }

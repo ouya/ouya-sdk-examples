@@ -230,7 +230,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfc3eaab5f3dea3429191724f83b7d4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_developerId: 310a8f51-4d6e-4ae5-bda0-b93878e5f5d0
+  OuyaPluginInitValues:
+  - Key: tv.ouya.developer_id
+    Value: 310a8f51-4d6e-4ae5-bda0-b93878e5f5d0
   m_useInputThreading: 0
 --- !u!4 &1493664120
 Transform:

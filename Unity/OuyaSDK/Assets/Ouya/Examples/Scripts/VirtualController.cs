@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
 using tv.ouya.console.api;
 #endif
 using System;
@@ -31,6 +31,19 @@ public class VirtualController : MonoBehaviour
     private const float AXIS_SCALER = 0.05f;
 
     private const float DEADZONE = 0.25f;
+
+    public void OnGUI()
+    {
+        GUILayout.BeginVertical(GUILayout.Height(Screen.height));
+        GUILayout.FlexibleSpace();
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("Virtual Controller for Unity");
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.EndVertical();
+    }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 

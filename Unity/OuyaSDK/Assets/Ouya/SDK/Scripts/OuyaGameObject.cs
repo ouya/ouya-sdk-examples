@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 #if UNITY_ANDROID && !UNITY_EDITOR
+using org.json;
 using System.Threading;
+using tv.ouya.console.api.content;
+using tv.ouya.sdk;
 #endif
 using UnityEngine;
 
@@ -24,7 +29,14 @@ public class OuyaGameObject : MonoBehaviour
 {
     #region Public Visible Variables
 
-    public string m_developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
+    [Serializable]
+    public class KeyValuePair
+    {
+        public string Key = string.Empty;
+        public string Value = string.Empty;
+    }
+
+    public List<KeyValuePair> OuyaPluginInitValues = new List<KeyValuePair>() { new KeyValuePair() { Key = "tv.ouya.developer_id", Value = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0" } };
 
     public bool m_useInputThreading = false;
 
@@ -57,6 +69,8 @@ public class OuyaGameObject : MonoBehaviour
      
     #region Java To Unity Event Handlers
 
+#if UNITY_ANDROID && !UNITY_EDITOR
+
     public void onMenuAppearing(string ignore)
     {
         //Debug.Log("onMenuAppearing");
@@ -66,7 +80,7 @@ public class OuyaGameObject : MonoBehaviour
         }
     }
 
-    public void onPause()
+    public void onPause(string ignore)
     {
         //Debug.Log("onPause");
         foreach (OuyaSDK.IPauseListener listener in OuyaSDK.getPauseListeners())
@@ -75,132 +89,543 @@ public class OuyaGameObject : MonoBehaviour
         }
     }
 
-    public void onResume()
+    public void onResume(string ignore)
     {
-        //Debug.Log("onResume");
+        Debug.Log("onResume");
         foreach (OuyaSDK.IResumeListener listener in OuyaSDK.getResumeListeners())
         {
             listener.OuyaOnResume();
         }
     }
 
+#endif
+
     #endregion
-    
+
+    #region Initialization Listeners
+
+    IEnumerator InvokeInitOuyaPlugin(bool wait)
+    {
+        if (wait)
+        {
+            yield return new WaitForSeconds(1f);
+        }
+        else
+        {
+            yield return null;
+        }
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            using (JSONArray jsonArray = new JSONArray())
+            {
+                int index = 0;
+                foreach (OuyaGameObject.KeyValuePair kvp in OuyaPluginInitValues)
+                {
+                    try
+                    {
+                        using (JSONObject jsonObject = new JSONObject())
+                        {
+                            //Debug.Log(string.Format("key={0} value={1}", kvp.Key, kvp.Value));
+                            jsonObject.put("key", kvp.Key);
+                            jsonObject.put("value", kvp.Value);
+                            jsonArray.put(index, jsonObject);
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    ++index;
+                }
+                
+                string jsonData = jsonArray.toString();
+                //Debug.Log("InvokeInitOuyaPlugin jsonData" + jsonData);
+
+                OuyaSDK.initOuyaPlugin(jsonData);
+            }
+        }
+        catch (Exception)
+        {
+            OnFailureInitializePlugin("Failed to invoke initOuyaPlugin.");
+        }
+#endif
+    }
+
+    public void OnSuccessInitializePlugin(string ignore)
+    {
+        Debug.Log("OUYA Plugin Initialized.");
+        //success
+        OuyaSDK.setIAPInitComplete();
+    }
+
+    public void OnFailureInitializePlugin(string errorMessage)
+    {
+        Debug.Log(string.Format("initOuyaPlugin failed: {0}", errorMessage));
+        //reattempt
+        StartCoroutine("InvokeInitOuyaPlugin", true);
+    }
+
+    #endregion
+
     #region JSON Data Listeners
 
-    public void FetchGamerInfoSuccessListener(string jsonData)
-    {
-#if !UNITY_WP8
-        //Debug.Log(string.Format("FetchGamerInfoSuccessListener jsonData={0}", jsonData));
-        OuyaSDK.GamerInfo gamerInfo = OuyaSDK.GamerInfo.Parse(jsonData);
-        InvokeOuyaFetchGamerInfoOnSuccess(gamerInfo.uuid, gamerInfo.username);
-#endif
-    }
-    public void FetchGamerInfoFailureListener(string jsonData)
-    {
-        Debug.LogError(string.Format("FetchGamerInfoFailureListener jsonData={0}", jsonData));
-        InvokeOuyaFetchGamerInfoOnFailure(0, jsonData);
-    }
-    public void FetchGamerInfoCancelListener(string ignore)
-    {
-        InvokeOuyaFetchGamerInfoOnCancel();
-    }
+#if UNITY_ANDROID && !UNITY_EDITOR
 
-    private List<OuyaSDK.Product> m_products = new List<OuyaSDK.Product>();
-
-    public void ProductListClearListener(string ignore)
+    public void ContentDeleteListenerOnDeleted(string ignore)
     {
-        m_products.Clear();
-    }
-    public void ProductListListener(string jsonData)
-    {
-#if !UNITY_WP8
-        if (string.IsNullOrEmpty(jsonData))
+        foreach (OuyaSDK.IContentDeleteListener listener in OuyaSDK.getContentDeleteListeners())
         {
-            Debug.Log("OuyaSDK.ProductListListener: received empty jsondata");
-            return;
+            if (null != listener)
+            {
+                listener.ContentDeleteOnDeleted(null);
+            }
         }
-
-        Debug.Log(string.Format("OuyaSDK.ProductListListener: jsonData={0}", jsonData));
-        OuyaSDK.Product product = OuyaSDK.Product.Parse(jsonData);
-        m_products.Add(product);
-#endif
     }
-    public void ProductListFailureListener(string jsonData)
+    public void ContentDeleteListenerOnDeleteFailed(string jsonData)
     {
-        Debug.LogError(string.Format("ProductListFailureListener jsonData={0}", jsonData));
-        InvokeOuyaGetReceiptsOnFailure(0, jsonData);
-    }
-    public void ProductListCompleteListener(string ignore)
-    {
-        foreach (OuyaSDK.Product product in m_products)
+        using (JSONObject jsonObject = new JSONObject(jsonData))
         {
-            Debug.Log(string.Format("ProductListCompleteListener Product id={0} name={1} price={2}",
-                product.identifier, product.name, product.localPrice));
+            int code = 0;
+            string reason = string.Empty;
+            if (jsonObject.has("code"))
+            {
+                code = jsonObject.getInt("code");
+            }
+            if (jsonObject.has("reason"))
+            {
+                reason = jsonObject.getString("reason");
+            }
+            foreach (OuyaSDK.IContentDeleteListener listener in OuyaSDK.getContentDeleteListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentDeleteOnDeleteFailed(null, code, reason);
+                }
+            }
         }
-        InvokeOuyaGetProductsOnSuccess(m_products);
     }
 
-    public void PurchaseSuccessListener(string jsonData)
+    public void ContentDownloadListenerOnComplete(string ignore)
     {
-#if !UNITY_WP8
-        Debug.Log(string.Format("PurchaseSuccessListener jsonData={0}", jsonData));
-        OuyaSDK.Product product = OuyaSDK.Product.Parse(jsonData);
-        InvokeOuyaPurchaseOnSuccess(product);
-#endif
-    }
-    public void PurchaseFailureListener(string jsonData)
-    {
-        Debug.LogError(string.Format("PurchaseFailureListener jsonData={0}", jsonData));
-        InvokeOuyaPurchaseOnFailure(0, jsonData);
-    }
-    public void PurchaseCancelListener(string ignore)
-    {
-        InvokeOuyaPurchaseOnCancel();
-    }
-    
-    private List<OuyaSDK.Receipt> m_receipts = new List<OuyaSDK.Receipt>();
-
-    public void ReceiptListClearListener(string ignore)
-    {
-        m_receipts.Clear();
-    }
-    public void ReceiptListListener(string jsonData)
-    {
-#if !UNITY_WP8
-        if (string.IsNullOrEmpty(jsonData))
+        foreach (OuyaSDK.IContentDownloadListener listener in OuyaSDK.getContentDownloadListeners())
         {
-            Debug.Log("OuyaSDK.ReceiptListListener: received empty jsondata");
-            return;
+            if (null != listener)
+            {
+                listener.ContentDownloadOnComplete(null);
+            }
         }
-
-        Debug.Log(string.Format("OuyaSDK.ReceiptListListener: jsonData={0}", jsonData));
-        OuyaSDK.Receipt receipt = OuyaSDK.Receipt.Parse(jsonData);
-        m_receipts.Add(receipt);
-#endif
     }
-    public void ReceiptListCompleteListener(string ignore)
+    public void ContentDownloadListenerOnProgress(string jsonData)
     {
-        foreach (OuyaSDK.Receipt receipt in m_receipts)
+        using (JSONObject jsonObject = new JSONObject(jsonData))
         {
-            Debug.Log(string.Format("ReceiptListCompleteListener Receipt id={0} price={1} purchaseDate={2} generatedDate={3}",
-                receipt.identifier,
-                receipt.priceInCents,
-                receipt.purchaseDate,
-                receipt.generatedDate));
+            int progress = 0;
+            if (jsonObject.has("progress"))
+            {
+                progress = jsonObject.getInt("progress");
+            }
+            foreach (OuyaSDK.IContentDownloadListener listener in OuyaSDK.getContentDownloadListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentDownloadOnProgress(null, progress);
+                }
+            }
         }
-        InvokeOuyaGetReceiptsOnSuccess(m_receipts);
     }
-    public void ReceiptListFailureListener(string jsonData)
+    public void ContentDownloadListenerOnFailed(string ignore)
     {
-        Debug.LogError(string.Format("ReceiptListFailureListener jsonData={0}", jsonData));
-        InvokeOuyaGetReceiptsOnFailure(0, jsonData);
+        foreach (OuyaSDK.IContentDownloadListener listener in OuyaSDK.getContentDownloadListeners())
+        {
+            if (null != listener)
+            {
+                listener.ContentDownloadOnFailed(null);
+            }
+        }
     }
-    public void ReceiptListCancelListener(string ignore)
+
+    public void ContentInitListenerOnInitialized(string ignore)
     {
-        InvokeOuyaGetReceiptsOnCancel();
+        foreach (OuyaSDK.IContentInitializedListener listener in OuyaSDK.getContentInitializedListeners())
+        {
+            if (null != listener)
+            {
+                listener.ContentInitializedOnInitialized();
+            }
+        }
     }
-    
+    public void ContentInitListenerOnDestroyed(string ignore)
+    {
+        foreach (OuyaSDK.IContentInitializedListener listener in OuyaSDK.getContentInitializedListeners())
+        {
+            if (null != listener)
+            {
+                listener.ContentInitializedOnDestroyed();
+            }
+        }
+    }
+
+    public void ContentInstalledSearchListenerOnResults(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int count = 0;
+            if (jsonObject.has("count"))
+            {
+                count = jsonObject.getInt("count");
+            }
+            List<OuyaMod> ouyaMods = OuyaUnityPlugin.getOuyaContentInstalledResults();
+            foreach (OuyaSDK.IContentInstalledSearchListener listener in OuyaSDK.getContentInstalledSearchListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentInstalledSearchOnResults(ouyaMods, count);
+                }
+            }
+        }
+    }
+    public void ContentInstalledSearchListenerOnError(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int code = 0;
+            string reason = string.Empty;
+            if (jsonObject.has("code"))
+            {
+                code = jsonObject.getInt("code");
+            }
+            if (jsonObject.has("reason"))
+            {
+                reason = jsonObject.getString("reason");
+            }
+            foreach (OuyaSDK.IContentInstalledSearchListener listener in OuyaSDK.getContentInstalledSearchListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentInstalledSearchOnError(code, reason);
+                }
+            }
+        }
+    }
+
+    public void ContentPublishedSearchListenerOnResults(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int count = 0;
+            if (jsonObject.has("count"))
+            {
+                count = jsonObject.getInt("count");
+            }
+            List<OuyaMod> ouyaMods = OuyaUnityPlugin.getOuyaContentPublishedResults();
+            foreach (OuyaSDK.IContentPublishedSearchListener listener in OuyaSDK.getContentPublishedSearchListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentPublishedSearchOnResults(ouyaMods, count);
+                }
+            }
+        }
+    }
+    public void ContentPublishedSearchListenerOnError(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int code = 0;
+            string reason = string.Empty;
+            if (jsonObject.has("code"))
+            {
+                code = jsonObject.getInt("code");
+            }
+            if (jsonObject.has("reason"))
+            {
+                reason = jsonObject.getString("reason");
+            }
+            foreach (OuyaSDK.IContentPublishedSearchListener listener in OuyaSDK.getContentPublishedSearchListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentPublishedSearchOnError(code, reason);
+                }
+            }
+        }
+    }
+
+    public void ContentSaveListenerOnSuccess(string ignore)
+    {
+        foreach (OuyaSDK.IContentSaveListener listener in OuyaSDK.getContentSaveListeners())
+        {
+            if (null != listener)
+            {
+                listener.ContentSaveOnSuccess(null);
+            }
+        }
+    }
+    public void ContentSaveListenerOnError(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int code = 0;
+            string reason = string.Empty;
+            if (jsonObject.has("code"))
+            {
+                code = jsonObject.getInt("code");
+            }
+            if (jsonObject.has("reason"))
+            {
+                reason = jsonObject.getString("reason");
+            }
+            foreach (OuyaSDK.IContentSaveListener listener in OuyaSDK.getContentSaveListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentSaveOnError(null, code, reason);
+                }
+            }
+        }
+    }
+
+    public void ContentPublishListenerOnSuccess(string ignore)
+    {
+        foreach (OuyaSDK.IContentPublishListener listener in OuyaSDK.getContentPublishListeners())
+        {
+            if (null != listener)
+            {
+                listener.ContentPublishOnSuccess(null);
+            }
+        }
+    }
+    public void ContentPublishListenerOnError(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int code = 0;
+            string reason = string.Empty;
+            if (jsonObject.has("code"))
+            {
+                code = jsonObject.getInt("code");
+            }
+            if (jsonObject.has("reason"))
+            {
+                reason = jsonObject.getString("reason");
+            }
+            foreach (OuyaSDK.IContentPublishListener listener in OuyaSDK.getContentPublishListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentPublishOnError(null, code, reason);
+                }
+            }
+        }
+    }
+
+    public void ContentUnpublishListenerOnSuccess(string ignore)
+    {
+        foreach (OuyaSDK.IContentUnpublishListener listener in OuyaSDK.getContentUnpublishListeners())
+        {
+            if (null != listener)
+            {
+                listener.ContentUnpublishOnSuccess(null);
+            }
+        }
+    }
+    public void ContentUnpublishListenerOnError(string jsonData)
+    {
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            int code = 0;
+            string reason = string.Empty;
+            if (jsonObject.has("code"))
+            {
+                code = jsonObject.getInt("code");
+            }
+            if (jsonObject.has("reason"))
+            {
+                reason = jsonObject.getString("reason");
+            }
+            foreach (OuyaSDK.IContentUnpublishListener listener in OuyaSDK.getContentUnpublishListeners())
+            {
+                if (null != listener)
+                {
+                    listener.ContentUnpublishOnError(null, code, reason);
+                }
+            }
+        }
+    }
+
+    public void RequestGamerInfoSuccessListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestGamerInfo = false;
+        //Debug.Log(string.Format("RequestGamerInfoSuccessListener: jsonData={0}", jsonData));
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            OuyaSDK.GamerInfo gamerInfo = OuyaSDK.GamerInfo.Parse(jsonObject);
+            foreach (OuyaSDK.IRequestGamerInfoListener listener in OuyaSDK.getRequestGamerInfoListeners())
+            {
+                if (null != listener)
+                {
+                    listener.RequestGamerInfoOnSuccess(gamerInfo);
+                }
+            }
+        }
+    }
+    public void RequestGamerInfoFailureListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestGamerInfo = false;
+        //Debug.LogError(string.Format("RequestGamerInfoFailureListener: jsonData={0}", jsonData));
+        foreach (OuyaSDK.IRequestGamerInfoListener listener in OuyaSDK.getRequestGamerInfoListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestGamerInfoOnFailure(0, jsonData);
+            }
+        }
+    }
+    public void RequestGamerInfoCancelListener(string ignore)
+    {
+        OuyaUnityPlugin.m_pendingRequestGamerInfo = false;
+        foreach (OuyaSDK.IRequestGamerInfoListener listener in OuyaSDK.getRequestGamerInfoListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestGamerInfoOnCancel();
+            }
+        }
+    }
+
+    public void RequestProductsSuccessListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestProducts = false;
+
+        //Debug.Log(string.Format("OuyaSDK.RequestProductsSuccessListener: jsonData={0}", jsonData));
+
+        using (JSONArray jsonArray = new JSONArray(jsonData))
+        {
+            List<OuyaSDK.Product> products = new List<OuyaSDK.Product>();
+            for (int index = 0; index < jsonArray.length(); ++index)
+            {
+                using (JSONObject jsonObject = jsonArray.getJSONObject(index))
+                {
+                    //Debug.Log(string.Format("Found Product: {0}", jsonObject.toString()));
+                    OuyaSDK.Product product = OuyaSDK.Product.Parse(jsonObject);
+                    products.Add(product);
+                }
+            }
+            foreach (OuyaSDK.IRequestProductsListener listener in OuyaSDK.getRequestProductsListeners())
+            {
+                if (null != listener)
+                {
+                    listener.RequestProductsOnSuccess(products);
+                }
+            }
+        }
+    }
+    public void RequestProductsFailureListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestProducts = false;
+        //Debug.LogError(string.Format("RequestProductsFailureListener: jsonData={0}", jsonData));
+        foreach (OuyaSDK.IRequestProductsListener listener in OuyaSDK.getRequestProductsListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestProductsOnFailure(0, jsonData);
+            }
+        }
+    }
+
+    public void RequestPurchaseSuccessListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestPurchase = false;
+        //Debug.Log(string.Format("RequestPurchaseSuccessListener: jsonData={0}", jsonData));
+        using (JSONObject jsonObject = new JSONObject(jsonData))
+        {
+            OuyaSDK.Product product = OuyaSDK.Product.Parse(jsonObject);
+            foreach (OuyaSDK.IRequestPurchaseListener listener in OuyaSDK.getRequestPurchaseListeners())
+            {
+                if (null != listener)
+                {
+                    listener.RequestPurchaseOnSuccess(product);
+                }
+            }
+        }
+    }
+    public void RequestPurchaseFailureListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestPurchase = false;
+        //Debug.LogError(string.Format("RequestPurchaseFailureListener: jsonData={0}", jsonData));
+        foreach (OuyaSDK.IRequestPurchaseListener listener in OuyaSDK.getRequestPurchaseListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestPurchaseOnFailure(0, jsonData);
+            }
+        }
+    }
+    public void RequestPurchaseCancelListener(string ignore)
+    {
+        OuyaUnityPlugin.m_pendingRequestPurchase = false;
+        foreach (OuyaSDK.IRequestPurchaseListener listener in OuyaSDK.getRequestPurchaseListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestPurchaseOnCancel();
+            }
+        }
+    }
+
+    public void RequestReceiptsSuccessListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestReceipts = false;
+
+        //Debug.Log(string.Format("OuyaSDK.RequestReceiptsSuccessListener: jsonData={0}", jsonData));
+
+        using (JSONArray jsonArray = new JSONArray(jsonData))
+        {
+            List<OuyaSDK.Receipt> receipts = new List<OuyaSDK.Receipt>();
+            for (int index = 0; index < jsonArray.length(); ++index)
+            {
+                using (JSONObject jsonObject = jsonArray.getJSONObject(index))
+                {
+                    //Debug.Log(string.Format("Found Receipt: {0}", jsonObject.toString()));
+                    OuyaSDK.Receipt receipt = OuyaSDK.Receipt.Parse(jsonObject);
+                    receipts.Add(receipt);
+                }
+            }
+            foreach (OuyaSDK.IRequestReceiptsListener listener in OuyaSDK.getRequestReceiptsListeners())
+            {
+                if (null != listener)
+                {
+                    listener.RequestReceiptsOnSuccess(receipts);
+                }
+            }
+        }
+    }
+    public void RequestReceiptsFailureListener(string jsonData)
+    {
+        OuyaUnityPlugin.m_pendingRequestReceipts = false;
+        Debug.LogError(string.Format("RequestReceiptsFailureListener: jsonData={0}", jsonData));
+        foreach (OuyaSDK.IRequestReceiptsListener listener in OuyaSDK.getRequestReceiptsListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestReceiptsOnFailure(0, jsonData);
+            }
+        }
+    }
+    public void RequestReceiptsCancelListener(string ignore)
+    {
+        OuyaUnityPlugin.m_pendingRequestReceipts = false;
+        foreach (OuyaSDK.IRequestReceiptsListener listener in OuyaSDK.getRequestReceiptsListeners())
+        {
+            if (null != listener)
+            {
+                listener.RequestReceiptsOnCancel();
+            }
+        }
+    }
+
+#endif
     #endregion
 
     #region UNITY Awake, Start & Update
@@ -214,20 +639,7 @@ public class OuyaGameObject : MonoBehaviour
         Application.targetFrameRate = 60;
         DontDestroyOnLoad(transform.gameObject);
 
-        #region Init OUYA
-
-        try
-        {
-            //Initialize OuyaSDK with your developer ID
-            //Get your developer_id from the ouya developer portal @ http://developer.ouya.tv
-            OuyaSDK.initialize(m_developerId);
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError(string.Format("Failed to initialize OuyaSDK exception={0}", ex));
-        }
-
-        #endregion
+        StartCoroutine("InvokeInitOuyaPlugin", false);
 
         #region Init Input
 
@@ -242,148 +654,6 @@ public class OuyaGameObject : MonoBehaviour
 
         #endregion
     }
-    #endregion
-
-    #region IAP
-
-    public void RequestUnityAwake(string ignore)
-    {
-        OuyaSDK.initialize(m_developerId);
-    }
-
-    public void SendIAPInitComplete(string ignore)
-    {
-        OuyaSDK.setIAPInitComplete();
-    }
-
-    public void InvokeOuyaFetchGamerInfoOnSuccess(string uuid, string username)
-    {
-        foreach (OuyaSDK.IFetchGamerInfoListener listener in OuyaSDK.getFetchGamerInfoListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaFetchGamerInfoOnSuccess(uuid, username);
-            }
-        }
-    }
-
-    public void InvokeOuyaFetchGamerInfoOnFailure(int errorCode, string errorMessage)
-    {
-        Debug.LogError(string.Format("InvokeOuyaFetchGamerInfoOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
-        foreach (OuyaSDK.IFetchGamerInfoListener listener in OuyaSDK.getFetchGamerInfoListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaFetchGamerInfoOnFailure(errorCode, errorMessage);
-            }
-        }
-    }
-
-    public void InvokeOuyaFetchGamerInfoOnCancel()
-    {
-        //Debug.Log("InvokeOuyaFetchGamerInfoOnCancel");
-        foreach (OuyaSDK.IFetchGamerInfoListener listener in OuyaSDK.getFetchGamerInfoListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaFetchGamerInfoOnCancel();
-            }
-        }
-    }
-
-    public void InvokeOuyaGetProductsOnSuccess(List<OuyaSDK.Product> products)
-    {
-        foreach (OuyaSDK.IGetProductsListener listener in OuyaSDK.getGetProductsListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaGetProductsOnSuccess(products);
-            }
-        }
-    }
-
-    public void InvokeOuyaGetProductsOnFailure(int errorCode, string errorMessage)
-    {
-        Debug.LogError(string.Format("InvokeOuyaGetProductsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
-        foreach (OuyaSDK.IGetProductsListener listener in OuyaSDK.getGetProductsListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaGetProductsOnFailure(errorCode, errorMessage);
-            }
-        }
-    }
-
-    public void InvokeOuyaPurchaseOnSuccess(OuyaSDK.Product product)
-    {
-        foreach (OuyaSDK.IPurchaseListener listener in OuyaSDK.getPurchaseListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaPurchaseOnSuccess(product);
-            }
-        }
-    }
-
-    public void InvokeOuyaPurchaseOnFailure(int errorCode, string errorMessage)
-    {
-        Debug.LogError(string.Format("InvokeOuyaPurchaseOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
-        foreach (OuyaSDK.IPurchaseListener listener in OuyaSDK.getPurchaseListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaPurchaseOnFailure(errorCode, errorMessage);
-            }
-        }
-    }
-
-    public void InvokeOuyaPurchaseOnCancel()
-    {
-        //Debug.Log("InvokeOuyaPurchaseOnCancel");
-        foreach (OuyaSDK.IPurchaseListener listener in OuyaSDK.getPurchaseListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaPurchaseOnCancel();
-            }
-        }
-    }
-
-    public void InvokeOuyaGetReceiptsOnSuccess(List<OuyaSDK.Receipt> receipts)
-    {
-        foreach (OuyaSDK.IGetReceiptsListener listener in OuyaSDK.getGetReceiptsListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaGetReceiptsOnSuccess(receipts);
-            }
-        }
-    }
-
-    public void InvokeOuyaGetReceiptsOnFailure(int errorCode, string errorMessage)
-    {
-        Debug.LogError(string.Format("InvokeOuyaGetReceiptsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage));
-        foreach (OuyaSDK.IGetReceiptsListener listener in OuyaSDK.getGetReceiptsListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaGetReceiptsOnFailure(errorCode, errorMessage);
-            }
-        }
-    }
-
-    public void InvokeOuyaGetReceiptsOnCancel()
-    {
-        //Debug.Log("InvokeOuyaGetReceiptsOnCancel");
-        foreach (OuyaSDK.IGetReceiptsListener listener in OuyaSDK.getGetReceiptsListeners())
-        {
-            if (null != listener)
-            {
-                listener.OuyaGetReceiptsOnCancel();
-            }
-        }
-    }
-
     #endregion
 
     #region Controllers

@@ -1,4 +1,4 @@
-﻿namespace Android.Runtime
+namespace Android.Runtime
 {
     public enum JniHandleOwnership
     {

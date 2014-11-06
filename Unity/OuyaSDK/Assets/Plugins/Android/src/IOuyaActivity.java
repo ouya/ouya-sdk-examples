@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 OUYA, Inc.
+ * Copyright (C) 2012-2014 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import com.unity3d.player.UnityPlayer;
+import java.util.*;
+import tv.ouya.console.api.content.OuyaContent;
+import tv.ouya.console.api.content.OuyaMod;
 
 public class IOuyaActivity
 {
@@ -79,5 +82,35 @@ public class IOuyaActivity
 	public static void SetApplicationKey(byte[] applicationKey)
 	{
 		m_applicationKey = applicationKey;
+	}
+
+	protected static OuyaContent m_ouyaContent = null;
+	public static OuyaContent GetOuyaContent()
+	{
+		return m_ouyaContent;
+	}
+	public static void SetOuyaContent(OuyaContent ouyaContent)
+	{
+		m_ouyaContent = ouyaContent;
+	}
+
+	protected static List<OuyaMod> m_ouyaContentInstalledResults = null;
+	public static List<OuyaMod> GetOuyaContentInstalledResults()
+	{
+		return m_ouyaContentInstalledResults;
+	}
+	public static void SetOuyaContentInstalledResults(List<OuyaMod> results)
+	{
+		m_ouyaContentInstalledResults = results;
+	}
+
+	protected static List<OuyaMod> m_ouyaContentPublishedResults = null;
+	public static List<OuyaMod> GetOuyaContentPublishedResults()
+	{
+		return m_ouyaContentPublishedResults;
+	}
+	public static void SetOuyaContentPublishedResults(List<OuyaMod> results)
+	{
+		m_ouyaContentPublishedResults = results;
 	}
 }

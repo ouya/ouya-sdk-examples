@@ -26,13 +26,14 @@ using System.Runtime.InteropServices;
 using com.unity3d.player;
 using org.json;
 using tv.ouya.console.api;
+using tv.ouya.console.api.content;
 using tv.ouya.sdk;
 #endif
 using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.0.14.5";
+    public const string VERSION = "2.0.1353.1";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -446,11 +447,6 @@ public static class OuyaSDK
     }
 
     /// <summary>
-    /// The developer ID assigned by OuyaGameObject
-    /// </summary>
-    static private string m_developerId = string.Empty;
-
-    /// <summary>
     /// Inidicates IAP has been setup and is ready for processing
     /// </summary>
     private static bool m_iapInitComplete = false;
@@ -458,24 +454,11 @@ public static class OuyaSDK
     /// <summary>
     /// Initialized by OuyaGameObject
     /// </summary>
-    /// <param name="developerId"></param>
-    public static void initialize(string developerId)
+    public static void initOuyaPlugin(string jsonData)
     {
-        m_developerId = developerId;
-
 #if UNITY_ANDROID && !UNITY_EDITOR
-        OuyaUnityPlugin.setDeveloperId(developerId);
-        OuyaUnityPlugin.unityInitialized();
+        OuyaUnityPlugin.initOuyaPlugin(jsonData);
 #endif
-    }
-
-    /// <summary>
-    /// Access the developer id
-    /// </summary>
-    /// <returns></returns>
-    public static string getDeveloperId()
-    {
-        return m_developerId;
     }
 
     public static bool isIAPInitComplete()
@@ -490,15 +473,23 @@ public static class OuyaSDK
 
     #region Mirror Java API
 
-    public static void fetchGamerInfo()
+    public static void requestGamerInfo()
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
-        OuyaUnityPlugin.fetchGamerInfo();
+        OuyaUnityPlugin.requestGamerInfo();
 #endif
     }
 
     public static void putGameData(string key, string val)
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.putGameData(key, val);
 #endif
@@ -506,6 +497,10 @@ public static class OuyaSDK
 
     public static string getGameData(string key)
     {
+        if (!m_iapInitComplete)
+        {
+            return string.Empty;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
         return OuyaUnityPlugin.getGameData(key);
 #else
@@ -513,34 +508,53 @@ public static class OuyaSDK
 #endif
     }
 
-    public static void requestProductList(List<Purchasable> purchasables)
+    public static void requestProducts(List<Purchasable> purchasables)
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
+        JSONArray jsonArray = new JSONArray();
+        int index = 0;
         foreach (Purchasable purchasable in purchasables)
         {
-            //Debug.Log(string.Format("Unity Adding: {0}", purchasable.getProductId()));
-            OuyaUnityPlugin.addGetProduct(purchasable.productId);
+            jsonArray.put(index, purchasable.productId);
+            ++index;
         }
-        OuyaUnityPlugin.getProductsAsync();
+        OuyaUnityPlugin.requestProducts(jsonArray.toString());
+        jsonArray.Dispose();
 #endif
     }
 
     public static void requestPurchase(Purchasable purchasable)
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
-        OuyaUnityPlugin.requestPurchaseAsync(purchasable.productId);
+        OuyaUnityPlugin.requestPurchase(purchasable.productId);
 #endif
     }
 
-    public static void requestReceiptList()
+    public static void requestReceipts()
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
-        OuyaUnityPlugin.getReceiptsAsync();
+        OuyaUnityPlugin.requestReceipts();
 #endif
     }
 
     public static bool isRunningOnOUYASupportedHardware()
     {
+        if (!m_iapInitComplete)
+        {
+            return false;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
         return OuyaUnityPlugin.isRunningOnOUYASupportedHardware();
 #else
@@ -555,6 +569,10 @@ public static class OuyaSDK
     /// <param name="percentage"></param>
     public static void setSafeArea(float percentage)
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.setSafeArea(percentage);
 #endif        
@@ -565,6 +583,10 @@ public static class OuyaSDK
     /// </summary>
     public static void clearFocus()
     {
+        if (!m_iapInitComplete)
+        {
+            return;
+        }
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.clearFocus();
 #endif
@@ -580,25 +602,23 @@ public static class OuyaSDK
         public string uuid = string.Empty;
         public string username = string.Empty;
 
-        public static GamerInfo Parse(string jsonData)
+#if UNITY_ANDROID && !UNITY_EDITOR
+        public static GamerInfo Parse(JSONObject jsonObject)
         {
             GamerInfo result = new GamerInfo();
-#if UNITY_ANDROID && !UNITY_EDITOR
+
             //Debug.Log(jsonData);
-            using (JSONObject json = new JSONObject(jsonData))
+            if (jsonObject.has("uuid"))
             {
-                if (json.has("uuid"))
-                {
-                    result.uuid = json.getString("uuid");
-                }
-                if (json.has("username"))
-                {
-                    result.username = json.getString("username");
-                }
+                result.uuid = jsonObject.getString("uuid");
             }
-#endif
+            if (jsonObject.has("username"))
+            {
+                result.username = jsonObject.getString("username");
+            }
             return result;
         }
+#endif
     }
 
     [Serializable]
@@ -619,49 +639,45 @@ public static class OuyaSDK
         public float percentOff = 0f;
         public string developerName = string.Empty;
 
-        public static Product Parse(string jsonData)
+#if UNITY_ANDROID && !UNITY_EDITOR
+        public static Product Parse(JSONObject jsonData)
         {
             Product result = new Product();
-#if UNITY_ANDROID && !UNITY_EDITOR
-            //Debug.Log(jsonData);
-            using (JSONObject json = new JSONObject(jsonData))
+            if (jsonData.has("currencyCode"))
             {
-                if (json.has("currencyCode"))
-                {
-                    result.currencyCode = json.getString("currencyCode");
-                }
-                if (json.has("description"))
-                {
-                    result.description = json.getString("description");
-                }
-                if (json.has("identifier"))
-                {
-                    result.identifier = json.getString("identifier");
-                }
-                if (json.has("localPrice"))
-                {
-                    result.localPrice = (float) json.getDouble("localPrice");
-                }
-                if (json.has("name"))
-                {
-                    result.name = json.getString("name");
-                }
-                if (json.has("originalPrice"))
-                {
-                    result.originalPrice = (float) json.getDouble("originalPrice");
-                }
-                if (json.has("percentOff"))
-                {
-                    result.percentOff = (float) json.getDouble("percentOff");
-                }
-                if (json.has("developerName"))
-                {
-                    result.developerName = json.getString("developerName");
-                }
+                result.currencyCode = jsonData.getString("currencyCode");
             }
-#endif
+            if (jsonData.has("description"))
+            {
+                result.description = jsonData.getString("description");
+            }
+            if (jsonData.has("identifier"))
+            {
+                result.identifier = jsonData.getString("identifier");
+            }
+            if (jsonData.has("localPrice"))
+            {
+                result.localPrice = (float)jsonData.getDouble("localPrice");
+            }
+            if (jsonData.has("name"))
+            {
+                result.name = jsonData.getString("name");
+            }
+            if (jsonData.has("originalPrice"))
+            {
+                result.originalPrice = (float)jsonData.getDouble("originalPrice");
+            }
+            if (jsonData.has("percentOff"))
+            {
+                result.percentOff = (float)jsonData.getDouble("percentOff");
+            }
+            if (jsonData.has("developerName"))
+            {
+                result.developerName = jsonData.getString("developerName");
+            }
             return result;
         }
+#endif
     }
 
     [Serializable]
@@ -672,60 +688,55 @@ public static class OuyaSDK
         public DateTime generatedDate = DateTime.MinValue;
         public string identifier = string.Empty;
         public float localPrice = 0f;
-        public int priceInCents = 0;
         public DateTime purchaseDate = DateTime.MinValue;
         public string uuid = string.Empty;
 
-        public static Receipt Parse(string jsonData)
+#if UNITY_ANDROID && !UNITY_EDITOR
+        public static Receipt Parse(JSONObject jsonObject)
         {
             Receipt result = new Receipt();
-#if UNITY_ANDROID && !UNITY_EDITOR
-            //Debug.Log(jsonData);
-            using (JSONObject json = new JSONObject(jsonData))
+
+            if (jsonObject.has("identifier"))
             {
-                if (json.has("identifier"))
-                {
-                    result.identifier = json.getString("identifier");
-                }
-                if (json.has("purchaseDate"))
-                {
-                    DateTime date;
-                    DateTime.TryParse(json.getString("purchaseDate"), out date);
-                    result.purchaseDate = date;
-                }
-                if (json.has("gamer"))
-                {
-                    result.gamer = json.getString("gamer");
-                }
-                if (json.has("localPrice"))
-                {
-                    result.localPrice = (float) json.getDouble("localPrice");
-                }
-                if (json.has("uuid"))
-                {
-                    result.uuid = json.getString("uuid");
-                }
-                if (json.has("localPrice"))
-                {
-                    result.localPrice = (float) json.getDouble("localPrice");
-                }
-                if (json.has("currency"))
-                {
-                    result.currency = json.getString("currency");
-                }
-                if (json.has("generatedDate"))
-                {
-                    DateTime date;
-                    DateTime.TryParse(json.getString("generatedDate"), out date);
-                    result.generatedDate = date;
-                }
+                result.identifier = jsonObject.getString("identifier");
             }
-#endif
+            if (jsonObject.has("purchaseDate"))
+            {
+                DateTime date;
+                DateTime.TryParse(jsonObject.getString("purchaseDate"), out date);
+                result.purchaseDate = date;
+            }
+            if (jsonObject.has("gamer"))
+            {
+                result.gamer = jsonObject.getString("gamer");
+            }
+            if (jsonObject.has("localPrice"))
+            {
+                result.localPrice = (float)jsonObject.getDouble("localPrice");
+            }
+            if (jsonObject.has("uuid"))
+            {
+                result.uuid = jsonObject.getString("uuid");
+            }
+            if (jsonObject.has("currency"))
+            {
+                result.currency = jsonObject.getString("currency");
+            }
+            if (jsonObject.has("generatedDate"))
+            {
+                DateTime date;
+                DateTime.TryParse(jsonObject.getString("generatedDate"), out date);
+                result.generatedDate = date;
+            }
+
             return result;
         }
+#endif
     }
-    
+
     #endregion
+
+#if UNITY_ANDROID && !UNITY_EDITOR
 
     #region Joystick Callibration Listeners
 
@@ -839,123 +850,358 @@ public static class OuyaSDK
 
     #endregion
 
-    #region Fetch Gamer UUID Listener
+    #region Content Initialized Listener
 
-    public interface IFetchGamerInfoListener
+    public interface IContentInitializedListener
     {
-        void OuyaFetchGamerInfoOnSuccess(string uuid, string username);
-        void OuyaFetchGamerInfoOnFailure(int errorCode, string errorMessage);
-        void OuyaFetchGamerInfoOnCancel();
+        void ContentInitializedOnInitialized();
+        void ContentInitializedOnDestroyed();
     }
-    private static List<IFetchGamerInfoListener> m_FetchGamerInfoListeners = new List<IFetchGamerInfoListener>();
-    public static List<IFetchGamerInfoListener> getFetchGamerInfoListeners()
+    private static List<IContentInitializedListener> m_contentInitializedListeners = new List<IContentInitializedListener>();
+    public static List<IContentInitializedListener> getContentInitializedListeners()
     {
-        return m_FetchGamerInfoListeners;
+        return m_contentInitializedListeners;
     }
-    public static void registerFetchGamerInfoListener(IFetchGamerInfoListener listener)
+    public static void registerContentInitializedListener(IContentInitializedListener listener)
     {
-        if (!m_FetchGamerInfoListeners.Contains(listener))
+        if (!m_contentInitializedListeners.Contains(listener))
         {
-            m_FetchGamerInfoListeners.Add(listener);
+            m_contentInitializedListeners.Add(listener);
         }
     }
-    public static void unregisterFetchGamerInfoListener(IFetchGamerInfoListener listener)
+    public static void unregisterContentInitializedListener(IContentInitializedListener listener)
     {
-        if (m_FetchGamerInfoListeners.Contains(listener))
+        if (m_contentInitializedListeners.Contains(listener))
         {
-            m_FetchGamerInfoListeners.Remove(listener);
-        }
-    }
-
-    #endregion
-
-    #region Get GetProducts Listeners
-
-    public interface IGetProductsListener
-    {
-        void OuyaGetProductsOnSuccess(List<OuyaSDK.Product> products);
-        void OuyaGetProductsOnFailure(int errorCode, string errorMessage);
-        void OuyaGetProductsOnCancel();
-    }
-    private static List<IGetProductsListener> m_getProductsListeners = new List<IGetProductsListener>();
-    public static List<IGetProductsListener> getGetProductsListeners()
-    {
-        return m_getProductsListeners;
-    }
-    public static void registerGetProductsListener(IGetProductsListener listener)
-    {
-        if (!m_getProductsListeners.Contains(listener))
-        {
-            m_getProductsListeners.Add(listener);
-        }
-    }
-    public static void unregisterGetProductsListener(IGetProductsListener listener)
-    {
-        if (m_getProductsListeners.Contains(listener))
-        {
-            m_getProductsListeners.Remove(listener);
+            m_contentInitializedListeners.Remove(listener);
         }
     }
 
     #endregion
 
-    #region Purchase Listener
+    #region Content Delete Listener
 
-    public interface IPurchaseListener
+    public interface IContentDeleteListener
     {
-        void OuyaPurchaseOnSuccess(OuyaSDK.Product product);
-        void OuyaPurchaseOnFailure(int errorCode, string errorMessage);
-        void OuyaPurchaseOnCancel();
+        void ContentDeleteOnDeleted(OuyaMod ouyaMod);
+        void ContentDeleteOnDeleteFailed(OuyaMod ouyaMod, int code, string reason);
     }
-    private static List<IPurchaseListener> m_purchaseListeners = new List<IPurchaseListener>();
-    public static List<IPurchaseListener> getPurchaseListeners()
+    private static List<IContentDeleteListener> m_contentDeleteListeners = new List<IContentDeleteListener>();
+    public static List<IContentDeleteListener> getContentDeleteListeners()
     {
-        return m_purchaseListeners;
+        return m_contentDeleteListeners;
     }
-    public static void registerPurchaseListener(IPurchaseListener listener)
+    public static void registerContentDeleteListener(IContentDeleteListener listener)
     {
-        if (!m_purchaseListeners.Contains(listener))
+        if (!m_contentDeleteListeners.Contains(listener))
         {
-            m_purchaseListeners.Add(listener);
+            m_contentDeleteListeners.Add(listener);
         }
     }
-    public static void unregisterPurchaseListener(IPurchaseListener listener)
+    public static void unregisterContentDeleteListener(IContentDeleteListener listener)
     {
-        if (m_purchaseListeners.Contains(listener))
+        if (m_contentDeleteListeners.Contains(listener))
         {
-            m_purchaseListeners.Remove(listener);
+            m_contentDeleteListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Content Download Listener
+
+    public interface IContentDownloadListener
+    {
+        void ContentDownloadOnComplete(OuyaMod ouyaMod);
+        void ContentDownloadOnFailed(OuyaMod ouyaMod);
+        void ContentDownloadOnProgress(OuyaMod ouyaMod, int progress);
+    }
+    private static List<IContentDownloadListener> m_contentDownloadListeners = new List<IContentDownloadListener>();
+    public static List<IContentDownloadListener> getContentDownloadListeners()
+    {
+        return m_contentDownloadListeners;
+    }
+    public static void registerContentDownloadListener(IContentDownloadListener listener)
+    {
+        if (!m_contentDownloadListeners.Contains(listener))
+        {
+            m_contentDownloadListeners.Add(listener);
+        }
+    }
+    public static void unregisterContentDownloadListener(IContentDownloadListener listener)
+    {
+        if (m_contentDownloadListeners.Contains(listener))
+        {
+            m_contentDownloadListeners.Remove(listener);
         }
     }
 
     #endregion
 
-    #region Get GetReceipts Listeners
+    #region Content Installed Search Listener
 
-    public interface IGetReceiptsListener
+    public interface IContentInstalledSearchListener
     {
-        void OuyaGetReceiptsOnSuccess(List<Receipt> receipts);
-        void OuyaGetReceiptsOnFailure(int errorCode, string errorMessage);
-        void OuyaGetReceiptsOnCancel();
+        void ContentInstalledSearchOnResults(List<OuyaMod> ouyaMods, int count);
+        void ContentInstalledSearchOnError(int code, string reason);
     }
-    private static List<IGetReceiptsListener> m_getReceiptsListeners = new List<IGetReceiptsListener>();
-    public static List<IGetReceiptsListener> getGetReceiptsListeners()
+    private static List<IContentInstalledSearchListener> m_contentInstalledSearchListeners = new List<IContentInstalledSearchListener>();
+    public static List<IContentInstalledSearchListener> getContentInstalledSearchListeners()
     {
-        return m_getReceiptsListeners;
+        return m_contentInstalledSearchListeners;
     }
-    public static void registerGetReceiptsListener(IGetReceiptsListener listener)
+    public static void registerContentInstalledSearchListener(IContentInstalledSearchListener listener)
     {
-        if (!m_getReceiptsListeners.Contains(listener))
+        if (!m_contentInstalledSearchListeners.Contains(listener))
         {
-            m_getReceiptsListeners.Add(listener);
+            m_contentInstalledSearchListeners.Add(listener);
         }
     }
-    public static void unregisterGetReceiptsListener(IGetReceiptsListener listener)
+    public static void unregisterContentInstalledSearchListener(IContentInstalledSearchListener listener)
     {
-        if (m_getReceiptsListeners.Contains(listener))
+        if (m_contentInstalledSearchListeners.Contains(listener))
         {
-            m_getReceiptsListeners.Remove(listener);
+            m_contentInstalledSearchListeners.Remove(listener);
         }
     }
 
     #endregion
+
+    #region Content Published Search Listener
+
+    public interface IContentPublishedSearchListener
+    {
+        void ContentPublishedSearchOnResults(List<OuyaMod> ouyaMods, int count);
+        void ContentPublishedSearchOnError(int code, string reason);
+    }
+    private static List<IContentPublishedSearchListener> m_contentPublishedSearchListeners = new List<IContentPublishedSearchListener>();
+    public static List<IContentPublishedSearchListener> getContentPublishedSearchListeners()
+    {
+        return m_contentPublishedSearchListeners;
+    }
+    public static void registerContentPublishedSearchListener(IContentPublishedSearchListener listener)
+    {
+        if (!m_contentPublishedSearchListeners.Contains(listener))
+        {
+            m_contentPublishedSearchListeners.Add(listener);
+        }
+    }
+    public static void unregisterContentPublishedSearchListener(IContentPublishedSearchListener listener)
+    {
+        if (m_contentPublishedSearchListeners.Contains(listener))
+        {
+            m_contentPublishedSearchListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Content Publish Listener
+
+    public interface IContentPublishListener
+    {
+        void ContentPublishOnSuccess(OuyaMod ouyaMod);
+        void ContentPublishOnError(OuyaMod ouyaMod, int code, string reason);
+    }
+    private static List<IContentPublishListener> m_contentPublishListeners = new List<IContentPublishListener>();
+    public static List<IContentPublishListener> getContentPublishListeners()
+    {
+        return m_contentPublishListeners;
+    }
+    public static void registerContentPublishListener(IContentPublishListener listener)
+    {
+        if (!m_contentPublishListeners.Contains(listener))
+        {
+            m_contentPublishListeners.Add(listener);
+        }
+    }
+    public static void unregisterContentPublishListener(IContentPublishListener listener)
+    {
+        if (m_contentPublishListeners.Contains(listener))
+        {
+            m_contentPublishListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Content Save Listener
+
+    public interface IContentSaveListener
+    {
+        void ContentSaveOnSuccess(OuyaMod ouyaMod);
+        void ContentSaveOnError(OuyaMod ouyaMod, int code, string reason);
+    }
+    private static List<IContentSaveListener> m_contentSaveListeners = new List<IContentSaveListener>();
+    public static List<IContentSaveListener> getContentSaveListeners()
+    {
+        return m_contentSaveListeners;
+    }
+    public static void registerContentSaveListener(IContentSaveListener listener)
+    {
+        if (!m_contentSaveListeners.Contains(listener))
+        {
+            m_contentSaveListeners.Add(listener);
+        }
+    }
+    public static void unregisterContentSaveListener(IContentSaveListener listener)
+    {
+        if (m_contentSaveListeners.Contains(listener))
+        {
+            m_contentSaveListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Content Unpublish Listener
+
+    public interface IContentUnpublishListener
+    {
+        void ContentUnpublishOnSuccess(OuyaMod ouyaMod);
+        void ContentUnpublishOnError(OuyaMod ouyaMod, int code, string reason);
+    }
+    private static List<IContentUnpublishListener> m_contentUnpublishListeners = new List<IContentUnpublishListener>();
+    public static List<IContentUnpublishListener> getContentUnpublishListeners()
+    {
+        return m_contentUnpublishListeners;
+    }
+    public static void registerContentUnpublishListener(IContentUnpublishListener listener)
+    {
+        if (!m_contentUnpublishListeners.Contains(listener))
+        {
+            m_contentUnpublishListeners.Add(listener);
+        }
+    }
+    public static void unregisterContentUnpublishListener(IContentUnpublishListener listener)
+    {
+        if (m_contentUnpublishListeners.Contains(listener))
+        {
+            m_contentUnpublishListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Request Gamer Info Listener
+
+    public interface IRequestGamerInfoListener
+    {
+        void RequestGamerInfoOnSuccess(GamerInfo gamerInfo);
+        void RequestGamerInfoOnFailure(int errorCode, string errorMessage);
+        void RequestGamerInfoOnCancel();
+    }
+    private static List<IRequestGamerInfoListener> m_requestGamerInfoListeners = new List<IRequestGamerInfoListener>();
+    public static List<IRequestGamerInfoListener> getRequestGamerInfoListeners()
+    {
+        return m_requestGamerInfoListeners;
+    }
+    public static void registerRequestGamerInfoListener(IRequestGamerInfoListener listener)
+    {
+        if (!m_requestGamerInfoListeners.Contains(listener))
+        {
+            m_requestGamerInfoListeners.Add(listener);
+        }
+    }
+    public static void unregisterRequestGamerInfoListener(IRequestGamerInfoListener listener)
+    {
+        if (m_requestGamerInfoListeners.Contains(listener))
+        {
+            m_requestGamerInfoListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Request Products Listeners
+
+    public interface IRequestProductsListener
+    {
+        void RequestProductsOnSuccess(List<OuyaSDK.Product> products);
+        void RequestProductsOnFailure(int errorCode, string errorMessage);
+        void RequestProductsOnCancel();
+    }
+    private static List<IRequestProductsListener> m_requestProductsListeners = new List<IRequestProductsListener>();
+    public static List<IRequestProductsListener> getRequestProductsListeners()
+    {
+        return m_requestProductsListeners;
+    }
+    public static void registerRequestProductsListener(IRequestProductsListener listener)
+    {
+        if (!m_requestProductsListeners.Contains(listener))
+        {
+            m_requestProductsListeners.Add(listener);
+        }
+    }
+    public static void unregisterRequestProductsListener(IRequestProductsListener listener)
+    {
+        if (m_requestProductsListeners.Contains(listener))
+        {
+            m_requestProductsListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Request Purchase Listener
+
+    public interface IRequestPurchaseListener
+    {
+        void RequestPurchaseOnSuccess(OuyaSDK.Product product);
+        void RequestPurchaseOnFailure(int errorCode, string errorMessage);
+        void RequestPurchaseOnCancel();
+    }
+    private static List<IRequestPurchaseListener> m_requestPurchaseListeners = new List<IRequestPurchaseListener>();
+    public static List<IRequestPurchaseListener> getRequestPurchaseListeners()
+    {
+        return m_requestPurchaseListeners;
+    }
+    public static void registerRequestPurchaseListener(IRequestPurchaseListener listener)
+    {
+        if (!m_requestPurchaseListeners.Contains(listener))
+        {
+            m_requestPurchaseListeners.Add(listener);
+        }
+    }
+    public static void unregisterRequestPurchaseListener(IRequestPurchaseListener listener)
+    {
+        if (m_requestPurchaseListeners.Contains(listener))
+        {
+            m_requestPurchaseListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+    #region Request Receipts Listeners
+
+    public interface IRequestReceiptsListener
+    {
+        void RequestReceiptsOnSuccess(List<Receipt> receipts);
+        void RequestReceiptsOnFailure(int errorCode, string errorMessage);
+        void RequestReceiptsOnCancel();
+    }
+    private static List<IRequestReceiptsListener> m_requestReceiptsListeners = new List<IRequestReceiptsListener>();
+    public static List<IRequestReceiptsListener> getRequestReceiptsListeners()
+    {
+        return m_requestReceiptsListeners;
+    }
+    public static void registerRequestReceiptsListener(IRequestReceiptsListener listener)
+    {
+        if (!m_requestReceiptsListeners.Contains(listener))
+        {
+            m_requestReceiptsListeners.Add(listener);
+        }
+    }
+    public static void unregisterRequestReceiptsListener(IRequestReceiptsListener listener)
+    {
+        if (m_requestReceiptsListeners.Contains(listener))
+        {
+            m_requestReceiptsListeners.Remove(listener);
+        }
+    }
+
+    #endregion
+
+#endif
 }

@@ -96,8 +96,6 @@ public class OuyaPanel : EditorWindow
 
     private bool m_toggleCompileNDK = false;
 
-    private bool m_toggleSyncBundleID = false;
-
     private bool m_toggleOpenAndroidSDK = false;
 
     #endregion
@@ -108,7 +106,6 @@ public class OuyaPanel : EditorWindow
     public const string KEY_PATH_JAR_GUAVA = @"Guava Jar";
     public const string KEY_PATH_JAR_GSON = @"GSON Jar";
     public const string KEY_PATH_JAR_OUYA_UNITY_PLUGIN = @"OUYA/Plugin Jar";
-    public const string KEY_JAVA_APP_NAME = @"OuyaJavaAppName";
     public const string KEY_APK_NAME = @"OuyaJavaApkName";
 
     private static string pathOuyaSDKJar = string.Empty;
@@ -119,7 +116,6 @@ public class OuyaPanel : EditorWindow
     private static string pathBin = string.Empty;
     private static string pathSrc = string.Empty;
 
-    private static string javaAppName = "MainActivity";
     private static string apkName = "Game.apk";
 
     void UpdateOuyaPaths()
@@ -135,122 +131,9 @@ public class OuyaPanel : EditorWindow
         EditorPrefs.SetString(KEY_PATH_OUYA_SDK, pathOuyaSDKJar);
     }
 
-    public static string GetMainActivity()
-    {
-        return javaAppName;
-    }
-
-    private static string GetApplicationJava()
-    {
-        string path = string.Format("Assets/Plugins/Android/src/{0}.java", javaAppName);
-        FileInfo fi = new FileInfo(path);
-        return fi.FullName;
-    }
-
     public static string GetBundleId()
     {
         return PlayerSettings.bundleIdentifier;
-    }
-
-    private static DateTime timerCheckAppJavaPackageName = DateTime.MinValue;
-    private static string applicationJavaPackageName = string.Empty;
-    private static string GetApplicationJavaPackageName()
-    {
-        string path = GetApplicationJava();
-
-        if (!File.Exists(path))
-        {
-            return "NOT_FOUND";
-        }
-
-        if (timerCheckAppJavaPackageName < DateTime.Now)
-        {
-            timerCheckAppJavaPackageName = DateTime.Now + TimeSpan.FromSeconds(1);
-            try
-            {
-                using (StreamReader sr = new StreamReader(GetApplicationJava()))
-                {
-                    string line = string.Empty;
-                    do
-                    {
-                        line = sr.ReadLine();
-                        if (line.Trim().StartsWith("package"))
-                        {
-                            applicationJavaPackageName = line;
-                            break;
-                        }
-                        
-                    } while (null != line);
-                }
-            }
-            catch (System.Exception)
-            {
-            }
-        }
-
-        return applicationJavaPackageName;
-    }
-
-    private static DateTime timerCheckManifestPackageName = DateTime.MinValue;
-    private static string androidManifestPackageName = string.Empty;
-    private static string GetAndroidManifestPackageName()
-    {
-        if (!File.Exists(pathManifestPath))
-        {
-            return "NOT_FOUND";
-        }
-
-        if (timerCheckManifestPackageName < DateTime.Now)
-        {
-            timerCheckManifestPackageName = DateTime.Now + TimeSpan.FromSeconds(1);
-            try
-            {
-                XmlDocument xDoc = new XmlDocument();
-                xDoc.Load(pathManifestPath);
-                foreach (XmlNode level1 in xDoc.ChildNodes)
-                {
-                    if (level1.Name.ToUpper() == "MANIFEST")
-                    {
-                        XmlElement element = (XmlElement) level1;
-                        foreach (XmlAttribute attribute in element.Attributes)
-                        {
-                            if (attribute.Name.ToUpper() == "PACKAGE")
-                            {
-                                androidManifestPackageName = attribute.Value;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (System.Exception)
-            {
-            }
-        }
-
-        return androidManifestPackageName;
-    }
-
-    string GetIOuyaActivityJava()
-    {
-        string path = "Assets/Plugins/Android/src/IOuyaActivity.java";
-        FileInfo fi = new FileInfo(path);
-        return fi.FullName;
-    }
-
-    public static string GetBundlePrefix()
-    {
-        string identifier = PlayerSettings.bundleIdentifier;
-        if (string.IsNullOrEmpty(identifier))
-        {
-            return string.Empty;
-        }
-
-        foreach (string data in identifier.Split(".".ToCharArray()))
-        {
-            return data;
-        }
-
-        return string.Empty;
     }
 
     #endregion
@@ -506,139 +389,6 @@ public class OuyaPanel : EditorWindow
         }
     }
 
-    public static void SyncBundleID()
-    {
-        string bundleId = PlayerSettings.bundleIdentifier;
-        if (string.IsNullOrEmpty(bundleId))
-        {
-            return;
-        }
-
-        try
-        {
-            string path = GetApplicationJava();
-            if (File.Exists(path))
-            {
-                StringBuilder sb = new StringBuilder();
-                using (StreamReader sr = new StreamReader(GetApplicationJava()))
-                {
-                    bool foundPackge = false;
-                    string line;
-                    do
-                    {
-                        line = sr.ReadLine();
-                        if (null != line)
-                        {
-                            if (!foundPackge)
-                            {
-                                if (line.Trim().StartsWith("package"))
-                                {
-                                    sb.AppendFormat("package {0};", bundleId);
-                                    sb.AppendLine();
-
-                                    foundPackge = true;
-                                }
-                                else
-                                {
-                                    sb.Append(line);
-                                    sb.AppendLine();
-                                }
-                            }
-                            else
-                            {
-                                sb.Append(line);
-                                sb.AppendLine();
-                            }
-                        }
-                    } while (null != line);
-                }
-
-                using (StreamWriter sw = new StreamWriter(GetApplicationJava()))
-                {
-                    sw.Write(sb.ToString());
-                }
-            }
-            else
-            {
-                Debug.LogError(string.Format("Unable to find application java: {0}", path));
-            }
-        }
-        catch (System.Exception)
-        {
-        }
-
-        try
-        {
-            string path = pathManifestPath;
-            if (File.Exists(path))
-            {
-                XmlDocument xDoc = new XmlDocument();
-                xDoc.Load(path);
-
-                //Debug.Log("Processing Android.manifest");
-
-                foreach (XmlNode nodeManifest in xDoc.ChildNodes)
-                {
-                    if (!(nodeManifest is XmlElement))
-                    {
-                        continue;
-                    }
-
-                    //Debug.Log(nodeManifest.Name);
-
-                    XmlElement manifest = nodeManifest as XmlElement;
-                    
-                    //Debug.Log(manifest.Name);
-
-                    if (nodeManifest.Name.ToUpper() == "MANIFEST")
-                    {
-                        foreach (XmlAttribute attribute in manifest.Attributes)
-                        {
-                            if (attribute.Name.ToUpper() == "PACKAGE")
-                            {
-                                attribute.Value = bundleId;
-                            }
-                        }
-                        foreach (XmlElement application in manifest.ChildNodes)
-                        {
-                            //Debug.Log(application.Name);
-
-                            if (application.Name.ToUpper() == "APPLICATION")
-                            {
-                                foreach (XmlElement activity in application.ChildNodes)
-                                {
-                                    //Debug.Log(activity.Name);
-
-                                    if (activity.Name.ToUpper() == "ACTIVITY")
-                                    {
-                                        foreach (XmlAttribute attribute in activity.Attributes)
-                                        {
-                                            if (attribute.Name.ToUpper() == "ANDROID:NAME")
-                                            {
-                                                attribute.Value = string.Format(".{0}", javaAppName);
-                                                break; //only update the first activity
-                                            }
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                xDoc.Save(path);
-            }
-            else
-            {
-                Debug.LogError(string.Format("Unable to find android manifest: {0}", path));
-            }
-        }
-        catch (System.Exception)
-        {
-        }
-    }
-
     #endregion
 
     #region Unity Paths
@@ -753,16 +503,11 @@ public class OuyaPanel : EditorWindow
     [MenuItem("Window/Open OUYA Panel")]
     private static void MenuOpenPanel()
     {
-        GetWindow<OuyaPanel>("OUYA Panel");
+        GetWindow<OuyaPanel>("ObundUYA Panel");
     }
 
     void OnEnable()
     {
-        if (EditorPrefs.HasKey(KEY_JAVA_APP_NAME))
-        {
-            javaAppName = EditorPrefs.GetString(KEY_JAVA_APP_NAME);
-        }
-
         if (EditorPrefs.HasKey(KEY_APK_NAME))
         {
             apkName = EditorPrefs.GetString(KEY_APK_NAME);
@@ -851,15 +596,6 @@ public class OuyaPanel : EditorWindow
 
         var sceneArray = sceneList.ToArray();
 
-        if (m_toggleSyncBundleID)
-        {
-            m_toggleSyncBundleID = false;
-
-            SyncBundleID();
-
-            AssetDatabase.Refresh();
-        }
-
         if (m_toggleCompileNDK)
         {
             m_toggleCompileNDK = false;
@@ -878,6 +614,34 @@ public class OuyaPanel : EditorWindow
                 OuyaMenuAdmin.MenuGeneratePluginJar();
             }
 
+            // Remove folder
+            try
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo("Assets/Plugins/Android/Classes");
+                if (directoryInfo.Exists)
+                {
+                    directoryInfo.Delete(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
+            // Remove folder
+            try
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo("Assets/Plugins/Android/OuyaUnityPlugin");
+                if (directoryInfo.Exists)
+                {
+                    directoryInfo.Delete(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
             AssetDatabase.Refresh();
         }
 
@@ -890,7 +654,7 @@ public class OuyaPanel : EditorWindow
             {
                 //Debug.Log(appPath);
                 //Debug.Log(pathADB);
-                string args = string.Format("shell am start -n {0}/.{1}", PlayerSettings.bundleIdentifier, javaAppName);
+                string args = string.Format("shell am start -n {0}/tv.ouya.sdk.MainActivity", PlayerSettings.bundleIdentifier);
                 //Debug.Log(args);
                 ProcessStartInfo ps = new ProcessStartInfo(pathADB, args);
                 Process p = new Process();
@@ -1083,8 +847,8 @@ public class OuyaPanel : EditorWindow
         {
             Directory.CreateDirectory(pathClasses);
         }
-        string includeFiles = string.Format("\"{0}/{1}.java\" \"{0}/IOuyaActivity.java\" \"{0}/UnityOuyaFacade.java\"",
-            pathSrc, javaAppName);
+        string includeFiles = string.Format("\"{0}/MainActivity.java\" \"{0}/IOuyaActivity.java\" \"{0}/UnityOuyaFacade.java\"",
+            pathSrc);
         string jars = string.Empty;
 
         if (File.Exists(pathToolsJar))
@@ -1341,7 +1105,7 @@ public class OuyaPanel : EditorWindow
             @"Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
             true);
 
-        SetupProductBundleAndCompile(scenes, sceneName);
+        SetupExample(scenes, sceneName);
     }
 
     private void SwitchToStarterKitScene(string[] sceneNames, string productName)
@@ -1363,10 +1127,21 @@ public class OuyaPanel : EditorWindow
             true);
 
         EditorBuildSettingsScene[] scenes = sceneList.ToArray();
-        SetupProductBundleAndCompile(scenes, productName);
+        SetupExample(scenes, productName);
     }
 
-    private void SetupProductBundleAndCompile(EditorBuildSettingsScene[] scenes, string productName)
+    private void SwitchToOuyaEverywhereIcons()
+    {
+        File.Copy("Assets/Ouya/Examples/Icons/OuyaEverywhere/app_icon.png",
+            "Assets/Plugins/Android/res/drawable/app_icon.png",
+            true);
+
+        File.Copy("Assets/Ouya/Examples/Icons/OuyaEverywhere//ouya_icon.png",
+            @"Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
+            true);
+    }
+
+    private void SetupExample(EditorBuildSettingsScene[] scenes, string productName)
     {
         EditorBuildSettings.scenes = scenes;
         m_nextScene = scenes[0].path;
@@ -1376,10 +1151,6 @@ public class OuyaPanel : EditorWindow
 
         PlayerSettings.bundleIdentifier = string.Format("tv.ouya.demo.{0}", productName);
         PlayerSettings.productName = productName;
-
-        m_toggleSyncBundleID = true;
-        m_toggleCompileNDK = true;
-        m_toggleCompilePlugin = true;
     }
 
     private Vector2 m_scroll = Vector2.zero;
@@ -1389,11 +1160,13 @@ public class OuyaPanel : EditorWindow
     private static string[] m_exampleScenes =
         {
             "Starter Kit Scenes",
+            "OUYA Everywhere Icons",
+            "SceneCommunityContent",
+            "SceneSafeArea",
             "SceneShowJavaScript",
             "SceneShowProducts",
             "SceneShowUnityInput",
             "VirtualController",
-            "SceneSafeArea",
         };
 
     private static int m_selectedAdbMode = 0;
@@ -1478,13 +1251,6 @@ public class OuyaPanel : EditorWindow
                 GUILayout.Label("By default any Java compiler error will stop building");
                 StopOnErrors = GUILayout.Toggle(StopOnErrors, "Stop Build on Errors");
 
-                GUILayout.Space(5);
-                if (GUILayout.Button("Sync Bundle ID", GUILayout.MaxWidth(position.width)))
-                {
-                    m_toggleSyncBundleID = true;
-                }
-                GUILayout.Space(5);
-
                 #region Example scenes
 
                 GUILayout.Label("Build Settings:");
@@ -1493,7 +1259,7 @@ public class OuyaPanel : EditorWindow
                 m_selectedExample = EditorGUILayout.Popup(m_selectedExample, m_exampleScenes, GUILayout.MaxWidth(position.width));
                 if (GUILayout.Button("Switch to Example"))
                 {
-                    if (m_selectedExample > 0)
+                    if (m_selectedExample > 1)
                     {
                         SwitchToExampleScene(m_exampleScenes[m_selectedExample]);
                     }
@@ -1508,6 +1274,10 @@ public class OuyaPanel : EditorWindow
                         };
 
                         SwitchToStarterKitScene(newScenes, "StarterKit");
+                    }
+                    else if (m_selectedExample == 1)
+                    {
+                        SwitchToOuyaEverywhereIcons();
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -1570,77 +1340,6 @@ public class OuyaPanel : EditorWindow
                     EditorPrefs.SetString(KEY_APK_NAME, apkName);
                 }
 
-                else if (javaAppName.ToUpper().Equals("IOUYAACTIVITY") ||
-                    javaAppName.ToUpper().Equals("OUYAUNITYPLUGIN") ||
-                    javaAppName.ToUpper().Equals("UNITYOUYAFACADE"))
-                {
-                    String fieldError = "[error] (Used reserved Java Class Name)\n";
-                    if (string.IsNullOrEmpty(error))
-                    {
-                        ShowNotification(new GUIContent(fieldError));
-                        error = fieldError;
-                    }
-                    EditorGUILayout.Separator();
-                    GUILayout.Label(fieldError, EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                }
-                GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width));
-                GUILayout.Space(25);
-                GUILayout.Label("Main Activity:", GUILayout.Width(100));
-                GUILayout.Space(5);
-                string newJavaAppName = GUILayout.TextField(javaAppName, EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                GUILayout.EndHorizontal();
-                if (javaAppName != newJavaAppName)
-                {
-                    javaAppName = newJavaAppName;
-                    EditorPrefs.SetString(KEY_JAVA_APP_NAME, javaAppName);
-                }
-
-                GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width));
-                GUILayout.Space(25);
-                GUILayout.Label(string.Format("{0}:", "Bundle Prefix"), GUILayout.Width(100));
-                GUILayout.Space(5);
-                GUILayout.Label(GetBundlePrefix(), EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                GUILayout.EndHorizontal();
-
-                string javaPackageName = GetApplicationJavaPackageName();
-                if (!javaPackageName.Equals(string.Format("package {0};", PlayerSettings.bundleIdentifier)))
-                {
-                    String fieldError = "[error] (bundle mismatched)\n";
-                    if (string.IsNullOrEmpty(error))
-                    {
-                        ShowNotification(new GUIContent(fieldError));
-                        error = fieldError;
-                    }
-                    EditorGUILayout.Separator();
-                    GUILayout.Label(fieldError, EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                }
-
-                GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width));
-                GUILayout.Space(25);
-                GUILayout.Label("App Java Pack:", GUILayout.Width(100));
-                GUILayout.Space(5);
-                GUILayout.Label(string.Format("{0}{1}", error, GetApplicationJavaPackageName()), EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                GUILayout.EndHorizontal();
-
-                string manifestPackageName = GetAndroidManifestPackageName();
-                if (!manifestPackageName.Equals(PlayerSettings.bundleIdentifier))
-                {
-                    String fieldError = "[error] (bundle mismatched)\n";
-                    if (string.IsNullOrEmpty(error))
-                    {
-                        ShowNotification(new GUIContent(fieldError));
-                        error = fieldError;
-                    }
-                    EditorGUILayout.Separator();
-                    GUILayout.Label(fieldError, EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                }
-                GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width));
-                GUILayout.Space(25);
-                GUILayout.Label("Manifest Pack:", GUILayout.Width(100));
-                GUILayout.Space(5);
-                GUILayout.Label(string.Format("{0}{1}", error, GetAndroidManifestPackageName()), EditorStyles.wordWrappedLabel, GUILayout.MaxWidth(position.width - 130));
-                GUILayout.EndHorizontal();
-
                 GameObject go = GameObject.Find("OuyaGameObject");
                 OuyaGameObject ouyaGO = null;
                 if (go)
@@ -1666,9 +1365,7 @@ public class OuyaPanel : EditorWindow
                 GUIDisplayUnityFile(KEY_PATH_JAR_OUYA_UNITY_PLUGIN, pathOuyaUnityPluginJar);
                 GUIDisplayUnityFile("Manifest", pathManifestPath);
                 GUIDisplayUnityFile("key.der", "Assets/Plugins/Android/assets/key.der");
-                GUIDisplayUnityFile("Activity.Java", GetApplicationJava());
-                GUIDisplayUnityFile("IOuyaActivity.Java", GetIOuyaActivityJava());
-                //GUIDisplayFolder("Bin", pathBin);
+                GUIDisplayUnityFile("MainActivity.java", "Assets/Plugins/Android/src/MainActivity.java");
                 GUIDisplayFolder("Res", pathRes);
                 GUIDisplayFolder("Src", pathSrc);
 

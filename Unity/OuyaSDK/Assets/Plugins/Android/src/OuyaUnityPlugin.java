@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 OUYA, Inc.
+ * Copyright (C) 2012-2014 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package tv.ouya.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
@@ -25,345 +27,206 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-
-import java.io.File;
-
 import com.unity3d.player.UnityPlayer;
-
+import java.io.File;
+import java.util.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import tv.ouya.console.api.*;
+import tv.ouya.console.api.content.OuyaContent;
+import tv.ouya.console.api.content.OuyaMod;
+import tv.ouya.console.api.content.OuyaModException;
+import tv.ouya.console.api.content.OuyaModScreenshot;
+
 
 public class OuyaUnityPlugin
 {
-	private static final String LOG_TAG = "OuyaUnityPlugin";
-
-	// The plugin has an instance of the OuyaFacade
-	private static UnityOuyaFacade m_unityOuyaFacade = null;
-
-	// Unity sets the developer id
-	// Unity maybe set the iap test mode
-	private static Boolean m_unityInitialized = false;
-	public static Boolean isUnityInitialized()
-	{
-		return m_unityInitialized;
-	}
-	public static void unityInitialized()
-	{
-		m_unityInitialized = true;
-		InitializeUnityOuyaFacade();
-	}
-
-	// java needs to tell unity that the UnityOuyaFacade has been
-	// initialized
-	private static Boolean m_pluginAwake = false;
-	public static Boolean isPluginAwake()
-	{
-		return m_pluginAwake;
-	}
-
-	// the developer id is sent from Unity
-	private static String m_developerId = "";
-
-	// For debugging enable logging for testing
-	private static Boolean m_enableDebugLogging = true;
+	private static final String TAG = OuyaUnityPlugin.class.getSimpleName();
 
 	// This initializes the Unity plugin - our OuyaUnityPlugin,
 	// and it gets a generic reference to the activity
 	public OuyaUnityPlugin(Activity currentActivity)
 	{
-		Log.i(LOG_TAG, "OuyaUnityPlugin: Plugin is awake");
+	}
 
-		m_pluginAwake = true;
+	// most of the java functions that are called, need the ouya facade initialized
+	public static void initOuyaPlugin(final String jsonData)
+	{
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null != activity) {
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						if (null == IOuyaActivity.GetActivity())
+						{
+							Log.e(TAG, "initOuyaPlugin: activity is null");
+							IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "Activity is missing");
+							return;
+						}
+
+						if (null == IOuyaActivity.GetApplicationKey())
+						{
+							Log.e(TAG, "initOuyaPlugin: application key is null");
+							IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "Application key is missing");
+							return;
+						}
+
+						Log.i(TAG, "initOuyaPlugin: Initializing plugin");
+
+						Bundle developerInfo = new Bundle();
+
+						developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, IOuyaActivity.GetApplicationKey());
+
+						JSONArray jsonArray = new JSONArray(jsonData);
+						for (int index = 0; index < jsonArray.length(); ++index) {
+							JSONObject jsonObject = jsonArray.getJSONObject(index);
+							String name = jsonObject.getString("key");
+							String value = jsonObject.getString("value");
+							developerInfo.putString(name, value);
+						}
+
+						UnityOuyaFacade unityOuyaFacade =
+							new UnityOuyaFacade(IOuyaActivity.GetActivity(),
+								IOuyaActivity.GetSavedInstanceState(),
+								developerInfo);
+
+						IOuyaActivity.SetUnityOuyaFacade(unityOuyaFacade);
+			
+						Log.i(TAG, "initOuyaPlugin: OuyaGameObject send OnSuccessInitializePlugin");
+						IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");			
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+						IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "InitializePlugin exception");
+					}
+				}
+			};
+			activity.runOnUiThread(runnable);
+		}
 	}
 
 	public static void putGameData(String key, String val)
 	{
-		//Log.i(LOG_TAG, "OuyaUnityPlugin.putGameData: key=" + key + " val=" + val);
+		//Log.i(TAG, "putGameData: key=" + key + " val=" + val);
 
-		if (null == m_unityOuyaFacade)
+		if (null == IOuyaActivity.GetUnityOuyaFacade())
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.putGameData: m_unityOuyaFacade is null");
+			Log.e(TAG, "putGameData: unityOuyaFacade is null");
 		}
 		else
 		{
-			//Log.i(LOG_TAG, "OuyaUnityPlugin.putGameData: m_unityOuyaFacade is valid");
-			m_unityOuyaFacade.putGameData(key, val);
+			IOuyaActivity.GetUnityOuyaFacade().putGameData(key, val);
 		}
 	}
 
 	public static String getGameData(String key)
 	{
-		//Log.i(LOG_TAG, "OuyaUnityPlugin.getGameData");
+		//Log.i(TAG, "getGameData");
 
-		if (null == m_unityOuyaFacade)
+		if (null == IOuyaActivity.GetUnityOuyaFacade())
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.getGameData: m_unityOuyaFacade is null");
+			Log.e(TAG, "getGameData: unityOuyaFacade is null");
 			return "";
 		}
 		else
 		{
-			//Log.i(LOG_TAG, "OuyaUnityPlugin.getGameData: m_unityOuyaFacade is valid");
-			return m_unityOuyaFacade.getGameData(key);
+			return IOuyaActivity.GetUnityOuyaFacade().getGameData(key);
 		}
 	}
 
-	// most of the java functions that are called, need the ouya facade initialized
-	private static void InitializeUnityOuyaFacade()
+	public static void requestGamerInfo()
 	{
 		try
 		{
-			// check if the ouya facade is constructed
-			if (null == m_unityOuyaFacade)
+			//Log.i(TAG, "requestGamerInfo");
+			if (null == IOuyaActivity.GetUnityOuyaFacade())
 			{
-				if (m_enableDebugLogging)
-				{
-					Log.i(LOG_TAG, "OuyaUnityPlugin.InitializeTest: m_unityOuyaFacade is null");
-				}
+				Log.e(TAG, "requestGamerInfo: unityOuyaFacade is null");
 			}
-
-			if (null == IOuyaActivity.GetUnityPlayer())
+			else
 			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.InitializeTest: UnityPlayer is null");
+				IOuyaActivity.GetUnityOuyaFacade().requestGamerInfo();
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "requestGamerInfo: exception=" + e.toString());
+		}
+	}
+
+	public static void requestProducts(String jsonData)
+	{
+		try
+		{
+			//Log.i(TAG, "requestProducts");
+			if (null == IOuyaActivity.GetUnityOuyaFacade())
+			{
+				Log.e(TAG, "requestProducts: unityOuyaFacade is null");
 				return;
 			}
 
-			if (null == IOuyaActivity.GetActivity())
-			{
-				if (m_enableDebugLogging)
-				{
-					Log.i(LOG_TAG, "OuyaUnityPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
-				}
-				return;
-			}
+			JSONArray jsonArray = new JSONArray(jsonData);
 
-			if (null == m_unityOuyaFacade)
-			{
-				//wait to read the application key
-				if (null == IOuyaActivity.GetApplicationKey() ||
+			ArrayList<Purchasable> products = new ArrayList<Purchasable>();
 
-					//wait for Unity to initialize
-					!m_unityInitialized)
-				{
-					if (m_enableDebugLogging)
-					{
-						if (m_developerId.equals(""))
-						{
-							Log.i(LOG_TAG, "InitializeTest: m_developerId is empty, requesting init");
-						}
-						else
-						{
-							Log.i(LOG_TAG, "InitializeTest: m_developerId is set, requesting init");
-						}
-					}
-
-					Log.i(LOG_TAG, "OuyaUnityPlugin.InitializeTest: OuyaGameObject send RequestUnityAwake");
-					IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "RequestUnityAwake", "");
-				}
-				else
-				{
-					if (m_enableDebugLogging)
-					{
-						Log.i(LOG_TAG, "InitializeTest: Unity has initialized,  constructing TestOuyaFacade");
-					}
-
-					/*
-					if (null == IOuyaActivity.GetSavedInstanceState())
-					{
-						Log.i(LOG_TAG, "InitializeTest: IOuyaActivity.GetSavedInstanceState() == null");
-					}
-					else
-					{
-						Log.i(LOG_TAG, "InitializeTest: m_developerId is valid,  constructing TestOuyaFacade");
-						m_unityOuyaFacade = new TestOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-						IOuyaActivity.SetTestOuyaFacade(m_unityOuyaFacade);
-					}
-					*/
-
-					m_unityOuyaFacade = new UnityOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-
-					//make facade accessible by activity
-					IOuyaActivity.SetUnityOuyaFacade(m_unityOuyaFacade);
-
-					Log.i(LOG_TAG, "OuyaUnityPlugin.InitializeTest: OuyaGameObject send SendIAPInitComplete");
-					IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "SendIAPInitComplete", "");
+			for (int i = 0; i < jsonArray.length(); ++i) {
+				String productId = jsonArray.getString(i);
+				if (null != productId) {
+					Purchasable purchasable = new Purchasable(productId);
+					products.add(purchasable);
 				}
 			}
+
+			IOuyaActivity.GetUnityOuyaFacade().requestProducts(products);
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(LOG_TAG, "InitializeTest: InitializeTest exception: " + ex.toString());
+			Log.e(TAG, "requestProducts: exception=" + e.toString());
 		}
 	}
 
-	public static String setDeveloperId(String developerId)
+	public static void requestPurchase(String productId)
 	{
 		try
 		{
-			Log.i(LOG_TAG, "setDeveloperId developerId: " + developerId);
-			m_developerId = developerId;
-		}
-		catch (Exception ex)
-		{
-			Log.i(LOG_TAG, "setDeveloperId exception: " + ex.toString());
-		}
-		return "";
-	}
-
-	public static void fetchGamerInfo()
-	{
-		try
-		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.fetchGamerInfo");
-
-			if (null == m_unityOuyaFacade)
+			//Log.i(TAG, "requestPurchase productId: " + productId);
+			if (null == IOuyaActivity.GetUnityOuyaFacade())
 			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.fetchGamerInfo: m_unityOuyaFacade is null");
+				Log.e(TAG, "requestPurchase: unityOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.fetchGamerInfo: m_unityOuyaFacade is valid");
-				m_unityOuyaFacade.fetchGamerInfo();
+				Product product = new Product(productId, "", 0, 0, "", 0, 0, "", "", Product.Type.ENTITLEMENT);
+				IOuyaActivity.GetUnityOuyaFacade().requestPurchase(product);
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin: fetchGamerInfo exception: " + ex.toString());
+			Log.e(TAG, "requestPurchase: exception=" + e.toString());
 		}
 	}
 
-	public static void getProductsAsync()
+	public static void requestReceipts()
 	{
 		try
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.getProductsAsync");
-
-			if (null == m_unityOuyaFacade)
+			//Log.i(TAG, "requestReceipts");
+			if (null == IOuyaActivity.GetUnityOuyaFacade())
 			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.getProductsAsync: m_unityOuyaFacade is null");
+				Log.e(TAG, "requestReceipts: unityOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.getProductsAsync: m_unityOuyaFacade is valid");
-				m_unityOuyaFacade.requestProducts();
+				IOuyaActivity.GetUnityOuyaFacade().requestReceipts();
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
-		}
-	}
-
-	public static void clearGetProductList()
-	{
-		try
-		{
-			Log.i(LOG_TAG, "clearGetProductList");
-
-			UnityOuyaFacade.PRODUCT_IDENTIFIER_LIST.clear();
-		}
-		catch (Exception ex)
-		{
-			Log.i(LOG_TAG, "clearGetProductList exception: " + ex.toString());
-		}
-	}
-
-	public static void addGetProduct(String productId)
-	{
-		try
-		{
-			Log.i(LOG_TAG, "addGetProduct productId: " + productId);
-
-			boolean found = false;
-			for (Purchasable purchasable : UnityOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				//Log.i(LOG_TAG, "addGetProduct " + purchasable.getProductId() + "==" + productId);
-				if (purchasable.getProductId().equals(productId))
-				{
-					//Log.i(LOG_TAG, "addGetProduct equals: " + purchasable.getProductId() + "==" + productId + "=" + purchasable.getProductId().equals(productId));
-					found = true;
-					break;
-				}
-			}
-			if (found)
-			{
-				//Log.i(LOG_TAG, "addGetProduct found productId: " + productId);
-			}
-			else
-			{
-				//Log.i(LOG_TAG, "addGetProduct added productId: " + productId);
-				Purchasable newPurchasable = new Purchasable(new String(productId));
-				UnityOuyaFacade.PRODUCT_IDENTIFIER_LIST.add(newPurchasable);
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(LOG_TAG, "addGetProduct exception: " + ex.toString());
-		}
-	}
-
-	public static void debugGetProductList()
-	{
-		try
-		{
-			int count = 0;
-			for (Purchasable purchasable : UnityOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				++count;
-			}
-			Log.i(LOG_TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has " + count + " elements");
-			for (Purchasable purchasable : UnityOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				Log.i(LOG_TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has: " + purchasable.getProductId());
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(LOG_TAG, "debugProductList exception: " + ex.toString());
-		}
-	}
-
-	public static String requestPurchaseAsync(String sku)
-	{
-		try
-		{
-			Log.i(LOG_TAG, "requestPurchaseAsync sku: " + sku);
-
-			if (null == m_unityOuyaFacade)
-			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.requestPurchaseAsync: m_unityOuyaFacade is null");
-			}
-			else
-			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.getReceiptsAsync: m_unityOuyaFacade is valid");
-				Product product = new Product(sku, "", 0, 0, "", 0, 0, "", "", Product.Type.ENTITLEMENT);
-				m_unityOuyaFacade.requestPurchase(product);
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(LOG_TAG, "requestPurchaseAsync exception: " + ex.toString());
-		}
-		return "";
-	}
-
-	public static void getReceiptsAsync()
-	{
-		try
-		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.getReceiptsAsync");
-
-			if (null == m_unityOuyaFacade)
-			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.getReceiptsAsync: m_unityOuyaFacade is null");
-			}
-			else
-			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.getReceiptsAsync: m_unityOuyaFacade is valid");
-				m_unityOuyaFacade.requestReceipts();
-			}
-		}
-		catch (Exception ex)
-		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin: getProductsAsync exception: " + ex.toString());
+			Log.e(TAG, "requestReceipts: exception=" + e.toString());
 		}
 	}
 
@@ -372,20 +235,19 @@ public class OuyaUnityPlugin
 		boolean result = false;
 		try
 		{
-			//Log.i(LOG_TAG, "OuyaUnityPlugin.isRunningOnOUYASupportedHardware");
-			if (null == m_unityOuyaFacade)
+			//Log.i(TAG, "isRunningOnOUYASupportedHardware");
+			if (null == IOuyaActivity.GetUnityOuyaFacade())
 			{
-				Log.i(LOG_TAG, "OuyaUnityPlugin.isRunningOnOUYASupportedHardware: m_unityOuyaFacade is null");
+				Log.e(TAG, "isRunningOnOUYASupportedHardware: unityOuyaFacade is null");
 			}
 			else
 			{
-				//Log.i(LOG_TAG, "OuyaUnityPlugin.isRunningOnOUYASupportedHardware: m_unityOuyaFacade is valid");
-				result = m_unityOuyaFacade.isRunningOnOUYASupportedHardware();
+				result = IOuyaActivity.GetUnityOuyaFacade().isRunningOnOUYASupportedHardware();
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin: isRunningOnOUYASupportedHardware exception: " + ex.toString());
+			Log.e(TAG, "isRunningOnOUYASupportedHardware exception: " + e.toString());
 		}
 		return result;
 	}
@@ -429,7 +291,7 @@ public class OuyaUnityPlugin
 	{
 		try
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.setSafeArea: "+percentage);
+			//Log.i(TAG, "setSafeArea: "+percentage);
 			Activity activity = IOuyaActivity.GetActivity();
 			if (null != activity) {
 				Runnable runnable = new Runnable()
@@ -442,9 +304,9 @@ public class OuyaUnityPlugin
 				activity.runOnUiThread(runnable);
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.e(LOG_TAG, "OuyaUnityPlugin: setSafeArea exception: " + ex.toString());
+			Log.e(TAG, "setSafeArea: exception=" + e.toString());
 		}
 	}
 
@@ -452,7 +314,7 @@ public class OuyaUnityPlugin
 	{
 		try
 		{
-			Log.i(LOG_TAG, "OuyaUnityPlugin.clearFocus");
+			//Log.i(TAG, "clearFocus");
 			final Activity activity = IOuyaActivity.GetActivity();
 			if (null != activity) {
 				Runnable runnable = new Runnable()
@@ -469,9 +331,263 @@ public class OuyaUnityPlugin
 				activity.runOnUiThread(runnable);			
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.e(LOG_TAG, "OuyaUnityPlugin: setSafeArea exception: " + ex.toString());
+			Log.e(TAG, "clearFocus: exception=" + e.toString());
 		}
+	}
+
+
+	public static OuyaContent getOuyaContent() {
+		return IOuyaActivity.GetOuyaContent();
+	}
+
+	public static void saveOuyaMod(final OuyaMod ouyaMod, final OuyaMod.Editor editor) {
+		try
+		{
+			//Log.i(TAG, "saveOuyaMod");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							unityOuyaFacade.saveOuyaMod(ouyaMod, editor);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "saveOuyaMod: exception=" + e.toString());
+		}
+	}
+
+	public static void getOuyaContentInstalled() {
+		try
+		{
+			//Log.i(TAG, "getOuyaContentInstalled");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						OuyaContent ouyaContent = IOuyaActivity.GetOuyaContent();
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							unityOuyaFacade.getOuyaContentInstalled();
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "getOuyaContentInstalled: exception=" + e.toString());
+		}
+	}
+
+	public static OuyaMod[] getOuyaContentInstalledResults() {
+		List<OuyaMod> result = IOuyaActivity.GetOuyaContentInstalledResults();
+		if (null == result) {
+			return null;
+		}
+		OuyaMod[] retVal = new OuyaMod[result.size()];
+		result.toArray(retVal);
+		return retVal;
+	}
+
+	public static void getOuyaContentPublished(final String sortMethod) {
+		try
+		{
+			//Log.i(TAG, "getOuyaContentPublished");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						OuyaContent ouyaContent = IOuyaActivity.GetOuyaContent();
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							OuyaContent.SortMethod sort = OuyaContent.SortMethod.valueOf(sortMethod);
+							//Log.i(TAG, "sortMethod="+sortMethod);
+							unityOuyaFacade.getOuyaContentPublished(sort);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "getOuyaContentPublished: exception=" + e.toString());
+		}
+	}
+
+	public static OuyaMod[] getOuyaContentPublishedResults() {
+		List<OuyaMod> result = IOuyaActivity.GetOuyaContentPublishedResults();
+		if (null == result) {
+			Log.e(TAG, "getOuyaContentPublishedResults result is null."); 
+			return null;
+		}
+		//Log.i(TAG, "getOuyaContentPublishedResults returning size="+result.size()); 
+		OuyaMod[] retVal = new OuyaMod[result.size()];
+		result.toArray(retVal);
+		return retVal;
+	}
+
+	public static void contentDelete(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentDelete");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							unityOuyaFacade.contentDelete(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentDelete: exception=" + e.toString());
+		}
+	}
+
+	public static void contentPublish(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentPublish");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							unityOuyaFacade.contentPublish(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentPublish: exception=" + e.toString());
+		}
+	}
+
+	public static void contentUnpublish(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentUnpublish");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							unityOuyaFacade.contentUnpublish(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentUnpublish: exception=" + e.toString());
+		}
+	}
+
+	public static void contentDownload(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentDownload");
+			final Activity activity = IOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+						if (null == unityOuyaFacade) {
+							Log.e(TAG, "unityOuyaFacade is null");
+						} else {
+							unityOuyaFacade.contentDownload(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentDownload: exception=" + e.toString());
+		}
+	}
+
+	public static float getFloat(Float f) {
+		if (null == f) {
+			return 0;
+		}
+		return f.floatValue();
+	}
+
+	public static Bitmap[] getBitmapArray(List<Bitmap> list) {
+		if (null == list) {
+			return new Bitmap[0];
+		}
+		Bitmap[] retVal = new Bitmap[list.size()];
+		list.toArray(retVal);
+		return retVal;
+	}
+
+	public static OuyaModScreenshot[] getOuyaModScreenshotArray(List<OuyaModScreenshot> list) {
+		if (null == list) {
+			return new OuyaModScreenshot[0];
+		}
+		OuyaModScreenshot[] retVal = new OuyaModScreenshot[list.size()];
+		list.toArray(retVal);
+		return retVal;
+	}
+
+	public static String[] getStringArray(List<String> list) {
+		if (null == list) {
+			return new String[0];
+		}
+		String[] retVal = new String[list.size()];
+		list.toArray(retVal);
+		return retVal;
 	}
 }

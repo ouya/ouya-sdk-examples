@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 OUYA, Inc.
+ * Copyright (C) 2012-2014 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.demo.SceneShowProducts;
+package tv.ouya.sdk;
 
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.sdk.*;
@@ -25,6 +25,7 @@ import android.content.*;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -47,11 +48,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends OuyaUnityActivity
 {
-	//indicates the Unity player has loaded
-	private Boolean m_enableUnity = true;
-
-	//indicates use logging in one place
-	private Boolean m_enableLogging = false;
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -61,7 +58,10 @@ public class MainActivity extends OuyaUnityActivity
 		IOuyaActivity.SetActivity(this);
 
 		//make bundle accessible to Unity
-		IOuyaActivity.SetSavedInstanceState(savedInstanceState);
+		if (null != savedInstanceState)
+		{
+			IOuyaActivity.SetSavedInstanceState(savedInstanceState);
+		}
 
 		// load the signing key from assets
 		try {
@@ -127,17 +127,14 @@ public class MainActivity extends OuyaUnityActivity
     private BroadcastReceiver mMenuAppearingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-			Log.i("Unity", "BroadcastReceiver intent=" + intent.getAction());
+			Log.i(TAG, "BroadcastReceiver intent=" + intent.getAction());
 			if(intent.getAction().equals(OuyaIntent.ACTION_MENUAPPEARING)) {
 				//pause music, free up resources, etc.
 
 				//invoke a unity callback
-				if (m_enableUnity)
-				{
-					Log.i("Unity", "BroadcastReceiver tell Unity we see the menu appearing");
-					UnityPlayer.UnitySendMessage("OuyaGameObject", "onMenuAppearing", "");
-					Log.i("Unity", "BroadcastReceiver notified Unity onMenuAppearing");
-				}
+				Log.i(TAG, "BroadcastReceiver tell Unity we see the menu appearing");
+				UnityPlayer.UnitySendMessage("OuyaGameObject", "onMenuAppearing", "");
+				Log.i(TAG, "BroadcastReceiver notified Unity onMenuAppearing");
 			}
         }
     };
@@ -176,36 +173,19 @@ public class MainActivity extends OuyaUnityActivity
 		finish();
     }
 
-    /**
-     * Check for the result from a call through to the authentication intent. If the authentication was
-     * successful then re-try the purchase.
-     */
-
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if(resultCode == RESULT_OK) {
-			UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
-			if (null != unityOuyaFacade)
-			{
-				switch (requestCode) {
-					case UnityOuyaFacade.GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-						unityOuyaFacade.fetchGamerInfo();
-						break;
-					case UnityOuyaFacade.PURCHASE_AUTHENTICATION_ACTIVITY_ID:
-						unityOuyaFacade.restartInterruptedPurchase();
-						break;
-				}
-            }
-        }
-    }
-
-	@Override
-    protected void onSaveInstanceState(final Bundle outState)
-	{
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		Log.i(TAG, "onActivityResult");
+		super.onActivityResult(requestCode, resultCode, data);
 		UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
 		if (null != unityOuyaFacade)
 		{
-			unityOuyaFacade.onSaveInstanceState(outState);
+			// Forward this result to the facade, in case it is waiting for any activity results
+			if (unityOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+				return;
+			}
+		} else {
+			Log.e(TAG, "MarmaladeOuyaFacade is null");
 		}
 	}
 
@@ -229,37 +209,31 @@ public class MainActivity extends OuyaUnityActivity
     @Override
     public void onResume()
 	{
-		if (m_enableUnity)
-		{
-			UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
-		}
-
 		super.onResume();
 
-		IOuyaActivity.GetUnityPlayer().resume();
+		UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
+		if (null != IOuyaActivity.GetUnityPlayer()) {
+			IOuyaActivity.GetUnityPlayer().resume();
+		}
     }
 
     @Override
     public void onPause()
 	{
-		if (m_enableUnity)
-		{
-			UnityPlayer.UnitySendMessage("OuyaGameObject", "onPause", "");
-		}
-
-		Boolean isFinishing = isFinishing();
-		if (m_enableLogging)
-		{
-			Log.i("Unity", "isFinishing=" + isFinishing);
-		}
-		if (isFinishing)
-		{
-			IOuyaActivity.GetUnityPlayer().quit();
-		}
-
-		IOuyaActivity.GetUnityPlayer().pause();
-
 		super.onPause();
+
+		if (!isFinishing()) {
+			UnityPlayer.UnitySendMessage("OuyaGameObject", "onPause", "");
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					if (null != IOuyaActivity.GetUnityPlayer()) {
+						IOuyaActivity.GetUnityPlayer().pause();
+					}
+				}
+			}, 250);
+		}
     }
 
 	public void onConfigurationChanged(Configuration newConfig)
@@ -267,7 +241,7 @@ public class MainActivity extends OuyaUnityActivity
 		super.onConfigurationChanged(newConfig);
 		if (null == IOuyaActivity.GetUnityPlayer())
 		{
-			Log.i("Unity", "IOuyaActivity.GetUnityPlayer() is null");
+			Log.i(TAG, "IOuyaActivity.GetUnityPlayer() is null");
 			return;
 		}
 		IOuyaActivity.GetUnityPlayer().configurationChanged(newConfig);
@@ -277,7 +251,7 @@ public class MainActivity extends OuyaUnityActivity
 		super.onWindowFocusChanged(hasFocus);
 		if (null == IOuyaActivity.GetUnityPlayer())
 		{
-			Log.i("Unity", "IOuyaActivity.GetUnityPlayer() is null");
+			Log.i(TAG, "IOuyaActivity.GetUnityPlayer() is null");
 			return;
 		}
 		IOuyaActivity.GetUnityPlayer().windowFocusChanged(hasFocus);

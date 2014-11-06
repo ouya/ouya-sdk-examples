@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
 
 using System;
 using UnityEngine;
@@ -17,16 +17,16 @@ namespace com.unity3d.player
             {
                 {
                     string strName = "com/unity3d/player/UnityPlayer";
-                    _jcUnityPlayer = AndroidJNI.FindClass(strName);
-                    if (_jcUnityPlayer != IntPtr.Zero)
+                    IntPtr localRef = AndroidJNI.FindClass(strName);
+                    if (localRef != IntPtr.Zero)
                     {
                         Debug.Log(string.Format("Found {0} class", strName));
-                        _jcUnityPlayer = AndroidJNI.NewGlobalRef(_jcUnityPlayer);
+                        _jcUnityPlayer = AndroidJNI.NewGlobalRef(localRef);
+                        AndroidJNI.DeleteLocalRef(localRef);
                     }
                     else
                     {
                         Debug.LogError(string.Format("Failed to find {0} class", strName));
-                        return;
                     }
                 }
             }
@@ -81,12 +81,12 @@ namespace com.unity3d.player
                 if (result == IntPtr.Zero)
                 {
                     Debug.LogError("Failed to get current activity");
+                    return IntPtr.Zero;
                 }
-                else
-                {
-                    result = AndroidJNI.NewGlobalRef(result);
-                }
-                return result;
+                
+                IntPtr globalRef = AndroidJNI.NewGlobalRef(result);
+                AndroidJNI.DeleteLocalRef(result);
+                return globalRef;
             }
         }
     }
