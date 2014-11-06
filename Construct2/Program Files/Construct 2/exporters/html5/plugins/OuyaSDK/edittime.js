@@ -55,8 +55,34 @@ function GetPluginSettings()
 //				script_name);		// corresponding runtime function name
 
 // example
+
+var conditionIndex = -1;
+
 AddNumberParam("Number", "Enter a number to test if positive.");
-AddCondition(0, cf_none, "Is number positive", "My category", "{0} is positive", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Success", "Initialization", "initOuyaPlugin onSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Failure", "Initialization", "initOuyaPlugin onFailure", "Description for my condition!", "MyCondition");
+
+AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Success", "RequestGamerInfo", "requestGamerInfoOnSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Failure", "RequestGamerInfo", "requestGamerInfoOnFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Cancel", "RequestGamerInfo", "requestGamerInfoOnCancel", "Description for my condition!", "MyCondition");
+
+AddCondition(conditionIndex++, cf_none, "Request Products on Success", "RequestProducts", "requestProductsOnSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Products on Failure", "RequestProducts", "requestProductsOnFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Products on Cancel", "RequestProducts", "requestProductsOnCancel", "Description for my condition!", "MyCondition");
+
+AddCondition(conditionIndex++, cf_none, "Request Purchase on Success", "RequestPurchase", "requestPurchaseOnSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Purchase on Failure", "RequestPurchase", "requestPurchaseOnFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Purchase on Cancel", "RequestPurchase", "requestPurchaseOnCancel", "Description for my condition!", "MyCondition");
+
+AddCondition(conditionIndex++, cf_none, "Request Receipts on Success", "RequestReceipts", "requestReceiptsOnSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Receipts on Failure", "RequestReceipts", "requestReceiptsOnFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Receipts on Cancel", "RequestReceipts", "requestReceiptsOnCancel", "Description for my condition!", "MyCondition");
+
+AddCondition(conditionIndex++, cf_none, "Set Safe Area on Success", "SetSafeArea", "setSafeAreasOnSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Set Safe Area on Failure", "SetSafeArea", "setSafeAreaOnFailure", "Description for my condition!", "MyCondition");
+
+AddCondition(conditionIndex++, cf_none, "Shutdown on Success", "Shutdown", "shutdownOnSuccess", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shutdownOnFailure", "Description for my condition!", "MyCondition");
 
 ////////////////////////////////////////
 // Actions
@@ -70,8 +96,12 @@ AddCondition(0, cf_none, "Is number positive", "My category", "{0} is positive",
 //			 script_name);		// corresponding runtime function name
 
 // example
-AddStringParam("Message", "Enter a string to alert.");
-AddAction(0, af_none, "Alert", "My category", "Alert {0}", "Description for my action!", "MyAction");
+
+AddStringParam("key", "Enter an initialization key.");
+AddStringParam("value", "Enter an initialization value.");
+AddAction(0, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "MyAction");
+
+AddAction(1, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "MyAction");
 
 ////////////////////////////////////////
 // Expressions
