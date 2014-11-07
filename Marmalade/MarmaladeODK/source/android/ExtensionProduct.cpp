@@ -72,6 +72,7 @@ namespace OuyaSDK
 		PriceInCents = rhs.PriceInCents;
 	}
 
+#if defined(ANDROID)
 	void Product::ParseJSON(const org_json_JSONObject::JSONObject& jsonObject)
 	{
 		Init();
@@ -114,4 +115,5 @@ namespace OuyaSDK
 			PriceInCents = jsonObject.getInt(field);
 		}
 	}
+#endif
 }

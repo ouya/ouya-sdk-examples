@@ -52,7 +52,6 @@ namespace OuyaSDK
 	PluginOuya::PluginOuya()
 	{
 		jc_IMarmaladeOuyaActivity = NULL;
-		jc_AsyncCppOuyaSetDeveloperId = NULL;
 		jc_AsyncCppInitOuyaPlugin = NULL;
 		jc_AsyncCppOuyaRequestGamerInfo = NULL;
 		jc_AsyncCppOuyaRequestProducts = NULL;
@@ -96,13 +95,10 @@ namespace OuyaSDK
 		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaRequestReceipts", &jc_AsyncCppOuyaRequestReceipts);
 		EXCEPTION_RETURN(env);
 
-		FindClass(env, "tv/ouya/sdk/marmalade/AsyncCppOuyaSetDeveloperId", &jc_AsyncCppOuyaSetDeveloperId);
-		EXCEPTION_RETURN(env);
-
 		CallbackSingleton::GetInstance()->RegisterNativeMethods();
 	}
 
-	void PluginOuya::AsyncInitOuyaPlugin()
+	void PluginOuya::AsyncInitOuyaPlugin(const std::string& jsonData)
 	{
 		//LOGI("AsyncInitOuyaPlugin");
 
@@ -133,11 +129,14 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 
 		//LOGI("get the invoke method");
-		jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppInitOuyaPlugin, "invoke", "()V");
+		jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppInitOuyaPlugin, "invoke", "(Ljava/lang/String;)V");
+		EXCEPTION_RETURN(env);
+
+		jstring jsonString = env->NewStringUTF(jsonData.c_str());
 		EXCEPTION_RETURN(env);
 
 		//LOGI("execute the invoke method");
-		env->CallStaticVoidMethod(jc_AsyncCppInitOuyaPlugin, invokeMethod);
+		env->CallStaticVoidMethod(jc_AsyncCppInitOuyaPlugin, invokeMethod, jsonString);
 		EXCEPTION_RETURN(env);
 	}
 
@@ -241,50 +240,5 @@ namespace OuyaSDK
 		//LOGI("execute the invoke method");
 		env->CallStaticVoidMethod(jc_AsyncCppOuyaRequestReceipts, invokeMethod);
 		EXCEPTION_RETURN(env);
-	}
-
-	void PluginOuya::AsyncSetDeveloperId(const std::string& developerId)
-	{
-		if (!jc_AsyncCppOuyaSetDeveloperId)
-		{
-			LOGI("jc_AsyncOuyaSetDeveloperId is not initialized");
-			return;
-		}
-
-		JNIEnv* env = s3eEdkJNIGetEnv();
-
-		if (!env)
-		{
-			LOGI("JNIEnv is invalid");
-			return;
-		}
-
-		//std::string buffer = "Developer Id: ";
-		//buffer.append(m_developerId);
-		//LOGI(buffer.c_str());
-
-		//LOGI("Allocate DeveloperId String");
-		jstring developerIdString = env->NewStringUTF(developerId.c_str());
-		EXCEPTION_RETURN(env);
-
-		//LOGI("allocate the object");
-		jobject objSetDeveloperId = env->AllocObject(jc_AsyncCppOuyaSetDeveloperId);
-		EXCEPTION_RETURN(env);
-
-		//LOGI("get the constructor");
-		jmethodID constructSetDeveloperId = env->GetMethodID(jc_AsyncCppOuyaSetDeveloperId, "<init>", "()V");
-		EXCEPTION_RETURN(env);
-
-		//LOGI("construct the object");
-		env->CallVoidMethod(objSetDeveloperId, constructSetDeveloperId);
-		EXCEPTION_RETURN(env);
-
-		//LOGI("get the invoke method");
-		jmethodID invokeSetDeveloperId = env->GetStaticMethodID(jc_AsyncCppOuyaSetDeveloperId, "invoke", "(Ljava/lang/String;)V");
-		EXCEPTION_RETURN(env);
-
-		//LOGI("execute the invoke method");
-		env->CallStaticVoidMethod(jc_AsyncCppOuyaSetDeveloperId, invokeSetDeveloperId, developerIdString);
-		EXCEPTION_RETURN(env);
-	}
+	}	
 }

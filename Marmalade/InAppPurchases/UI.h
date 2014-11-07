@@ -30,7 +30,6 @@ class ApplicationCallbacksRequestGamerInfo;
 class ApplicationCallbacksRequestProducts;
 class ApplicationCallbacksRequestPurchase;
 class ApplicationCallbacksRequestReceipts;
-class ApplicationCallbacksSetDeveloperId;
 
 class UI
 {
@@ -69,7 +68,6 @@ public:
 	ApplicationCallbacksRequestProducts* m_callbacksRequestProducts;
 	ApplicationCallbacksRequestPurchase* m_callbacksRequestPurchase;
 	ApplicationCallbacksRequestReceipts* m_callbacksRequestReceipts;
-	ApplicationCallbacksSetDeveloperId* m_callbacksSetDeveloperId;
 
 private:
 

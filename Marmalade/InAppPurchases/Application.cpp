@@ -16,24 +16,36 @@
 
 #include "Application.h"
 #include "ApplicationCallbacksInitOuyaPlugin.h"
-#include "ApplicationCallbacksSetDeveloperId.h"
+#include "JSONArray.h"
+#include "JSONObject.h"
 #include "ODK.h"
 
+#include "IwDebug.h"
+
+using namespace org_json_JSONArray;
+using namespace org_json_JSONObject;
+
 UI Application::m_ui = UI();
-
-void Application::SetDeveloperId()
-{
-	Application::m_ui.SetMessage("Setting developer id...");
-
-	OuyaPlugin_asyncSetDeveloperId("310a8f51-4d6e-4ae5-bda0-b93878e5f5d0",
-		Application::m_ui.m_callbacksSetDeveloperId->GetSuccessEvent(),
-		Application::m_ui.m_callbacksSetDeveloperId->GetFailureEvent());
-}
 
 void Application::InitOuyaPlugin()
 {
 	Application::m_ui.SetMessage("Initialize OUYA Plugin...");
 
-	OuyaPlugin_initOuyaPlugin(Application::m_ui.m_callbacksInitOuyaPlugin->GetSuccessEvent(),
+	int jsonArray = OuyaPlugin_JSONArray_Construct();
+
+	int index = 0;
+	int jsonObject = OuyaPlugin_JSONObject_Construct();
+
+	OuyaPlugin_JSONObject_Put(jsonObject, "key", "tv.ouya.developer_id");
+	OuyaPlugin_JSONObject_Put(jsonObject, "value", "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+	//IwTrace(Sanity, (OuyaPlugin_JSONObject_ToString(jsonObject)));
+
+	OuyaPlugin_JSONArray_Put(jsonArray, index, jsonObject);	
+
+	std::string jsonData = OuyaPlugin_JSONArray_ToString(jsonArray);
+	//IwTrace(Sanity, (jsonData.c_str()));
+
+	OuyaPlugin_initOuyaPlugin(jsonData.c_str(),
+		Application::m_ui.m_callbacksInitOuyaPlugin->GetSuccessEvent(),
 		Application::m_ui.m_callbacksInitOuyaPlugin->GetFailureEvent());
 }

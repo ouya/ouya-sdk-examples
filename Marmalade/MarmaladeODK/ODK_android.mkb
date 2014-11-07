@@ -17,16 +17,27 @@
 # Builder mkb file for the ODK extension on android
 platform LINUX
 
-buildtype (SCONS, ARM)
+buildtype (ARM)
 
 define S3E_ANDROID
 
 options
 {
     dll
+    arm-arch=armv7-a
     output-name="lib/android/libODK.so"
     output-name-debug="lib/android/libODK_d.so"
 }
 define S3E_BUILD_EXT
 
 subproject ODK_build
+
+#files
+#{
+#	(source)
+#	android/ExtensionGamerInfo.cpp
+#	android/ExtensionProduct.cpp
+#	android/ExtensionReceipt.cpp
+#	android/JSONArray.cpp
+#	android/JSONObject.cpp	
+#}

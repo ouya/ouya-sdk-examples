@@ -1,12 +1,6 @@
 #ifndef __ORG_JSON_JSONOBJECT_JSONOBJECT_H__
 #define __ORG_JSON_JSONOBJECT_JSONOBJECT_H__
 
-#if defined(ANDROID)
-#include "s3eEdk.h"
-#include "s3eEdk_android.h"
-#include <jni.h>
-#endif
-
 #include <string>
 
 namespace org_json_JSONArray
@@ -33,6 +27,7 @@ namespace org_json_JSONObject
 	public:
 		static int InitJNI(JNIEnv* env);
 		static void FindJNI();
+		JSONObject();
 		JSONObject(jobject jsonObject);
 		JSONObject(const std::string& json);
 		jobject GetInstance() const;
@@ -42,16 +37,21 @@ namespace org_json_JSONObject
 		int getInt(const std::string& name) const;
 		std::string getString(const std::string& name) const;
 		bool has(const std::string& name) const;
+		JSONObject put(const std::string& name, const std::string& value) const;
+		std::string toString() const;
 	private:
 		static JNIEnv* _env;
 		static jclass _jcJsonObject;
 		static jmethodID _mConstruct;
+		static jmethodID _mConstruct2;
 		static jmethodID _mGetDouble;
 		static jmethodID _mGetInt;
 		static jmethodID _mGetJsonArray;
 		static jmethodID _mGetJsonObject;
 		static jmethodID _mGetString;
 		static jmethodID _mHas;
+		static jmethodID _mPut;
+		static jmethodID _mToString;
 		jobject _instance;
 	};
 }

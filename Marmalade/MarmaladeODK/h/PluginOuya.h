@@ -43,7 +43,7 @@ namespace OuyaSDK
 
 		void SetApp(struct android_app* app);
 
-		void AsyncInitOuyaPlugin();
+		void AsyncInitOuyaPlugin(const std::string& jsonData);
 
 		void AsyncOuyaRequestGamerInfo();
 
@@ -52,8 +52,6 @@ namespace OuyaSDK
 		void AsyncOuyaRequestPurchase(const std::string& purchasable);
 
 		void AsyncOuyaRequestReceipts();
-
-		void AsyncSetDeveloperId(const std::string& developerId);
 
 	private:
 
@@ -64,7 +62,6 @@ namespace OuyaSDK
 		jclass jc_AsyncCppOuyaRequestProducts;
 		jclass jc_AsyncCppOuyaRequestPurchase;
 		jclass jc_AsyncCppOuyaRequestReceipts;
-		jclass jc_AsyncCppOuyaSetDeveloperId;
 	};
 }
 

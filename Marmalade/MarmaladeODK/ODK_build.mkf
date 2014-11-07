@@ -77,7 +77,6 @@ if {{defined S3E_ANDROID}}
 		CallbacksRequestProducts.cpp
 		CallbacksRequestPurchase.cpp
 		CallbacksRequestReceipts.cpp
-		CallbacksSetDeveloperId.cpp
 		ExtensionGamerInfo.cpp
 		ExtensionProduct.cpp
 		ExtensionReceipt.cpp

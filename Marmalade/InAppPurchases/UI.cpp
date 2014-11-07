@@ -20,7 +20,6 @@
 #include "ApplicationCallbacksRequestProducts.h"
 #include "ApplicationCallbacksRequestPurchase.h"
 #include "ApplicationCallbacksRequestReceipts.h"
-#include "ApplicationCallbacksSetDeveloperId.h"
 #include "CallbackSingleton.h"
 #include "Controller.h"
 #include "ODK.h"
@@ -49,7 +48,6 @@ UI::UI()
 	m_callbacksRequestProducts = new ApplicationCallbacksRequestProducts();
 	m_callbacksRequestPurchase = new ApplicationCallbacksRequestPurchase();
 	m_callbacksRequestReceipts = new ApplicationCallbacksRequestReceipts();
-	m_callbacksSetDeveloperId = new ApplicationCallbacksSetDeveloperId();
 
 	m_productIds.push_back("long_sword");
 	m_productIds.push_back("sharp_axe");
@@ -388,7 +386,7 @@ void UI::HandleInput()
 			if (m_selectedButton == &m_uiRequestGamerUUID)
 			{
 
-				SetMessage("Fetching gamer info...");
+				SetMessage("Fetching gamer uuid...");
 				OuyaPlugin_asyncOuyaRequestGamerInfo(
 					Application::m_ui.m_callbacksRequestGamerInfo->GetSuccessEvent(),
 					Application::m_ui.m_callbacksRequestGamerInfo->GetFailureEvent(),

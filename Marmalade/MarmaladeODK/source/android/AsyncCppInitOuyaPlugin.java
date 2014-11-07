@@ -27,8 +27,9 @@ public class AsyncCppInitOuyaPlugin {
 
 	static final String LOG_TAG = AsyncCppInitOuyaPlugin.class.getSimpleName();
 
-	public static void invoke() {
-		Log.i(LOG_TAG, "invoke");		
+	public static void invoke(String jsonData) {
+
+		//Log.i(LOG_TAG, "invoke jsonData="+jsonData);		
 
 		CallbacksInitOuyaPlugin callbacks = new CallbacksInitOuyaPlugin();
 
@@ -55,7 +56,7 @@ public class AsyncCppInitOuyaPlugin {
 		}
 		
 		try {
-			MarmaladeOuyaPlugin.InitializePlugin();
+			MarmaladeOuyaPlugin.InitializePlugin(jsonData);
 			callbacks.onSuccess();
 		} catch (Exception e) {
 			e.printStackTrace();

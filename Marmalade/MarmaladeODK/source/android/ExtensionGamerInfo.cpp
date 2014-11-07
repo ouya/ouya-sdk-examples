@@ -52,6 +52,7 @@ namespace OuyaSDK
 		}
 	}
 
+#if defined(ANDROID)
 	void GamerInfo::ParseJSON(const org_json_JSONObject::JSONObject& jsonObject)
 	{
 		Init();
@@ -70,4 +71,5 @@ namespace OuyaSDK
 			Uuid = jsonObject.getString(field);
 		}
 	}
+#endif
 }

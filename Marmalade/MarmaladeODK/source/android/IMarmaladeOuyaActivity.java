@@ -67,14 +67,6 @@ public class IMarmaladeOuyaActivity
 		m_marmaladeOuyaPlugin = marmaladeOuyaPlugin;
 	}
 
-	private static String m_developerId = "";
-	public static String GetDeveloperId() {
-		return m_developerId;
-	}
-	public static void SetDeveloperId(String developerId) {
-		m_developerId = developerId;
-	}
-
 	/*
 	* The application key. This is used to decrypt encrypted receipt responses. This should be replaced with the
 	* application key obtained from the OUYA developers website.
@@ -137,15 +129,5 @@ public class IMarmaladeOuyaActivity
 	public static void SetCallbacksRequestReceipts(CallbacksRequestReceipts callback)
 	{
 		m_callbacksRequestReceipts = callback;
-	}
-
-	protected static CallbacksSetDeveloperId m_callbacksSetDeveloperId = null;
-	public static CallbacksSetDeveloperId GetCallbacksSetDeveloperId()
-	{
-		return m_callbacksSetDeveloperId;
-	}
-	public static void SetCallbacksSetDeveloperId(CallbacksSetDeveloperId callback)
-	{
-		m_callbacksSetDeveloperId = callback;
 	}
 }

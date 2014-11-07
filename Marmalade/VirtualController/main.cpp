@@ -22,10 +22,7 @@
 
 #include "ODK.h"
 
-#include "Application.h"
-
-
-const char* g_version = "Mamalade Version: 008";
+const char* g_version = "Mamalade Version: 009";
 
 //the controller instances
 VirtualControllerSprite m_controllers[OuyaController_MAX_CONTROLLERS];
@@ -159,8 +156,6 @@ int main()
 		IwTrace(DEFAULT, ("Not running on OUYA, exit!"));
 		return 0;
 	}
-
-	Application::Init();
 
 	IwGxInit();
 	IwGxSetColClear(0, 0, 0xff, 0xff);

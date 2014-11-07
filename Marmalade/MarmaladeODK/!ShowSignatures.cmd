@@ -16,6 +16,12 @@ REM
 
 pushd
 cd build_odk_android_java\classes
+javap -s tv.ouya.sdk.marmalade.AsyncCppInitOuyaPlugin
+javap -s tv.ouya.sdk.marmalade.AsyncCppOuyaRequestGamerInfo
+javap -s tv.ouya.sdk.marmalade.AsyncCppOuyaRequestProducts
+javap -s tv.ouya.sdk.marmalade.AsyncCppOuyaRequestPurchase
+javap -s tv.ouya.sdk.marmalade.AsyncCppOuyaRequestReceipts
+javap -s tv.ouya.sdk.marmalade.CallbacksInitOuyaPlugin
 javap -s tv.ouya.sdk.marmalade.CallbacksRequestGamerInfo
 javap -s tv.ouya.sdk.marmalade.CallbacksRequestProducts
 javap -s tv.ouya.sdk.marmalade.CallbacksRequestPurchase

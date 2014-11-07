@@ -24,7 +24,6 @@ class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
-class CallbacksSetDeveloperId;
 
 namespace OuyaSDK
 {
@@ -47,7 +46,6 @@ namespace OuyaSDK
 		CallbacksRequestProducts* m_callbacksRequestProducts;
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;
-		CallbacksSetDeveloperId* m_callbacksSetDeveloperId;
 	};
 };
 

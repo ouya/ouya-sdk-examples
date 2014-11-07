@@ -28,12 +28,17 @@ typedef       bool(*OuyaPlugin_isPressedDown_t)(int deviceId, int keyCode);
 typedef       bool(*OuyaPlugin_isPressedUp_t)(int deviceId, int keyCode);
 typedef       void(*OuyaPlugin_clearButtonStates_t)();
 typedef const char*(*OuyaPlugin_getDeviceName_t)(int playerNum);
-typedef       void(*OuyaPlugin_initOuyaPlugin_t)(s3eCallback onSuccess, s3eCallback onFailure);
+typedef       void(*OuyaPlugin_initOuyaPlugin_t)(const char* jsonData, s3eCallback onSuccess, s3eCallback onFailure);
 typedef       void(*OuyaPlugin_asyncOuyaRequestGamerInfo_t)(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 typedef       void(*OuyaPlugin_asyncOuyaRequestProducts_t)(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 typedef       void(*OuyaPlugin_asyncOuyaRequestPurchase_t)(const char* purchasable, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 typedef       void(*OuyaPlugin_asyncOuyaRequestReceipts_t)(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
-typedef       void(*OuyaPlugin_asyncSetDeveloperId_t)(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure);
+typedef        int(*OuyaPlugin_JSONObject_Construct_t)();
+typedef       void(*OuyaPlugin_JSONObject_Put_t)(int jsonObject, const char* name, const char* value);
+typedef const char*(*OuyaPlugin_JSONObject_ToString_t)(int jsonObject);
+typedef        int(*OuyaPlugin_JSONArray_Construct_t)();
+typedef       void(*OuyaPlugin_JSONArray_Put_t)(int jsonArray, int index, int jsonObject);
+typedef const char*(*OuyaPlugin_JSONArray_ToString_t)(int jsonArray);
 
 /**
  * struct that gets filled in by ODKRegister
@@ -51,7 +56,12 @@ typedef struct ODKFuncs
     OuyaPlugin_asyncOuyaRequestProducts_t m_OuyaPlugin_asyncOuyaRequestProducts;
     OuyaPlugin_asyncOuyaRequestPurchase_t m_OuyaPlugin_asyncOuyaRequestPurchase;
     OuyaPlugin_asyncOuyaRequestReceipts_t m_OuyaPlugin_asyncOuyaRequestReceipts;
-    OuyaPlugin_asyncSetDeveloperId_t m_OuyaPlugin_asyncSetDeveloperId;
+    OuyaPlugin_JSONObject_Construct_t m_OuyaPlugin_JSONObject_Construct;
+    OuyaPlugin_JSONObject_Put_t m_OuyaPlugin_JSONObject_Put;
+    OuyaPlugin_JSONObject_ToString_t m_OuyaPlugin_JSONObject_ToString;
+    OuyaPlugin_JSONArray_Construct_t m_OuyaPlugin_JSONArray_Construct;
+    OuyaPlugin_JSONArray_Put_t m_OuyaPlugin_JSONArray_Put;
+    OuyaPlugin_JSONArray_ToString_t m_OuyaPlugin_JSONArray_ToString;
 } ODKFuncs;
 
 static ODKFuncs g_Ext;
@@ -217,7 +227,7 @@ const char* OuyaPlugin_getDeviceName(int playerNum)
     return ret;
 }
 
-void OuyaPlugin_initOuyaPlugin(s3eCallback onSuccess, s3eCallback onFailure)
+void OuyaPlugin_initOuyaPlugin(const char* jsonData, s3eCallback onSuccess, s3eCallback onFailure)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK[6] func: OuyaPlugin_initOuyaPlugin"));
 
@@ -228,7 +238,7 @@ void OuyaPlugin_initOuyaPlugin(s3eCallback onSuccess, s3eCallback onFailure)
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_initOuyaPlugin(onSuccess, onFailure);
+    g_Ext.m_OuyaPlugin_initOuyaPlugin(jsonData, onSuccess, onFailure);
 
 #ifdef LOADER_CALL_LOCK
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
@@ -317,9 +327,29 @@ void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFa
     return;
 }
 
-void OuyaPlugin_asyncSetDeveloperId(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure)
+int OuyaPlugin_JSONObject_Construct()
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK[11] func: OuyaPlugin_asyncSetDeveloperId"));
+    IwTrace(ODK_VERBOSE, ("calling ODK[11] func: OuyaPlugin_JSONObject_Construct"));
+
+    if (!_extLoad())
+        return false;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    int ret = g_Ext.m_OuyaPlugin_JSONObject_Construct();
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return ret;
+}
+
+void OuyaPlugin_JSONObject_Put(int jsonObject, const char* name, const char* value)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[12] func: OuyaPlugin_JSONObject_Put"));
 
     if (!_extLoad())
         return;
@@ -328,11 +358,91 @@ void OuyaPlugin_asyncSetDeveloperId(const char* developerId, s3eCallback onSucce
     s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
 #endif
 
-    g_Ext.m_OuyaPlugin_asyncSetDeveloperId(developerId, onSuccess, onFailure);
+    g_Ext.m_OuyaPlugin_JSONObject_Put(jsonObject, name, value);
 
 #ifdef LOADER_CALL_LOCK
     s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
 #endif
 
     return;
+}
+
+const char* OuyaPlugin_JSONObject_ToString(int jsonObject)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[13] func: OuyaPlugin_JSONObject_ToString"));
+
+    if (!_extLoad())
+        return false;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    const char* ret = g_Ext.m_OuyaPlugin_JSONObject_ToString(jsonObject);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return ret;
+}
+
+int OuyaPlugin_JSONArray_Construct()
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[14] func: OuyaPlugin_JSONArray_Construct"));
+
+    if (!_extLoad())
+        return false;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    int ret = g_Ext.m_OuyaPlugin_JSONArray_Construct();
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return ret;
+}
+
+void OuyaPlugin_JSONArray_Put(int jsonArray, int index, int jsonObject)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[15] func: OuyaPlugin_JSONArray_Put"));
+
+    if (!_extLoad())
+        return;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    g_Ext.m_OuyaPlugin_JSONArray_Put(jsonArray, index, jsonObject);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return;
+}
+
+const char* OuyaPlugin_JSONArray_ToString(int jsonArray)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK[16] func: OuyaPlugin_JSONArray_ToString"));
+
+    if (!_extLoad())
+        return false;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+#endif
+
+    const char* ret = g_Ext.m_OuyaPlugin_JSONArray_ToString(jsonArray);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+#endif
+
+    return ret;
 }

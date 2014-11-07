@@ -30,7 +30,7 @@ package tv.ouya.sdk.marmalade;
 
 
 import android.app.Activity;
-import android.app.NativeActivity;
+import android.content.Intent;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -68,6 +68,22 @@ public class ODK extends LoaderActivity
 			super.onDestroy();
 
 			OuyaInputMapper.shutdown(this);
+	}
+
+	@Override
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		Log.i(TAG, "onActivityResult");
+		super.onActivityResult(requestCode, resultCode, data);
+		MarmaladeOuyaFacade marmaladeOuyaFacade = IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade();
+		if (null != marmaladeOuyaFacade)
+		{
+			// Forward this result to the facade, in case it is waiting for any activity results
+			if (marmaladeOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+				return;
+			}
+		} else {
+			Log.e(TAG, "MarmaladeOuyaFacade is null");
+		}
 	}
 
 	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
@@ -112,6 +128,8 @@ public class ODK extends LoaderActivity
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+		//Log.i(TAG, "onKeyUp keyCode=" + keyCode);
+		//Log.i(TAG, "It came from=" + this.getClass().getSimpleName());
 		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
 
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    

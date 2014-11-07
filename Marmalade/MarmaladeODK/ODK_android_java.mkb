@@ -20,22 +20,20 @@ platform JAVA
 files
 {
     (source/android)
-    AsyncCppInitOuyaPlugin.java
+	AsyncCppInitOuyaPlugin.java
 	AsyncCppOuyaRequestGamerInfo.java
-    AsyncCppOuyaRequestProducts.java
-    AsyncCppOuyaRequestPurchase.java
-    AsyncCppOuyaRequestReceipts.java
-    AsyncCppOuyaSetDeveloperId.java
-    CallbacksInitOuyaPlugin.java
-    CallbacksRequestGamerInfo.java
-    CallbacksRequestProducts.java
-    CallbacksRequestPurchase.java
-    CallbacksRequestReceipts.java
-	CallbacksSetDeveloperId.java
-    IMarmaladeOuyaActivity.java
-    MarmaladeOuyaFacade.java
-    MarmaladeOuyaPlugin.java
-    ODK.java
+	AsyncCppOuyaRequestProducts.java
+	AsyncCppOuyaRequestPurchase.java
+	AsyncCppOuyaRequestReceipts.java
+	CallbacksInitOuyaPlugin.java
+	CallbacksRequestGamerInfo.java
+	CallbacksRequestProducts.java
+	CallbacksRequestPurchase.java
+	CallbacksRequestReceipts.java
+	IMarmaladeOuyaActivity.java
+	MarmaladeOuyaFacade.java
+	MarmaladeOuyaPlugin.java
+	ODK.java
 }
 
 librarypath "$MARMALADE_ROOT/s3e/deploy/plugins/android/android.jar"

@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
-//import android.widget.Toast;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -47,7 +46,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tv.ouya.console.api.*;
-import tv.ouya.console.internal.util.Strings;
 
 public class MarmaladeOuyaFacade
 {
@@ -58,63 +56,9 @@ public class MarmaladeOuyaFacade
     private static final String LOG_TAG = MarmaladeOuyaFacade.class.getSimpleName();
 
     /**
-     * The saved instance state key for products
-     */
-
-    private static final String PRODUCTS_INSTANCE_STATE_KEY = "Products";
-
-    /**
-     * The saved instance state key for receipts
-     */
-
-    private static final String RECEIPTS_INSTANCE_STATE_KEY = "Receipts";
-	
-    /**
-     * The ID used to track the activity started by an authentication intent during a purchase.
-     */
-
-    public static final int PURCHASE_AUTHENTICATION_ACTIVITY_ID = 1;
-
-    /**
-     * The ID used to track the activity started by an authentication intent during a request for
-     * the gamers UUID.
-     */
-
-    public static final int GAMER_UUID_AUTHENTICATION_ACTIVITY_ID = 2;
-
-    /**
-     * The receipt adapter will display a previously-purchased item in a cell in a ListView. It's not part of the in-app
-     * purchase API. Neither is the ListView itself.
-     */
-    //private ListView receiptListView;
-    /**
      * Your game talks to the OuyaFacade, which hides all the mechanics of doing an in-app purchase.
      */
     private OuyaFacade ouyaFacade;
-
-    private List<Product> mProductList;
-    private List<Receipt> mReceiptList;
-
-    /**
-     * The outstanding purchase request UUIDs.
-     */
-
-    private final Map<String, Product> mOutstandingPurchaseRequests = new HashMap<String, Product>();
-	
-    /**
-     * Broadcast listener to handle re-requesting the receipts when a user has re-authenticated
-     */
-
-	// moved to java application
-
-	/*
-    private BroadcastReceiver mAuthChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            requestReceipts();
-        }
-    };
-	*/
 
     /**
      * The cryptographic key for this application
@@ -125,13 +69,16 @@ public class MarmaladeOuyaFacade
 	//android context
 	private Context context;
 
-	// Custom-iap-code, listener for requesting gamer info
+	// listener for requesting gamer info
 	CancelIgnoringOuyaResponseListener<GamerInfo> m_requestGamerInfoListener = null;
 
-	// Custom-iap-code, listener for getting products
-	OuyaResponseListener<ArrayList<Product>> m_productListListener = null;
+	// listener for getting products
+	OuyaResponseListener<List<Product>> m_productListListener = null;
 
-	public MarmaladeOuyaFacade(Context context, Bundle savedInstanceState, String developerId, byte[] applicationKey)
+	// listener for requesting purchases
+	OuyaResponseListener<PurchaseResult> m_purchaseListener = null;
+
+	public MarmaladeOuyaFacade(Context context, Bundle savedInstanceState, Bundle developerInfo)
 	{
 		try
 		{
@@ -141,11 +88,11 @@ public class MarmaladeOuyaFacade
 
 			ouyaFacade = OuyaFacade.getInstance();
 
-			Init(developerId);
+			Init(developerInfo);
 
 			// Create a PublicKey object from the key data downloaded from the developer portal.
 			try {
-				X509EncodedKeySpec keySpec = new X509EncodedKeySpec(applicationKey);
+				X509EncodedKeySpec keySpec = new X509EncodedKeySpec(IMarmaladeOuyaActivity.GetApplicationKey());
 				KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 				mPublicKey = keyFactory.generatePublic(keySpec);
 			} catch (Exception e) {
@@ -164,12 +111,10 @@ public class MarmaladeOuyaFacade
 		public String errorMessage = "";
 	}
 
-	private void Init(String developerId)
+	private void Init(Bundle developerInfo)
 	{
-		Log.i(LOG_TAG, "OuyaFacade.init(context, " + developerId + ");");
-        ouyaFacade.init(context, developerId);
+        ouyaFacade.init(context, developerInfo);
 
-		// custom-iap-code
         m_requestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
             @Override
             public void onSuccess(GamerInfo info) {
@@ -189,61 +134,24 @@ public class MarmaladeOuyaFacade
 
             @Override
             public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-                Log.w(LOG_TAG, "request gamer info error (code " + errorCode + ": " + errorMessage + ")");
-                boolean wasHandledByAuthHelper =
-                        OuyaAuthenticationHelper.
-                                handleError(
-										//custom iap code										
-										IMarmaladeOuyaActivity.GetActivity(), errorCode, errorMessage,
-
-                                        //IapSampleActivity.this, errorCode, errorMessage,
-                                        optionalData, GAMER_UUID_AUTHENTICATION_ACTIVITY_ID,
-                                        new OuyaResponseListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void result) {
-                                                requestGamerInfo();   // Retry the request if the error was handled.
-                                            }
-
-                                            @Override
-                                            public void onFailure(int errorCode, String errorMessage,
-                                                                  Bundle optionalData) {
-                                                //showError("Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
-												Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
-												IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
-                                            }
-
-                                            @Override
-                                            public void onCancel() {
-                                                //showError("Unable to request gamer info");
-												Log.i(LOG_TAG, "m_requestGamerInfoListener RequestGamerInfoCancelListener");
-												IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onCancel();
-                                            }
-                                        });
-
-                if (!wasHandledByAuthHelper) {
-					Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
-					IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
-                }
+				Log.i(LOG_TAG, "Unable to request gamer info (error " + errorCode + ": " + errorMessage + ")");
+				IMarmaladeOuyaActivity.GetCallbacksRequestGamerInfo().onFailure(errorCode, errorMessage);
             }
         };
 
-		// custom-iap-code
-		m_productListListener = new OuyaResponseListener<ArrayList<Product>>()
+		m_productListListener = new OuyaResponseListener<List<Product>>()
 		{
 			@Override
-			public void onSuccess(final ArrayList<Product> products) {
-				mProductList = products;
-
-				// custom-iap-code
+			public void onSuccess(final List<Product> products) {
 
 				// clear the old list
-				Log.i(LOG_TAG, "m_productListListener ProductListClearListener");
+				Log.i(LOG_TAG, "m_productListListener ProductListListener");
 
 				//send each item in the list
-				if (null != mProductList) {
+				if (null != products) {
 					
 					JSONArray jarray = new JSONArray();
-					for (Product product : mProductList)
+					for (Product product : products)
 					{
 						JSONObject json = new JSONObject();
 						try {
@@ -255,7 +163,7 @@ public class MarmaladeOuyaFacade
 							json.put("originalPrice", product.getOriginalPrice());
 							json.put("percentOff", product.getPercentOff());
 							json.put("developerName", product.getDeveloperName());
-							jarray.put(mProductList.indexOf(product), json);
+							jarray.put(products.indexOf(product), json);
 						} catch (JSONException e1) {
 						}
 					}
@@ -288,63 +196,62 @@ public class MarmaladeOuyaFacade
 				IMarmaladeOuyaActivity.GetCallbacksRequestProducts().onCancel();
 			}
 		};
+
+		m_purchaseListener = new OuyaResponseListener<PurchaseResult>() {
+
+			/**
+			 * Handle a successful purchase.
+			 *
+			 * @param result The response from the server.
+			 */
+			@Override
+			public void onSuccess(PurchaseResult result)
+			{
+				if (null != result)
+				{
+					JSONObject json = new JSONObject();
+					try {
+						json.put("identifier", result.getProductIdentifier());
+					} catch (JSONException e1) {
+					}
+					String jsonData = json.toString();
+
+					Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
+					IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
+				}
+			}
+
+			/**
+			 * Handle an error. If the OUYA framework supplies an intent this means that the user needs to
+			 * either authenticate or re-authenticate themselves, so we start the supplied intent.
+			 *
+			 * @param errorCode An HTTP error code between 0 and 999, if there was one. Otherwise, an internal error code from the
+			 *                  Ouya server, documented in the {@link OuyaErrorCodes} class.
+			 *
+			 * @param errorMessage Empty for HTTP error codes. Otherwise, a brief, non-localized, explanation of the error.
+			 *
+			 * @param optionalData A Map of optional key/value pairs which provide additional information.
+			 */
+
+			@Override
+			public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
+			}
+
+			/**
+			 * Handle the cancel event.
+			 *
+			 */
+			@Override
+			public void onCancel()
+			{
+				//showError("Purchase was cancelled");
+
+				Log.i(LOG_TAG, "PurchaseListener Invoke PurchaseCancelListener");
+				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onCancel();
+			}
+		};
 	}
-
-    /**
-     * Check for the result from a call through to the authentication intent. If the authentication was
-     * successful then re-try the purchase.
-     */
-
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if(resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-                    requestGamerInfo();
-                    break;
-                case PURCHASE_AUTHENTICATION_ACTIVITY_ID:
-                    restartInterruptedPurchase();
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Restart an interrupted purchase.
-     */
-
-    public void restartInterruptedPurchase() {
-		//custom iap code
-		final String suspendedPurchaseId = OuyaPurchaseHelper.getSuspendedPurchase(context);
-        //final String suspendedPurchaseId = OuyaPurchaseHelper.getSuspendedPurchase(this);
-        if(suspendedPurchaseId == null) {
-            return;
-        }
-
-        try {
-            for(Product thisProduct : mProductList) {
-                if(suspendedPurchaseId.equals(thisProduct.getIdentifier())) {
-                    requestPurchase(thisProduct);
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            Log.e(LOG_TAG, "Error during purchase request", ex);
-            showError(ex.getMessage());
-        }
-    }
-
-    /**
-     * Save the products and receipts if we're going for a restart
-     */
-
-    public void onSaveInstanceState(final Bundle outState) {
-        if(mProductList != null) {
-            outState.putParcelableArray(PRODUCTS_INSTANCE_STATE_KEY, mProductList.toArray(new Product[mProductList.size()]));
-        }
-        if(mReceiptList != null) {
-            outState.putParcelableArray(RECEIPTS_INSTANCE_STATE_KEY, mReceiptList.toArray(new Receipt[mReceiptList.size()]));
-        }
-    }
 
     /*
      * The IAP Facade registers a broadcast receiver with Android. You should take care to call shutdown(),
@@ -354,6 +261,15 @@ public class MarmaladeOuyaFacade
         ouyaFacade.shutdown();
     }
 
+	public boolean processActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		// Forward this result to the facade, in case it is waiting for any activity results
+		if(ouyaFacade.processActivityResult(requestCode, resultCode, data)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
     /**
      * Get the list of products the user can purchase from the server.
      */
@@ -362,7 +278,7 @@ public class MarmaladeOuyaFacade
 		if (null != m_productListListener)
 		{
 			Log.i(LOG_TAG, "requestProducts m_productListListener is valid");
-			ouyaFacade.requestProductList(products, m_productListListener);
+			ouyaFacade.requestProductList(IMarmaladeOuyaActivity.GetActivity(), products, m_productListListener);
 		}
 		else
 		{
@@ -376,7 +292,7 @@ public class MarmaladeOuyaFacade
 		if (null != m_requestGamerInfoListener)
 		{
 			Log.i(LOG_TAG, "requestGamerInfo m_requestGamerInfoListener is valid");
-			ouyaFacade.requestGamerInfo(m_requestGamerInfoListener);
+			ouyaFacade.requestGamerInfo(IMarmaladeOuyaActivity.GetActivity(), m_requestGamerInfoListener);
 		}
 		else
 		{
@@ -389,7 +305,7 @@ public class MarmaladeOuyaFacade
      */
 
     public void requestReceipts() {
-        ouyaFacade.requestReceipts(new ReceiptListener());
+        ouyaFacade.requestReceipts(IMarmaladeOuyaActivity.GetActivity(), new ReceiptListener());
     }
 
     /*
@@ -397,64 +313,16 @@ public class MarmaladeOuyaFacade
      */
     public void requestPurchase(final Product product)
         throws GeneralSecurityException, UnsupportedEncodingException, JSONException {
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
 
-        // This is an ID that allows you to associate a successful purchase with
-        // it's original request. The server does nothing with this string except
-        // pass it back to you, so it only needs to be unique within this instance
-        // of your app to allow you to pair responses with requests.
-        String uniqueId = Long.toHexString(sr.nextLong());
-
-        JSONObject purchaseRequest = new JSONObject();
-        purchaseRequest.put("uuid", uniqueId);
-        purchaseRequest.put("identifier", product.getIdentifier());
-        String purchaseRequestJson = purchaseRequest.toString();
-
-        byte[] keyBytes = new byte[16];
-        sr.nextBytes(keyBytes);
-        SecretKey key = new SecretKeySpec(keyBytes, "AES");
-
-        byte[] ivBytes = new byte[16];
-        sr.nextBytes(ivBytes);
-        IvParameterSpec iv = new IvParameterSpec(ivBytes);
-
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-        byte[] payload = cipher.doFinal(purchaseRequestJson.getBytes("UTF-8"));
-
-        cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
-        cipher.init(Cipher.ENCRYPT_MODE, mPublicKey);
-        byte[] encryptedKey = cipher.doFinal(keyBytes);
-
-        Purchasable purchasable =
-                new Purchasable(
-                        product.getIdentifier(),
-                        Base64.encodeToString(encryptedKey, Base64.NO_WRAP),
-                        Base64.encodeToString(ivBytes, Base64.NO_WRAP),
-                        Base64.encodeToString(payload, Base64.NO_WRAP) );
-
-        synchronized (mOutstandingPurchaseRequests) {
-            mOutstandingPurchaseRequests.put(uniqueId, product);
-        }
-
-		//custom-iap-code
 		Log.i(LOG_TAG, "requestPurchase(" + product.getIdentifier() + ")");
-        
-		ouyaFacade.requestPurchase(purchasable, new PurchaseListener(product));
-    }
-
-    /**
-     * Display an error to the user. We're using a toast for simplicity.
-     */
-
-    private void showError(final String errorMessage) {
-        //Toast.makeText(IapSampleActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+		Purchasable purchasable = new Purchasable(product.getIdentifier());
+		ouyaFacade.requestPurchase(IMarmaladeOuyaActivity.GetActivity(), purchasable, m_purchaseListener);        
     }
 
     /**
      * The callback for when the list of user receipts has been requested.
      */
-    private class ReceiptListener implements OuyaResponseListener<String> {
+    private class ReceiptListener implements OuyaResponseListener<Collection<Receipt>> {
 
         /**
          * Handle the successful fetching of the data for the receipts from the server.
@@ -462,75 +330,13 @@ public class MarmaladeOuyaFacade
          * @param receiptResponse The response from the server.
          */
         @Override
-        public void onSuccess(String receiptResponse)
+        public void onSuccess(Collection<Receipt> receipts)
 		{
-            OuyaEncryptionHelper helper = new OuyaEncryptionHelper();
-            List<Receipt> receipts;
-            try
-			{
-                JSONObject response = new JSONObject(receiptResponse);
-                if(response.has("key") && response.has("iv"))
-				{
-                    receipts = helper.decryptReceiptResponse(response, mPublicKey);
-                }
-				else
-				{
-                    receipts = helper.parseJSONReceiptResponse(receiptResponse);
-                }
-            }
-			catch (ParseException e)
-			{
-				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
-				return;
-
-            }
-			catch (JSONException e)
-			{
-                if(e.getMessage().contains("ENCRYPTED"))
-				{
-                    // This is a hack for some testing code which will be removed
-                    // before the consumer release
-                    try
-					{
-                        receipts = helper.parseJSONReceiptResponse(receiptResponse);
-                    }
-					catch (IOException ioe)
-					{
-						IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + ioe);
-						return;
-
-                    }
-                }
-				else
-				{
-					IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "RuntimeException: " + e);
-					return;
-                }
-            }
-			catch (GeneralSecurityException e)
-			{
-				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "GeneralSecurityException: " + e);
-				return;
-            }
-			catch (IOException e)
-			{
-				IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onFailure(0, "IOException: " + e);
-				return;
-            }
-            Collections.sort(receipts, new Comparator<Receipt>() {
-                @Override
-                public int compare(Receipt lhs, Receipt rhs) {
-                    return rhs.getPurchaseDate().compareTo(lhs.getPurchaseDate());
-                }
-            });
-
-            mReceiptList = receipts;
-
-			// custom-iap-code
-			if(mReceiptList != null) {
+            if (receipts != null) {
 				
 				JSONArray jarray = new JSONArray();
-				for (Receipt receipt : mReceiptList)
+				int index = 0;
+				for (Receipt receipt : receipts)
 				{
 					JSONObject json = new JSONObject();
 					try {
@@ -541,7 +347,8 @@ public class MarmaladeOuyaFacade
 						json.put("localPrice", receipt.getLocalPrice());
 						json.put("currency", receipt.getCurrency());
 						json.put("generatedDate", receipt.getGeneratedDate());
-						jarray.put(mReceiptList.indexOf(receipt), json);
+						jarray.put(index, json);
+						++index;
 					} catch (JSONException e1) {
 					}
 				}
@@ -583,236 +390,6 @@ public class MarmaladeOuyaFacade
 		{
 			Log.i(LOG_TAG, "ReceiptListener Invoke ReceiptListCancelListener");
 			IMarmaladeOuyaActivity.GetCallbacksRequestReceipts().onCancel();
-		}
-    }
-
-    /**
-     * The callback for when the user attempts to purchase something
-     */
-    private class PurchaseListener implements OuyaResponseListener<String> {
-        /**
-         * The ID of the product the user is trying to purchase. This is used in the
-         * onFailure method to start a re-purchase if they user wishes to do so.
-         */
-
-        private Product mProduct;
-
-        /**
-         * Constructor. Store the ID of the product being purchased.
-         */
-
-        PurchaseListener(final Product product) {
-            mProduct = product;
-        }
-
-        /**
-         * Handle a successful purchase.
-         *
-         * @param result The response from the server.
-         */
-        @Override
-        public void onSuccess(String result)
-		{
-            Product product = null;
-			Product storedProduct = null;
-            String id = "";
-            try
-			{
-                OuyaEncryptionHelper helper = new OuyaEncryptionHelper();
-
-                JSONObject response = new JSONObject(result);
-                if(response.has("key") && response.has("iv"))
-				{
-                    id = helper.decryptPurchaseResponse(response, mPublicKey);
-                    synchronized (mOutstandingPurchaseRequests)
-					{
-                        storedProduct = mOutstandingPurchaseRequests.remove(id);
-                    }
-                    if(storedProduct == null || !storedProduct.getIdentifier().equals(mProduct.getIdentifier()))
-					{
-                        onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, "Purchased product is not the same as purchase request product", Bundle.EMPTY);
-                        return;
-                    }
-                }
-				else
-				{
-                    product = new Product(new JSONObject(result));
-                    if(!mProduct.getIdentifier().equals(product.getIdentifier()))
-					{
-                        onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, "Purchased product is not the same as purchase request product", Bundle.EMPTY);
-                        return;
-                    }
-                }
-            }
-			catch (ParseException e)
-			{
-                onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, e.getMessage(), Bundle.EMPTY);
-            }
-			catch (JSONException e)
-			{
-                if(e.getMessage().contains("ENCRYPTED"))
-				{
-                    // This is a hack for some testing code which will be removed
-                    // before the consumer release
-                    try
-					{
-                        product = new Product(new JSONObject(result));
-                        if(!mProduct.getIdentifier().equals(product.getIdentifier()))
-						{
-                            onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, "Purchased product is not the same as purchase request product", Bundle.EMPTY);
-                            return;
-                        }
-                    }
-					catch (JSONException jse)
-					{
-                        onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, e.getMessage(), Bundle.EMPTY);
-                        return;
-                    }
-                }
-				else
-				{
-                    onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, e.getMessage(), Bundle.EMPTY);
-                    return;
-                }
-            }
-			catch (IOException e)
-			{
-                onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, e.getMessage(), Bundle.EMPTY);
-                return;
-            }
-			catch (GeneralSecurityException e)
-			{
-                onFailure(OuyaErrorCodes.THROW_DURING_ON_SUCCESS, e.getMessage(), Bundle.EMPTY);
-                return;
-            }
-
-			/*
-            new AlertDialog.Builder(IapSampleActivity.this)
-                    .setTitle(getString(R.string.alert_title))
-                    .setMessage("You have successfully purchased a " + mProduct.getName() + " for " + Strings.formatDollarAmount(mProduct.getPriceInCents()))
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .show();
-            requestReceipts();
-			*/
-
-			if (null != product)
-			{
-				JSONObject json = new JSONObject();
-				try {
-					json.put("currencyCode", product.getCurrencyCode());
-					json.put("description", product.getDescription());
-					json.put("identifier", product.getIdentifier());
-					json.put("localPrice", product.getLocalPrice());
-					json.put("name", product.getName());
-					json.put("originalPrice", product.getOriginalPrice());
-					json.put("percentOff", product.getPercentOff());
-					json.put("developerName", product.getDeveloperName());
-				} catch (JSONException e1) {
-				}
-				String jsonData = json.toString();
-
-				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
-				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
-			}
-			else if (null != storedProduct)
-			{
-				JSONObject json = new JSONObject();
-				try {
-					json.put("currencyCode", storedProduct.getCurrencyCode());
-					json.put("description", storedProduct.getDescription());
-					json.put("identifier", storedProduct.getIdentifier());
-					json.put("localPrice", storedProduct.getLocalPrice());
-					json.put("name", storedProduct.getName());
-					json.put("originalPrice", storedProduct.getOriginalPrice());
-					json.put("percentOff", storedProduct.getPercentOff());
-					json.put("developerName", storedProduct.getDeveloperName());
-				} catch (JSONException e1) {
-				}
-				String jsonData = json.toString();
-
-				Log.i(LOG_TAG, "PurchaseListener PurchaseSuccessListener jsonData=" + jsonData);
-				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onSuccess(jsonData);
-			}
-        }
-
-        /**
-         * Handle an error. If the OUYA framework supplies an intent this means that the user needs to
-         * either authenticate or re-authenticate themselves, so we start the supplied intent.
-         *
-         * @param errorCode An HTTP error code between 0 and 999, if there was one. Otherwise, an internal error code from the
-         *                  Ouya server, documented in the {@link OuyaErrorCodes} class.
-         *
-         * @param errorMessage Empty for HTTP error codes. Otherwise, a brief, non-localized, explanation of the error.
-         *
-         * @param optionalData A Map of optional key/value pairs which provide additional information.
-         */
-
-        @Override
-        public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-
-			// custom iap-code
-			OuyaPurchaseHelper.suspendPurchase(IMarmaladeOuyaActivity.GetActivity(), mProduct.getIdentifier());
-
-            //OuyaPurchaseHelper.suspendPurchase(IapSampleActivity.this, mProduct.getIdentifier());
-
-            boolean wasHandledByAuthHelper =
-                    OuyaAuthenticationHelper.
-                            handleError(
-
-									// custom iap-code
-									IMarmaladeOuyaActivity.GetActivity(), errorCode, errorMessage,
-
-                                    //IapSampleActivity.this, errorCode, errorMessage,
-                                    optionalData, PURCHASE_AUTHENTICATION_ACTIVITY_ID,
-                                    new OuyaResponseListener<Void>()
-									{
-                                        @Override
-                                        public void onSuccess(Void result)
-										{
-                                            restartInterruptedPurchase();   // Retry the purchase if the error was handled.
-                                        }
-
-                                        @Override
-                                        public void onFailure(int errorCode, String errorMessage,
-                                                              Bundle optionalData)
-										{
-											IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
-											return;
-                                        }
-
-                                        @Override
-                                        public void onCancel()
-										{
-											Log.i(LOG_TAG, "PurchaseListener PurchaseCancelListener=");
-											IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onCancel();
-											return;
-                                        }
-                                    });
-
-
-            if(!wasHandledByAuthHelper)
-			{
-				IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onFailure(errorCode, errorMessage);
-				return;				
-            }
-        }
-
-        /**
-         * Handle the cancel event.
-         *
-         */
-        @Override
-        public void onCancel()
-		{
-			//showError("Purchase was cancelled");
-
-			Log.i(LOG_TAG, "PurchaseListener Invoke PurchaseCancelListener");
-			IMarmaladeOuyaActivity.GetCallbacksRequestPurchase().onCancel();
 		}
     }
 }

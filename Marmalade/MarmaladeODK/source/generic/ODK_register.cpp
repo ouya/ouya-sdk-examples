@@ -60,10 +60,10 @@ static const char* OuyaPlugin_getDeviceName_wrap(int playerNum)
     return (const char*)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_getDeviceName, 1, playerNum);
 }
 
-static void OuyaPlugin_initOuyaPlugin_wrap(s3eCallback onSuccess, s3eCallback onFailure)
+static void OuyaPlugin_initOuyaPlugin_wrap(const char* jsonData, s3eCallback onSuccess, s3eCallback onFailure)
 {
     IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_initOuyaPlugin"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_initOuyaPlugin, 2, onSuccess, onFailure);
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_initOuyaPlugin, 3, jsonData, onSuccess, onFailure);
 }
 
 static void OuyaPlugin_asyncOuyaRequestGamerInfo_wrap(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
@@ -90,10 +90,40 @@ static void OuyaPlugin_asyncOuyaRequestReceipts_wrap(s3eCallback onSuccess, s3eC
     s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncOuyaRequestReceipts, 3, onSuccess, onFailure, onCancel);
 }
 
-static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure)
+static int OuyaPlugin_JSONObject_Construct_wrap()
 {
-    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_asyncSetDeveloperId"));
-    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_asyncSetDeveloperId, 3, developerId, onSuccess, onFailure);
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_JSONObject_Construct"));
+    return (int)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_JSONObject_Construct, 0);
+}
+
+static void OuyaPlugin_JSONObject_Put_wrap(int jsonObject, const char* name, const char* value)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_JSONObject_Put"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_JSONObject_Put, 3, jsonObject, name, value);
+}
+
+static const char* OuyaPlugin_JSONObject_ToString_wrap(int jsonObject)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_JSONObject_ToString"));
+    return (const char*)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_JSONObject_ToString, 1, jsonObject);
+}
+
+static int OuyaPlugin_JSONArray_Construct_wrap()
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_JSONArray_Construct"));
+    return (int)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_JSONArray_Construct, 0);
+}
+
+static void OuyaPlugin_JSONArray_Put_wrap(int jsonArray, int index, int jsonObject)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_JSONArray_Put"));
+    s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_JSONArray_Put, 3, jsonArray, index, jsonObject);
+}
+
+static const char* OuyaPlugin_JSONArray_ToString_wrap(int jsonArray)
+{
+    IwTrace(ODK_VERBOSE, ("calling ODK func on main thread: OuyaPlugin_JSONArray_ToString"));
+    return (const char*)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)OuyaPlugin_JSONArray_ToString, 1, jsonArray);
 }
 
 #define OuyaPlugin_getAxis OuyaPlugin_getAxis_wrap
@@ -107,14 +137,19 @@ static void OuyaPlugin_asyncSetDeveloperId_wrap(const char* developerId, s3eCall
 #define OuyaPlugin_asyncOuyaRequestProducts OuyaPlugin_asyncOuyaRequestProducts_wrap
 #define OuyaPlugin_asyncOuyaRequestPurchase OuyaPlugin_asyncOuyaRequestPurchase_wrap
 #define OuyaPlugin_asyncOuyaRequestReceipts OuyaPlugin_asyncOuyaRequestReceipts_wrap
-#define OuyaPlugin_asyncSetDeveloperId OuyaPlugin_asyncSetDeveloperId_wrap
+#define OuyaPlugin_JSONObject_Construct OuyaPlugin_JSONObject_Construct_wrap
+#define OuyaPlugin_JSONObject_Put OuyaPlugin_JSONObject_Put_wrap
+#define OuyaPlugin_JSONObject_ToString OuyaPlugin_JSONObject_ToString_wrap
+#define OuyaPlugin_JSONArray_Construct OuyaPlugin_JSONArray_Construct_wrap
+#define OuyaPlugin_JSONArray_Put OuyaPlugin_JSONArray_Put_wrap
+#define OuyaPlugin_JSONArray_ToString OuyaPlugin_JSONArray_ToString_wrap
 
 #endif
 
 void ODKRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[12];
+    void* funcPtrs[17];
     funcPtrs[0] = (void*)OuyaPlugin_getAxis;
     funcPtrs[1] = (void*)OuyaPlugin_isPressed;
     funcPtrs[2] = (void*)OuyaPlugin_isPressedDown;
@@ -126,12 +161,17 @@ void ODKRegisterExt()
     funcPtrs[8] = (void*)OuyaPlugin_asyncOuyaRequestProducts;
     funcPtrs[9] = (void*)OuyaPlugin_asyncOuyaRequestPurchase;
     funcPtrs[10] = (void*)OuyaPlugin_asyncOuyaRequestReceipts;
-    funcPtrs[11] = (void*)OuyaPlugin_asyncSetDeveloperId;
+    funcPtrs[11] = (void*)OuyaPlugin_JSONObject_Construct;
+    funcPtrs[12] = (void*)OuyaPlugin_JSONObject_Put;
+    funcPtrs[13] = (void*)OuyaPlugin_JSONObject_ToString;
+    funcPtrs[14] = (void*)OuyaPlugin_JSONArray_Construct;
+    funcPtrs[15] = (void*)OuyaPlugin_JSONArray_Put;
+    funcPtrs[16] = (void*)OuyaPlugin_JSONArray_ToString;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[12] = { 0 };
+    int flags[17] = { 0 };
 
     /*
      * Register the extension

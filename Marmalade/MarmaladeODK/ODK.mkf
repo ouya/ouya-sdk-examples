@@ -38,7 +38,6 @@ files
 	CallbacksRequestProducts.h
 	CallbacksRequestPurchase.h
 	CallbacksRequestReceipts.h
-	CallbacksSetDeveloperId.h
 	Controller.h
 	ExtensionProduct.h
 	ExtensionReceipt.h

@@ -38,7 +38,9 @@ namespace OuyaSDK
 
 		void Init();
 		void Copy(const ExtensionProduct& rhs);
+#if defined(ANDROID)
 		void ParseJSON(const org_json_JSONObject::JSONObject& jsonObject);
+#endif
 	};
 
 	// for passing object from extension to application

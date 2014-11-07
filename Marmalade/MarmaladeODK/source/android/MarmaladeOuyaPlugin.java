@@ -18,12 +18,14 @@ package tv.ouya.sdk.marmalade;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import java.util.ArrayList;
-
 import java.io.File;
+import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import tv.ouya.console.api.*;
 
@@ -35,7 +37,8 @@ public class MarmaladeOuyaPlugin
 	}
 
 	// most of the java functions that are called, need the ouya facade initialized
-	public static void InitializePlugin()
+	public static void InitializePlugin(String jsonData)
+		throws Exception
 	{
 		try		
 		{
@@ -51,36 +54,36 @@ public class MarmaladeOuyaPlugin
 				Log.e(TAG, "InitializePlugin: application key is null");
 				return;
 			}
-			else
-			{
-				MarmaladeOuyaFacade marmaladeOuyaFacade =
-					new MarmaladeOuyaFacade(IMarmaladeOuyaActivity.GetActivity(), IMarmaladeOuyaActivity.GetSavedInstanceState(), IMarmaladeOuyaActivity.GetDeveloperId(), IMarmaladeOuyaActivity.GetApplicationKey());
-					
-				//make facade accessible by activity
-				IMarmaladeOuyaActivity.SetMarmaladeOuyaFacade(marmaladeOuyaFacade);
 
-				Log.i(TAG, "InitializePlugin Complete.");
+			Bundle developerInfo = new Bundle();
+
+			developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, IMarmaladeOuyaActivity.GetApplicationKey());
+
+			JSONArray jsonArray = new JSONArray(jsonData);
+			for (int index = 0; index < jsonArray.length(); ++index) {
+				JSONObject jsonObject = jsonArray.getJSONObject(index);
+				String name = jsonObject.getString("key");
+				String value = jsonObject.getString("value");
+				developerInfo.putString(name, value);
 			}
+
+			MarmaladeOuyaFacade marmaladeOuyaFacade =
+				new MarmaladeOuyaFacade(IMarmaladeOuyaActivity.GetActivity(),
+					IMarmaladeOuyaActivity.GetSavedInstanceState(),
+					developerInfo);
+					
+			//make facade accessible by activity
+			IMarmaladeOuyaActivity.SetMarmaladeOuyaFacade(marmaladeOuyaFacade);
+
+			Log.i(TAG, "InitializePlugin Complete.");
 		}
-		catch (Exception ex) 
+		catch (Exception e) 
 		{
-			Log.i(TAG, "InitializePlugin: exception: " + ex.toString());
+			Log.i(TAG, "InitializePlugin: exception: " + e.toString());
+			throw e;
 		}
 	}
 	
-	public static void setDeveloperId(String developerId)
-	{
-		CallbacksSetDeveloperId callbacks = IMarmaladeOuyaActivity.GetCallbacksSetDeveloperId();		
-
-		try {
-			IMarmaladeOuyaActivity.SetDeveloperId(developerId);
-			callbacks.onSuccess();
-		} catch (Exception ex) {
-			Log.i(TAG, "setDeveloperId exception: " + ex.toString());
-			callbacks.onFailure(0, "Failed to set developer id.");
-		}
-	}
-
 	public static void requestGamerInfo()
 	{
 		try

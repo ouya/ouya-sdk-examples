@@ -29,7 +29,6 @@
 #include "CallbacksRequestProducts.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
-#include "CallbacksSetDeveloperId.h"
 #include "JSONArray.h"
 #include "JSONObject.h"
 #include "OuyaController.h"
@@ -279,13 +278,13 @@ const char* OuyaPlugin_getDeviceName(int playerNum)
 	return g_tempPluginString.c_str();
 }
 
-void OuyaPlugin_initOuyaPlugin(s3eCallback onSuccess, s3eCallback onFailure)
+void OuyaPlugin_initOuyaPlugin(const char* jsonData, s3eCallback onSuccess, s3eCallback onFailure)
 {
 	IwTrace(ODK, ("OuyaPlugin_initOuyaPlugin"));
 
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin->RegisterCallbacks(onSuccess, onFailure);
 
-	g_pluginOuya.AsyncInitOuyaPlugin();
+	g_pluginOuya.AsyncInitOuyaPlugin(jsonData);
 }
 
 void OuyaPlugin_asyncOuyaRequestGamerInfo(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
@@ -294,7 +293,7 @@ void OuyaPlugin_asyncOuyaRequestGamerInfo(s3eCallback onSuccess, s3eCallback onF
 
 	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo->RegisterCallbacks(onSuccess, onFailure, onCancel);
 
-    g_pluginOuya.AsyncOuyaRequestGamerInfo();
+	g_pluginOuya.AsyncOuyaRequestGamerInfo();
 }
 
 void OuyaPlugin_asyncOuyaRequestProducts(const char* productsJson, s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel)
@@ -343,13 +342,152 @@ void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFa
 	g_pluginOuya.AsyncOuyaRequestReceipts();
 }
 
-void OuyaPlugin_asyncSetDeveloperId(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure)
+static int g_refCountJSONObject = 0;
+static std::map<int, JSONObject*> g_refJSONObject = std::map<int, JSONObject*>();
+
+int OuyaPlugin_JSONObject_Construct()
 {
-	std::string buffer = "OuyaPlugin_asyncSetDeveloperId developerId=";
-	buffer.append(developerId);
-	IwTrace(ODK, (buffer.c_str()));
+	JSONObject* jsonObject = new JSONObject();
+	g_refJSONObject[g_refCountJSONObject] = jsonObject;
+	int result = g_refCountJSONObject;
+	++g_refCountJSONObject;
+	return result;
+}
 
-	OuyaSDK::CallbackSingleton::GetInstance()->m_callbacksSetDeveloperId->RegisterCallbacks(onSuccess, onFailure);
+void OuyaPlugin_JSONObject_Put(int jsonObject, const char* name, const char* value)
+{
+#if ENABLE_VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONObject_Put: jsonObject=%d", jsonObject);
+#endif
+	std::map<int, JSONObject*>::const_iterator search = g_refJSONObject.find(jsonObject);
+	if (search != g_refJSONObject.end())
+	{
+		JSONObject* instance = search->second;
+		if (instance)
+		{
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONObject_Put JSONObject reference is valid");
+#endif
+			instance->put(name, value);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONObject_Put JSONObject reference is invalid");
+		}
+	}
+	else
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONObject_Put failed to find JSONObject reference");
+	}
+}
 
-	g_pluginOuya.AsyncSetDeveloperId(developerId);
+const char* OuyaPlugin_JSONObject_ToString(int jsonObject)
+{
+#if ENABLE_VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONObject_ToString: jsonObject=%d", jsonObject);
+#endif
+	std::map<int, JSONObject*>::const_iterator search = g_refJSONObject.find(jsonObject);
+	if (search != g_refJSONObject.end())
+	{
+		JSONObject* instance = search->second;
+		if (instance)
+		{
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONObject_ToString JSONObject reference is valid");
+#endif
+			g_tempPluginString = instance->toString();
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONObject_ToString jsonData=%s", g_tempPluginString.c_str());
+#endif
+			return g_tempPluginString.c_str();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONObject_ToString JSONObject reference is invalid");
+		}
+	}
+	else
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONObject_ToString failed to find JSONObject reference");
+	}
+
+	return "";
+}
+
+static int g_refCountJSONArray = 0;
+static std::map<int, JSONArray*> g_refJSONArray = std::map<int, JSONArray*>();
+
+int OuyaPlugin_JSONArray_Construct()
+{
+	JSONArray* jsonArray = new JSONArray();
+	g_refJSONArray[g_refCountJSONArray] = jsonArray;
+	int result = g_refCountJSONArray;
+	++g_refCountJSONArray;
+	return result;
+}
+
+void OuyaPlugin_JSONArray_Put(int jsonArray, int index, int jsonObject)
+{
+	std::map<int, JSONArray*>::const_iterator searchJSONArray = g_refJSONArray.find(jsonArray);
+	if (searchJSONArray == g_refJSONArray.end())
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONArray_Put JSONArray reference is invalid");
+		return;
+	}
+
+	std::map<int, JSONObject*>::const_iterator searchJSONObject = g_refJSONObject.find(jsonObject);
+	if (searchJSONObject == g_refJSONObject.end())
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONArray_Put JSONObject reference is invalid");
+		return;
+	}
+
+	JSONArray* instanceJSONArray = searchJSONArray->second;
+	if (!instanceJSONArray)
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONArray_Put JSONArray instance is invalid");
+		return;
+	}
+
+	JSONObject* instanceJSONObject = searchJSONObject->second;
+	if (!instanceJSONObject)
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONArray_Put JSONObject instance is invalid");
+		return;
+	}
+
+	instanceJSONArray->put(index, instanceJSONObject->GetInstance());
+}
+
+const char* OuyaPlugin_JSONArray_ToString(int jsonArray)
+{
+#if ENABLE_VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONArray_ToString: jsonArray=%d", jsonArray);
+#endif
+	std::map<int, JSONArray*>::const_iterator search = g_refJSONArray.find(jsonArray);
+	if (search != g_refJSONArray.end())
+	{
+		JSONArray* instance = search->second;
+		if (instance)
+		{
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONArray_ToString JSONArray reference is valid");
+#endif
+			g_tempPluginString = instance->toString();
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "OuyaPlugin_JSONArray_ToString jsonData=%s", g_tempPluginString.c_str());
+#endif
+			return g_tempPluginString.c_str();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONArray_ToString JSONArray reference is invalid");
+		}
+	}
+	else
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "OuyaPlugin_JSONArray_ToString failed to find JSONArray reference");
+	}
+
+	return "";
 }

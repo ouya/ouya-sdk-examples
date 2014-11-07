@@ -1,9 +1,5 @@
 files
 {
-	Application.h
-	Application.cpp
-	ApplicationCallbacksSetDeveloperId.h
-	ApplicationCallbacksSetDeveloperId.cpp
 	Main.cpp
 	VirtualControllerSprite.h
 	VirtualControllerSprite.cpp

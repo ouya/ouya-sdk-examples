@@ -20,7 +20,6 @@
 #include "CallbacksRequestProducts.h"
 #include "CallbacksRequestPurchase.h"
 #include "CallbacksRequestReceipts.h"
-#include "CallbacksSetDeveloperId.h"
 #include "ExtensionGamerInfo.h"
 #include "ExtensionProduct.h"
 #include "ExtensionReceipt.h"
@@ -64,7 +63,6 @@ namespace OuyaSDK
 		m_callbacksRequestProducts = new CallbacksRequestProducts();
 		m_callbacksRequestPurchase = new CallbacksRequestPurchase();
 		m_callbacksRequestReceipts = new CallbacksRequestReceipts();
-		m_callbacksSetDeveloperId = new CallbacksSetDeveloperId();
 	}
 
 	CallbackSingleton::~CallbackSingleton()
@@ -74,7 +72,6 @@ namespace OuyaSDK
 		delete m_callbacksRequestProducts;
 		delete m_callbacksRequestPurchase;
 		delete m_callbacksRequestReceipts;
-		delete m_callbacksSetDeveloperId;
 	}
 
 	CallbackSingleton* CallbackSingleton::GetInstance()
@@ -352,34 +349,6 @@ namespace OuyaSDK
 				callback->OnCancel();
 			}
 		}
-
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnSuccess(JNIEnv* env, jobject thiz)
-		{
-			LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnSuccess***********");
-
-			CallbacksSetDeveloperId* callback = CallbackSingleton::GetInstance()->m_callbacksSetDeveloperId;
-			if (callback)
-			{
-				callback->OnSuccess();
-			}
-		}
-
-		JNIEXPORT void JNICALL Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
-		{
-			//LOGI("***********Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure***********");
-
-			std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
-
-			//char buffer[256];
-			//sprintf(buffer, "Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
-			//LOGI(buffer);
-
-			CallbacksSetDeveloperId* callback = CallbackSingleton::GetInstance()->m_callbacksSetDeveloperId;
-			if (callback)
-			{
-				callback->OnFailure(errorCode, strErrorMessage);
-			}
-		}
 	}
 
 	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string className, std::string signature, void* method, JNINativeMethod* savedNativeMethod)
@@ -444,13 +413,6 @@ namespace OuyaSDK
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnSuccess;
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnFailure;
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnCancel;
-
-	//
-	// Native Callbacks for SetDeveloperId
-	//
-
-	JNINativeMethod g_nativeCallbacksSetDeveloperIdOnSuccess;
-	JNINativeMethod g_nativeCallbacksSetDeveloperIdOnFailure;
 
 	void CallbackSingleton::RegisterNativeMethods()
 	{
@@ -517,15 +479,5 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnCancel", "tv/ouya/sdk/marmalade/CallbacksRequestReceipts", "()V",
 			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel, &g_nativeCallbacksRequestReceiptsOnCancel);
-
-		//
-		// Register Native Callbacks for SetDeveloperId
-		//
-
-		RegisterNativeMethod(env, "CallbacksSetDeveloperIdOnSuccess", "tv/ouya/sdk/marmalade/CallbacksSetDeveloperId", "()V",
-			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnSuccess, &g_nativeCallbacksSetDeveloperIdOnSuccess);
-
-		RegisterNativeMethod(env, "CallbacksSetDeveloperIdOnFailure", "tv/ouya/sdk/marmalade/CallbacksSetDeveloperId", "(ILjava/lang/String;)V",
-			(void*)&Java_tv_ouya_sdk_marmalade_CallbacksSetDeveloperId_CallbacksSetDeveloperIdOnFailure, &g_nativeCallbacksSetDeveloperIdOnFailure);
 	}
 }

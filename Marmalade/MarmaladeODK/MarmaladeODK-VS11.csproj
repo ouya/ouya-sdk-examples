@@ -78,7 +78,6 @@
     <None Include="source\android\AsyncCppOuyaRequestProducts.java" />
     <None Include="source\android\AsyncCppOuyaRequestPurchase.java" />
     <None Include="source\android\AsyncCppOuyaRequestReceipts.java" />
-    <None Include="source\android\AsyncCppOuyaSetDeveloperId.java" />
     <None Include="source\android\CallbacksRequestGamerInfo.java" />
     <None Include="source\android\CallbacksRequestProducts.java" />
     <None Include="source\android\CallbacksRequestPurchase.java" />
@@ -93,14 +92,11 @@
     <None Include="interface\ODK.defines.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="h\CallbacksSetDeveloperId.h" />
     <None Include="h\CallbacksInitOuyaPlugin.h" />
     <Content Include="h\OuyaController.h" />
     <None Include="source\android\AsyncCppInitOuyaPlugin.java" />
-    <None Include="source\android\CallbacksSetDeveloperId.java" />
     <None Include="source\android\CallbacksInitOuyaPlugin.java" />
     <None Include="source\android\CallbacksInitOuyaPlugin.cpp" />
-    <None Include="source\android\CallbacksSetDeveloperId.cpp" />
     <None Include="h\ExtensionGamerInfo.h" />
     <Content Include="source\android\ExtensionGamerInfo.cpp" />
     <Content Include="source\android\OuyaController.cpp" />

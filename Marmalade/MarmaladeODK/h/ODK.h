@@ -51,8 +51,6 @@
 #define	OuyaController_BUTTON_L3 		106	
 
 typedef enum s3eOdkFnCallbackType {
-	S3E_ODK_CALLBACKS_SET_DEVELOPER_ID_ON_SUCCESS,
-	S3E_ODK_CALLBACKS_SET_DEVELOPER_ID_ON_FAILURE,	
 	S3E_ODK_CALLBACKS_INIT_OUYA_PLUGIN_ON_SUCCESS,
 	S3E_ODK_CALLBACKS_INIT_OUYA_PLUGIN_ON_FAILURE,
 	S3E_ODK_CALLBACKS_REQUEST_GAMER_INFO_ON_SUCCESS,
@@ -90,7 +88,7 @@ void OuyaPlugin_clearButtonStates();
 
 const char* OuyaPlugin_getDeviceName(int playerNum);
 
-void OuyaPlugin_initOuyaPlugin(s3eCallback onSuccess, s3eCallback onFailure);
+void OuyaPlugin_initOuyaPlugin(const char* jsonData, s3eCallback onSuccess, s3eCallback onFailure);
 
 void OuyaPlugin_asyncOuyaRequestGamerInfo(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
@@ -100,7 +98,17 @@ void OuyaPlugin_asyncOuyaRequestPurchase(const char* purchasable, s3eCallback on
 
 void OuyaPlugin_asyncOuyaRequestReceipts(s3eCallback onSuccess, s3eCallback onFailure, s3eCallback onCancel);
 
-void OuyaPlugin_asyncSetDeveloperId(const char* developerId, s3eCallback onSuccess, s3eCallback onFailure);
+int OuyaPlugin_JSONObject_Construct();
+
+void OuyaPlugin_JSONObject_Put(int jsonObject, const char* name, const char* value);
+
+const char* OuyaPlugin_JSONObject_ToString(int jsonObject);
+
+int OuyaPlugin_JSONArray_Construct();
+
+void OuyaPlugin_JSONArray_Put(int jsonArray, int index, int jsonObject);
+
+const char* OuyaPlugin_JSONArray_ToString(int jsonArray);
 
 S3E_END_C_DECL
 

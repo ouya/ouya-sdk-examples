@@ -28,13 +28,9 @@ files
 	ApplicationCallbacksRequestPurchase.cpp
 	ApplicationCallbacksRequestReceipts.h
 	ApplicationCallbacksRequestReceipts.cpp
-	ApplicationCallbacksSetDeveloperId.h
-	ApplicationCallbacksSetDeveloperId.cpp
 	..\MarmaladeODK\source\android\ExtensionGamerInfo.cpp
 	..\MarmaladeODK\source\android\ExtensionProduct.cpp
 	..\MarmaladeODK\source\android\ExtensionReceipt.cpp
-	..\MarmaladeODK\source\android\JSONArray.cpp
-	..\MarmaladeODK\source\android\JSONObject.cpp
 	Main.cpp
 	TextButton.h
 	TextButton.cpp
@@ -42,6 +38,11 @@ files
 	TextLabel.cpp
 	UI.h
 	UI.cpp
+}
+
+options
+{
+    arm-arch=armv7-a
 }
 
 subprojects
@@ -64,4 +65,5 @@ deployments
     name=MarmaladeIAP
     caption="Marmalade IAP"    
     android-pkgname=tv.ouya.sdk.marmalade.inapppurchases
+    [Android]
 }
