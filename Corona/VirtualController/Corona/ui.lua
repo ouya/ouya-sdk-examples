@@ -18,16 +18,11 @@
 --
 -----------------------------------------------------------------------------------------
 
-local DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
-
 helpers = require "helpers"
 
-if nil ~= ouyaSDK then
-	print ("LUA ouyaSetDeveloperId (" .. DEVELOPER_ID .. ")");
-	ouyaSDK.ouyaSetDeveloperId(DEVELOPER_ID);
-end
-
 local ui = {}
+
+display.newText("Virtual Controllers for Corona", 500, 200, "Helvetica", 48);
 
 ui.createController = function (player, x, y, xScale, yScale)
 	local spriteObj =

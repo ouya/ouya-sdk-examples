@@ -16,20 +16,22 @@
 
 package tv.ouya.sdk.corona;
 
+import android.app.Activity;
+
 
 /**
  * Implements the printString() function in Lua.
  * <p>
  * Demonstrates how to fetch a string argument from a Lua function.
  */
-public class AsyncLuaOuyaSetDeveloperId implements com.naef.jnlua.NamedJavaFunction {
+public class AsyncLuaInitOuyaPlugin implements com.naef.jnlua.NamedJavaFunction {
 	/**
 	 * Gets the name of the Lua function as it would appear in the Lua script.
 	 * @return Returns the name of the custom Lua function.
 	 */
 	@Override
 	public String getName() {
-		return "ouyaSetDeveloperId";
+		return "initOuyaPlugin";
 	}
 	
 	/**
@@ -41,19 +43,35 @@ public class AsyncLuaOuyaSetDeveloperId implements com.naef.jnlua.NamedJavaFunct
 	 * @return Returns the number of values to be returned by the Lua function.
 	 */
 	@Override
-	public int invoke(com.naef.jnlua.LuaState luaState) {
-		// Print the Lua function's argument to the Android logging system.
-		try {
-			// Fetch the Lua function's first argument.
-			// Will throw an exception if it is not of type string.
-			String value = luaState.checkString(1);
-			
-			CoronaOuyaPlugin.setDeveloperId(value);
-		}
-		catch (Exception ex) {
-			// An exception will occur if given an invalid argument or no argument. Print the error.
-			ex.printStackTrace();
-		}
+	public int invoke(final com.naef.jnlua.LuaState luaState) {
+
+		final CallbacksInitOuyaPlugin callbacks = new CallbacksInitOuyaPlugin(luaState);
+					
+		// store for access
+		IOuyaActivity.SetCallbacksInitOuyaPlugin(callbacks);
+
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null != activity) {
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{
+
+					// Print the Lua function's argument to the Android logging system.
+					try {
+						CoronaOuyaPlugin.initOuyaPlugin(callbacks.getJSONData());
+						callbacks.onSuccess();
+					}
+					catch (Exception ex) {
+						// An exception will occur if given an invalid argument or no argument. Print the error.
+						ex.printStackTrace();
+
+						callbacks.onFailure(0, "Failed to initialize CoronaOuyaPlugin");
+					}
+				}
+			};
+			activity.runOnUiThread(runnable);
+		};
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;

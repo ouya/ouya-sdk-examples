@@ -75,8 +75,9 @@ public class CoronaOuyaInputView extends View {
 
 		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());	    
 	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
-	    	return true;
+	    	//Log.e(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
+	    	//return true;
+	    	playerNum = 0; //treat the controller as the first controller
 	    }
 	    
 	    CallbacksOuyaInput input = IOuyaActivity.GetCallbacksOuyaInput();
@@ -99,8 +100,31 @@ public class CoronaOuyaInputView extends View {
 
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	return true;
+	    	//Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
+	    	//return true;
+	    	
+	    	//hack for non-supported controllers
+	    	playerNum = 0; //treat the controller as the first controller
+	    	switch (keyCode) {
+	    	case KeyEvent.KEYCODE_BUTTON_A:
+	    	case KeyEvent.KEYCODE_ENTER:
+	    		keyCode = OuyaController.BUTTON_O;
+	    		break;
+	    	case KeyEvent.KEYCODE_BUTTON_X:
+	    		keyCode = OuyaController.BUTTON_U;
+	    		break;
+	    	case KeyEvent.KEYCODE_BUTTON_Y:
+	    		keyCode = OuyaController.BUTTON_Y;
+	    		break;
+	    	case KeyEvent.KEYCODE_BUTTON_B:
+	    		keyCode = OuyaController.BUTTON_A;
+	    		break;
+	    	default:
+	    		if (keyEvent.getScanCode() == 102) {
+	    			keyCode = OuyaController.BUTTON_MENU;
+	    		}
+	    		break;
+	    	}
 	    }
 
 		int action = keyEvent.getAction();
@@ -119,8 +143,31 @@ public class CoronaOuyaInputView extends View {
 
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	return true;
+	    	//Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
+	    	//return true;
+	    	
+	    	//hack for non-supported controllers
+	    	playerNum = 0; //treat the controller as the first controller
+	    	switch (keyCode) {
+	    	case KeyEvent.KEYCODE_BUTTON_A:
+	    	case KeyEvent.KEYCODE_ENTER:
+	    		keyCode = OuyaController.BUTTON_O;
+	    		break;
+	    	case KeyEvent.KEYCODE_BUTTON_X:
+	    		keyCode = OuyaController.BUTTON_U;
+	    		break;
+	    	case KeyEvent.KEYCODE_BUTTON_Y:
+	    		keyCode = OuyaController.BUTTON_Y;
+	    		break;
+	    	case KeyEvent.KEYCODE_BUTTON_B:
+	    		keyCode = OuyaController.BUTTON_A;
+	    		break;
+	    	default:
+	    		if (keyEvent.getScanCode() == 102) {
+	    			keyCode = OuyaController.BUTTON_MENU;
+	    		}
+	    		break;
+	    	}
 	    }
 
 		int action = keyEvent.getAction();

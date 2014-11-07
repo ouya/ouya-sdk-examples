@@ -18,117 +18,77 @@ package tv.ouya.sdk.corona;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-
 import java.io.File;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import tv.ouya.console.api.*;
 
 public class CoronaOuyaPlugin
 {
 	private static final String TAG = "OuyaCoronaPlugin";
 
-	// the developer id is sent from Corona
-	private static String m_developerId = "";
-
-	// ENABLE IAP mode this is for testing/debugging to turn off IAP
-	private static Boolean m_enableIAP = true;
-
-	// For debugging enable logging for testing
-	private static Boolean m_enableDebugLogging = true;
-	
-	public CoronaOuyaPlugin() {
-	}
-
 	// most of the java functions that are called, need the ouya facade initialized
-	public static void InitializeTest()
+	public static void initOuyaPlugin(String jsonData)
+		throws Exception
 	{
 		try		
 		{
 			if (null == IOuyaActivity.GetActivity())
 			{
-				if (m_enableDebugLogging)
-				{
-					Log.w(TAG, "CoronaOuyaPlugin.InitializeTest: IOuyaActivity.GetActivity() is null");
-				}
-				return;
+				throw new Exception("Activity is not set");
 			}
 
-			if (null == IOuyaActivity.GetCoronaOuyaFacade())
+			if (null == IOuyaActivity.GetApplicationKey())
 			{
-				//wait to read the application key
-				if (null == IOuyaActivity.GetApplicationKey())
-				{
-				}
-				else
-				{
-					if (m_enableDebugLogging)
-					{
-						Log.i(TAG, "InitializeTest: Corona has initialized, constructing CoronaOuyaFacade");
-					}
-					
-					CoronaOuyaFacade coronaOuyaFacade =
-						new CoronaOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), m_developerId, IOuyaActivity.GetApplicationKey());
-					
-					//make facade accessible by activity
-					IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
-
-					Log.i(TAG, "CoronaOuyaPlugin.Initialization Complete.");
-				}
+				throw new Exception("Signing key is not set");
 			}
-		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "InitializeTest: InitializeTest exception: " + ex.toString());
-		}
-	}
-	
-	public static String getDeveloperId()
-	{
-		return m_developerId;
-	}
 
-	public static String setDeveloperId(String developerId)
-	{
-		try
-		{
-			//Log.i(TAG, "setDeveloperId developerId: " + developerId);
-			m_developerId = developerId;
+			Bundle developerInfo = new Bundle();
+
+	        developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, IOuyaActivity.GetApplicationKey());
+	        
+	        JSONArray jsonArray = new JSONArray(jsonData);
+			for (int index = 0; index < jsonArray.length(); ++index) {
+				JSONObject jsonObject = jsonArray.getJSONObject(index);
+				String key = jsonObject.getString("key");
+				String value = jsonObject.getString("value");
+				//Log.i(TAG, "key="+key+" value="+value);
+				developerInfo.putString(key, value);
+			}
+
+			//Log.i(TAG, "Developer info was set.");
+			
+			CoronaOuyaFacade coronaOuyaFacade =
+				new CoronaOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), developerInfo);
+			
+			//make facade accessible by activity
+			IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
+
+			Log.i(TAG, "Corona Plugin Initialized.");
 		}
-		catch (Exception ex) 
+		catch (Exception e) 
 		{
-			Log.i(TAG, "setDeveloperId exception: " + ex.toString());
+			Log.i(TAG, "initOuyaPlugin exception: " + e.toString());
+			throw e;
 		}
-		return "";
 	}
 
 	public static void requestGamerInfo()
 	{
 		try
 		{
-			Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo");
-
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo IAP is disabled");
-				return;
-			}
-
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
 				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo: CoronaOuyaFacade is valid");
-				
-				if (m_developerId == "") {
-					Log.i(TAG, "CoronaOuyaPlugin.m_developerId is not set");
-				} else {
-					Log.i(TAG, "CoronaOuyaPlugin.m_developerId valid: " + m_developerId);
-				}
 				
 				IOuyaActivity.GetCoronaOuyaFacade().requestGamerInfo();
 			}
@@ -139,26 +99,17 @@ public class CoronaOuyaPlugin
 		}
 	}
 
-	public static void getProductsAsync()
+	public static void getProductsAsync(ArrayList<Purchasable> products)
 	{
 		try
 		{
-			Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync");
-
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync IAP is disabled");
-				return;
-			}
-
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
 				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync: CoronaOuyaFacade is valid");
-				IOuyaActivity.GetCoronaOuyaFacade().requestProducts();
+				IOuyaActivity.GetCoronaOuyaFacade().requestProducts(products);
 			}
 		}
 		catch (Exception ex) 
@@ -167,94 +118,16 @@ public class CoronaOuyaPlugin
 		}
 	}
 
-	public static void clearGetProductList()
-	{
-		try
-		{
-			Log.i(TAG, "clearGetProductList");
-		
-			CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST.clear();
-		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "clearGetProductList exception: " + ex.toString());
-		}
-	}
-
-	public static void addGetProduct(String productId)
-	{
-		try
-		{
-			Log.i(TAG, "addGetProduct productId: " + productId);
-		
-			boolean found = false;
-			for (Purchasable purchasable : CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				//Log.i(TAG, "addGetProduct " + purchasable.getProductId() + "==" + productId);
-				if (purchasable.getProductId().equals(productId))
-				{
-					//Log.i(TAG, "addGetProduct equals: " + purchasable.getProductId() + "==" + productId + "=" + purchasable.getProductId().equals(productId));
-					found = true;
-					break;
-				}
-			}
-			if (found)
-			{
-				//Log.i(TAG, "addGetProduct found productId: " + productId);
-			}
-			else
-			{
-				//Log.i(TAG, "addGetProduct added productId: " + productId);
-				Purchasable newPurchasable = new Purchasable(new String(productId));
-				CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST.add(newPurchasable);
-			}
-		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "addGetProduct exception: " + ex.toString());
-		}
-	}
-
-	public static void debugGetProductList()
-	{
-		try
-		{
-			int count = 0;
-			for (Purchasable purchasable : CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				++count;
-			}
-			Log.i(TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has " + count + " elements");
-			for (Purchasable purchasable : CoronaOuyaFacade.PRODUCT_IDENTIFIER_LIST)
-			{
-				Log.i(TAG, "debugProductList TestOuyaFacade.PRODUCT_IDENTIFIER_LIST has: " + purchasable.getProductId());
-			}
-		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "debugProductList exception: " + ex.toString());
-		}
-	}
-
 	public static String requestPurchaseAsync(String identifier)
 	{
 		try
 		{
-			Log.i(TAG, "requestPurchaseAsync identifier: " + identifier);
-		
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync IAP is disabled");
-				return "";
-			}
-
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
 				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync: CoronaOuyaFacade is valid");
 				Product product = new Product(identifier, "", 0, 0, "", 0, 0, "", "", Product.Type.ENTITLEMENT);
 				
 				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);
@@ -271,21 +144,12 @@ public class CoronaOuyaPlugin
 	{
 		try
 		{
-			Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync");
-
-			if (!m_enableIAP)
-			{
-				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync IAP is disabled");
-				return;
-			}
-
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
 				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync: CoronaOuyaFacade is valid");
 				IOuyaActivity.GetCoronaOuyaFacade().requestReceipts();
 			}
 		}
