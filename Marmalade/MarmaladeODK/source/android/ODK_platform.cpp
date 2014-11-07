@@ -135,6 +135,11 @@ s3eResult ODKInit_platform()
 	{
 		jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
 		ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
+
+		const char* strMethod = "nativeLoaded";
+		jmethodID nativeLoaded = env->GetStaticMethodID(clazz, strMethod, "()V");
+		env->CallStaticVoidMethod(clazz, nativeLoaded);
+
 		env->DeleteLocalRef(clazz);
 	}
 	else

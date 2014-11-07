@@ -48,6 +48,9 @@ public class ODK extends LoaderActivity
 {
 	private static final String TAG = ODK.class.getSimpleName();
 
+	// Only use native methods after the native plugin loads
+	private static boolean mNativePluginLoaded = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
@@ -86,6 +89,10 @@ public class ODK extends LoaderActivity
 		}
 	}
 
+	public static void nativeLoaded() {
+		mNativePluginLoaded = true;
+	}
+
 	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
 	public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
 
@@ -111,18 +118,26 @@ public class ODK extends LoaderActivity
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		//DebugInput.debugMotionEvent(motionEvent);
 
+		if (!mNativePluginLoaded) {
+			return false;
+		}
+
 		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());	    
 	    if (playerNum < 0) {
 	    	//Log.w(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
 	    	playerNum = 0;
 	    }
 
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		try {
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		} catch (Exception e) {
+			// axis might be used before native plugin loads
+		}
 		return true;
 	}
 
@@ -132,6 +147,10 @@ public class ODK extends LoaderActivity
 		//Log.i(TAG, "It came from=" + this.getClass().getSimpleName());
 		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
 
+		if (!mNativePluginLoaded) {
+			return false;
+		}
+
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0) {
 	    	Log.w(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
@@ -139,7 +158,11 @@ public class ODK extends LoaderActivity
 	    }
 
 		int action = keyEvent.getAction();
-		dispatchKeyEventNative(playerNum, keyCode, action);
+		try {
+			dispatchKeyEventNative(playerNum, keyCode, action);
+		} catch (Exception e) {
+			// button might be used before native plugin loads
+		}
 		return true;
 	}
 	
@@ -147,6 +170,10 @@ public class ODK extends LoaderActivity
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
 		//Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
 
+		if (!mNativePluginLoaded) {
+			return false;
+		}
+
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0) {
 	    	Log.w(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
@@ -154,7 +181,11 @@ public class ODK extends LoaderActivity
 	    }
 
 		int action = keyEvent.getAction();
-		dispatchKeyEventNative(playerNum, keyCode, action);
+		try {
+			dispatchKeyEventNative(playerNum, keyCode, action);
+		} catch (Exception e) {
+			// button might be used before native plugin loads
+		}
 		return true;
 	}
 }
