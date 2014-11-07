@@ -17,3 +17,12 @@ assets
 	(data-ram/data-gles1)
 	"tiles.group.bin"
 }
+
+deployments
+{
+    # default version
+    name=MarmaladeVirtualController
+    caption="Marmalade VirtualController"    
+    android-pkgname=tv.ouya.sdk.marmalade.virtualcontroller
+    [Android]
+}
