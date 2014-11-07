@@ -39,11 +39,10 @@ import android.widget.RelativeLayout;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import tv.ouya.console.api.*;
+import tv.ouya.console.api.OuyaController;
 
 /**
  * Extends the Application class to receive Corona runtime events and to extend the Lua API.
@@ -54,10 +53,8 @@ import tv.ouya.console.api.*;
  */
 public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	
-	private final String TAG = CoronaOuyaActivity.class.getSimpleName();
-	
-	private boolean m_waitToExit = true;
-	
+	private final String TAG = "CoronaOuyaActivity";
+		
 	/** Called when your application has started. */
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -89,52 +86,13 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 
 		// Init the controller
 		OuyaController.init(context);
-		
-		// Initialize the OUYA Corona Plugin
-		CoronaOuyaPlugin ouyaCoronaPlugin = new CoronaOuyaPlugin();
-		IOuyaActivity.SetOuyaCoronaPlugin(ouyaCoronaPlugin);
-		
-		Thread timer = new Thread() {
-			public void run() {
-				// wait for developer id to be set
-				while (m_waitToExit) {
-					
-					final CoronaOuyaPlugin ouyaCoronaPlugin = IOuyaActivity.GetOuyaCoronaPlugin();
-					if (null != ouyaCoronaPlugin) {
-						if (ouyaCoronaPlugin.getDeveloperId() != "") {
-							Log.i(TAG, "Detected developer id initializing...");
-							
-							Runnable runnable = new Runnable()
-							{
-								public void run()
-								{
-									Log.i(TAG, "OuyaCoronaPlugin initializing...");
-									ouyaCoronaPlugin.InitializeTest();
-								}
-							};
-
-							runOnUiThread(runnable);
-							
-							break;
-						}
-					}
-
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-        };
-        timer.start();
 	}
+	
 
 	@Override
 	protected void onDestroy() {
+		// TODO Auto-generated method stub
 		super.onDestroy();
-		m_waitToExit = false;
 	}
 
     /**
@@ -153,6 +111,22 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
     };
 
     /**
+     * Broadcast listener to handle menu appearing
+     */
+
+    private BroadcastReceiver mMenuAppearingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+			Log.i(TAG, "BroadcastReceiver intent=" + intent.getAction());
+			if(intent.getAction().equals(OuyaIntent.ACTION_MENUAPPEARING)) {
+				//pause music, free up resources, etc.
+
+				Log.i(TAG, "BroadcastReceiver tell Corona we see the menu appearing");
+			}
+        }
+    };
+
+    /**
      * Request an up to date list of receipts and start listening for any account changes
      * whilst the application is running.
      */
@@ -166,6 +140,10 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
         IntentFilter accountsChangedFilter = new IntentFilter();
         accountsChangedFilter.addAction(AccountManager.LOGIN_ACCOUNTS_CHANGED_ACTION);
         registerReceiver(mAuthChangeReceiver, accountsChangedFilter);
+
+		IntentFilter menuAppearingFilter = new IntentFilter();
+		menuAppearingFilter.addAction(OuyaIntent.ACTION_MENUAPPEARING);
+		registerReceiver(mMenuAppearingReceiver, menuAppearingFilter);
     }
 
     /**
@@ -174,7 +152,8 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
     @Override
     public void onStop() {
 		unregisterReceiver(mAuthChangeReceiver);
-	    super.onStop();
+		unregisterReceiver(mMenuAppearingReceiver);
+        super.onStop();
     }
 
     /**
@@ -184,20 +163,14 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if(resultCode == RESULT_OK) {
-        	CoronaOuyaFacade coronaOuyaFacade = IOuyaActivity.GetCoronaOuyaFacade();
-			if (null != coronaOuyaFacade)
-			{
-				switch (requestCode) {
-					case CoronaOuyaFacade.GAMER_UUID_AUTHENTICATION_ACTIVITY_ID:
-						coronaOuyaFacade.requestGamerInfo();
-						break;
-					case CoronaOuyaFacade.PURCHASE_AUTHENTICATION_ACTIVITY_ID:
-						coronaOuyaFacade.restartInterruptedPurchase();
-						break;
-				}
-            }
-        }
+    	CoronaOuyaFacade coronaOuyaFacade = IOuyaActivity.GetCoronaOuyaFacade();
+    	if (null != coronaOuyaFacade)
+		{
+	    	// Forward this result to the facade, in case it is waiting for any activity results
+	        if(coronaOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+	            return;
+	        }
+		}
     }
 	
 }

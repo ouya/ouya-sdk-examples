@@ -63,7 +63,7 @@
 			"file": "Corona/ui.lua",
 			"settings":
 			{
-				"buffer_size": 3654,
+				"buffer_size": 3733,
 				"line_ending": "Unix"
 			}
 		}
@@ -149,7 +149,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 6,
 			"sheets":
 			[
 				{
@@ -317,15 +317,15 @@
 					"file": "Corona/ui.lua",
 					"settings":
 					{
-						"buffer_size": 3654,
+						"buffer_size": 3733,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2239,
-								2251
+								1082,
+								1082
 							]
 						],
 						"settings":
@@ -333,7 +333,7 @@
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 304.0,
+						"translation.y": 224.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

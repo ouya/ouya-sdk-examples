@@ -2,7 +2,7 @@
 
 > __Type__              plugin.ouya
 
-> __Revision__          003 (ODK-1.0.14)
+> __Revision__          004 (ODK-2.0.2053)
 
 > __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
 
@@ -10,7 +10,7 @@
 
 > __Availability__      Basic, Pro, Enterprise
 
-> __Platforms__	         Android
+> __Platforms__	       Android
 
 
 ## Overview
@@ -41,6 +41,34 @@ Each call should happen in serial versus asyncronous.
 ##### Named Java methods:
 
 
+#### ouyaSDK.initOuyaPlugin
+
+Requires callback arguments for onSuccess and onFailure.
+This method passes the plugin intialization values to start the OUYA Plugin.
+The onSuccess callback is invoked if the plugin initializes successfully.
+The onFailure callback is invoked if the plugin fails to initialize.
+
+lua
+```
+callbacksInitOuyaPlugin.onSuccess = function ()
+end
+
+callbacksInitOuyaPlugin.onFailure = function (errorCode, errorMessage)
+end
+
+callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
+local json = require "json"
+if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
+	local data = {
+	[1] = {
+	    ["key"] = "tv.ouya.developer_id",
+	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
+	}};
+	local jsonData = json.encode(data);
+	ouyaSDK.initOuyaPlugin(callbacksInitOuyaPlugin.onSuccess, callbacksInitOuyaPlugin.onFailure, jsonData);
+end
+```
+
 #### ouyaSDK.asyncLuaOuyaInitInput
 
 Requires callback arguments for onGenericMotionEvent, onKeyDown, and onKeyUp.
@@ -49,18 +77,27 @@ This is also connected with OUYA-Everywhere input.
 OUYA-Everywhere input ensures the same controller mappings will work on all supported OUYA devices.
 New devices can be adding without needing to recompile the app/game.
 
+lua
+```
+inputs.onGenericMotionEvent = function (playerNum, axis, val)
+end
+
+inputs.onKeyDown = function (playerNum, button)
+end
+
+inputs.onKeyUp = function (playerNum, button)
+end
+
+if nil ~= ouyaSDK and nil ~= ouyaSDK.asyncLuaOuyaInitInput then
+	ouyaSDK.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
+end
+```
 
 #### ouyaSDK.asyncLuaOuyaGetControllerName
 
 Requires onGetControllerName callback and PlayerNum arguments.
 The onGetControllerName callback is passed the string of the controller name. The controller name comes from the OUYA Framework which provides a more detailed name of the controller than the device name on the KeyEvent and MotionEvent.
 PlayerNum is a zero-based integer which is intended to indicate controller #1, #2, #3, and #4.
-
-
-#### ouyaSDK.ouyaSetDeveloperId
-
-Before IAP functions can be invoked the developer id must be set.
-This developer id corresponds with the signing key, and bundle id, and needs to match for proper encryption/decryption.
 
 
 #### ouyaSDK.asyncLuaOuyaRequestGamerInfo
@@ -124,6 +161,11 @@ Be sure to set your developer id from the developer portal.
 Common method handles initialization for the wrapper methods.
 
 
+#### plugin_ouya.initOuyaPlugin
+
+Wraps calling ouyaSDK.initOuyaPlugin so that the plugin is only initialized once.
+
+
 #### plugin_ouya.asyncLuaOuyaInitInput
 
 Wraps calling ouyaSDK.asyncLuaOuyaInitInput to check if the plugin has been initialized before invoking.
@@ -132,11 +174,6 @@ Wraps calling ouyaSDK.asyncLuaOuyaInitInput to check if the plugin has been init
 #### plugin_ouya.asyncLuaOuyaGetControllerName
 
 Wraps calling ouyaSDK.asyncLuaOuyaGetControllerName to check if the plugin has been initialized before invoking.
-
-
-#### plugin_ouya.ouyaSetDeveloperId
-
-Wraps calling ouyaSDK.ouyaSetDeveloperId so that the plugin is only initialized once.
 
 
 #### plugin_ouya.asyncLuaOuyaRequestGamerInfo

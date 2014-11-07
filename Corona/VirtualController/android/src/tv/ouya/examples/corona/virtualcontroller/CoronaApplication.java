@@ -55,7 +55,7 @@ public class CoronaApplication extends android.app.Application {
 			luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
 				new AsyncLuaOuyaGetControllerName(),
 				new AsyncLuaOuyaInitInput(),
-				new AsyncLuaOuyaSetDeveloperId(),
+				new AsyncLuaInitOuyaPlugin(),
 				new AsyncLuaOuyaRequestGamerInfo(),
 				new AsyncLuaOuyaRequestProducts(),
 				new AsyncLuaOuyaRequestPurchase(),

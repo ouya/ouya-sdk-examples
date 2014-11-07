@@ -14,32 +14,32 @@
 
 -----------------------------------------------------------------------------------------
 --
--- main.lua
+-- callbacksRequestInitOuyaPlugin.lua
 --
 -----------------------------------------------------------------------------------------
 
-callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
 globals = require "globals"
-helpers = require "helpers"
-inputs = require "inputs"
-local json = require "json"
-ui = require "ui"
+json = require "json"
 
-if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
-	local data = {
-	[1] = {
-	    ["key"] = "tv.ouya.developer_id",
-	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
-	}};
-	local jsonData = json.encode(data);
-	--print (jsonData);
-	ouyaSDK.initOuyaPlugin(callbacksInitOuyaPlugin.onSuccess, callbacksInitOuyaPlugin.onFailure, jsonData);
+local callbacksInitOuyaPlugin = {}
+
+callbacksInitOuyaPlugin.onSuccess = function ()
+	globals.txtStatus.text = "onSuccessRequestInitOuyaPlugin";
 end
 
-globals.controllers =
-{
-	ui.createController(1, -100, 500, 2, 2),
-	ui.createController(2, -100, 1200, 2, 2),
-	ui.createController(3, 1000, 500, 2, 2),
-	ui.createController(4, 1000, 1200, 2, 2)
-};
+callbacksInitOuyaPlugin.onFailure = function (errorCode, errorMessage)
+	globals.txtStatus.text = "onFailureInitOuyaPlugin";
+	if errorCode == nil then
+        print("onFailureRequestInitOuyaPlugin: errorCode=(nil)");
+	else
+        print("onFailureRequestInitOuyaPlugin: errorCode=" .. errorCode);
+	end
+	
+	if errorMessage == nil then
+        print("onFailureRequestInitOuyaPlugin: errorMessage=(nil)");
+	else
+        print("onFailureRequestInitOuyaPlugin: errorMessage=" .. errorMessage);
+	end
+end
+
+return callbacksInitOuyaPlugin;

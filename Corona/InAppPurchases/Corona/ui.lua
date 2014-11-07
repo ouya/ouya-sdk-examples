@@ -55,7 +55,7 @@ ui.displayProductList = function ()
 	ui.clearReceiptText();
 	if globals.getProducts ~= nil then
 		for i=1,#globals.getProducts do
-				print ("displayProductList: identifier=" .. globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " localPrice=" .. globals.getProducts[i].localPrice);
+				--print ("displayProductList: identifier=" .. globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " localPrice=" .. globals.getProducts[i].localPrice);
 				local label = "Product: " .. globals.getProducts[i].identifier .. " name=" .. globals.getProducts[i].name .. " localPrice=" .. globals.getProducts[i].localPrice;
 				local txtProduct = display.newText(label, globals.centerX - 200, 425 + i * 30, "Helvetica", 24);
 				if (1 + globals.selectedProduct) == i then
