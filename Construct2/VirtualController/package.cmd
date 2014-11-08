@@ -4,7 +4,7 @@ copy /Y customization\res\drawable\splash_screen.png ..\..\Html5\WebArchive\Cont
 copy /Y customization\res\drawable-xhdpi\ouya_icon.png ..\..\Html5\WebArchive\ContentShell\res\drawable-xhdpi\ouya_icon.png
 copy /Y customization\res\values\strings.xml ..\..\Html5\WebArchive\ContentShell\res\values\strings.xml
 cd Build
-zip ../web_archive.jar *
+zip -r ../web_archive.jar *
 move ..\web_archive.jar ..\..\..\Html5\WebArchive\ContentShell\res\raw\web_archive.jar
 dir ..\..\..\Html5\WebArchive\ContentShell\res\raw\web_archive.jar
 cd ..\..\..\Html5\WebArchive\
