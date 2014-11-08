@@ -10,7 +10,7 @@
       }
     </style>
   </head>
-  <body>
+  <body style="zoom: 0.5">
     <canvas id="htmlCanvas" width="1920" height="1080"></canvas>
     <script>
 
@@ -75,14 +75,8 @@
 
       var OuyaSDK = new Object();
       OuyaSDK.method = "";
-      OuyaSDK.setDeveloperId = function(developerId, onSuccess, onFailure)
-      {
-        OuyaSDK.developerId = developerId;
-        OuyaSDK.onSuccess = onSuccess;
-        OuyaSDK.onFailure = onFailure;
-        OuyaSDK.method = "setDeveloperId";
-      };
-      OuyaSDK.initOuyaPlugin = function(onSuccess, onFailure) {
+      OuyaSDK.initOuyaPlugin = function(jsonData, onSuccess, onFailure) {
+        OuyaSDK.initValues = jsonData;
         OuyaSDK.onSuccess = onSuccess;
         OuyaSDK.onFailure = onFailure;
         OuyaSDK.method = "initOuyaPlugin";
@@ -129,8 +123,6 @@
       var context = canvas.getContext('2d');
 
       var pluginReady = false;
-
-      var developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
@@ -529,32 +521,14 @@
         } else {
             lblStatus = "initializing plugin...";
             redraw = true;
-            OuyaSDK.initOuyaPlugin(onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
-        }
-      }
-
-      function onSuccessSetDeveloperId() {
-      	lblStatus = "developer id is set.";
-      	redraw = true;
-      	setTimeout(function(){ initOuyaPlugin() }, 1000);
-      }
-
-      function onFailureSetDeveloperId() {
-	      lblStatus = "failed to set developer id.";
-	      redraw = true;
-	      setTimeout(function(){ initSetDeveloperId() }, 1000);
-      }
-
-      function initSetDeveloperId() {
-        if (OuyaSDK.setDeveloperId == undefined) {
-            lblStatus = "waiting for OuyaSDK.setDeveloperId...";
-            redraw = true;
-            setTimeout(function(){ initSetDeveloperId() }, 1000);
-            return;
-        } else {
-            lblStatus = "setting developerId...";
-            redraw = true;
-            OuyaSDK.setDeveloperId(developerId, onSuccessSetDeveloperId, onFailureSetDeveloperId);
+            var data = Array();
+            data[0] =
+			{
+				'key': 'tv.ouya.developer_id',
+				'value': '310a8f51-4d6e-4ae5-bda0-b93878e5f5d0'
+			};
+            var jsonData = JSON.stringify(data);
+            OuyaSDK.initOuyaPlugin(jsonData, onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
         }
       }
 
@@ -578,7 +552,7 @@
       	redraw = true;
       }
 
-      initSetDeveloperId();
+      initOuyaPlugin()
 
 	  setTimeout(function(){ setInterval(function(){ showScene()}, 1) }, 100);
 

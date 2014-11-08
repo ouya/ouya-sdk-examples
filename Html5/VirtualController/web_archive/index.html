@@ -10,7 +10,7 @@
       }
     </style>
   </head>
-  <body>
+  <body style="zoom: 0.5">
     <canvas id="htmlCanvas" width="1920" height="1080"></canvas>
     <script>
 
@@ -186,6 +186,8 @@
 			context.drawImage(images.y, x, y, width, height);
 		}
       };
+
+      var OuyaSDK = Object();
 
       var canvas = document.getElementById('htmlCanvas');
       var context = canvas.getContext('2d');
