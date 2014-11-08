@@ -66,5 +66,6 @@ deployments
     caption="Marmalade IAP"    
     android-pkgname=tv.ouya.sdk.marmalade.inapppurchases
     android-manifest=data/AndroidManifest.xml
+    android-external-res=res
     [Android]
 }
