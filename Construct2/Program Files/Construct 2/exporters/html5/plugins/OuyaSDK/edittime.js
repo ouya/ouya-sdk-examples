@@ -97,11 +97,25 @@ AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shut
 
 // example
 
+var actionIndex = -1;
+
 AddStringParam("key", "Enter an initialization key.");
 AddStringParam("value", "Enter an initialization value.");
-AddAction(0, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "MyAction");
 
-AddAction(1, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "MyAction");
+
+AddAction(++actionIndex, af_none, "Request Gamer Info", "RequestGamerInfo", "requestGamerInfo", "Description for my action!", "MyAction");
+
+AddAction(++actionIndex, af_none, "Request Products", "RequestProducts", "requestProducts", "Description for my action!", "MyAction");
+
+AddAction(++actionIndex, af_none, "Request Purchase", "RequestPurchase", "requestPurchase", "Description for my action!", "MyAction");
+
+AddAction(++actionIndex, af_none, "Request Receipts", "RequestReceipts", "requestReceipts", "Description for my action!", "MyAction");
+
+AddAction(++actionIndex, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea", "Description for my action!", "MyAction");
+
+AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Description for my action!", "MyAction");
 
 ////////////////////////////////////////
 // Expressions
