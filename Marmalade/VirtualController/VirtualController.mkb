@@ -25,5 +25,6 @@ deployments
     caption="Marmalade VirtualController"    
     android-pkgname=tv.ouya.sdk.marmalade.virtualcontroller
     android-manifest=data/AndroidManifest.xml
+    android-external-res=res
     [Android]
 }
