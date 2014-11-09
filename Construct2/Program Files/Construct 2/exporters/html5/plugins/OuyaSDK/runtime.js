@@ -185,6 +185,51 @@
 		gamepads[playerNum].buttons[newButton] = false;
 	}
 
+	OuyaSDK.method = "";
+	OuyaSDK.initOuyaPlugin = function(jsonData, onSuccess, onFailure) {
+		OuyaSDK.initValues = jsonData;
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.method = "initOuyaPlugin";
+	};
+	OuyaSDK.requestGamerInfo = function(onSuccess, onFailure, onCancel) {
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.onCancel = onCancel;
+		OuyaSDK.method = "requestGamerInfo";
+	};
+	OuyaSDK.requestProducts = function(products, onSuccess, onFailure, onCancel) {
+		OuyaSDK.products = products;
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.onCancel = onCancel;
+		OuyaSDK.method = "requestProducts";
+	};
+	OuyaSDK.requestPurchase = function(purchasable, onSuccess, onFailure, onCancel) {
+		OuyaSDK.purchasable = purchasable;
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.onCancel = onCancel;
+		OuyaSDK.method = "requestPurchase";
+	};
+	OuyaSDK.requestReceipts = function(onSuccess, onFailure, onCancel) {
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.onCancel = onCancel;
+		OuyaSDK.method = "requestReceipts";
+	};
+	OuyaSDK.setSafeArea = function(amount, onSuccess, onFailure) {
+		OuyaSDK.safeAreaAmount = amount;
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.method = "setSafeArea";
+	}
+	OuyaSDK.shutdown = function(onSuccess, onFailure) {
+		OuyaSDK.onSuccess = onSuccess;
+		OuyaSDK.onFailure = onFailure;
+		OuyaSDK.method = "shutdown";
+	}
+
 // end of OUYA SDK
 
 assert2(cr, "cr namespace not created");
@@ -334,6 +379,122 @@ cr.plugins_.OuyaSDK = function(runtime)
 	//////////////////////////////////////
 	// Actions
 	function Acts() {};
+
+	Acts.prototype.addInitOuyaPluginValues = function (myparam)
+	{
+	};
+
+	function onSuccessInitOuyaPlugin() {
+	}
+
+	function onFailureInitOuyaPlugin(errorCode, errorMessage) {
+	}
+
+	Acts.prototype.initOuyaPlugin = function (myparam)
+	{
+	};
+
+	function onSuccessRequestGamerInfo(jsonData) {
+		var gamerInfo = JSON.parse(jsonData);
+		var gamerUsername = gamerInfo.username;
+		var gamerUuid = gamerInfo.uuid;
+	}
+
+	function onFailureRequestGamerInfo(errorCode, errorMessage) {
+	}
+
+	function onCancelRequestGamerInfo() {
+	}
+
+	Acts.prototype.requestGamerInfo = function (myparam)
+	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.requestGamerInfo != undefined) {
+			OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
+		}
+	};
+
+	function onSuccessRequestProducts(jsonData) {
+	}
+
+	function onFailureRequestProducts(errorCode, errorMessage) {
+	}
+
+	function onCancelRequestProducts() {
+	}
+
+	Acts.prototype.requestProducts = function (myparam)
+	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.requestProducts != undefined) {
+			var products = Array("long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE");
+			OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+		}
+	};
+
+	function onSuccessRequestPurchase(jsonData) {
+	}
+
+	function onFailureRequestPurchase(errorCode, errorMessage) {
+	}
+
+	function onCancelRequestPurchase() {
+	}
+
+	Acts.prototype.requestPurchase = function (myparam)
+	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.requestPurchase != undefined) {
+			var purchasable = "long_sword";
+			OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+		}
+	};
+
+	function onSuccessRequestReceipts(jsonData) {
+	}
+
+	function onFailureRequestReceipts(errorCode, errorMessage) {
+	}
+
+	function onCancelRequestReceipts() {
+	}
+
+	Acts.prototype.requestReceipts = function (myparam)
+	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.requestReceipts != undefined) {
+			OuyaSDK.requestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);
+		}
+	};
+
+	function onSuccessSetSafeArea() {
+	}
+
+	function onFailureSafeArea(errorCode, errorMessage) {
+	}
+
+	Acts.prototype.setSafeArea = function (myparam)
+	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.setSafeArea != undefined) {
+			var safeAreaAmount = 0.0;
+			OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
+		}
+	};
+
+	function onSuccessShutdown() {
+	}
+
+	function onFailureShutdown(errorCode, errorMessage) {
+	}
+
+	Acts.prototype.shutdown = function (myparam)
+	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.shutdown != undefined) {
+			OuyaSDK.shutdown(onSuccessShutdown, onFailureShutdown);
+		}
+	};
 
 	// the example action
 	Acts.prototype.MyAction = function (myparam)

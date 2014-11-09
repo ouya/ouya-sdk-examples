@@ -101,21 +101,22 @@ var actionIndex = -1;
 
 AddStringParam("key", "Enter an initialization key.");
 AddStringParam("value", "Enter an initialization value.");
-AddAction(++actionIndex, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "addInitOuyaPluginValues");
 
-AddAction(++actionIndex, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "initOuyaPlugin");
 
-AddAction(++actionIndex, af_none, "Request Gamer Info", "RequestGamerInfo", "requestGamerInfo", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Request Gamer Info", "RequestGamerInfo", "requestGamerInfo", "Description for my action!", "requestGamerInfo");
 
-AddAction(++actionIndex, af_none, "Request Products", "RequestProducts", "requestProducts", "Description for my action!", "MyAction");
+AddStringParam("products", "Enter product ids separated by commas.");
+AddAction(++actionIndex, af_none, "Request Products", "RequestProducts", "requestProducts({0})", "Description for my action!", "requestProducts");
 
-AddAction(++actionIndex, af_none, "Request Purchase", "RequestPurchase", "requestPurchase", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Request Purchase", "RequestPurchase", "requestPurchase", "Description for my action!", "requestPurchase");
 
-AddAction(++actionIndex, af_none, "Request Receipts", "RequestReceipts", "requestReceipts", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Request Receipts", "RequestReceipts", "requestReceipts", "Description for my action!", "requestReceipts");
 
-AddAction(++actionIndex, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea", "Description for my action!", "setSafeArea");
 
-AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Description for my action!", "MyAction");
+AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Description for my action!", "shutdown");
 
 ////////////////////////////////////////
 // Expressions
