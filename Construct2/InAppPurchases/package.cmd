@@ -1,4 +1,5 @@
 copy /Y customization\AndroidManifest.xml ..\..\Html5\WebArchive\ContentShell\AndroidManifest.xml
+copy /Y customization\assets\key.der ..\..\Html5\WebArchive\ContentShell\assets\key.der
 copy /Y customization\res\drawable\app_icon.png ..\..\Html5\WebArchive\ContentShell\res\drawable\app_icon.png
 copy /Y customization\res\drawable\splash_screen.png ..\..\Html5\WebArchive\ContentShell\res\drawable\splash_screen.png
 copy /Y customization\res\drawable-xhdpi\ouya_icon.png ..\..\Html5\WebArchive\ContentShell\res\drawable-xhdpi\ouya_icon.png

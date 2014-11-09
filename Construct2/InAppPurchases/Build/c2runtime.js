@@ -13223,8 +13223,14 @@ cr.plugins_.OuyaSDK = function(runtime)
 	};
 	pluginProto.cnds = new Cnds();
 	function Acts() {};
-	Acts.prototype.addInitOuyaPluginValues = function (myparam)
+	var ouyaInitializationValues = Array();
+	Acts.prototype.addInitOuyaPluginValues = function (key, value)
 	{
+		ouyaInitializationValues[ouyaInitializationValues.length] =
+		{
+			'key': 'tv.ouya.developer_id',
+			'value': '310a8f51-4d6e-4ae5-bda0-b93878e5f5d0'
+		};
 	};
 	function onSuccessInitOuyaPlugin() {
 	}
@@ -13232,6 +13238,11 @@ cr.plugins_.OuyaSDK = function(runtime)
 	}
 	Acts.prototype.initOuyaPlugin = function (myparam)
 	{
+		if (OuyaSDK != undefined &&
+			OuyaSDK.initOuyaPlugin != undefined) {
+			var jsonData = JSON.stringify(ouyaInitializationValues);
+            OuyaSDK.initOuyaPlugin(jsonData, onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
+		}
 	};
 	function onSuccessRequestGamerInfo(jsonData) {
 		var gamerInfo = JSON.parse(jsonData);
