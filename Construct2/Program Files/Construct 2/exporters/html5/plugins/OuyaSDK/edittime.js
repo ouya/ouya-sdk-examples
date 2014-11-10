@@ -59,12 +59,12 @@ function GetPluginSettings()
 var conditionIndex = -1;
 
 AddNumberParam("Number", "Enter a number to test if positive.");
-AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Success", "Initialization", "initOuyaPlugin onSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Failure", "Initialization", "initOuyaPlugin onFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Success", "Initialization", "initOuyaPlugin onSuccess", "Description for my condition!", "onSuccessInitOuyaPlugin");
+AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Failure", "Initialization", "initOuyaPlugin onFailure", "Description for my condition!", "onFailureInitOuyaPlugin");
 
-AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Success", "RequestGamerInfo", "requestGamerInfoOnSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Failure", "RequestGamerInfo", "requestGamerInfoOnFailure", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Cancel", "RequestGamerInfo", "requestGamerInfoOnCancel", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Success", "RequestGamerInfo", "requestGamerInfoOnSuccess", "Description for my condition!", "onSuccessRequestGamerInfo");
+AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Failure", "RequestGamerInfo", "requestGamerInfoOnFailure", "Description for my condition!", "onFailureRequestGamerInfo");
+AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Cancel", "RequestGamerInfo", "requestGamerInfoOnCancel", "Description for my condition!", "onCancelRequestGamerInfo");
 
 AddCondition(conditionIndex++, cf_none, "Request Products on Success", "RequestProducts", "requestProductsOnSuccess", "Description for my condition!", "MyCondition");
 AddCondition(conditionIndex++, cf_none, "Request Products on Failure", "RequestProducts", "requestProductsOnFailure", "Description for my condition!", "MyCondition");
@@ -110,11 +110,13 @@ AddAction(++actionIndex, af_none, "Request Gamer Info", "RequestGamerInfo", "req
 AddStringParam("products", "Enter product ids separated by commas.");
 AddAction(++actionIndex, af_none, "Request Products", "RequestProducts", "requestProducts({0})", "Description for my action!", "requestProducts");
 
-AddAction(++actionIndex, af_none, "Request Purchase", "RequestPurchase", "requestPurchase", "Description for my action!", "requestPurchase");
+AddStringParam("purchasable", "Enter product id to purchase.");
+AddAction(++actionIndex, af_none, "Request Purchase", "RequestPurchase", "requestPurchase({0})", "Description for my action!", "requestPurchase");
 
 AddAction(++actionIndex, af_none, "Request Receipts", "RequestReceipts", "requestReceipts", "Description for my action!", "requestReceipts");
 
-AddAction(++actionIndex, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea", "Description for my action!", "setSafeArea");
+AddNumberParam("SafeAreaAmount", "Enter the safe area amount from 0.0 to 1.0");
+AddAction(++actionIndex, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea({0})", "Description for my action!", "setSafeArea");
 
 AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Description for my action!", "shutdown");
 
@@ -130,7 +132,13 @@ AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Descripti
 //				 description);	// description in expressions panel
 
 // example
-AddExpression(0, ef_return_number, "Leet expression", "My category", "MyExpression", "Return the number 1337.");
+
+var expressionIndex = -1;
+
+AddExpression(expressionIndex++, ef_return_number, "Leet expression", "My category", "MyExpression", "Return the number 1337.");
+
+AddExpression(expressionIndex++, ef_return_string, "GamerInfo.username", "requestGamerInfo", "GamerInfoUsername", "Get GamerInfo.username");
+AddExpression(expressionIndex++, ef_return_string, "GamerInfo.uuid", "requestGamerInfo", "GamerInfoUuid", "Get GamerInfo.uuid");
 
 ////////////////////////////////////////
 ACESDone();

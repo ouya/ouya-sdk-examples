@@ -13217,105 +13217,155 @@ cr.plugins_.OuyaSDK = function(runtime)
 	{
 	};
 	function Cnds() {};
+	Cnds.prototype.onSuccessInitOuyaPlugin = function () {
+		if (Acts.prototype.hasOnSuccessInitOuyaPlugin != undefined &&
+			Acts.prototype.hasOnSuccessInitOuyaPlugin) {
+			Acts.prototype.hasOnSuccessInitOuyaPlugin = false;
+			return true;
+		}
+		return false;
+	}
+	Cnds.prototype.onFailureInitOuyaPlugin = function () {
+		if (Acts.prototype.hasOnFailureInitOuyaPlugin != undefined &&
+			Acts.prototype.hasOnFailureInitOuyaPlugin) {
+			Acts.prototype.hasOnFailureInitOuyaPlugin = false;
+			return true;
+		}
+		return false;
+	}
+	Cnds.prototype.onSuccessRequestGamerInfo = function () {
+		if (Acts.prototype.hasOnSuccessRequestGamerInfo != undefined &&
+			Acts.prototype.hasOnSuccessRequestGamerInfo) {
+			Acts.prototype.hasOnSuccessRequestGamerInfo = false;
+			return true;
+		}
+		return false;
+	}
+	Cnds.prototype.onFailureRequestGamerInfo = function () {
+		if (Acts.prototype.hasOnFailureRequestGamerInfo != undefined &&
+			Acts.prototype.hasOnFailureRequestGamerInfo) {
+			Acts.prototype.hasOnFailureRequestGamerInfo = false;
+			return true;
+		}
+		return false;
+	}
+	Cnds.prototype.onCancelRequestGamerInfo = function () {
+		if (Acts.prototype.hasOnCancelRequestGamerInfo != undefined &&
+			Acts.prototype.hasOnCancelRequestGamerInfo) {
+			Acts.prototype.hasOnCancelRequestGamerInfo = false;
+			return true;
+		}
+		return false;
+	}
 	Cnds.prototype.MyCondition = function (myparam)
 	{
 		return myparam >= 0;
 	};
 	pluginProto.cnds = new Cnds();
 	function Acts() {};
-	var ouyaInitializationValues = Array();
+	Acts.prototype.ouyaInitializationValues = Array();
 	Acts.prototype.addInitOuyaPluginValues = function (key, value)
 	{
-		ouyaInitializationValues[ouyaInitializationValues.length] =
+		Acts.prototype.ouyaInitializationValues[Acts.prototype.ouyaInitializationValues.length] =
 		{
 			'key': 'tv.ouya.developer_id',
 			'value': '310a8f51-4d6e-4ae5-bda0-b93878e5f5d0'
 		};
 	};
-	function onSuccessInitOuyaPlugin() {
+	Acts.prototype.hasOnSuccessInitOuyaPlugin = false;
+	Acts.prototype.onSuccessInitOuyaPlugin = function () {
+		Acts.prototype.hasOnSuccessInitOuyaPlugin = true;
 	}
-	function onFailureInitOuyaPlugin(errorCode, errorMessage) {
+	Acts.prototype.hasOnFailureInitOuyaPlugin = false;
+	Acts.prototype.onFailureInitOuyaPlugin = function (errorCode, errorMessage) {
+		Acts.prototype.hasOnFailureInitOuyaPlugin = true;
 	}
 	Acts.prototype.initOuyaPlugin = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.initOuyaPlugin != undefined) {
-			var jsonData = JSON.stringify(ouyaInitializationValues);
-            OuyaSDK.initOuyaPlugin(jsonData, onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
+			var jsonData = JSON.stringify(Acts.prototype.ouyaInitializationValues);
+            OuyaSDK.initOuyaPlugin(jsonData, Acts.prototype.onSuccessInitOuyaPlugin, Acts.prototype.onFailureInitOuyaPlugin);
 		}
 	};
-	function onSuccessRequestGamerInfo(jsonData) {
+	Acts.prototype.onSuccessRequestGamerInfo = function (jsonData) {
+		Acts.prototype.resultOnSuccessRequestGamerInfo = jsonData;
 		var gamerInfo = JSON.parse(jsonData);
 		var gamerUsername = gamerInfo.username;
 		var gamerUuid = gamerInfo.uuid;
+		Acts.prototype.hasOnSuccessRequestGamerInfo = true;
 	}
-	function onFailureRequestGamerInfo(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestGamerInfo = function (errorCode, errorMessage) {
+		Acts.prototype.resultOnFailureRequestGamerInfoErrorCode = errorCode;
+		Acts.prototype.resultOnFailureRequestGamerInfoErrorMessage = errorMessage;
+		Acts.prototype.hasOnFailureRequestGamerInfo = true;
 	}
-	function onCancelRequestGamerInfo() {
+	Acts.prototype.onCancelRequestGamerInfo = function () {
+		Acts.prototype.hasOnCancelRequestGamerInfo = true;
 	}
 	Acts.prototype.requestGamerInfo = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestGamerInfo != undefined) {
-			OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
+			OuyaSDK.requestGamerInfo(Acts.prototype.onSuccessRequestGamerInfo, Acts.prototype.onFailureRequestGamerInfo, Acts.prototype.onCancelRequestGamerInfo);
 		}
 	};
-	function onSuccessRequestProducts(jsonData) {
+	Acts.prototype.onSuccessRequestProducts = function (jsonData) {
 	}
-	function onFailureRequestProducts(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestProducts = function (errorCode, errorMessage) {
 	}
-	function onCancelRequestProducts() {
+	Acts.prototype.onCancelRequestProducts = function () {
 	}
 	Acts.prototype.requestProducts = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestProducts != undefined) {
 			var products = Array("long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE");
-			OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+			OuyaSDK.requestProducts(products, Acts.prototype.onSuccessRequestProducts, Acts.prototype.onFailureRequestProducts, Acts.prototype.onCancelRequestProducts);
 		}
 	};
-	function onSuccessRequestPurchase(jsonData) {
+	Acts.prototype.onSuccessRequestPurchase = function (jsonData) {
 	}
-	function onFailureRequestPurchase(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestPurchase = function (errorCode, errorMessage) {
 	}
-	function onCancelRequestPurchase() {
+	Acts.prototype.onCancelRequestPurchase = function () {
 	}
 	Acts.prototype.requestPurchase = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestPurchase != undefined) {
 			var purchasable = "long_sword";
-			OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+			OuyaSDK.requestPurchase(purchasable, Acts.prototype.onSuccessRequestPurchase, Acts.prototype.onFailureRequestPurchase, Acts.prototype.onCancelRequestPurchase);
 		}
 	};
-	function onSuccessRequestReceipts(jsonData) {
+	Acts.prototype.onSuccessRequestReceipts = function (jsonData) {
 	}
-	function onFailureRequestReceipts(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestReceipts = function (errorCode, errorMessage) {
 	}
-	function onCancelRequestReceipts() {
+	Acts.prototype.onCancelRequestReceipts = function () {
 	}
 	Acts.prototype.requestReceipts = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestReceipts != undefined) {
-			OuyaSDK.requestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);
+			OuyaSDK.requestReceipts(Acts.prototype.onSuccessRequestReceipts, Acts.prototype.onFailureRequestReceipts, Acts.prototype.onCancelRequestReceipts);
 		}
 	};
-	function onSuccessSetSafeArea() {
+	Acts.prototype.onSuccessSetSafeArea = function () {
 	}
-	function onFailureSafeArea(errorCode, errorMessage) {
+	Acts.prototype.onFailureSafeArea = function (errorCode, errorMessage) {
 	}
-	Acts.prototype.setSafeArea = function (myparam)
+	Acts.prototype.SafeAreaAmount = 1.0;
+	Acts.prototype.setSafeArea = function (safeAreaAmount)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.setSafeArea != undefined) {
-			var safeAreaAmount = 0.0;
-			OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
+			OuyaSDK.setSafeArea(safeAreaAmount, Acts.prototype.onSuccessSetSafeArea, Acts.prototype.onFailureSafeArea);
 		}
 	};
-	function onSuccessShutdown() {
+	Acts.prototype.onSuccessShutdown = function () {
 	}
-	function onFailureShutdown(errorCode, errorMessage) {
+	Acts.prototype.onFailureShutdown = function (errorCode, errorMessage) {
 	}
 	Acts.prototype.shutdown = function (myparam)
 	{
@@ -13330,6 +13380,28 @@ cr.plugins_.OuyaSDK = function(runtime)
 	};
 	pluginProto.acts = new Acts();
 	function Exps() {};
+	Exps.prototype.GamerInfoUsername = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestGamerInfo != undefined) {
+			var gamerInfo = JSON.parse(Acts.prototype.resultOnSuccessRequestGamerInfo);
+			result = gamerInfo.username;
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.GamerInfoUuid = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestGamerInfo != undefined) {
+			var gamerInfo = JSON.parse(Acts.prototype.resultOnSuccessRequestGamerInfo);
+			result = gamerInfo.uuid;
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.SafeAreaAmount = function (ret)
+	{
+		ret.set_float(Acts.prototype.SafeAreaAmount);
+	};
 	Exps.prototype.MyExpression = function (ret)	// 'ret' must always be the first parameter - always return the expression's result through it!
 	{
 		ret.set_int(1337);				// return our value
@@ -16632,6 +16704,13 @@ cr.getProjectModel = function() { return [
 		[
 		[
 			1,
+			"SafeAreaAmount",
+			0,
+			1,
+false,false,723212796259268,false
+		]
+,		[
+			1,
 			"ButtonIndex",
 			0,
 			0,
@@ -16760,7 +16839,7 @@ false,false,6507122753107457,false
 			[
 			[
 				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.MyCondition,
+				cr.plugins_.OuyaSDK.prototype.cnds.onFailureInitOuyaPlugin,
 				null,
 				0,
 				false,
@@ -16798,7 +16877,7 @@ false,false,6507122753107457,false
 			[
 			[
 				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.MyCondition,
+				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessInitOuyaPlugin,
 				null,
 				0,
 				false,
@@ -16806,6 +16885,15 @@ false,false,6507122753107457,false
 				false,
 				4198006736049561,
 				false
+				,[
+				[
+					0,
+					[
+						0,
+						0
+					]
+				]
+				]
 			]
 			],
 			[
@@ -16867,7 +16955,7 @@ false,false,6507122753107457,false
 			[
 			[
 				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.MyCondition,
+				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestGamerInfo,
 				null,
 				0,
 				false,
@@ -16888,8 +16976,35 @@ false,false,6507122753107457,false
 				[
 					7,
 					[
-						2,
-						"requestGamerInfo onSuccess"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"requestGamerInfo onSuccess username="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.GamerInfoUsername,
+									true,
+									null
+								]
+							]
+							,[
+								2,
+								" uuid="
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.GamerInfoUuid,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -16905,7 +17020,7 @@ false,false,6507122753107457,false
 			[
 			[
 				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.MyCondition,
+				cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestGamerInfo,
 				null,
 				0,
 				false,
@@ -16943,7 +17058,7 @@ false,false,6507122753107457,false
 			[
 			[
 				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.MyCondition,
+				cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestGamerInfo,
 				null,
 				0,
 				false,
@@ -18555,6 +18670,316 @@ false,false,6507122753107457,false
 					null,
 					false,
 					null,
+					5297311642759082,
+					[
+					[
+						18,
+						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
+						null,
+						0,
+						false,
+						false,
+						false,
+						6533913228128514,
+						false
+						,[
+						[
+							0,
+							[
+								0,
+								0
+							]
+						]
+,						[
+							3,
+							12
+						]
+						]
+					]
+					],
+					[
+					]
+					,[
+					[
+						0,
+						null,
+						false,
+						null,
+						3517081234550253,
+						[
+						[
+							-1,
+							cr.system_object.prototype.cnds.Compare,
+							null,
+							0,
+							false,
+							false,
+							false,
+							1667997230529543,
+							false
+							,[
+							[
+								7,
+								[
+									23,
+									"ButtonIndex"
+								]
+							]
+,							[
+								8,
+								0
+							]
+,							[
+								7,
+								[
+									0,
+									4
+								]
+							]
+							]
+						]
+						],
+						[
+						[
+							-1,
+							cr.system_object.prototype.acts.SetVar,
+							null,
+							3275102061216195,
+							false
+							,[
+							[
+								11,
+								"SafeAreaAmount"
+							]
+,							[
+								7,
+								[
+									19,
+									cr.system_object.prototype.exps.min
+									,[
+[
+										0,
+										1
+									]
+,[
+										4,
+										[
+											23,
+											"SafeAreaAmount"
+										]
+										,[
+											1,
+											0.1
+										]
+									]
+									]
+								]
+							]
+							]
+						]
+,						[
+							17,
+							cr.plugins_.Text.prototype.acts.SetText,
+							null,
+							5047321514466906,
+							false
+							,[
+							[
+								7,
+								[
+									10,
+									[
+										2,
+										"Setting safe area... "
+									]
+									,[
+										23,
+										"SafeAreaAmount"
+									]
+								]
+							]
+							]
+						]
+,						[
+							0,
+							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
+							null,
+							2066764487615797,
+							false
+							,[
+							[
+								0,
+								[
+									23,
+									"SafeAreaAmount"
+								]
+							]
+							]
+						]
+						]
+					]
+					]
+				]
+,				[
+					0,
+					null,
+					false,
+					null,
+					1083152529027286,
+					[
+					[
+						18,
+						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
+						null,
+						0,
+						false,
+						false,
+						false,
+						3745087037594735,
+						false
+						,[
+						[
+							0,
+							[
+								0,
+								0
+							]
+						]
+,						[
+							3,
+							13
+						]
+						]
+					]
+					],
+					[
+					]
+					,[
+					[
+						0,
+						null,
+						false,
+						null,
+						409457045787836,
+						[
+						[
+							-1,
+							cr.system_object.prototype.cnds.Compare,
+							null,
+							0,
+							false,
+							false,
+							false,
+							4823616386521923,
+							false
+							,[
+							[
+								7,
+								[
+									23,
+									"ButtonIndex"
+								]
+							]
+,							[
+								8,
+								0
+							]
+,							[
+								7,
+								[
+									0,
+									4
+								]
+							]
+							]
+						]
+						],
+						[
+						[
+							-1,
+							cr.system_object.prototype.acts.SetVar,
+							null,
+							679298570015785,
+							false
+							,[
+							[
+								11,
+								"SafeAreaAmount"
+							]
+,							[
+								7,
+								[
+									19,
+									cr.system_object.prototype.exps.max
+									,[
+[
+										0,
+										0
+									]
+,[
+										5,
+										[
+											23,
+											"SafeAreaAmount"
+										]
+										,[
+											1,
+											0.1
+										]
+									]
+									]
+								]
+							]
+							]
+						]
+,						[
+							17,
+							cr.plugins_.Text.prototype.acts.SetText,
+							null,
+							6579623987264257,
+							false
+							,[
+							[
+								7,
+								[
+									10,
+									[
+										2,
+										"Setting safe area... "
+									]
+									,[
+										23,
+										"SafeAreaAmount"
+									]
+								]
+							]
+							]
+						]
+,						[
+							0,
+							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
+							null,
+							275357495991527,
+							false
+							,[
+							[
+								0,
+								[
+									23,
+									"SafeAreaAmount"
+								]
+							]
+							]
+						]
+						]
+					]
+					]
+				]
+,				[
+					0,
+					null,
+					false,
+					null,
 					945897824287367,
 					[
 					[
@@ -18850,71 +19275,6 @@ false,false,6507122753107457,false
 							cr.plugins_.OuyaSDK.prototype.acts.requestGamerInfo,
 							null,
 							4761493111722674,
-							false
-						]
-						]
-					]
-,					[
-						0,
-						null,
-						false,
-						null,
-						3913815113600801,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							9437848779867599,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									4
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							4756994409992298,
-							false
-							,[
-							[
-								7,
-								[
-									2,
-									"Setting safe area..."
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
-							null,
-							461753284886358,
 							false
 						]
 						]

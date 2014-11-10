@@ -365,6 +365,51 @@ cr.plugins_.OuyaSDK = function(runtime)
 	// Conditions
 	function Cnds() {};
 
+	Cnds.prototype.onSuccessInitOuyaPlugin = function () {
+		if (Acts.prototype.hasOnSuccessInitOuyaPlugin != undefined &&
+			Acts.prototype.hasOnSuccessInitOuyaPlugin) {
+			Acts.prototype.hasOnSuccessInitOuyaPlugin = false;
+			return true;
+		}
+		return false;
+	}
+
+	Cnds.prototype.onFailureInitOuyaPlugin = function () {
+		if (Acts.prototype.hasOnFailureInitOuyaPlugin != undefined &&
+			Acts.prototype.hasOnFailureInitOuyaPlugin) {
+			Acts.prototype.hasOnFailureInitOuyaPlugin = false;
+			return true;
+		}
+		return false;
+	}
+
+	Cnds.prototype.onSuccessRequestGamerInfo = function () {
+		if (Acts.prototype.hasOnSuccessRequestGamerInfo != undefined &&
+			Acts.prototype.hasOnSuccessRequestGamerInfo) {
+			Acts.prototype.hasOnSuccessRequestGamerInfo = false;
+			return true;
+		}
+		return false;
+	}
+
+	Cnds.prototype.onFailureRequestGamerInfo = function () {
+		if (Acts.prototype.hasOnFailureRequestGamerInfo != undefined &&
+			Acts.prototype.hasOnFailureRequestGamerInfo) {
+			Acts.prototype.hasOnFailureRequestGamerInfo = false;
+			return true;
+		}
+		return false;
+	}
+
+	Cnds.prototype.onCancelRequestGamerInfo = function () {
+		if (Acts.prototype.hasOnCancelRequestGamerInfo != undefined &&
+			Acts.prototype.hasOnCancelRequestGamerInfo) {
+			Acts.prototype.hasOnCancelRequestGamerInfo = false;
+			return true;
+		}
+		return false;
+	}
+
 	// the example condition
 	Cnds.prototype.MyCondition = function (myparam)
 	{
@@ -380,59 +425,69 @@ cr.plugins_.OuyaSDK = function(runtime)
 	// Actions
 	function Acts() {};
 
-	var ouyaInitializationValues = Array();
+	Acts.prototype.ouyaInitializationValues = Array();
 
 	Acts.prototype.addInitOuyaPluginValues = function (key, value)
 	{
-		ouyaInitializationValues[ouyaInitializationValues.length] =
+		Acts.prototype.ouyaInitializationValues[Acts.prototype.ouyaInitializationValues.length] =
 		{
 			'key': 'tv.ouya.developer_id',
 			'value': '310a8f51-4d6e-4ae5-bda0-b93878e5f5d0'
 		};
 	};
 
-	function onSuccessInitOuyaPlugin() {
+	Acts.prototype.hasOnSuccessInitOuyaPlugin = false;
+	Acts.prototype.onSuccessInitOuyaPlugin = function () {
+		Acts.prototype.hasOnSuccessInitOuyaPlugin = true;
 	}
 
-	function onFailureInitOuyaPlugin(errorCode, errorMessage) {
+	Acts.prototype.hasOnFailureInitOuyaPlugin = false;
+	Acts.prototype.onFailureInitOuyaPlugin = function (errorCode, errorMessage) {
+		Acts.prototype.hasOnFailureInitOuyaPlugin = true;
 	}
 
 	Acts.prototype.initOuyaPlugin = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.initOuyaPlugin != undefined) {
-			var jsonData = JSON.stringify(ouyaInitializationValues);
-            OuyaSDK.initOuyaPlugin(jsonData, onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
+			var jsonData = JSON.stringify(Acts.prototype.ouyaInitializationValues);
+            OuyaSDK.initOuyaPlugin(jsonData, Acts.prototype.onSuccessInitOuyaPlugin, Acts.prototype.onFailureInitOuyaPlugin);
 		}
 	};
 
-	function onSuccessRequestGamerInfo(jsonData) {
+	Acts.prototype.onSuccessRequestGamerInfo = function (jsonData) {
+		Acts.prototype.resultOnSuccessRequestGamerInfo = jsonData;
 		var gamerInfo = JSON.parse(jsonData);
 		var gamerUsername = gamerInfo.username;
 		var gamerUuid = gamerInfo.uuid;
+		Acts.prototype.hasOnSuccessRequestGamerInfo = true;
 	}
 
-	function onFailureRequestGamerInfo(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestGamerInfo = function (errorCode, errorMessage) {
+		Acts.prototype.resultOnFailureRequestGamerInfoErrorCode = errorCode;
+		Acts.prototype.resultOnFailureRequestGamerInfoErrorMessage = errorMessage;
+		Acts.prototype.hasOnFailureRequestGamerInfo = true;
 	}
 
-	function onCancelRequestGamerInfo() {
+	Acts.prototype.onCancelRequestGamerInfo = function () {
+		Acts.prototype.hasOnCancelRequestGamerInfo = true;
 	}
 
 	Acts.prototype.requestGamerInfo = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestGamerInfo != undefined) {
-			OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
+			OuyaSDK.requestGamerInfo(Acts.prototype.onSuccessRequestGamerInfo, Acts.prototype.onFailureRequestGamerInfo, Acts.prototype.onCancelRequestGamerInfo);
 		}
 	};
 
-	function onSuccessRequestProducts(jsonData) {
+	Acts.prototype.onSuccessRequestProducts = function (jsonData) {
 	}
 
-	function onFailureRequestProducts(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestProducts = function (errorCode, errorMessage) {
 	}
 
-	function onCancelRequestProducts() {
+	Acts.prototype.onCancelRequestProducts = function () {
 	}
 
 	Acts.prototype.requestProducts = function (myparam)
@@ -440,17 +495,17 @@ cr.plugins_.OuyaSDK = function(runtime)
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestProducts != undefined) {
 			var products = Array("long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE");
-			OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+			OuyaSDK.requestProducts(products, Acts.prototype.onSuccessRequestProducts, Acts.prototype.onFailureRequestProducts, Acts.prototype.onCancelRequestProducts);
 		}
 	};
 
-	function onSuccessRequestPurchase(jsonData) {
+	Acts.prototype.onSuccessRequestPurchase = function (jsonData) {
 	}
 
-	function onFailureRequestPurchase(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestPurchase = function (errorCode, errorMessage) {
 	}
 
-	function onCancelRequestPurchase() {
+	Acts.prototype.onCancelRequestPurchase = function () {
 	}
 
 	Acts.prototype.requestPurchase = function (myparam)
@@ -458,46 +513,45 @@ cr.plugins_.OuyaSDK = function(runtime)
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestPurchase != undefined) {
 			var purchasable = "long_sword";
-			OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+			OuyaSDK.requestPurchase(purchasable, Acts.prototype.onSuccessRequestPurchase, Acts.prototype.onFailureRequestPurchase, Acts.prototype.onCancelRequestPurchase);
 		}
 	};
 
-	function onSuccessRequestReceipts(jsonData) {
+	Acts.prototype.onSuccessRequestReceipts = function (jsonData) {
 	}
 
-	function onFailureRequestReceipts(errorCode, errorMessage) {
+	Acts.prototype.onFailureRequestReceipts = function (errorCode, errorMessage) {
 	}
 
-	function onCancelRequestReceipts() {
+	Acts.prototype.onCancelRequestReceipts = function () {
 	}
 
 	Acts.prototype.requestReceipts = function (myparam)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestReceipts != undefined) {
-			OuyaSDK.requestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);
+			OuyaSDK.requestReceipts(Acts.prototype.onSuccessRequestReceipts, Acts.prototype.onFailureRequestReceipts, Acts.prototype.onCancelRequestReceipts);
 		}
 	};
 
-	function onSuccessSetSafeArea() {
+	Acts.prototype.onSuccessSetSafeArea = function () {
 	}
 
-	function onFailureSafeArea(errorCode, errorMessage) {
+	Acts.prototype.onFailureSafeArea = function (errorCode, errorMessage) {
 	}
 
-	Acts.prototype.setSafeArea = function (myparam)
+	Acts.prototype.setSafeArea = function (safeAreaAmount)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.setSafeArea != undefined) {
-			var safeAreaAmount = 0.0;
-			OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
+			OuyaSDK.setSafeArea(safeAreaAmount, Acts.prototype.onSuccessSetSafeArea, Acts.prototype.onFailureSafeArea);
 		}
 	};
 
-	function onSuccessShutdown() {
+	Acts.prototype.onSuccessShutdown = function () {
 	}
 
-	function onFailureShutdown(errorCode, errorMessage) {
+	Acts.prototype.onFailureShutdown = function (errorCode, errorMessage) {
 	}
 
 	Acts.prototype.shutdown = function (myparam)
@@ -522,6 +576,26 @@ cr.plugins_.OuyaSDK = function(runtime)
 	//////////////////////////////////////
 	// Expressions
 	function Exps() {};
+
+	Exps.prototype.GamerInfoUsername = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestGamerInfo != undefined) {
+			var gamerInfo = JSON.parse(Acts.prototype.resultOnSuccessRequestGamerInfo);
+			result = gamerInfo.username;
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.GamerInfoUuid = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestGamerInfo != undefined) {
+			var gamerInfo = JSON.parse(Acts.prototype.resultOnSuccessRequestGamerInfo);
+			result = gamerInfo.uuid;
+		}
+		ret.set_string(result);
+	};
 
 	// the example expression
 	Exps.prototype.MyExpression = function (ret)	// 'ret' must always be the first parameter - always return the expression's result through it!
