@@ -29,7 +29,7 @@ local json = require "json"
 plugin_ouya = require "plugin_ouya"
 ui = require "ui"
 
-if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
+if nil ~= plugin_ouya and nil ~= plugin_ouya.initOuyaPlugin then
 	local data = {
 	[1] = {
 	    ["key"] = "tv.ouya.developer_id",

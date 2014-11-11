@@ -1,73 +1,38 @@
 # ouya.*
 
-> __Type__              plugin.ouya
-
-> __Revision__          004 (ODK-2.0.1353.1)
-
-> __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
-
-> __See also__          [Marketplace](http://www.coronalabs.com/store/plugin)
-
-> __Availability__      Basic, Pro, Enterprise
-
-> __Platforms__	       Android
-
+> --------------------- ------------------------------------------------------------------------------------------
+> __Type__              [library][api.type.library]
+> __Revision__          [REVISION_LABEL](REVISION_URL)
+> __Keywords__          OUYA
+> __Availability__      Pro, Enterprise
+> __Platforms__			Android
+> --------------------- ------------------------------------------------------------------------------------------
 
 ## Overview
 
-The OUYA plugin allows you to build games supported on the OUYA system.
+The OUYA plugin allows you to build games supported on the OUYA system. This plugin adds an interface for <nobr>in-app</nobr> purchases (entitlements and consumables) as well as support for accessing the gamer unique identifier.
 
-The plugin provides an interface for <nobr>in-app</nobr> purchases (entitlements and consumables).
+In addition, this plugin integrates with OUYA-Everywhere Input which shares code with the `OuyaFramework` for controller support. Without needing to rebuild or republish, new support for controllers and devices will be added with OUYA OTA updates.
 
-The plugin provides access to the gamer unique identifier and username.
-
-The plugin integrates with OUYA-Everywhere Input which shares code with the OuyaFramework for controller support. Without needing to rebuild or republish, new support for controllers and devices will be added with OUYA OTA updates.
+Plugin has been upgraded to ODK version: 2.0.1353.
 
 
-## Syntax
+## Gotchas
 
-local ouya = require("plugin.ouya") 
-
-This causes the plugin to initialize which registers the Java Named Functions making it possible to call into the plugin from Lua.
+Before in-app purchase functions can be invoked, wait a couple seconds to allow Java to load the OUYA plugin.
+When you invoke an <nobr>in-app</nobr> purchase method, wait for the callback to happen before making a call to another <nobr>in-app</nobr> purchase function. Each call should happen in serial versus asynchronous.
 
 
 ## Functions
 
-Before in-app-purchase functions can be invoked, wait a couple seconds to allow Java to load the ouya plugin.
-When you invoke an in-app-purchase method wait for the callback to happen before making a call to another in-app-purchase function.
-Each call should happen in serial versus asyncronous.
-
-
-##### Named Java methods:
+### Named Java Methods
 
 
 #### ouyaSDK.initOuyaPlugin
 
-Requires callback arguments for onSuccess and onFailure.
-This method passes the plugin intialization values to start the OUYA Plugin.
-The onSuccess callback is invoked if the plugin initializes successfully.
-The onFailure callback is invoked if the plugin fails to initialize.
+Requires callback arguments for onSuccess, onFailure, and the initialization plugin values.
+This method initializes the plugin and invokes the corresponding callback.
 
-lua
-```
-callbacksInitOuyaPlugin.onSuccess = function ()
-end
-
-callbacksInitOuyaPlugin.onFailure = function (errorCode, errorMessage)
-end
-
-callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
-local json = require "json"
-if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
-	local data = {
-	[1] = {
-	    ["key"] = "tv.ouya.developer_id",
-	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
-	}};
-	local jsonData = json.encode(data);
-	ouyaSDK.initOuyaPlugin(callbacksInitOuyaPlugin.onSuccess, callbacksInitOuyaPlugin.onFailure, jsonData);
-end
-```
 
 #### ouyaSDK.asyncLuaOuyaInitInput
 
@@ -77,21 +42,6 @@ This is also connected with OUYA-Everywhere input.
 OUYA-Everywhere input ensures the same controller mappings will work on all supported OUYA devices.
 New devices can be adding without needing to recompile the app/game.
 
-lua
-```
-inputs.onGenericMotionEvent = function (playerNum, axis, val)
-end
-
-inputs.onKeyDown = function (playerNum, button)
-end
-
-inputs.onKeyUp = function (playerNum, button)
-end
-
-if nil ~= ouyaSDK and nil ~= ouyaSDK.asyncLuaOuyaInitInput then
-	ouyaSDK.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
-end
-```
 
 #### ouyaSDK.asyncLuaOuyaGetControllerName
 
@@ -102,7 +52,7 @@ PlayerNum is a zero-based integer which is intended to indicate controller #1, #
 
 #### ouyaSDK.asyncLuaOuyaRequestGamerInfo
 
-Requires developer id to be set.
+Requires initOuyaPlugin to be successfully invoked.
 
 This method has success, failure, and cancel callbacks.
 
@@ -111,7 +61,7 @@ The success event provides access to the gamer's username and unique identifier.
 
 #### ouyaSDK.asyncLuaOuyaRequestProducts
 
-Requires developer id to be set.
+Requires initOuyaPlugin to be successfully invoked.
 
 This method has success, failure, and cancel callbacks.
 
@@ -124,7 +74,7 @@ The cancel event provides no arguments and indicates the request was cancelled.
 
 #### ouyaSDK.asyncLuaOuyaRequestPurchase
 
-Requires developer id to be set.
+Requires initOuyaPlugin to be successfully invoked.
 
 This method has success, failure, and cancel callbacks.
 
@@ -137,7 +87,7 @@ The cancel event provides no arguments and indicates the request was cancelled.
 
 #### ouyaSDK.asyncLuaOuyaRequestReceipts
 
-Requires developer id to be set.
+Requires initOuyaPlugin to be successfully invoked.
 
 This method has success, failure, and cancel callbacks.
 
@@ -148,36 +98,36 @@ The failure event provides an error code and description.
 The cancel event provides no arguments and indicates the request was cancelled.
 
 
-##### Wrapped Methods:
-
-
-Be sure to set your developer id from the [developer portal](http://devs.ouya.tv).
+### Wrapped Methods
 
 
 #### plugin_ouya.initOuyaPlugin
 
-Wraps calling ouyaSDK.initOuyaPlugin so that the plugin is only initialized once.
+Be sure to set your developer id from the [developer portal](http://devs.ouya.tv).
 
 ```lua
 local ouya = require("plugin.ouya") -- load the ouya plugin
 
 callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
+
 local json = require "json"
 plugin_ouya = require "plugin_ouya"
 
-if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
+if nil ~= plugin_ouya and nil ~= plugin_ouya.initOuyaPlugin then
 	local data = {
 	[1] = {
 	    ["key"] = "tv.ouya.developer_id",
-	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0" -- YOUR DEVELOPER ID from the dev portal
+	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
 	}};
 	local jsonData = json.encode(data);
+	--print (jsonData);
 	plugin_ouya.initOuyaPlugin(
 		callbacksInitOuyaPlugin.onSuccess,
 		callbacksInitOuyaPlugin.onFailure,
 		jsonData);
 end
 ```
+
 
 #### plugin_ouya.asyncLuaOuyaInitInput
 
@@ -209,61 +159,63 @@ Wraps calling ouyaSDK.asyncLuaOuyaRequestPurchase to check if the plugin has bee
 Wraps calling ouyaSDK.asyncLuaOuyaRequestReceipts to check if the plugin has been initialized before invoking.
 
 
-#### key.der
+## Signing Key
 
-This is the signing key from the developer portal that goes into your Corona Assets folder (next to main.lua).
+Remember to include the `key.der` signing key from the OUYA developer portal inside your main Corona project directory, alongside `main.lua`.
 
 
 ## Project Settings
 
-### SDK
+To use this plugin, add an entry into the `plugins` table of `build.settings`. When added, the build server will integrate the plugin during the build phase.
 
-When you build using the Corona Simulator, the server automatically takes care of integrating the plugin into your project. 
-
-All you need to do is add an entry into a `plugins` table of your `build.settings`. The following is an example of a minimal `build.settings` file:
-
-```lua
+``````lua
 settings =
 {
 	plugins =
 	{
 		["plugin.ouya"] =
 		{
-			publisherId = "tv.ouya"
+			publisherId = "tv.ouya",
 			supportedPlatforms = { android=true },
 		},
-	},		
+	},
 }
-```
-
+``````
 
 In addition, you must add an intent filter to the `android` table within `build.settings` so that your game icon will appear in the OUYA Play section:
 
-```
-   android =
+``````lua
+settings =
+{
+	android =
    {
-      mainIntentFilter =
-      {
-         categories = { "tv.ouya.intent.category.GAME" },
-      }
-   },
-```
+		mainIntentFilter =
+		{
+			categories = { "tv.ouya.intent.category.GAME" },
+		}
+	},
+}
+``````
+
 
 ## Sample Code
 
 * Enterprise samples &mdash; [https://github.com/ouya/docs/blob/master/corona.md](https://github.com/ouya/docs/blob/master/corona.md)
 
-* In-App-Purchase sample &mdash; [https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/InAppPurchasesPlugin/](https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/InAppPurchasesPlugin)
+* In-App Purchase sample &mdash; [https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/InAppPurchasesPlugin/](https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/InAppPurchasesPlugin)
 
 * Virtual Controller sample &mdash; [https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/VirtualControllerPlugin/](https://github.com/ouya/ouya-sdk-examples/tree/master/Corona/Submission/ouya/samples/VirtualControllerPlugin)
 
 
-## Support
+## Documentation
 
-Support is available from the OUYA team, online hangouts, and the community forums:
+[https://devs.ouya.tv/developers/docs/corona/](https://devs.ouya.tv/developers/docs/corona)
+
+
+## Support
 
 * [http://www.ouya.tv](http://www.ouya.tv)
 * [OUYA Forums](http://forums.ouya.tv/categories/corona-on-ouya)
 * [Corona Forums](http://forums.coronalabs.com/forum/627-ouya/)
-* [OUYA Office Hours](https://github.com/ouya/docs/blob/master/developer_support.md)
+* [Developer Support](https://github.com/ouya/docs/blob/master/developer_support.md)
 * [tgraupmann@ouya.tv](mailto:tgraupmann@ouya.tv)
