@@ -66,23 +66,23 @@ AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Success", "Reques
 AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Failure", "RequestGamerInfo", "requestGamerInfoOnFailure", "Description for my condition!", "onFailureRequestGamerInfo");
 AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Cancel", "RequestGamerInfo", "requestGamerInfoOnCancel", "Description for my condition!", "onCancelRequestGamerInfo");
 
-AddCondition(conditionIndex++, cf_none, "Request Products on Success", "RequestProducts", "requestProductsOnSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Products on Failure", "RequestProducts", "requestProductsOnFailure", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Products on Cancel", "RequestProducts", "requestProductsOnCancel", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Products on Success", "RequestProducts", "requestProductsOnSuccess", "Description for my condition!", "onSuccessRequestProducts");
+AddCondition(conditionIndex++, cf_none, "Request Products on Failure", "RequestProducts", "requestProductsOnFailure", "Description for my condition!", "onFailureRequestProducts");
+AddCondition(conditionIndex++, cf_none, "Request Products on Cancel", "RequestProducts", "requestProductsOnCancel", "Description for my condition!", "onCancelRequestProducts");
 
-AddCondition(conditionIndex++, cf_none, "Request Purchase on Success", "RequestPurchase", "requestPurchaseOnSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Purchase on Failure", "RequestPurchase", "requestPurchaseOnFailure", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Purchase on Cancel", "RequestPurchase", "requestPurchaseOnCancel", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Purchase on Success", "RequestPurchase", "requestPurchaseOnSuccess", "Description for my condition!", "onSuccessRequestPurchase");
+AddCondition(conditionIndex++, cf_none, "Request Purchase on Failure", "RequestPurchase", "requestPurchaseOnFailure", "Description for my condition!", "onFailureRequestPurchase");
+AddCondition(conditionIndex++, cf_none, "Request Purchase on Cancel", "RequestPurchase", "requestPurchaseOnCancel", "Description for my condition!", "onCancelRequestPurchase");
 
-AddCondition(conditionIndex++, cf_none, "Request Receipts on Success", "RequestReceipts", "requestReceiptsOnSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Receipts on Failure", "RequestReceipts", "requestReceiptsOnFailure", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Request Receipts on Cancel", "RequestReceipts", "requestReceiptsOnCancel", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Request Receipts on Success", "RequestReceipts", "requestReceiptsOnSuccess", "Description for my condition!", "onSuccessRequestReceipts");
+AddCondition(conditionIndex++, cf_none, "Request Receipts on Failure", "RequestReceipts", "requestReceiptsOnFailure", "Description for my condition!", "onFailureRequestReceipts");
+AddCondition(conditionIndex++, cf_none, "Request Receipts on Cancel", "RequestReceipts", "requestReceiptsOnCancel", "Description for my condition!", "onCancelRequestReceipts");
 
-AddCondition(conditionIndex++, cf_none, "Set Safe Area on Success", "SetSafeArea", "setSafeAreasOnSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Set Safe Area on Failure", "SetSafeArea", "setSafeAreaOnFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Set Safe Area on Success", "SetSafeArea", "setSafeAreasOnSuccess", "Description for my condition!", "onSuccessSetSafeArea");
+AddCondition(conditionIndex++, cf_none, "Set Safe Area on Failure", "SetSafeArea", "setSafeAreaOnFailure", "Description for my condition!", "onFailureSetSafeArea");
 
-AddCondition(conditionIndex++, cf_none, "Shutdown on Success", "Shutdown", "shutdownOnSuccess", "Description for my condition!", "MyCondition");
-AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shutdownOnFailure", "Description for my condition!", "MyCondition");
+AddCondition(conditionIndex++, cf_none, "Shutdown on Success", "Shutdown", "shutdownOnSuccess", "Description for my condition!", "onSuccessShutdown");
+AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shutdownOnFailure", "Description for my condition!", "onFailureShutdown");
 
 ////////////////////////////////////////
 // Actions
@@ -139,6 +139,19 @@ AddExpression(expressionIndex++, ef_return_number, "Leet expression", "My catego
 
 AddExpression(expressionIndex++, ef_return_string, "GamerInfo.username", "requestGamerInfo", "GamerInfoUsername", "Get GamerInfo.username");
 AddExpression(expressionIndex++, ef_return_string, "GamerInfo.uuid", "requestGamerInfo", "GamerInfoUuid", "Get GamerInfo.uuid");
+
+AddExpression(expressionIndex++, ef_return_number, "Products.length", "requestProducts", "ProductsLength", "Get Products Length");
+
+AddExpression(expressionIndex++, ef_return_number, "Receipts.length", "requestReceipts", "ReceiptsLength", "Get Receipts Length");
+
+AddNumberParam("Index", "Receipt index");
+AddExpression(expressionIndex++, ef_return_string, "GetReceiptsIdentififer", "requestReceipts", "GetReceiptsIdentififer", "Get Receipts Identifier");
+
+AddNumberParam("Index", "Receipt index");
+AddExpression(expressionIndex++, ef_return_string, "GetReceiptsGeneratedDate", "requestReceipts", "GetReceiptsGeneratedDate", "Get Receipts Generated Date");
+
+AddNumberParam("Index", "Receipt index");
+AddExpression(expressionIndex++, ef_return_number, "GetReceiptsLocalPrice", "requestReceipts", "GetReceiptsLocalPrice", "Get Receipts Local Price");
 
 ////////////////////////////////////////
 ACESDone();
