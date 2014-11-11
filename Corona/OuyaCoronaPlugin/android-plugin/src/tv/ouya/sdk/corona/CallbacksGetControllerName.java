@@ -17,6 +17,7 @@
 package tv.ouya.sdk.corona;
 
 import tv.ouya.console.api.OuyaController;
+import android.app.Activity;
 import android.util.Log;
 
 
@@ -87,7 +88,13 @@ public class CallbacksGetControllerName {
 		//Log.i(TAG, "invoke playerNum=" + m_luaPlayerNum + " name="+name);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***

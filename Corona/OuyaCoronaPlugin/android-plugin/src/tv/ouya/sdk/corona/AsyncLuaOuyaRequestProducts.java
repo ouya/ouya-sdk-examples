@@ -52,7 +52,7 @@ public class AsyncLuaOuyaRequestProducts implements com.naef.jnlua.NamedJavaFunc
 		IOuyaActivity.SetCallbacksRequestProducts(callbacks);
 		
 		// invoke service
-		CoronaOuyaPlugin.getProductsAsync();
+		CoronaOuyaPlugin.getProductsAsync(callbacks.getProducts());
 		
 		// Return 0 since this Lua function does not return any values.
 		return 0;

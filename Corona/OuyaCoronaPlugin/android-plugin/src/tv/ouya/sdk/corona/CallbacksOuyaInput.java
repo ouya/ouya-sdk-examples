@@ -16,6 +16,7 @@
 
 package tv.ouya.sdk.corona;
 
+import android.app.Activity;
 import android.util.Log;
 
 
@@ -94,7 +95,13 @@ public class CallbacksOuyaInput {
 		//Log.i(TAG, "onGenericMotionEvent playerNum=" + playerNum + " axis="+axis + " val="+val);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
@@ -143,7 +150,13 @@ public class CallbacksOuyaInput {
 		//Log.i(TAG, "onKeyUp playerNum=" + playerNum + " button="+button);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
@@ -189,7 +202,13 @@ public class CallbacksOuyaInput {
 		//Log.i(TAG, "onKeyDown playerNum=" + playerNum + " button="+button);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***

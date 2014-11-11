@@ -16,10 +16,13 @@
 
 package tv.ouya.sdk.corona;
 
+import android.app.Activity;
 import android.util.Log;
 
 
 public class CallbacksRequestReceipts {
+	
+	private static final String TAG = CallbacksRequestReceipts.class.getSimpleName();
 	
 	private int m_luaStackIndexOnSuccess = 1;
 	private int m_luaReferenceKeyOnSuccess = 0;
@@ -94,7 +97,13 @@ public class CallbacksRequestReceipts {
 		Log.i("CallbacksRequestReceipts", "onSuccess jsonData=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
@@ -137,7 +146,13 @@ public class CallbacksRequestReceipts {
 		Log.i("CallbacksRequestReceipts", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
@@ -183,7 +198,13 @@ public class CallbacksRequestReceipts {
 		Log.i("CallbacksRequestReceipts", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***

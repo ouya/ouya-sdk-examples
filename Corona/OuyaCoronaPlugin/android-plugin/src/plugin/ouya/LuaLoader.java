@@ -1,33 +1,42 @@
 package plugin.ouya;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.util.Log;
+import com.ansca.corona.*;
+import java.io.IOException;
+import java.io.InputStream;
 import tv.ouya.console.api.OuyaController;
-
 import tv.ouya.sdk.corona.*;
 
 public class LuaLoader implements com.naef.jnlua.JavaFunction {
 	
-	private final String LOG_TAG = "PluginOuyaLuaLoader";
-	
-	private static boolean m_waitToExit = true;
-	
+	private final String LOG_TAG = LuaLoader.class.getSimpleName();
+		
 	com.naef.jnlua.NamedJavaFunction[] luaFunctions = null;
 	
 	private static LuaLoader.CoronaRuntimeEventHandler runtimeEventHandler = null;
 
 	public LuaLoader() {
+	
+		if (null == runtimeEventHandler) {
+			// OUYA activity has not been initialized
+			
+			Log.i(LOG_TAG, "Switching to OUYA SDK activity");
+			final Activity activity = CoronaEnvironment.getCoronaActivity();
+			Intent intent = new Intent(activity, CoronaOuyaActivity.class);
+			activity.startActivity(intent);
+			activity.finish();
+			return;
+		}
 		
 		// Set up a Corona runtime listener used to add custom APIs to Lua.
 		if (null == runtimeEventHandler) { //only construct one
 			runtimeEventHandler = new LuaLoader.CoronaRuntimeEventHandler();
 		}
-		com.ansca.corona.CoronaEnvironment.addRuntimeListener(runtimeEventHandler);
+		com.ansca.corona.CoronaEnvironment.addRuntimeListener(runtimeEventHandler);		
 	}
 
 	/**
@@ -38,18 +47,18 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 	@Override
 	public int invoke(com.naef.jnlua.LuaState luaState) {
 		
-		Log.i(LOG_TAG, "invoke");
+		//Log.i(LOG_TAG, "invoke");
 
 		// This is where you would register Lua functions into this object's Lua library.
 		
 		// the normal way to register named java functions
-		Log.i(LOG_TAG, "Register named functions for lua");
+		//Log.i(LOG_TAG, "Register named functions for lua");
 		
 		// Add a module named "myTests" to Lua having the following functions.
 		luaFunctions = new com.naef.jnlua.NamedJavaFunction[] {
 			new AsyncLuaOuyaGetControllerName(),
 			new AsyncLuaOuyaInitInput(),
-			new AsyncLuaOuyaSetDeveloperId(),
+			new AsyncLuaInitOuyaPlugin(),
 			new AsyncLuaOuyaRequestGamerInfo(),
 			new AsyncLuaOuyaRequestProducts(),
 			new AsyncLuaOuyaRequestPurchase(),
@@ -60,8 +69,8 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		
 		initializeOUYA();
 		
-		Log.i(LOG_TAG, "Named functions for lua registered.");
-		Log.i(LOG_TAG, "****\n*****\n****\n****\n****\n");
+		//Log.i(LOG_TAG, "Named functions for lua registered.");
+		//Log.i(LOG_TAG, "****\n*****\n****\n****\n****\n");
 
 		return 1;
 	}
@@ -70,6 +79,9 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 	
 	/** Receives and handles Corona runtime events. */
 	private class CoronaRuntimeEventHandler implements com.ansca.corona.CoronaRuntimeListener {
+
+		private CoronaActivity.OnActivityResultHandler mOnActivityResultHandler = null;
+
 		/**
 		 * Called after the Corona runtime has been created and just before executing the "main.lua" file.
 		 * This is the application's opportunity to register custom APIs into Lua.
@@ -80,7 +92,6 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		 */
 		@Override
 		public void onLoaded(com.ansca.corona.CoronaRuntime runtime) {
-			
 			Log.i(LOG_TAG, "CoronaRuntimeEventHandler.onLoaded");
 		}
 		
@@ -93,6 +104,29 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		@Override
 		public void onStarted(com.ansca.corona.CoronaRuntime runtime) {
 			Log.i(LOG_TAG, "CoronaRuntimeEventHandler.onStarted");
+
+			mOnActivityResultHandler = new CoronaActivity.OnActivityResultHandler() {
+				@Override
+				public void onHandleActivityResult(CoronaActivity activity, int requestCode, int resultCode, android.content.Intent data) {
+					Log.i(LOG_TAG, "onHandleActivityResult");
+					CoronaOuyaFacade coronaOuyaFacade = IOuyaActivity.GetCoronaOuyaFacade();
+			    	if (null != coronaOuyaFacade)
+					{
+				    	// Forward this result to the facade, in case it is waiting for any activity results
+				        if(coronaOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+				            return;
+				        }
+					}
+				}
+			};
+
+			Log.i(LOG_TAG, "Get activity from Corona Environment...");
+			CoronaActivity coronaActivity = CoronaEnvironment.getCoronaActivity();
+
+			Log.i(LOG_TAG, "Registered Activity Result Handler");
+			int result = coronaActivity.registerActivityResultHandler(mOnActivityResultHandler);
+
+			Log.i(LOG_TAG, "Registered Activity Result Handler returned="+result);
 		}
 		
 		/**
@@ -132,10 +166,9 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		@Override
 		public void onExiting(com.ansca.corona.CoronaRuntime runtime) {
 			Log.i(LOG_TAG, "CoronaRuntimeEventHandler.onExiting");
-			LuaLoader.m_waitToExit = false;
 		}
 	}
-	
+
 	private void initializeOUYA() {
 		
 		Log.i(LOG_TAG, "Initializing OUYA...");
@@ -162,56 +195,11 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		
 		// Init the controller
 		OuyaController.init(context);
-		
-		Log.i(LOG_TAG, "Initialize CoronaOuyaPlugin...");
-		
-		// Initialize the OUYA Corona Plugin
-		CoronaOuyaPlugin ouyaCoronaPlugin = new CoronaOuyaPlugin();
-		IOuyaActivity.SetOuyaCoronaPlugin(ouyaCoronaPlugin);
-		
-		Log.i(LOG_TAG, "Get activity from context...");
-		final Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+			
+		Log.i(LOG_TAG, "Get activity from Corona Environment...");
+		final Activity activity = CoronaEnvironment.getCoronaActivity();
 		
 		//make activity accessible to Unity
 		IOuyaActivity.SetActivity(activity);
-		
-		Log.i(LOG_TAG, "Spawn wait thread...");
-		
-		// spawn thread to wait to initialize ouya facade
-		Thread timer = new Thread() {
-			public void run() {
-				// wait for developer id to be set
-				while (LuaLoader.m_waitToExit) {
-					
-					final CoronaOuyaPlugin ouyaCoronaPlugin = IOuyaActivity.GetOuyaCoronaPlugin();
-					if (null != ouyaCoronaPlugin) {
-						if (ouyaCoronaPlugin.getDeveloperId() != "") {
-							Log.i(LOG_TAG, "Detected developer id initializing...");
-							
-							Runnable runnable = new Runnable()
-							{
-								public void run()
-								{
-									Log.i(LOG_TAG, "OuyaCoronaPlugin initializing...");
-									ouyaCoronaPlugin.InitializeTest();
-								}
-							};
-
-							activity.runOnUiThread(runnable);
-							
-							break;
-						}
-					}
-
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-        };
-        timer.start();
 	}
 }

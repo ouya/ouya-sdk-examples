@@ -16,10 +16,17 @@
 
 package tv.ouya.sdk.corona;
 
+import android.app.Activity;
 import android.util.Log;
+import java.util.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import tv.ouya.console.api.*;
 
 
 public class CallbacksRequestProducts {
+
+	private static final String TAG = CallbacksRequestProducts.class.getSimpleName();
 	
 	private int m_luaStackIndexOnSuccess = 1;
 	private int m_luaReferenceKeyOnSuccess = 0;
@@ -33,6 +40,12 @@ public class CallbacksRequestProducts {
 	private int m_luaStackIndexProducts = 4;
 	
 	private com.ansca.corona.CoronaRuntimeTaskDispatcher m_dispatcher = null;
+
+	private ArrayList<Purchasable> mProducts = new ArrayList<Purchasable>();;
+
+	public ArrayList<Purchasable> getProducts() {
+		return mProducts;
+	}
 	
 	public CallbacksRequestProducts(com.naef.jnlua.LuaState luaState) {
 		
@@ -95,80 +108,15 @@ public class CallbacksRequestProducts {
 		// Check if the first argument is a function.
 		// Will print a stack trace if not or if no argument was given.
 		try {
-			luaState.checkType(m_luaStackIndexProducts, com.naef.jnlua.LuaType.TABLE);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return;
-		}
-		
-		//clear the list of products
-		CoronaOuyaPlugin.clearGetProductList();
-		
-		// Print the Lua function's argument to the Android logging system.
-		try {
-			// Check if the Lua function's first argument is a Lua table.
-			// Will throw an exception if it is not a table or if no argument was given.
-			int luaTableStackIndex = m_luaStackIndexProducts;
-			luaState.checkType(luaTableStackIndex, com.naef.jnlua.LuaType.TABLE);
-			
-			// Print all of the key/value paris in the Lua table.
-			System.out.println("printTable()");
-			System.out.println("{");
-			for (luaState.pushNil(); luaState.next(luaTableStackIndex); luaState.pop(1)) {
-				// Fetch the table entry's string key.
-				// An index of -2 accesses the key that was pushed into the Lua stack by luaState.next() up above.
-				String keyName = null;
-				com.naef.jnlua.LuaType luaType = luaState.type(-2);
-				switch (luaType) {
-					case STRING:
-						// Fetch the table entry's string key.
-						keyName = luaState.toString(-2);
-						break;
-					case NUMBER:
-						// The key will be a number if the given Lua table is really an array.
-						// In this case, the key is an array index. Do not call luaState.toString() on the
-						// numeric key or else Lua will convert the key to a string from within the Lua table.
-						keyName = Integer.toString(luaState.toInteger(-2));
-						break;
+			String jsonData = luaState.checkString(m_luaStackIndexProducts);
+			JSONArray jsonArray = new JSONArray(jsonData);
+			for (int index = 0; index < jsonArray.length(); ++index) {
+				String productId = jsonArray.getString(index);
+				if (null != productId) {
+					Purchasable purchasable = new Purchasable(productId);
+					mProducts.add(purchasable);
 				}
-				if (keyName == null) {
-					// A valid key was not found. Skip this table entry.
-					continue;
-				}
-				
-				// Fetch the table entry's value in string form.
-				// An index of -1 accesses the entry's value that was pushed into the Lua stack by luaState.next() above.
-				String valueString = null;
-				luaType = luaState.type(-1);
-				switch (luaType) {
-					case STRING:
-						valueString = luaState.toString(-1);
-						break;
-					case BOOLEAN:
-						valueString = Boolean.toString(luaState.toBoolean(-1));
-						break;
-					case NUMBER:
-						valueString = Double.toString(luaState.toNumber(-1));
-						break;
-					default:
-						valueString = luaType.displayText();
-						break;
-				}
-				if (valueString == null) {
-					valueString = "";
-				}
-				
-				// Print the table entry to the Android logging system.
-				System.out.println("   [" + keyName + "] = " + valueString);
-				
-				//add to the product list
-				CoronaOuyaPlugin.addGetProduct(valueString);
 			}
-			System.out.println("}");
-			
-			//show added products
-			CoronaOuyaPlugin.debugGetProductList();
 		}
 		catch (Exception ex) {
 			// An exception will occur if given an invalid argument or no argument. Print the error.
@@ -178,10 +126,16 @@ public class CallbacksRequestProducts {
 	
 	public void onSuccess(final String jsonData) {
 		
-		Log.i("CallbacksRequestProducts", "onSuccess jsonData=" + jsonData);
+		//Log.i("CallbacksRequestProducts", "onSuccess jsonData=" + jsonData);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
@@ -225,7 +179,13 @@ public class CallbacksRequestProducts {
 		Log.i("CallbacksRequestProducts", "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
@@ -271,7 +231,13 @@ public class CallbacksRequestProducts {
 		Log.i("CallbacksRequestProducts", "onCancel");
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
-		com.ansca.corona.CoronaEnvironment.getCoronaActivity().runOnUiThread(new Runnable() {
+		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.i(TAG, "Activity is null");
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// *** We are now running in the main UI thread. ***
