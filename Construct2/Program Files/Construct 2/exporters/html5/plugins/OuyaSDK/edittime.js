@@ -142,6 +142,18 @@ AddExpression(expressionIndex++, ef_return_string, "GamerInfo.uuid", "requestGam
 
 AddExpression(expressionIndex++, ef_return_number, "Products.length", "requestProducts", "ProductsLength", "Get Products Length");
 
+AddNumberParam("Index", "Product index");
+AddExpression(expressionIndex++, ef_return_string, "GetProductsIdentifier", "requestProducts", "GetProductsIdentifier", "Get Products Identifier");
+
+AddNumberParam("Index", "Product index");
+AddExpression(expressionIndex++, ef_return_string, "GetProductsName", "requestProducts", "GetProductsName", "Get Products Name");
+
+AddNumberParam("Index", "Product index");
+AddExpression(expressionIndex++, ef_return_string, "GetProductsDescription", "requestProducts", "GetProductsDescription", "Get Productions Description");
+
+AddNumberParam("Index", "Product index");
+AddExpression(expressionIndex++, ef_return_number, "GetProductsLocalPrice", "requestProducts", "GetProductsLocalPrice", "Get Products Local Price");
+
 AddExpression(expressionIndex++, ef_return_number, "Receipts.length", "requestReceipts", "ReceiptsLength", "Get Receipts Length");
 
 AddNumberParam("Index", "Receipt index");

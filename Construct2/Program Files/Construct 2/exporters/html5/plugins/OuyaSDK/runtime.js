@@ -644,11 +644,11 @@ cr.plugins_.OuyaSDK = function(runtime)
 		Acts.prototype.hasOnCancelRequestPurchase = true;
 	}
 
-	Acts.prototype.requestPurchase = function (myparam)
+	Acts.prototype.requestPurchase = function (purchasable)
 	{
 		if (OuyaSDK != undefined &&
-			OuyaSDK.requestPurchase != undefined) {
-			var purchasable = "long_sword";
+			OuyaSDK.requestPurchase != undefined &&
+			purchasable != "") {
 			OuyaSDK.requestPurchase(purchasable, Acts.prototype.onSuccessRequestPurchase, Acts.prototype.onFailureRequestPurchase, Acts.prototype.onCancelRequestPurchase);
 		}
 	};
@@ -716,7 +716,7 @@ cr.plugins_.OuyaSDK = function(runtime)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.shutdown != undefined) {
-			OuyaSDK.shutdown(onSuccessShutdown, onFailureShutdown);
+			OuyaSDK.shutdown(Acts.prototype.onSuccessShutdown, Acts.prototype.onFailureShutdown);
 		}
 	};
 
@@ -763,6 +763,70 @@ cr.plugins_.OuyaSDK = function(runtime)
 			result = products.length;
 		}
 		ret.set_int(result);
+	};
+
+	Exps.prototype.GetProductsIdentifier = function (ret, index)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.identifier;
+				}
+			}
+
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.GetProductsName = function (ret, index)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.name;
+				}
+			}
+
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.GetProductsDescription = function (ret, index)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.description;
+				}
+			}
+
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.GetProductsLocalPrice = function (ret, index)
+	{
+		var result = 0.0;
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.localPrice;
+				}
+			}
+
+		}
+		ret.set_float(result);
 	};
 
 	Exps.prototype.ReceiptsLength = function (ret)

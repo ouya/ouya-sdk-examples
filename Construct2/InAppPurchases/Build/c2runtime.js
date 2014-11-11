@@ -13452,11 +13452,11 @@ cr.plugins_.OuyaSDK = function(runtime)
 	Acts.prototype.onCancelRequestPurchase = function () {
 		Acts.prototype.hasOnCancelRequestPurchase = true;
 	}
-	Acts.prototype.requestPurchase = function (myparam)
+	Acts.prototype.requestPurchase = function (purchasable)
 	{
 		if (OuyaSDK != undefined &&
-			OuyaSDK.requestPurchase != undefined) {
-			var purchasable = "long_sword";
+			OuyaSDK.requestPurchase != undefined &&
+			purchasable != "") {
 			OuyaSDK.requestPurchase(purchasable, Acts.prototype.onSuccessRequestPurchase, Acts.prototype.onFailureRequestPurchase, Acts.prototype.onCancelRequestPurchase);
 		}
 	};
@@ -13514,7 +13514,7 @@ cr.plugins_.OuyaSDK = function(runtime)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.shutdown != undefined) {
-			OuyaSDK.shutdown(onSuccessShutdown, onFailureShutdown);
+			OuyaSDK.shutdown(Acts.prototype.onSuccessShutdown, Acts.prototype.onFailureShutdown);
 		}
 	};
 	Acts.prototype.MyAction = function (myparam)
@@ -13549,6 +13549,62 @@ cr.plugins_.OuyaSDK = function(runtime)
 			result = products.length;
 		}
 		ret.set_int(result);
+	};
+	Exps.prototype.GetProductsIdentifier = function (ret, index)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.identifier;
+				}
+			}
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.GetProductsName = function (ret, index)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.name;
+				}
+			}
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.GetProductsDescription = function (ret, index)
+	{
+		var result = "";
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.description;
+				}
+			}
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.GetProductsLocalPrice = function (ret, index)
+	{
+		var result = 0.0;
+		if (Acts.prototype.resultOnSuccessRequestProducts != undefined) {
+			var products = JSON.parse(Acts.prototype.resultOnSuccessRequestProducts);
+			if (products != undefined) {
+				var product = products[index];
+				if (product != undefined) {
+					result = product.localPrice;
+				}
+			}
+		}
+		ret.set_float(result);
 	};
 	Exps.prototype.ReceiptsLength = function (ret)
 	{
@@ -16968,6 +17024,13 @@ false,false,9702340493828291,false
 		]
 ,		[
 			1,
+			"RequestPurchaseIndex",
+			0,
+			0,
+false,false,9176812289096727,false
+		]
+,		[
+			1,
 			"SafeAreaAmount",
 			0,
 			1,
@@ -17437,6 +17500,233 @@ false,false,723212796259268,false
 				]
 				]
 			]
+,			[
+				-1,
+				cr.system_object.prototype.acts.SetVar,
+				null,
+				9746196301800118,
+				false
+				,[
+				[
+					11,
+					"ProductIndex"
+				]
+,				[
+					7,
+					[
+						0,
+						0
+					]
+				]
+				]
+			]
+			]
+			,[
+			[
+				0,
+				null,
+				false,
+				null,
+				4078190422696228,
+				[
+				[
+					-1,
+					cr.system_object.prototype.cnds.Repeat,
+					null,
+					0,
+					true,
+					false,
+					false,
+					6901445315987263,
+					false
+					,[
+					[
+						0,
+						[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
+							false,
+							null
+						]
+					]
+					]
+				]
+				],
+				[
+				[
+					19,
+					cr.plugins_.Text.prototype.acts.SetText,
+					null,
+					814834755519058,
+					false
+					,[
+					[
+						7,
+						[
+							10,
+							[
+								10,
+								[
+									10,
+									[
+										10,
+										[
+											10,
+											[
+												10,
+												[
+													10,
+													[
+														10,
+														[
+															10,
+															[
+																20,
+																19,
+																cr.plugins_.Text.prototype.exps.Text,
+																true,
+																null
+															]
+															,[
+																23,
+																"ProductIndex"
+															]
+														]
+														,[
+															2,
+															": identifier="
+														]
+													]
+													,[
+														20,
+														0,
+														cr.plugins_.OuyaSDK.prototype.exps.GetProductsIdentifier,
+														true,
+														null
+														,[
+[
+															23,
+															"ProductIndex"
+														]
+														]
+													]
+												]
+												,[
+													2,
+													" name="
+												]
+											]
+											,[
+												20,
+												0,
+												cr.plugins_.OuyaSDK.prototype.exps.GetProductsName,
+												true,
+												null
+												,[
+[
+													23,
+													"ProductIndex"
+												]
+												]
+											]
+										]
+										,[
+											2,
+											" description="
+										]
+									]
+									,[
+										20,
+										0,
+										cr.plugins_.OuyaSDK.prototype.exps.GetProductsDescription,
+										true,
+										null
+										,[
+[
+											23,
+											"ProductIndex"
+										]
+										]
+									]
+								]
+								,[
+									2,
+									" localPrice="
+								]
+							]
+							,[
+								20,
+								0,
+								cr.plugins_.OuyaSDK.prototype.exps.GetProductsLocalPrice,
+								false,
+								null
+								,[
+[
+									23,
+									"ProductIndex"
+								]
+								]
+							]
+						]
+					]
+					]
+				]
+,				[
+					19,
+					cr.plugins_.Text.prototype.acts.SetText,
+					null,
+					5574088703932139,
+					false
+					,[
+					[
+						7,
+						[
+							10,
+							[
+								20,
+								19,
+								cr.plugins_.Text.prototype.exps.Text,
+								true,
+								null
+							]
+							,[
+								2,
+								"\n\n"
+							]
+						]
+					]
+					]
+				]
+,				[
+					-1,
+					cr.system_object.prototype.acts.SetVar,
+					null,
+					780419189857172,
+					false
+					,[
+					[
+						11,
+						"ProductIndex"
+					]
+,					[
+						7,
+						[
+							4,
+							[
+								23,
+								"ProductIndex"
+							]
+							,[
+								0,
+								1
+							]
+						]
+					]
+					]
+				]
+				]
+			]
 			]
 		]
 ,		[
@@ -17753,6 +18043,26 @@ false,false,723212796259268,false
 				]
 				]
 			]
+,			[
+				-1,
+				cr.system_object.prototype.acts.SetVar,
+				null,
+				6095590507223931,
+				false
+				,[
+				[
+					11,
+					"ReceiptIndex"
+				]
+,				[
+					7,
+					[
+						0,
+						0
+					]
+				]
+				]
+			]
 			]
 			,[
 			[
@@ -17764,7 +18074,7 @@ false,false,723212796259268,false
 				[
 				[
 					-1,
-					cr.system_object.prototype.cnds.For,
+					cr.system_object.prototype.cnds.Repeat,
 					null,
 					0,
 					true,
@@ -17774,20 +18084,6 @@ false,false,723212796259268,false
 					false
 					,[
 					[
-						1,
-						[
-							2,
-							"ReceiptIndex"
-						]
-					]
-,					[
-						0,
-						[
-							0,
-							0
-						]
-					]
-,					[
 						0,
 						[
 							20,
@@ -17917,6 +18213,33 @@ false,false,723212796259268,false
 							,[
 								2,
 								"\n\n"
+							]
+						]
+					]
+					]
+				]
+,				[
+					-1,
+					cr.system_object.prototype.acts.SetVar,
+					null,
+					7736915587003851,
+					false
+					,[
+					[
+						11,
+						"ReceiptIndex"
+					]
+,					[
+						7,
+						[
+							4,
+							[
+								23,
+								"ReceiptIndex"
+							]
+							,[
+								0,
+								1
 							]
 						]
 					]
@@ -19213,7 +19536,7 @@ false,false,723212796259268,false
 								7,
 								[
 									0,
-									4
+									1
 								]
 							]
 							]
@@ -19225,6 +19548,165 @@ false,false,723212796259268,false
 							cr.system_object.prototype.acts.SetVar,
 							null,
 							3275102061216195,
+							false
+							,[
+							[
+								11,
+								"RequestPurchaseIndex"
+							]
+,							[
+								7,
+								[
+									19,
+									cr.system_object.prototype.exps.max
+									,[
+[
+										0,
+										0
+									]
+,[
+										19,
+										cr.system_object.prototype.exps.min
+										,[
+[
+											5,
+											[
+												20,
+												0,
+												cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
+												false,
+												null
+											]
+											,[
+												0,
+												1
+											]
+										]
+,[
+											5,
+											[
+												23,
+												"RequestPurchaseIndex"
+											]
+											,[
+												0,
+												1
+											]
+										]
+										]
+									]
+									]
+								]
+							]
+							]
+						]
+,						[
+							17,
+							cr.plugins_.Text.prototype.acts.SetText,
+							null,
+							5047321514466906,
+							false
+							,[
+							[
+								7,
+								[
+									10,
+									[
+										2,
+										"Request Purchase Item #"
+									]
+									,[
+										23,
+										"RequestPurchaseIndex"
+									]
+								]
+							]
+							]
+						]
+						]
+					]
+					]
+				]
+,				[
+					0,
+					null,
+					false,
+					null,
+					9374358313745289,
+					[
+					[
+						18,
+						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
+						null,
+						0,
+						false,
+						false,
+						false,
+						4761510283522202,
+						false
+						,[
+						[
+							0,
+							[
+								0,
+								0
+							]
+						]
+,						[
+							3,
+							12
+						]
+						]
+					]
+					],
+					[
+					]
+					,[
+					[
+						0,
+						null,
+						false,
+						null,
+						1085024596155466,
+						[
+						[
+							-1,
+							cr.system_object.prototype.cnds.Compare,
+							null,
+							0,
+							false,
+							false,
+							false,
+							205502232051062,
+							false
+							,[
+							[
+								7,
+								[
+									23,
+									"ButtonIndex"
+								]
+							]
+,							[
+								8,
+								0
+							]
+,							[
+								7,
+								[
+									0,
+									4
+								]
+							]
+							]
+						]
+						],
+						[
+						[
+							-1,
+							cr.system_object.prototype.acts.SetVar,
+							null,
+							6213539768210957,
 							false
 							,[
 							[
@@ -19261,7 +19743,7 @@ false,false,723212796259268,false
 							17,
 							cr.plugins_.Text.prototype.acts.SetText,
 							null,
-							5047321514466906,
+							2511901172867466,
 							false
 							,[
 							[
@@ -19284,7 +19766,7 @@ false,false,723212796259268,false
 							0,
 							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
 							null,
-							2066764487615797,
+							2798750066526453,
 							false
 							,[
 							[
@@ -19340,7 +19822,7 @@ false,false,723212796259268,false
 						null,
 						false,
 						null,
-						409457045787836,
+						9469133035577634,
 						[
 						[
 							-1,
@@ -19350,7 +19832,166 @@ false,false,723212796259268,false
 							false,
 							false,
 							false,
-							4823616386521923,
+							8176801400729995,
+							false
+							,[
+							[
+								7,
+								[
+									23,
+									"ButtonIndex"
+								]
+							]
+,							[
+								8,
+								0
+							]
+,							[
+								7,
+								[
+									0,
+									1
+								]
+							]
+							]
+						]
+						],
+						[
+						[
+							-1,
+							cr.system_object.prototype.acts.SetVar,
+							null,
+							5107188209360662,
+							false
+							,[
+							[
+								11,
+								"RequestPurchaseIndex"
+							]
+,							[
+								7,
+								[
+									19,
+									cr.system_object.prototype.exps.max
+									,[
+[
+										0,
+										0
+									]
+,[
+										19,
+										cr.system_object.prototype.exps.min
+										,[
+[
+											5,
+											[
+												20,
+												0,
+												cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
+												false,
+												null
+											]
+											,[
+												0,
+												1
+											]
+										]
+,[
+											4,
+											[
+												23,
+												"RequestPurchaseIndex"
+											]
+											,[
+												0,
+												1
+											]
+										]
+										]
+									]
+									]
+								]
+							]
+							]
+						]
+,						[
+							17,
+							cr.plugins_.Text.prototype.acts.SetText,
+							null,
+							8411084945771862,
+							false
+							,[
+							[
+								7,
+								[
+									10,
+									[
+										2,
+										"Request Purchase Item #"
+									]
+									,[
+										23,
+										"RequestPurchaseIndex"
+									]
+								]
+							]
+							]
+						]
+						]
+					]
+					]
+				]
+,				[
+					0,
+					null,
+					false,
+					null,
+					8242523447191213,
+					[
+					[
+						18,
+						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
+						null,
+						0,
+						false,
+						false,
+						false,
+						6402292622208496,
+						false
+						,[
+						[
+							0,
+							[
+								0,
+								0
+							]
+						]
+,						[
+							3,
+							13
+						]
+						]
+					]
+					],
+					[
+					]
+					,[
+					[
+						0,
+						null,
+						false,
+						null,
+						8933305522708372,
+						[
+						[
+							-1,
+							cr.system_object.prototype.cnds.Compare,
+							null,
+							0,
+							false,
+							false,
+							false,
+							6224473523373183,
 							false
 							,[
 							[
@@ -19379,7 +20020,7 @@ false,false,723212796259268,false
 							-1,
 							cr.system_object.prototype.acts.SetVar,
 							null,
-							679298570015785,
+							5709864170930921,
 							false
 							,[
 							[
@@ -19416,7 +20057,7 @@ false,false,723212796259268,false
 							17,
 							cr.plugins_.Text.prototype.acts.SetText,
 							null,
-							6579623987264257,
+							1557669222885683,
 							false
 							,[
 							[
@@ -19439,7 +20080,7 @@ false,false,723212796259268,false
 							0,
 							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
 							null,
-							275357495991527,
+							7518997218106558,
 							false
 							,[
 							[
@@ -19630,8 +20271,17 @@ false,false,723212796259268,false
 							[
 								1,
 								[
-									23,
-									"Purchasable"
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.GetProductsIdentifier,
+									true,
+									null
+									,[
+[
+										23,
+										"RequestPurchaseIndex"
+									]
+									]
 								]
 							]
 							]
