@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.examples.corona.inapppurchases;
+package tv.ouya.sdk.corona;
 
 import tv.ouya.sdk.corona.*;
 

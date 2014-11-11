@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.examples.corona.inapppurchases;
+package tv.ouya.sdk.corona;
 
 import tv.ouya.sdk.corona.*;
 
@@ -25,12 +25,12 @@ import tv.ouya.sdk.corona.*;
  * activity is displayed and will persist after the activity is destroyed. The name of this class must be set in the
  * AndroidManifest.xml file's "application" tag or else an instance of this class will not be created on startup.
  */
-public class CoronaApplication extends android.app.Application {
+public class CoronaOuyaApplication extends android.app.Application {
 	/** Called when your application has started. */
 	@Override
 	public void onCreate() {
 		// Set up a Corona runtime listener used to add custom APIs to Lua.
-		com.ansca.corona.CoronaEnvironment.addRuntimeListener(new CoronaApplication.CoronaRuntimeEventHandler());
+		com.ansca.corona.CoronaEnvironment.addRuntimeListener(new CoronaOuyaApplication.CoronaRuntimeEventHandler());
 	}
 	
 	
