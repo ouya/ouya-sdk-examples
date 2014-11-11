@@ -85,9 +85,10 @@ inputs.onKeyUp = function (playerNum, button)
     		globals.getProducts = { };
     		ui.displayProductList();
     		globals.txtStatus.text = "Requesting products...";
-    		local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
-			print "Accessing plugin_ouya...";
-    		plugin_ouya.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, products);
+            local products =  { "long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE" };
+            local jsonData = json.encode(products);
+            print "Accessing ouyaSDK...";
+            plugin_ouya.asyncLuaOuyaRequestProducts(callbacksRequestProducts.onSuccess, callbacksRequestProducts.onFailure, callbacksRequestProducts.onCancel, jsonData);
     	elseif globals.focusButton == globals.btnPurchase then
     		if #globals.getProducts > 1 and globals.selectedProduct < #globals.getProducts then
 	    		globals.txtStatus.text = "Requesting purchase: " .. globals.getProducts[globals.selectedProduct + 1].name;

@@ -2,7 +2,7 @@
 
 > __Type__              plugin.ouya
 
-> __Revision__          004 (ODK-2.0.2053)
+> __Revision__          004 (ODK-2.0.1353.1)
 
 > __Keywords__          ouya, in-app-purchase, iap, store, gameNetwork
 
@@ -151,20 +151,33 @@ The cancel event provides no arguments and indicates the request was cancelled.
 ##### Wrapped Methods:
 
 
-#### plugin_ouya.developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
-
-Be sure to set your developer id from the developer portal.
-
-
-#### plugin_ouya.initialize
-
-Common method handles initialization for the wrapper methods.
+Be sure to set your developer id from the [developer portal](http://devs.ouya.tv).
 
 
 #### plugin_ouya.initOuyaPlugin
 
 Wraps calling ouyaSDK.initOuyaPlugin so that the plugin is only initialized once.
 
+```lua
+local ouya = require("plugin.ouya") -- load the ouya plugin
+
+callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
+local json = require "json"
+plugin_ouya = require "plugin_ouya"
+
+if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
+	local data = {
+	[1] = {
+	    ["key"] = "tv.ouya.developer_id",
+	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0" -- YOUR DEVELOPER ID from the dev portal
+	}};
+	local jsonData = json.encode(data);
+	plugin_ouya.initOuyaPlugin(
+		callbacksInitOuyaPlugin.onSuccess,
+		callbacksInitOuyaPlugin.onFailure,
+		jsonData);
+end
+```
 
 #### plugin_ouya.asyncLuaOuyaInitInput
 
