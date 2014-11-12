@@ -456,8 +456,8 @@
 						"selection":
 						[
 							[
-								2996,
-								2996
+								858,
+								917
 							]
 						],
 						"settings":
@@ -465,7 +465,7 @@
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 95.0,
+						"translation.y": 60.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

@@ -23,7 +23,7 @@
 	 The "name" attribute should be set to the name of the class that extends/inherits from the Application class.
 	 The "label" attribute sets the name of the application as how it is shown to the end-user.
 	 -->
-	<application android:name="CoronaApplication"
+	<application android:name="android.app.Application"
 	             android:label="CoronaVirtualController"
 	             android:hardwareAccelerated="true"
 	             android:debuggable="true">
@@ -41,6 +41,8 @@
 				<category android:name="tv.ouya.intent.category.GAME" />
 			</intent-filter>
 		</activity>
+		
+		<activity android:name="tv.ouya.sdk.corona.CoronaOuyaActivity" />
 		
 		<!-- Corona content provider required to access this app's local files. -->
 		<provider android:name="com.ansca.corona.storage.FileContentProvider"

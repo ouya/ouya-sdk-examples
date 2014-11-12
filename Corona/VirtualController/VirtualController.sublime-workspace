@@ -55,7 +55,15 @@
 			"file": "Corona/main.lua",
 			"settings":
 			{
-				"buffer_size": 1092,
+				"buffer_size": 1530,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Corona/callbacksInitOuyaPlugin.lua",
+			"settings":
+			{
+				"buffer_size": 1550,
 				"line_ending": "Unix"
 			}
 		},
@@ -63,7 +71,31 @@
 			"file": "Corona/ui.lua",
 			"settings":
 			{
-				"buffer_size": 3733,
+				"buffer_size": 3540,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/examples/corona/virtualcontroller/CoronaApplication.java",
+			"settings":
+			{
+				"buffer_size": 4625,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/examples/corona/virtualcontroller/CoronaOuyaActivity.java",
+			"settings":
+			{
+				"buffer_size": 5756,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/AndroidManifest.xml",
+			"settings":
+			{
+				"buffer_size": 2551,
 				"line_ending": "Unix"
 			}
 		}
@@ -149,7 +181,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -255,7 +287,7 @@
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3300.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -291,15 +323,15 @@
 					"file": "Corona/main.lua",
 					"settings":
 					{
-						"buffer_size": 1092,
+						"buffer_size": 1530,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1092,
-								1092
+								855,
+								855
 							]
 						],
 						"settings":
@@ -314,18 +346,18 @@
 				},
 				{
 					"buffer": 6,
-					"file": "Corona/ui.lua",
+					"file": "Corona/callbacksInitOuyaPlugin.lua",
 					"settings":
 					{
-						"buffer_size": 3733,
+						"buffer_size": 1550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1082,
-								1082
+								0,
+								0
 							]
 						],
 						"settings":
@@ -333,7 +365,113 @@
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 224.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Corona/ui.lua",
+					"settings":
+					{
+						"buffer_size": 3540,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								823,
+								823
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 279.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "android/src/tv/ouya/examples/corona/virtualcontroller/CoronaApplication.java",
+					"settings":
+					{
+						"buffer_size": 4625,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3545,
+								3545
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 345.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "android/src/tv/ouya/examples/corona/virtualcontroller/CoronaOuyaActivity.java",
+					"settings":
+					{
+						"buffer_size": 5756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5756,
+								5756
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1740.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "android/AndroidManifest.xml",
+					"settings":
+					{
+						"buffer_size": 2551,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
