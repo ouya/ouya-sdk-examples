@@ -12,6 +12,10 @@ local metadata =
             usesFeatures = {},
             applicationChildElements =
             {
+		[[
+		<activity android:name="tv.ouya.sdk.corona.CoronaOuyaActivity">
+		</activity>		
+		]],
             },
         },
     },
