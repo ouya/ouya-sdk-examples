@@ -12,18 +12,18 @@
 	"buffers":
 	[
 		{
-			"file": "Corona/inputs.lua",
+			"file": "Corona/plugin_ouya.lua",
 			"settings":
 			{
-				"buffer_size": 8116,
+				"buffer_size": 4306,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "Corona/ui.lua",
+			"file": "Corona/callbacksInitOuyaPlugin.lua",
 			"settings":
 			{
-				"buffer_size": 3540,
+				"buffer_size": 1514,
 				"line_ending": "Unix"
 			}
 		},
@@ -44,6 +44,14 @@
 			}
 		},
 		{
+			"file": "Corona/callbacksRequestReceipts.lua",
+			"settings":
+			{
+				"buffer_size": 1974,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "Corona/callbacksRequestPurchase.lua",
 			"settings":
 			{
@@ -55,15 +63,7 @@
 			"file": "Corona/config.lua",
 			"settings":
 			{
-				"buffer_size": 389,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Corona/callbacksRequestReceipts.lua",
-			"settings":
-			{
-				"buffer_size": 1974,
+				"buffer_size": 895,
 				"line_ending": "Unix"
 			}
 		},
@@ -84,6 +84,14 @@
 			}
 		},
 		{
+			"file": "Corona/inputs.lua",
+			"settings":
+			{
+				"buffer_size": 8357,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "Corona/main.lua",
 			"settings":
 			{
@@ -92,18 +100,18 @@
 			}
 		},
 		{
-			"file": "Corona/plugin_ouya.lua",
-			"settings":
-			{
-				"buffer_size": 4306,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "Corona/OuyaController.lua",
 			"settings":
 			{
 				"buffer_size": 1508,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Corona/ui.lua",
+			"settings":
+			{
+				"buffer_size": 3540,
 				"line_ending": "Unix"
 			}
 		}
@@ -202,15 +210,15 @@
 	"groups":
 	[
 		{
-			"selected": 10,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Corona/inputs.lua",
+					"file": "Corona/plugin_ouya.lua",
 					"settings":
 					{
-						"buffer_size": 8116,
+						"buffer_size": 4306,
 						"regions":
 						{
 						},
@@ -223,7 +231,8 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Lua/Lua.tmLanguage"
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -233,18 +242,18 @@
 				},
 				{
 					"buffer": 1,
-					"file": "Corona/ui.lua",
+					"file": "Corona/callbacksInitOuyaPlugin.lua",
 					"settings":
 					{
-						"buffer_size": 3540,
+						"buffer_size": 1514,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1135,
+								1135
 							]
 						],
 						"settings":
@@ -252,7 +261,7 @@
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 404.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -311,6 +320,32 @@
 				},
 				{
 					"buffer": 4,
+					"file": "Corona/callbacksRequestReceipts.lua",
+					"settings":
+					{
+						"buffer_size": 1974,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "Corona/callbacksRequestPurchase.lua",
 					"settings":
 					{
@@ -336,39 +371,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 6,
 					"file": "Corona/config.lua",
 					"settings":
 					{
-						"buffer_size": 389,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "Corona/callbacksRequestReceipts.lua",
-					"settings":
-					{
-						"buffer_size": 1974,
+						"buffer_size": 895,
 						"regions":
 						{
 						},
@@ -445,6 +452,32 @@
 				},
 				{
 					"buffer": 9,
+					"file": "Corona/inputs.lua",
+					"settings":
+					{
+						"buffer_size": 8357,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
 					"file": "Corona/main.lua",
 					"settings":
 					{
@@ -455,8 +488,8 @@
 						"selection":
 						[
 							[
-								686,
-								686
+								0,
+								0
 							]
 						],
 						"settings":
@@ -471,38 +504,37 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "Corona/plugin_ouya.lua",
+					"buffer": 11,
+					"file": "Corona/OuyaController.lua",
 					"settings":
 					{
-						"buffer_size": 4306,
+						"buffer_size": 1508,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4115,
-								4115
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1065.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 11,
-					"file": "Corona/OuyaController.lua",
+					"buffer": 12,
+					"file": "Corona/ui.lua",
 					"settings":
 					{
-						"buffer_size": 1508,
+						"buffer_size": 3540,
 						"regions":
 						{
 						},

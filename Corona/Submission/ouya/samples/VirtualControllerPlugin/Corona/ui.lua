@@ -19,8 +19,10 @@
 -----------------------------------------------------------------------------------------
 
 helpers = require "helpers"
-	
+
 local ui = {}
+
+display.newText("Virtual Controllers for Corona", 500, 200, "Helvetica", 48);
 
 ui.createController = function (player, x, y, xScale, yScale)
 	local spriteObj =
@@ -80,7 +82,7 @@ ui.createController = function (player, x, y, xScale, yScale)
 	helpers.updateSprite(spriteObj.rightStickInactive, x, y, xScale, yScale, 1);
 
 	return spriteObj;
-
+	
 end
 
 return ui;

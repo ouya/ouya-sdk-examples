@@ -18,13 +18,26 @@
 --
 -----------------------------------------------------------------------------------------
 
-
 local ouya = require("plugin.ouya") -- load the ouya plugin
 
+callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
 globals = require "globals"
 helpers = require "helpers"
 inputs = require "inputs"
+local json = require "json"
+plugin_ouya = require "plugin_ouya"
 ui = require "ui"
+
+if nil ~= plugin_ouya and nil ~= plugin_ouya.initOuyaPlugin then
+	local data = {
+	[1] = {
+	    ["key"] = "tv.ouya.developer_id",
+	    ["value"] = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
+	}};
+	local jsonData = json.encode(data);
+	--print (jsonData);
+	plugin_ouya.initOuyaPlugin(callbacksInitOuyaPlugin.onSuccess, callbacksInitOuyaPlugin.onFailure, jsonData);
+end
 
 globals.controllers =
 {

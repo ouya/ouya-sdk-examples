@@ -21,7 +21,6 @@
 local helpers = {}
 
 helpers.updateSprite = function (spriteObj, x, y, xScale, yScale, alpha)
-
 	spriteObj.x = x;
 	spriteObj.y = y;
 	spriteObj.xScale = xScale;
@@ -43,18 +42,18 @@ end
 helpers.spriteFadeAuto = function (phase, spriteObj)
     	if phase then
     		helpers.spriteFadeIn(spriteObj)
-	else
+    	else
     		helpers.spriteFadeOut(spriteObj)    	
-	end
+    	end
 end
 
 -- Invert auto fade the sprite based on the phase, fade In if up, fade out if down
 helpers.spriteFadeAutoInv = function (phase, spriteObj)
     	if phase then
     		helpers.spriteFadeOut(spriteObj)
-	else
+    	else
     		helpers.spriteFadeIn(spriteObj)    	
-	end
+    	end
 end
 
 return helpers;
