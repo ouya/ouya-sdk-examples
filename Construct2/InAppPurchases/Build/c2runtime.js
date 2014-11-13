@@ -13401,7 +13401,6 @@ cr.plugins_.OuyaSDK = function(runtime)
 	Acts.prototype.onFailureRequestGamerInfo = function (errorCode, errorMessage) {
 		Acts.prototype.errorCodeOnFailureRequestGamerInfo = errorCode;
 		Acts.prototype.errorMessageOnFailureRequestGamerInfo = errorMessage;
-		Acts.prototype.resultOnFailureRequestGamerInfoErrorMessage = errorMessage;
 		Acts.prototype.hasOnFailureRequestGamerInfo = true;
 	}
 	Acts.prototype.onCancelRequestGamerInfo = function () {
@@ -13468,8 +13467,8 @@ cr.plugins_.OuyaSDK = function(runtime)
 	}
 	Acts.prototype.hasOnFailureRequestReceipts = false;
 	Acts.prototype.onFailureRequestReceipts = function (errorCode, errorMessage) {
-		Acts.prototype.errorCodeOnFailureRequestPurchase = errorCode;
-		Acts.prototype.errorMessageOnFailureRequestPurchase = errorMessage;
+		Acts.prototype.errorCodeOnFailureRequestReceipts = errorCode;
+		Acts.prototype.errorMessageOnFailureRequestReceipts = errorMessage;
 		Acts.prototype.hasOnFailureRequestReceipts = true;
 	}
 	Acts.prototype.hasOnCancelRequestReceipts = false;
@@ -13487,17 +13486,17 @@ cr.plugins_.OuyaSDK = function(runtime)
 	Acts.prototype.onSuccessSetSafeArea = function () {
 		Acts.prototype.hasOnSuccessSetSafeArea = true;
 	}
-	Acts.prototype.hasOnFailureSafeArea = false;
-	Acts.prototype.onFailureSafeArea = function (errorCode, errorMessage) {
-		Acts.prototype.errorCodeOnFailureSafeArea = errorCode;
-		Acts.prototype.errorMessageOnFailureSafeArea = errorMessage;
-		Acts.prototype.hasOnFailureSafeArea = true;
+	Acts.prototype.hasOnFailureSetSafeArea = false;
+	Acts.prototype.onFailureSetSafeArea = function (errorCode, errorMessage) {
+		Acts.prototype.errorCodeOnFailureSetSafeArea = errorCode;
+		Acts.prototype.errorMessageOnFailureSetSafeArea = errorMessage;
+		Acts.prototype.hasOnFailureSetSafeArea = true;
 	}
 	Acts.prototype.setSafeArea = function (safeAreaAmount)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.setSafeArea != undefined) {
-			OuyaSDK.setSafeArea(safeAreaAmount, Acts.prototype.onSuccessSetSafeArea, Acts.prototype.onFailureSafeArea);
+			OuyaSDK.setSafeArea(safeAreaAmount, Acts.prototype.onSuccessSetSafeArea, Acts.prototype.onFailureSetSafeArea);
 		}
 	};
 	Acts.prototype.hasOnSuccessShutdown = false;
@@ -13523,6 +13522,22 @@ cr.plugins_.OuyaSDK = function(runtime)
 	};
 	pluginProto.acts = new Acts();
 	function Exps() {};
+	Exps.prototype.errorCodeOnFailureInitOuyaPlugin = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureInitOuyaPlugin != undefined) {
+			result = Acts.prototype.errorCodeOnFailureInitOuyaPlugin;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureInitOuyaPlugin = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureInitOuyaPlugin != undefined) {
+			result = Acts.prototype.errorMessageOnFailureInitOuyaPlugin;
+		}
+		ret.set_string(result);
+	};
 	Exps.prototype.GamerInfoUsername = function (ret)
 	{
 		var result = "";
@@ -13538,6 +13553,22 @@ cr.plugins_.OuyaSDK = function(runtime)
 		if (Acts.prototype.resultOnSuccessRequestGamerInfo != undefined) {
 			var gamerInfo = JSON.parse(Acts.prototype.resultOnSuccessRequestGamerInfo);
 			result = gamerInfo.uuid;
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.errorCodeOnFailureRequestGamerInfo = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestGamerInfo != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestGamerInfo;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureRequestGamerInfo = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestGamerInfo != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestGamerInfo;
 		}
 		ret.set_string(result);
 	};
@@ -13606,6 +13637,38 @@ cr.plugins_.OuyaSDK = function(runtime)
 		}
 		ret.set_float(result);
 	};
+	Exps.prototype.errorCodeOnFailureRequestProducts = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestProducts != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestProducts;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureRequestProducts = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestProducts != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestProducts;
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.errorCodeOnFailureRequestPurchase = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestPurchase != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestPurchase;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureRequestPurchase = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestPurchase != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestPurchase;
+		}
+		ret.set_string(result);
+	};
 	Exps.prototype.ReceiptsLength = function (ret)
 	{
 		var result = 0;
@@ -13656,6 +13719,54 @@ cr.plugins_.OuyaSDK = function(runtime)
 			}
 		}
 		ret.set_float(result);
+	};
+	Exps.prototype.errorCodeOnFailureRequestReceipts = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestReceipts != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestReceipts;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureRequestReceipts = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestReceipts != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestReceipts;
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.errorCodeOnFailureSetSafeArea = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureSetSafeArea != undefined) {
+			result = Acts.prototype.errorCodeOnFailureSetSafeArea;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureSetSafeArea = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureSetSafeArea != undefined) {
+			result = Acts.prototype.errorMessageOnFailureSetSafeArea;
+		}
+		ret.set_string(result);
+	};
+	Exps.prototype.errorCodeOnFailureShutdown = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureShutdown != undefined) {
+			result = Acts.prototype.errorCodeOnFailureShutdown;
+		}
+		ret.set_int(result);
+	};
+	Exps.prototype.errorMessageOnFailureShutdown = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureShutdown != undefined) {
+			result = Acts.prototype.errorMessageOnFailureShutdown;
+		}
+		ret.set_string(result);
 	};
 	Exps.prototype.MyExpression = function (ret)	// 'ret' must always be the first parameter - always return the expression's result through it!
 	{
@@ -17017,13 +17128,6 @@ false,false,4411191228664226,false
 		]
 ,		[
 			1,
-			"Purchasable",
-			1,
-			"",
-false,false,9702340493828291,false
-		]
-,		[
-			1,
 			"RequestPurchaseIndex",
 			0,
 			0,
@@ -17155,44 +17259,6 @@ false,false,723212796259268,false
 			null,
 			false,
 			null,
-			7650236363582274,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureInitOuyaPlugin,
-				null,
-				0,
-				false,
-				false,
-				false,
-				3769069247496751,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				7398372400544311,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"initOuyaPlugin onFailure"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
 			1283853764891728,
 			[
 			[
@@ -17229,6 +17295,71 @@ false,false,723212796259268,false
 					[
 						2,
 						"initOuyaPlugin onSuccess"
+					]
+				]
+				]
+			]
+			]
+		]
+,		[
+			0,
+			null,
+			false,
+			null,
+			7650236363582274,
+			[
+			[
+				0,
+				cr.plugins_.OuyaSDK.prototype.cnds.onFailureInitOuyaPlugin,
+				null,
+				0,
+				false,
+				false,
+				false,
+				3769069247496751,
+				false
+			]
+			],
+			[
+			[
+				17,
+				cr.plugins_.Text.prototype.acts.SetText,
+				null,
+				7398372400544311,
+				false
+				,[
+				[
+					7,
+					[
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"initOuyaPlugin onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureInitOuyaPlugin,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureInitOuyaPlugin,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -17361,8 +17492,35 @@ false,false,723212796259268,false
 				[
 					7,
 					[
-						2,
-						"requestGamerInfo onFailure"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"requestGamerInfo onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestGamerInfo,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestGamerInfo,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -17759,8 +17917,35 @@ false,false,723212796259268,false
 				[
 					7,
 					[
-						2,
-						"requestProducts onFailure"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"requestProducts onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestProducts,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestProducts,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -17904,8 +18089,35 @@ false,false,723212796259268,false
 				[
 					7,
 					[
-						2,
-						"requestPurchase onFailure"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"requestPurchase onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestPurchase,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestPurchase,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -18279,8 +18491,35 @@ false,false,723212796259268,false
 				[
 					7,
 					[
-						2,
-						"requestReceipts onFailure"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"requestReceipts onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestReceipts,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestReceipts,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -18424,8 +18663,35 @@ false,false,723212796259268,false
 				[
 					7,
 					[
-						2,
-						"setSafeArea onFailure"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"setSafeArea onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureSetSafeArea,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureSetSafeArea,
+							true,
+							null
+						]
 					]
 				]
 				]
@@ -18531,8 +18797,35 @@ false,false,723212796259268,false
 				[
 					7,
 					[
-						2,
-						"shutdown onFailure"
+						10,
+						[
+							10,
+							[
+								10,
+								[
+									2,
+									"shutdown onFailure errorCode="
+								]
+								,[
+									20,
+									0,
+									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureShutdown,
+									false,
+									null
+								]
+							]
+							,[
+								2,
+								" errorMessage"
+							]
+						]
+						,[
+							20,
+							0,
+							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureShutdown,
+							true,
+							null
+						]
 					]
 				]
 				]

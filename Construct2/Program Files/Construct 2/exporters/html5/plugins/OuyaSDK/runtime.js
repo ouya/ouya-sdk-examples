@@ -583,7 +583,6 @@ cr.plugins_.OuyaSDK = function(runtime)
 	Acts.prototype.onFailureRequestGamerInfo = function (errorCode, errorMessage) {
 		Acts.prototype.errorCodeOnFailureRequestGamerInfo = errorCode;
 		Acts.prototype.errorMessageOnFailureRequestGamerInfo = errorMessage;
-		Acts.prototype.resultOnFailureRequestGamerInfoErrorMessage = errorMessage;
 		Acts.prototype.hasOnFailureRequestGamerInfo = true;
 	}
 
@@ -662,8 +661,8 @@ cr.plugins_.OuyaSDK = function(runtime)
 
 	Acts.prototype.hasOnFailureRequestReceipts = false;
 	Acts.prototype.onFailureRequestReceipts = function (errorCode, errorMessage) {
-		Acts.prototype.errorCodeOnFailureRequestPurchase = errorCode;
-		Acts.prototype.errorMessageOnFailureRequestPurchase = errorMessage;
+		Acts.prototype.errorCodeOnFailureRequestReceipts = errorCode;
+		Acts.prototype.errorMessageOnFailureRequestReceipts = errorMessage;
 		Acts.prototype.hasOnFailureRequestReceipts = true;
 	}
 
@@ -685,18 +684,18 @@ cr.plugins_.OuyaSDK = function(runtime)
 		Acts.prototype.hasOnSuccessSetSafeArea = true;
 	}
 
-	Acts.prototype.hasOnFailureSafeArea = false;
-	Acts.prototype.onFailureSafeArea = function (errorCode, errorMessage) {
-		Acts.prototype.errorCodeOnFailureSafeArea = errorCode;
-		Acts.prototype.errorMessageOnFailureSafeArea = errorMessage;
-		Acts.prototype.hasOnFailureSafeArea = true;
+	Acts.prototype.hasOnFailureSetSafeArea = false;
+	Acts.prototype.onFailureSetSafeArea = function (errorCode, errorMessage) {
+		Acts.prototype.errorCodeOnFailureSetSafeArea = errorCode;
+		Acts.prototype.errorMessageOnFailureSetSafeArea = errorMessage;
+		Acts.prototype.hasOnFailureSetSafeArea = true;
 	}
 
 	Acts.prototype.setSafeArea = function (safeAreaAmount)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.setSafeArea != undefined) {
-			OuyaSDK.setSafeArea(safeAreaAmount, Acts.prototype.onSuccessSetSafeArea, Acts.prototype.onFailureSafeArea);
+			OuyaSDK.setSafeArea(safeAreaAmount, Acts.prototype.onSuccessSetSafeArea, Acts.prototype.onFailureSetSafeArea);
 		}
 	};
 
@@ -735,6 +734,24 @@ cr.plugins_.OuyaSDK = function(runtime)
 	// Expressions
 	function Exps() {};
 
+	Exps.prototype.errorCodeOnFailureInitOuyaPlugin = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureInitOuyaPlugin != undefined) {
+			result = Acts.prototype.errorCodeOnFailureInitOuyaPlugin;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureInitOuyaPlugin = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureInitOuyaPlugin != undefined) {
+			result = Acts.prototype.errorMessageOnFailureInitOuyaPlugin;
+		}
+		ret.set_string(result);
+	};
+
 	Exps.prototype.GamerInfoUsername = function (ret)
 	{
 		var result = "";
@@ -751,6 +768,24 @@ cr.plugins_.OuyaSDK = function(runtime)
 		if (Acts.prototype.resultOnSuccessRequestGamerInfo != undefined) {
 			var gamerInfo = JSON.parse(Acts.prototype.resultOnSuccessRequestGamerInfo);
 			result = gamerInfo.uuid;
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.errorCodeOnFailureRequestGamerInfo = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestGamerInfo != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestGamerInfo;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureRequestGamerInfo = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestGamerInfo != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestGamerInfo;
 		}
 		ret.set_string(result);
 	};
@@ -829,6 +864,42 @@ cr.plugins_.OuyaSDK = function(runtime)
 		ret.set_float(result);
 	};
 
+	Exps.prototype.errorCodeOnFailureRequestProducts = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestProducts != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestProducts;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureRequestProducts = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestProducts != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestProducts;
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.errorCodeOnFailureRequestPurchase = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestPurchase != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestPurchase;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureRequestPurchase = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestPurchase != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestPurchase;
+		}
+		ret.set_string(result);
+	};
+
 	Exps.prototype.ReceiptsLength = function (ret)
 	{
 		var result = 0;
@@ -885,6 +956,60 @@ cr.plugins_.OuyaSDK = function(runtime)
 
 		}
 		ret.set_float(result);
+	};
+
+	Exps.prototype.errorCodeOnFailureRequestReceipts = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureRequestReceipts != undefined) {
+			result = Acts.prototype.errorCodeOnFailureRequestReceipts;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureRequestReceipts = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureRequestReceipts != undefined) {
+			result = Acts.prototype.errorMessageOnFailureRequestReceipts;
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.errorCodeOnFailureSetSafeArea = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureSetSafeArea != undefined) {
+			result = Acts.prototype.errorCodeOnFailureSetSafeArea;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureSetSafeArea = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureSetSafeArea != undefined) {
+			result = Acts.prototype.errorMessageOnFailureSetSafeArea;
+		}
+		ret.set_string(result);
+	};
+
+	Exps.prototype.errorCodeOnFailureShutdown = function (ret)
+	{
+		var result = -1;
+		if (Acts.prototype.errorCodeOnFailureShutdown != undefined) {
+			result = Acts.prototype.errorCodeOnFailureShutdown;
+		}
+		ret.set_int(result);
+	};
+
+	Exps.prototype.errorMessageOnFailureShutdown = function (ret)
+	{
+		var result = "";
+		if (Acts.prototype.errorMessageOnFailureShutdown != undefined) {
+			result = Acts.prototype.errorMessageOnFailureShutdown;
+		}
+		ret.set_string(result);
 	};
 
 	// the example expression

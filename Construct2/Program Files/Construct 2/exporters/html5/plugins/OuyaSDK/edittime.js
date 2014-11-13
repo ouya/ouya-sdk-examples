@@ -137,8 +137,14 @@ var expressionIndex = -1;
 
 AddExpression(expressionIndex++, ef_return_number, "Leet expression", "My category", "MyExpression", "Return the number 1337.");
 
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureInitOuyaPlugin", "initOuyaPlugin", "errorCodeOnFailureInitOuyaPlugin", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureInitOuyaPlugin", "initOuyaPlugin", "errorMessageOnFailureInitOuyaPlugin", "Get the on failure error message");
+
 AddExpression(expressionIndex++, ef_return_string, "GamerInfo.username", "requestGamerInfo", "GamerInfoUsername", "Get GamerInfo.username");
 AddExpression(expressionIndex++, ef_return_string, "GamerInfo.uuid", "requestGamerInfo", "GamerInfoUuid", "Get GamerInfo.uuid");
+
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestGamerInfo", "requestGamerInfo", "errorCodeOnFailureRequestGamerInfo", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestGamerInfo", "requestGamerInfo", "errorMessageOnFailureRequestGamerInfo", "Get the on failure error message");
 
 AddExpression(expressionIndex++, ef_return_number, "Products.length", "requestProducts", "ProductsLength", "Get Products Length");
 
@@ -154,6 +160,12 @@ AddExpression(expressionIndex++, ef_return_string, "GetProductsDescription", "re
 AddNumberParam("Index", "Product index");
 AddExpression(expressionIndex++, ef_return_number, "GetProductsLocalPrice", "requestProducts", "GetProductsLocalPrice", "Get Products Local Price");
 
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestProducts", "requestGamerInfo", "errorCodeOnFailureRequestProducts", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestProducts", "requestGamerInfo", "errorMessageOnFailureRequestProducts", "Get the on failure error message");
+
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestPurchase", "requestGamerInfo", "errorCodeOnFailureRequestPurchase", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestPurchase", "requestGamerInfo", "errorMessageOnFailureRequestPurchase", "Get the on failure error message");
+
 AddExpression(expressionIndex++, ef_return_number, "Receipts.length", "requestReceipts", "ReceiptsLength", "Get Receipts Length");
 
 AddNumberParam("Index", "Receipt index");
@@ -164,6 +176,15 @@ AddExpression(expressionIndex++, ef_return_string, "GetReceiptsGeneratedDate", "
 
 AddNumberParam("Index", "Receipt index");
 AddExpression(expressionIndex++, ef_return_number, "GetReceiptsLocalPrice", "requestReceipts", "GetReceiptsLocalPrice", "Get Receipts Local Price");
+
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestReceipts", "requestGamerInfo", "errorCodeOnFailureRequestReceipts", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestReceipts", "requestGamerInfo", "errorMessageOnFailureRequestReceipts", "Get the on failure error message");
+
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureSetSafeArea", "requestGamerInfo", "errorCodeOnFailureSetSafeArea", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureSetSafeArea", "requestGamerInfo", "errorMessageOnFailureSetSafeArea", "Get the on failure error message");
+
+AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureShutdown", "requestGamerInfo", "errorCodeOnFailureShutdown", "Get the on failure error code");
+AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureShutdown", "requestGamerInfo", "errorMessageOnFailureShutdown", "Get the on failure error message");
 
 ////////////////////////////////////////
 ACESDone();
