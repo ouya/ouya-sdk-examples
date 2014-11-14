@@ -56,7 +56,7 @@ function GetPluginSettings()
 
 // example
 
-var conditionIndex = -1;
+var conditionIndex = 0;
 
 AddNumberParam("Number", "Enter a number to test if positive.");
 AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Success", "Initialization", "initOuyaPlugin onSuccess", "Description for my condition!", "onSuccessInitOuyaPlugin");
@@ -97,7 +97,7 @@ AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shut
 
 // example
 
-var actionIndex = -1;
+var actionIndex = 0;
 
 AddStringParam("key", "Enter an initialization key.");
 AddStringParam("value", "Enter an initialization value.");
@@ -133,7 +133,7 @@ AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Descripti
 
 // example
 
-var expressionIndex = -1;
+var expressionIndex = 0;
 
 AddExpression(expressionIndex++, ef_return_number, "Leet expression", "My category", "MyExpression", "Return the number 1337.");
 
