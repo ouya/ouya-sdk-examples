@@ -50,7 +50,7 @@ int JsonUtil::ParseInt(JSONObject item, const std::wstring& fieldName)
 	if (item.find(fieldName) == item.end())
 	{
 		LOGI("Parsing JSON Failed: Can't find field name");
-		return NULL;
+		return 0;
 	}
 	if (item[fieldName]->IsNumber())
 	{
@@ -66,7 +66,7 @@ float JsonUtil::ParseFloat(JSONObject item, const std::wstring& fieldName)
 	if (item.find(fieldName) == item.end())
 	{
 		LOGI("Parsing JSON Failed: Can't find field name");
-		return NULL;
+		return 0;
 	}
 	if (item[fieldName]->IsNumber())
 	{
