@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="NsightTegraProject">
-    <NsightTegraProjectRevisionNumber>7</NsightTegraProjectRevisionNumber>
+    <NsightTegraProjectRevisionNumber>8</NsightTegraProjectRevisionNumber>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Tegra-Android">
@@ -12,26 +12,19 @@
       <Configuration>Release</Configuration>
       <Platform>Tegra-Android</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Profile|Tegra-Android">
-      <Configuration>Profile</Configuration>
-      <Platform>Tegra-Android</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
     <AndroidBuild Include="AndroidManifest.xml" />
-    <AndroidBuild Include="build.xml" />
-    <AndroidBuild Include="project.properties" />
-    <AndroidBuild Include="proguard.cfg" />
     <AndroidBuild Include="res\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <JCompile Include="src\com\example\hellojni\HelloJni.java" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jni\HelloJni.c" />
+    <ClCompile Include="jni\HelloJni.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{063167DF-7A75-4497-A30B-550999B4666C}</ProjectGuid>
+    <ProjectGuid>{B806EE21-94A5-47EC-922E-001AE4E128ED}</ProjectGuid>
     <RootNamespace>HelloWorldNative</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -41,9 +34,6 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <AndroidTargetAPI>android-15</AndroidTargetAPI>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Profile|Tegra-Android'">
-    <AndroidTargetAPI>android-15</AndroidTargetAPI>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -51,36 +41,13 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
     <ClCompile>
-      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
     </ClCompile>
-    <Link>
-      <AdditionalOptions>-lGLESv1_CM %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <AntBuild>
-      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
-    </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <ClCompile>
-      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
     </ClCompile>
-    <Link>
-      <AdditionalOptions>-lGLESv1_CM %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <AntBuild>
-      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
-    </AntBuild>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Tegra-Android'">
-    <ClCompile>
-      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <AdditionalOptions>-lGLESv1_CM %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <AntBuild>
-      <AntBuildPath>$(ProjectDir)\</AntBuildPath>
-    </AntBuild>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

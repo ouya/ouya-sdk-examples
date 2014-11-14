@@ -2,32 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="jni">
-      <UniqueIdentifier>8328fdc1-38af-4948-8a07-eeecf05a95d3</UniqueIdentifier>
+      <UniqueIdentifier>61348073-285d-4ff1-90a5-2a7aee6c68b5</UniqueIdentifier>
     </Filter>
     <Filter Include="res">
-      <UniqueIdentifier>f18e039a-77a7-435f-8fd7-c2ae8bdc12cc</UniqueIdentifier>
+      <UniqueIdentifier>d8f3dc62-be47-4ac6-9aaf-f9e94668df9b</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>8a9d3fde-efd1-45f0-b8ec-1e50183f7dea</UniqueIdentifier>
+      <UniqueIdentifier>9bf8f3db-c662-4860-b5ea-d406505993a2</UniqueIdentifier>
     </Filter>
     <Filter Include="res\values">
-      <UniqueIdentifier>e9d7921c-516b-424a-aae9-2c79d1ab13a5</UniqueIdentifier>
+      <UniqueIdentifier>913f3c99-5ea0-4d41-b0cc-bcb4c136c3be</UniqueIdentifier>
     </Filter>
     <Filter Include="src\com">
-      <UniqueIdentifier>71cb47e8-9b14-4dcd-86f5-5fd1f19d4244</UniqueIdentifier>
+      <UniqueIdentifier>c8862762-6135-4182-800b-ce3826d854a9</UniqueIdentifier>
     </Filter>
     <Filter Include="src\com\example">
-      <UniqueIdentifier>b0b9ef31-5cbc-4d06-ad78-a96708af05ca</UniqueIdentifier>
+      <UniqueIdentifier>e8ffa0a5-34bd-4022-b4a4-a244dc4cd387</UniqueIdentifier>
     </Filter>
     <Filter Include="src\com\example\hellojni">
-      <UniqueIdentifier>6ae5a625-c182-4ce8-9c0e-d1e0fed5e534</UniqueIdentifier>
+      <UniqueIdentifier>e9f58ff2-63cc-4e57-a1b9-61624ca0c1f5</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <AndroidBuild Include="AndroidManifest.xml" />
-    <AndroidBuild Include="build.xml" />
-    <AndroidBuild Include="project.properties" />
-    <AndroidBuild Include="proguard.cfg" />
     <AndroidBuild Include="res\values\strings.xml">
       <Filter>res\values</Filter>
     </AndroidBuild>
@@ -38,7 +35,7 @@
     </JCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jni\HelloJni.c">
+    <ClCompile Include="jni\HelloJni.cpp">
       <Filter>jni</Filter>
     </ClCompile>
   </ItemGroup>
