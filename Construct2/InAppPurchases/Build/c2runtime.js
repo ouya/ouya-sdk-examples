@@ -13432,7 +13432,7 @@ cr.plugins_.OuyaSDK = function(runtime)
 	{
 		if (OuyaSDK != undefined &&
 			OuyaSDK.requestProducts != undefined) {
-			var products = Array("long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE");
+			var products = myparam.split(',');
 			OuyaSDK.requestProducts(products, Acts.prototype.onSuccessRequestProducts, Acts.prototype.onFailureRequestProducts, Acts.prototype.onCancelRequestProducts);
 		}
 	};
