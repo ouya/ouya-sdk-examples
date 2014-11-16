@@ -56,32 +56,31 @@ function GetPluginSettings()
 
 // example
 
-var conditionIndex = -1;
+AddNumberParam("Number", "Enter a number to test if positive.");
+AddCondition(0, cf_none, "Initialize OUYA Plugin on Success", "Initialization", "initOuyaPlugin onSuccess", "Description for my condition!", "onSuccessInitOuyaPlugin");
+AddCondition(1, cf_none, "Initialize OUYA Plugin on Failure", "Initialization", "initOuyaPlugin onFailure", "Description for my condition!", "onFailureInitOuyaPlugin");
 
-AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Success", "Initialization", "initOuyaPlugin onSuccess", "Description for my condition!", "onSuccessInitOuyaPlugin");
-AddCondition(conditionIndex++, cf_none, "Initialize OUYA Plugin on Failure", "Initialization", "initOuyaPlugin onFailure", "Description for my condition!", "onFailureInitOuyaPlugin");
+AddCondition(2, cf_none, "Request Gamer Info on Success", "RequestGamerInfo", "requestGamerInfoOnSuccess", "Description for my condition!", "onSuccessRequestGamerInfo");
+AddCondition(3, cf_none, "Request Gamer Info on Failure", "RequestGamerInfo", "requestGamerInfoOnFailure", "Description for my condition!", "onFailureRequestGamerInfo");
+AddCondition(4, cf_none, "Request Gamer Info on Cancel", "RequestGamerInfo", "requestGamerInfoOnCancel", "Description for my condition!", "onCancelRequestGamerInfo");
 
-AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Success", "RequestGamerInfo", "requestGamerInfoOnSuccess", "Description for my condition!", "onSuccessRequestGamerInfo");
-AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Failure", "RequestGamerInfo", "requestGamerInfoOnFailure", "Description for my condition!", "onFailureRequestGamerInfo");
-AddCondition(conditionIndex++, cf_none, "Request Gamer Info on Cancel", "RequestGamerInfo", "requestGamerInfoOnCancel", "Description for my condition!", "onCancelRequestGamerInfo");
+AddCondition(5, cf_none, "Request Products on Success", "RequestProducts", "requestProductsOnSuccess", "Description for my condition!", "onSuccessRequestProducts");
+AddCondition(6, cf_none, "Request Products on Failure", "RequestProducts", "requestProductsOnFailure", "Description for my condition!", "onFailureRequestProducts");
+AddCondition(7, cf_none, "Request Products on Cancel", "RequestProducts", "requestProductsOnCancel", "Description for my condition!", "onCancelRequestProducts");
 
-AddCondition(conditionIndex++, cf_none, "Request Products on Success", "RequestProducts", "requestProductsOnSuccess", "Description for my condition!", "onSuccessRequestProducts");
-AddCondition(conditionIndex++, cf_none, "Request Products on Failure", "RequestProducts", "requestProductsOnFailure", "Description for my condition!", "onFailureRequestProducts");
-AddCondition(conditionIndex++, cf_none, "Request Products on Cancel", "RequestProducts", "requestProductsOnCancel", "Description for my condition!", "onCancelRequestProducts");
+AddCondition(8, cf_none, "Request Purchase on Success", "RequestPurchase", "requestPurchaseOnSuccess", "Description for my condition!", "onSuccessRequestPurchase");
+AddCondition(9, cf_none, "Request Purchase on Failure", "RequestPurchase", "requestPurchaseOnFailure", "Description for my condition!", "onFailureRequestPurchase");
+AddCondition(10, cf_none, "Request Purchase on Cancel", "RequestPurchase", "requestPurchaseOnCancel", "Description for my condition!", "onCancelRequestPurchase");
 
-AddCondition(conditionIndex++, cf_none, "Request Purchase on Success", "RequestPurchase", "requestPurchaseOnSuccess", "Description for my condition!", "onSuccessRequestPurchase");
-AddCondition(conditionIndex++, cf_none, "Request Purchase on Failure", "RequestPurchase", "requestPurchaseOnFailure", "Description for my condition!", "onFailureRequestPurchase");
-AddCondition(conditionIndex++, cf_none, "Request Purchase on Cancel", "RequestPurchase", "requestPurchaseOnCancel", "Description for my condition!", "onCancelRequestPurchase");
+AddCondition(11, cf_none, "Request Receipts on Success", "RequestReceipts", "requestReceiptsOnSuccess", "Description for my condition!", "onSuccessRequestReceipts");
+AddCondition(12, cf_none, "Request Receipts on Failure", "RequestReceipts", "requestReceiptsOnFailure", "Description for my condition!", "onFailureRequestReceipts");
+AddCondition(13, cf_none, "Request Receipts on Cancel", "RequestReceipts", "requestReceiptsOnCancel", "Description for my condition!", "onCancelRequestReceipts");
 
-AddCondition(conditionIndex++, cf_none, "Request Receipts on Success", "RequestReceipts", "requestReceiptsOnSuccess", "Description for my condition!", "onSuccessRequestReceipts");
-AddCondition(conditionIndex++, cf_none, "Request Receipts on Failure", "RequestReceipts", "requestReceiptsOnFailure", "Description for my condition!", "onFailureRequestReceipts");
-AddCondition(conditionIndex++, cf_none, "Request Receipts on Cancel", "RequestReceipts", "requestReceiptsOnCancel", "Description for my condition!", "onCancelRequestReceipts");
+AddCondition(14, cf_none, "Set Safe Area on Success", "SetSafeArea", "setSafeAreasOnSuccess", "Description for my condition!", "onSuccessSetSafeArea");
+AddCondition(15, cf_none, "Set Safe Area on Failure", "SetSafeArea", "setSafeAreaOnFailure", "Description for my condition!", "onFailureSetSafeArea");
 
-AddCondition(conditionIndex++, cf_none, "Set Safe Area on Success", "SetSafeArea", "setSafeAreasOnSuccess", "Description for my condition!", "onSuccessSetSafeArea");
-AddCondition(conditionIndex++, cf_none, "Set Safe Area on Failure", "SetSafeArea", "setSafeAreaOnFailure", "Description for my condition!", "onFailureSetSafeArea");
-
-AddCondition(conditionIndex++, cf_none, "Shutdown on Success", "Shutdown", "shutdownOnSuccess", "Description for my condition!", "onSuccessShutdown");
-AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shutdownOnFailure", "Description for my condition!", "onFailureShutdown");
+AddCondition(16, cf_none, "Shutdown on Success", "Shutdown", "shutdownOnSuccess", "Description for my condition!", "onSuccessShutdown");
+AddCondition(17, cf_none, "Shutdown on Failure", "Shutdown", "shutdownOnFailure", "Description for my condition!", "onFailureShutdown");
 
 ////////////////////////////////////////
 // Actions
@@ -96,28 +95,26 @@ AddCondition(conditionIndex++, cf_none, "Shutdown on Failure", "Shutdown", "shut
 
 // example
 
-var actionIndex = -1;
-
 AddStringParam("key", "Enter an initialization key.");
 AddStringParam("value", "Enter an initialization value.");
-AddAction(++actionIndex, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "addInitOuyaPluginValues");
+AddAction(0, af_none, "Add Initialization OUYA Plugin Values", "Initialization", "addInitOuyaPluginValues key={0} value={1}", "Description for my action!", "addInitOuyaPluginValues");
 
-AddAction(++actionIndex, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "initOuyaPlugin");
+AddAction(1, af_none, "Initialize OUYA Plugin", "Initialization", "initOuyaPlugin", "Description for my action!", "initOuyaPlugin");
 
-AddAction(++actionIndex, af_none, "Request Gamer Info", "RequestGamerInfo", "requestGamerInfo", "Description for my action!", "requestGamerInfo");
+AddAction(2, af_none, "Request Gamer Info", "RequestGamerInfo", "requestGamerInfo", "Description for my action!", "requestGamerInfo");
 
 AddStringParam("products", "Enter product ids separated by commas.");
-AddAction(++actionIndex, af_none, "Request Products", "RequestProducts", "requestProducts({0})", "Description for my action!", "requestProducts");
+AddAction(3, af_none, "Request Products", "RequestProducts", "requestProducts({0})", "Description for my action!", "requestProducts");
 
 AddStringParam("purchasable", "Enter product id to purchase.");
-AddAction(++actionIndex, af_none, "Request Purchase", "RequestPurchase", "requestPurchase({0})", "Description for my action!", "requestPurchase");
+AddAction(4, af_none, "Request Purchase", "RequestPurchase", "requestPurchase({0})", "Description for my action!", "requestPurchase");
 
-AddAction(++actionIndex, af_none, "Request Receipts", "RequestReceipts", "requestReceipts", "Description for my action!", "requestReceipts");
+AddAction(5, af_none, "Request Receipts", "RequestReceipts", "requestReceipts", "Description for my action!", "requestReceipts");
 
 AddNumberParam("SafeAreaAmount", "Enter the safe area amount from 0.0 to 1.0");
-AddAction(++actionIndex, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea({0})", "Description for my action!", "setSafeArea");
+AddAction(6, af_none, "Set Safe Area", "SetSafeArea", "setSafeArea({0})", "Description for my action!", "setSafeArea");
 
-AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Description for my action!", "shutdown");
+AddAction(7, af_none, "Shutdown", "Shutdown", "shutdown", "Description for my action!", "shutdown");
 
 ////////////////////////////////////////
 // Expressions
@@ -132,58 +129,56 @@ AddAction(++actionIndex, af_none, "Shutdown", "Shutdown", "shutdown", "Descripti
 
 // example
 
-var expressionIndex = -1;
+AddExpression(0, ef_return_number, "Leet expression", "My category", "MyExpression", "Return the number 1337.");
 
-AddExpression(expressionIndex++, ef_return_number, "Leet expression", "My category", "MyExpression", "Return the number 1337.");
+AddExpression(1, ef_return_number, "errorCodeOnFailureInitOuyaPlugin", "initOuyaPlugin", "errorCodeOnFailureInitOuyaPlugin", "Get the on failure error code");
+AddExpression(2, ef_return_string, "errorMessageOnFailureInitOuyaPlugin", "initOuyaPlugin", "errorMessageOnFailureInitOuyaPlugin", "Get the on failure error message");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureInitOuyaPlugin", "initOuyaPlugin", "errorCodeOnFailureInitOuyaPlugin", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureInitOuyaPlugin", "initOuyaPlugin", "errorMessageOnFailureInitOuyaPlugin", "Get the on failure error message");
+AddExpression(3, ef_return_string, "GamerInfo.username", "requestGamerInfo", "GamerInfoUsername", "Get GamerInfo.username");
+AddExpression(4, ef_return_string, "GamerInfo.uuid", "requestGamerInfo", "GamerInfoUuid", "Get GamerInfo.uuid");
 
-AddExpression(expressionIndex++, ef_return_string, "GamerInfo.username", "requestGamerInfo", "GamerInfoUsername", "Get GamerInfo.username");
-AddExpression(expressionIndex++, ef_return_string, "GamerInfo.uuid", "requestGamerInfo", "GamerInfoUuid", "Get GamerInfo.uuid");
+AddExpression(5, ef_return_number, "errorCodeOnFailureRequestGamerInfo", "requestGamerInfo", "errorCodeOnFailureRequestGamerInfo", "Get the on failure error code");
+AddExpression(6, ef_return_string, "errorMessageOnFailureRequestGamerInfo", "requestGamerInfo", "errorMessageOnFailureRequestGamerInfo", "Get the on failure error message");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestGamerInfo", "requestGamerInfo", "errorCodeOnFailureRequestGamerInfo", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestGamerInfo", "requestGamerInfo", "errorMessageOnFailureRequestGamerInfo", "Get the on failure error message");
-
-AddExpression(expressionIndex++, ef_return_number, "Products.length", "requestProducts", "ProductsLength", "Get Products Length");
+AddExpression(7, ef_return_number, "Products.length", "requestProducts", "ProductsLength", "Get Products Length");
 
 AddNumberParam("Index", "Product index");
-AddExpression(expressionIndex++, ef_return_string, "GetProductsIdentifier", "requestProducts", "GetProductsIdentifier", "Get Products Identifier");
+AddExpression(8, ef_return_string, "GetProductsIdentifier", "requestProducts", "GetProductsIdentifier", "Get Products Identifier");
 
 AddNumberParam("Index", "Product index");
-AddExpression(expressionIndex++, ef_return_string, "GetProductsName", "requestProducts", "GetProductsName", "Get Products Name");
+AddExpression(9, ef_return_string, "GetProductsName", "requestProducts", "GetProductsName", "Get Products Name");
 
 AddNumberParam("Index", "Product index");
-AddExpression(expressionIndex++, ef_return_string, "GetProductsDescription", "requestProducts", "GetProductsDescription", "Get Productions Description");
+AddExpression(10, ef_return_string, "GetProductsDescription", "requestProducts", "GetProductsDescription", "Get Productions Description");
 
 AddNumberParam("Index", "Product index");
-AddExpression(expressionIndex++, ef_return_number, "GetProductsLocalPrice", "requestProducts", "GetProductsLocalPrice", "Get Products Local Price");
+AddExpression(11, ef_return_number, "GetProductsLocalPrice", "requestProducts", "GetProductsLocalPrice", "Get Products Local Price");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestProducts", "requestGamerInfo", "errorCodeOnFailureRequestProducts", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestProducts", "requestGamerInfo", "errorMessageOnFailureRequestProducts", "Get the on failure error message");
+AddExpression(12, ef_return_number, "errorCodeOnFailureRequestProducts", "requestGamerInfo", "errorCodeOnFailureRequestProducts", "Get the on failure error code");
+AddExpression(13, ef_return_string, "errorMessageOnFailureRequestProducts", "requestGamerInfo", "errorMessageOnFailureRequestProducts", "Get the on failure error message");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestPurchase", "requestGamerInfo", "errorCodeOnFailureRequestPurchase", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestPurchase", "requestGamerInfo", "errorMessageOnFailureRequestPurchase", "Get the on failure error message");
+AddExpression(14, ef_return_number, "errorCodeOnFailureRequestPurchase", "requestGamerInfo", "errorCodeOnFailureRequestPurchase", "Get the on failure error code");
+AddExpression(15, ef_return_string, "errorMessageOnFailureRequestPurchase", "requestGamerInfo", "errorMessageOnFailureRequestPurchase", "Get the on failure error message");
 
-AddExpression(expressionIndex++, ef_return_number, "Receipts.length", "requestReceipts", "ReceiptsLength", "Get Receipts Length");
+AddExpression(16, ef_return_number, "Receipts.length", "requestReceipts", "ReceiptsLength", "Get Receipts Length");
 
 AddNumberParam("Index", "Receipt index");
-AddExpression(expressionIndex++, ef_return_string, "GetReceiptsIdentififer", "requestReceipts", "GetReceiptsIdentififer", "Get Receipts Identifier");
+AddExpression(17, ef_return_string, "GetReceiptsIdentififer", "requestReceipts", "GetReceiptsIdentififer", "Get Receipts Identifier");
 
 AddNumberParam("Index", "Receipt index");
-AddExpression(expressionIndex++, ef_return_string, "GetReceiptsGeneratedDate", "requestReceipts", "GetReceiptsGeneratedDate", "Get Receipts Generated Date");
+AddExpression(18, ef_return_string, "GetReceiptsGeneratedDate", "requestReceipts", "GetReceiptsGeneratedDate", "Get Receipts Generated Date");
 
 AddNumberParam("Index", "Receipt index");
-AddExpression(expressionIndex++, ef_return_number, "GetReceiptsLocalPrice", "requestReceipts", "GetReceiptsLocalPrice", "Get Receipts Local Price");
+AddExpression(19, ef_return_number, "GetReceiptsLocalPrice", "requestReceipts", "GetReceiptsLocalPrice", "Get Receipts Local Price");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureRequestReceipts", "requestGamerInfo", "errorCodeOnFailureRequestReceipts", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureRequestReceipts", "requestGamerInfo", "errorMessageOnFailureRequestReceipts", "Get the on failure error message");
+AddExpression(20, ef_return_number, "errorCodeOnFailureRequestReceipts", "requestGamerInfo", "errorCodeOnFailureRequestReceipts", "Get the on failure error code");
+AddExpression(21, ef_return_string, "errorMessageOnFailureRequestReceipts", "requestGamerInfo", "errorMessageOnFailureRequestReceipts", "Get the on failure error message");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureSetSafeArea", "requestGamerInfo", "errorCodeOnFailureSetSafeArea", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureSetSafeArea", "requestGamerInfo", "errorMessageOnFailureSetSafeArea", "Get the on failure error message");
+AddExpression(22, ef_return_number, "errorCodeOnFailureSetSafeArea", "requestGamerInfo", "errorCodeOnFailureSetSafeArea", "Get the on failure error code");
+AddExpression(23, ef_return_string, "errorMessageOnFailureSetSafeArea", "requestGamerInfo", "errorMessageOnFailureSetSafeArea", "Get the on failure error message");
 
-AddExpression(expressionIndex++, ef_return_number, "errorCodeOnFailureShutdown", "requestGamerInfo", "errorCodeOnFailureShutdown", "Get the on failure error code");
-AddExpression(expressionIndex++, ef_return_string, "errorMessageOnFailureShutdown", "requestGamerInfo", "errorMessageOnFailureShutdown", "Get the on failure error message");
+AddExpression(24, ef_return_number, "errorCodeOnFailureShutdown", "requestGamerInfo", "errorCodeOnFailureShutdown", "Get the on failure error code");
+AddExpression(25, ef_return_string, "errorMessageOnFailureShutdown", "requestGamerInfo", "errorMessageOnFailureShutdown", "Get the on failure error message");
 
 ////////////////////////////////////////
 ACESDone();
