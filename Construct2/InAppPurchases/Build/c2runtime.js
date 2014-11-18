@@ -23,6 +23,11 @@ if (typeof Object.getPrototypeOf !== "function")
 		if (window.console && window.console.log)
 			window.console.log(msg);
 	};
+	cr.logerror = function (msg)
+	{
+		if (window.console && window.console.error)
+			window.console.error(msg);
+	};
 	cr.seal = function(x)
 	{
 		return x;
@@ -1609,7 +1614,6 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 		if (this.maxPointSize > 2048)
 			this.maxPointSize = 2048;
 ;
-;
 		this.switchProgram(0);
 		cr.seal(this);
 	};
@@ -2879,6 +2883,7 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 		this.cssHeight = this.height;
 		this.lastWindowWidth = window.innerWidth;
 		this.lastWindowHeight = window.innerHeight;
+		this.forceCanvasAlpha = false;		// allow plugins to force the canvas to display with alpha channel
 		this.redraw = true;
 		this.isSuspended = false;
 		if (!Date.now) {
@@ -2984,12 +2989,79 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 		this.loaderlogo = null;
 		this.snapshotCanvas = null;
 		this.snapshotData = "";
-		this.load();
+		this.objectRefTable = [];
+		this.requestProjectData();
+	};
+	Runtime.prototype.requestProjectData = function ()
+	{
+		var self = this;
+		var xhr;
+		if (this.isWindowsPhone8)
+			xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		else
+			xhr = new XMLHttpRequest();
+		xhr.open("GET", "data.js", true);
+		var supportsJsonResponse = false;
+		if (!this.isDomFree && ("response" in xhr) && ("responseType" in xhr))
+		{
+			try {
+				xhr["responseType"] = "json";
+				supportsJsonResponse = (xhr["responseType"] === "json");
+			}
+			catch (e) {
+				supportsJsonResponse = false;
+			}
+		}
+		if (!supportsJsonResponse && ("responseType" in xhr))
+		{
+			try {
+				xhr["responseType"] = "text";
+			}
+			catch (e) {}
+		}
+		if ("overrideMimeType" in xhr)
+		{
+			try {
+				xhr["overrideMimeType"]("application/json; charset=utf-8");
+			}
+			catch (e) {}
+		}
+		xhr.onload = function ()
+		{
+			if (supportsJsonResponse)
+			{
+				self.loadProject(xhr["response"]);					// already parsed by browser
+			}
+			else
+			{
+				if (self.isEjecta)
+				{
+					var str = xhr["responseText"];
+					str = str.substr(str.indexOf("{"));		// trim any BOM
+					self.loadProject(JSON.parse(str));
+				}
+				else
+				{
+					self.loadProject(JSON.parse(xhr["responseText"]));	// forced to sync parse JSON
+				}
+			}
+		};
+		xhr.onerror = function (e)
+		{
+			cr.logerror("Error requesting data.js:");
+			cr.logerror(e);
+		};
+		xhr.send();
+	};
+	Runtime.prototype.initRendererAndLoader = function ()
+	{
+		var self = this;
+		var i, len, j, lenj, k, lenk, t, s, l, y;
 		this.isRetina = ((!this.isDomFree || this.isEjecta) && this.useHighDpi && !this.isAndroidStockBrowser);
 		this.devicePixelRatio = (this.isRetina ? (window["devicePixelRatio"] || window["webkitDevicePixelRatio"] || window["mozDevicePixelRatio"] || window["msDevicePixelRatio"] || 1) : 1);
 		this.ClearDeathRow();
 		var attribs;
-		var alpha_canvas = this.alphaBackground && !(this.isNodeWebkit || this.isWinJS || this.isWindowsPhone8 || this.isCrosswalk || this.isPhoneGap);
+		var alpha_canvas = !!(this.forceCanvasAlpha || (this.alphaBackground && !(this.isNodeWebkit || this.isWinJS || this.isWindowsPhone8 || this.isCrosswalk || this.isPhoneGap || this.isAmazonWebApp)));
 		if (this.fullscreen_mode > 0)
 			this["setSize"](window_innerWidth(), window_innerHeight(), true);
 		try {
@@ -3001,7 +3073,7 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 					"antialias": false,
 					"failIfMajorPerformanceCaveat": true
 				};
-				this.gl = (canvas.getContext("webgl", attribs) || canvas.getContext("experimental-webgl", attribs));
+				this.gl = (this.canvas.getContext("webgl", attribs) || this.canvas.getContext("experimental-webgl", attribs));
 			}
 		}
 		catch (e) {
@@ -3022,13 +3094,13 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 				this.overlay_ctx = this.overlay_canvas.getContext("2d");
 			}
 			this.glwrap = new cr.GLWrap(this.gl, this.isMobile);
-			this.glwrap.setSize(canvas.width, canvas.height);
+			this.glwrap.setSize(this.canvas.width, this.canvas.height);
 			this.glwrap.enable_mipmaps = (this.downscalingQuality !== 0);
 			this.ctx = null;
 			this.canvas.addEventListener("webglcontextlost", function (ev) {
 				ev.preventDefault();
 				self.onContextLost();
-				console.log("[Construct 2] WebGL context lost");
+				cr.logexport("[Construct 2] WebGL context lost");
 				window["cr_setSuspended"](true);		// stop rendering
 			}, false);
 			this.canvas.addEventListener("webglcontextrestored", function (ev) {
@@ -3040,10 +3112,9 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 				self.fx_tex[1] = null;
 				self.onContextRestored();
 				self.redraw = true;
-				console.log("[Construct 2] WebGL context restored");
+				cr.logexport("[Construct 2] WebGL context restored");
 				window["cr_setSuspended"](false);		// resume rendering
 			}, false);
-			var i, len, j, lenj, k, lenk, t, s, l, y;
 			for (i = 0, len = this.types_by_index.length; i < len; i++)
 			{
 				t = this.types_by_index[i];
@@ -3104,14 +3175,14 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 						"antialias": !!this.linearSampling,
 						"alpha": alpha_canvas
 					};
-					this.ctx = canvas.getContext("2d", attribs);
+					this.ctx = this.canvas.getContext("2d", attribs);
 				}
 				else
 				{
 					attribs = {
 						"alpha": alpha_canvas
 					};
-					this.ctx = canvas.getContext("2d", attribs);
+					this.ctx = this.canvas.getContext("2d", attribs);
 				}
 				this.ctx["webkitImageSmoothingEnabled"] = this.linearSampling;
 				this.ctx["mozImageSmoothingEnabled"] = this.linearSampling;
@@ -3153,25 +3224,28 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 				});
 			}
 		}
-		var unfocusFormControlFunc = function (e) {
-			if (cr.isCanvasInputEvent(e) && document["activeElement"] && document["activeElement"].blur)
-			{
-				document["activeElement"].blur();
+		if (!this.isDomFree)
+		{
+			var unfocusFormControlFunc = function (e) {
+				if (cr.isCanvasInputEvent(e) && document["activeElement"] && document["activeElement"] !== document.getElementsByTagName("body")[0] && document["activeElement"].blur)
+				{
+					document["activeElement"].blur();
+				}
 			}
+			if (window.navigator["pointerEnabled"])
+			{
+				document.addEventListener("pointerdown", unfocusFormControlFunc);
+			}
+			else if (window.navigator["msPointerEnabled"])
+			{
+				document.addEventListener("MSPointerDown", unfocusFormControlFunc);
+			}
+			else
+			{
+				document.addEventListener("touchstart", unfocusFormControlFunc);
+			}
+			document.addEventListener("mousedown", unfocusFormControlFunc);
 		}
-		if (window.navigator["pointerEnabled"])
-		{
-			document.addEventListener("pointerdown", unfocusFormControlFunc);
-		}
-		else if (window.navigator["msPointerEnabled"])
-		{
-			document.addEventListener("MSPointerDown", unfocusFormControlFunc);
-		}
-		else
-		{
-			document.addEventListener("touchstart", unfocusFormControlFunc);
-		}
-		document.addEventListener("mousedown", unfocusFormControlFunc);
 		if (this.fullscreen_mode === 0 && this.isRetina && this.devicePixelRatio > 1)
 		{
 			this["setSize"](this.original_width, this.original_height, true);
@@ -3391,7 +3465,9 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 		var orientation = "portrait";
 		if (this.orientations === 2)
 			orientation = "landscape";
-		if (screen["lockOrientation"])
+		if (screen["orientation"] && screen["orientation"]["lock"])
+			screen["orientation"]["lock"](orientation);
+		else if (screen["lockOrientation"])
 			screen["lockOrientation"](orientation);
 		else if (screen["webkitLockOrientation"])
 			screen["webkitLockOrientation"](orientation);
@@ -3468,10 +3544,17 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 	{
 		this.suspend_events.push(f);
 	};
-	Runtime.prototype.load = function ()
+	Runtime.prototype.GetObjectReference = function (i)
 	{
 ;
-		var pm = cr.getProjectModel();
+		return this.objectRefTable[i];
+	};
+	Runtime.prototype.loadProject = function (data_response)
+	{
+;
+		if (!data_response || !data_response["project"])
+			cr.logerror("Project model unavailable");
+		var pm = data_response["project"];
 		this.name = pm[0];
 		this.first_layout = pm[1];
 		this.fullscreen_mode = pm[12];	// 0 = off, 1 = crop, 2 = scale inner, 3 = scale outer, 4 = letterbox scale, 5 = integer letterbox scale
@@ -3494,15 +3577,17 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 			this.loaderlogo.src = "loading-logo.png";
 		}
 		this.next_uid = pm[21];
+		this.objectRefTable = cr.getObjectRefTable();
 		this.system = new cr.system_object(this);
-		var i, len, j, lenj, k, lenk, idstr, m, b, t, f;
+		var i, len, j, lenj, k, lenk, idstr, m, b, t, f, p;
 		var plugin, plugin_ctor;
 		for (i = 0, len = pm[2].length; i < len; i++)
 		{
 			m = pm[2][i];
+			p = this.GetObjectReference(m[0]);
 ;
-			cr.add_common_aces(m);
-			plugin = new m[0](this);
+			cr.add_common_aces(m, p.prototype);
+			plugin = new p(this);
 			plugin.singleglobal = m[1];
 			plugin.is_world = m[2];
 			plugin.must_predraw = m[9];
@@ -3511,11 +3596,11 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 			cr.seal(plugin);
 			this.plugins.push(plugin);
 		}
-		pm = cr.getProjectModel();
+		this.objectRefTable = cr.getObjectRefTable();
 		for (i = 0, len = pm[3].length; i < len; i++)
 		{
 			m = pm[3][i];
-			plugin_ctor = m[1];
+			plugin_ctor = this.GetObjectReference(m[1]);
 ;
 			plugin = null;
 			for (j = 0, lenj = this.plugins.length; j < lenj; j++)
@@ -3603,7 +3688,7 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 			for (j = 0, lenj = m[8].length; j < lenj; j++)
 			{
 				b = m[8][j];
-				var behavior_ctor = b[1];
+				var behavior_ctor = this.GetObjectReference(b[1]);
 				var behavior_plugin = null;
 				for (k = 0, lenk = this.behaviors.length; k < lenk; k++)
 				{
@@ -3771,10 +3856,13 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 		this.preloadSounds = pm[25];		// 0 = no, 1 = yes
 		this.projectName = pm[26];
 		this.start_time = Date.now();
+		this.objectRefTable.length = 0;
+		this.initRendererAndLoader();
 	};
 	var anyImageHadError = false;
-	Runtime.prototype.waitForImageLoad = function (img_)
+	Runtime.prototype.waitForImageLoad = function (img_, src_)
 	{
+		img_["cocoonLazyLoad"] = true;
 		img_.onerror = function (e)
 		{
 			img_.c2error = true;
@@ -3782,6 +3870,30 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 			if (console && console.error)
 				console.error("Error loading image '" + img_.src + "': ", e);
 		};
+		if (this.isEjecta)
+		{
+			img_.src = src_;
+		}
+		else if (!img_.src)
+		{
+			if (typeof XAPKReader !== "undefined")
+			{
+				XAPKReader.get(src_, function (expanded_url)
+				{
+					img_.src = expanded_url;
+				}, function (e)
+				{
+					img_.c2error = true;
+					anyImageHadError = true;
+					if (console && console.error)
+						console.error("Error extracting image '" + src_ + "' from expansion file: ", e);
+				});
+			}
+			else
+			{
+				img_.src = src_;
+			}
+		}
 		this.wait_for_textures.push(img_);
 	};
 	Runtime.prototype.findWaitingTexture = function (src_)
@@ -3816,7 +3928,7 @@ quat4.str=function(a){return"["+a[0]+", "+a[1]+", "+a[2]+", "+a[3]+"]"};
 			if (!filesize || filesize <= 0)
 				filesize = 50000;
 			totalsize += filesize;
-			if ((img.complete || img["loaded"]) && !img.c2error)
+			if (!!img.src && (img.complete || img["loaded"]) && !img.c2error)
 				completedsize += filesize;
 			else
 				ret = false;    // not all textures loaded
@@ -6599,16 +6711,7 @@ window["cr_setSuspended"] = function(s)
 		{
 			layer = this.layers[i];
 			layer.createInitialInstances();		// fills created_instances
-			layer.disableAngle = true;
-			var px = layer.canvasToLayer(0, 0, true, true);
-			var py = layer.canvasToLayer(0, 0, false, true);
-			layer.disableAngle = false;
-			if (this.runtime.pixel_rounding)
-			{
-				px = Math.round(px);
-				py = Math.round(py);
-			}
-			layer.rotateViewport(px, py, null);
+			layer.updateViewport(null);
 		}
 		var uids_changed = false;
 		if (!this.first_visit)
@@ -6825,8 +6928,10 @@ window["cr_setSuspended"] = function(s)
 		for (i = 0, len = this.layers.length; i < len; i++)
 		{
 			l = this.layers[i];
-			if (l.visible && l.opacity > 0 && l.blend_mode !== 11)
+			if (l.visible && l.opacity > 0 && l.blend_mode !== 11 && (l.instances.length || !l.transparent))
 				l.draw(layout_ctx);
+			else
+				l.updateViewport(null);		// even if not drawing, keep viewport up to date
 		}
 		if (render_offscreen)
 		{
@@ -6866,11 +6971,14 @@ window["cr_setSuspended"] = function(s)
 		}
 		if (this.runtime.alphaBackground && !this.hasOpaqueBottomLayer())
 			glw.clear(0, 0, 0, 0);
-		var i, len;
+		var i, len, l;
 		for (i = 0, len = this.layers.length; i < len; i++)
 		{
-			if (this.layers[i].visible && this.layers[i].opacity > 0)
-				this.layers[i].drawGL(glw);
+			l = this.layers[i];
+			if (l.visible && l.opacity > 0 && (l.instances.length || !l.transparent))
+				l.drawGL(glw);
+			else
+				l.updateViewport(null);		// even if not drawing, keep viewport up to date
 		}
 		if (render_to_texture)
 		{
@@ -7557,6 +7665,19 @@ window["cr_setSuspended"] = function(s)
 			ctx.globalAlpha = this.opacity;
 			ctx.drawImage(layer_canvas, 0, 0);
 		}
+	};
+	Layer.prototype.updateViewport = function (ctx)
+	{
+		this.disableAngle = true;
+		var px = this.canvasToLayer(0, 0, true, true);
+		var py = this.canvasToLayer(0, 0, false, true);
+		this.disableAngle = false;
+		if (this.runtime.pixel_rounding)
+		{
+			px = Math.round(px);
+			py = Math.round(py);
+		}
+		this.rotateViewport(px, py, ctx);
 	};
 	Layer.prototype.rotateViewport = function (px, py, ctx)
 	{
@@ -8561,7 +8682,7 @@ window["cr_setSuspended"] = function(s)
 		this.extra = {};		// for plugins to stow away some custom info
 		this.index = -1;
 		this.anyParamVariesPerInstance = false;
-		this.func = m[1];
+		this.func = this.runtime.GetObjectReference(m[1]);
 ;
 		this.trigger = (m[3] > 0);
 		this.fasttrigger = (m[3] === 2);
@@ -8866,7 +8987,7 @@ window["cr_setSuspended"] = function(s)
 		this.extra = {};		// for plugins to stow away some custom info
 		this.index = -1;
 		this.anyParamVariesPerInstance = false;
-		this.func = m[1];
+		this.func = this.runtime.GetObjectReference(m[1]);
 ;
 		if (m[0] === -1)	// system
 		{
@@ -9429,7 +9550,7 @@ window["cr_setSuspended"] = function(s)
 			this.third = new cr.expNode(owner_, m[3]);
 			break;
 		case 19:	// system_exp
-			this.func = m[1];
+			this.func = this.runtime.GetObjectReference(m[1]);
 ;
 			if (this.func === cr.system_object.prototype.exps.random
 			 || this.func === cr.system_object.prototype.exps.choose)
@@ -9450,7 +9571,7 @@ window["cr_setSuspended"] = function(s)
 			this.object_type = this.runtime.types_by_index[m[1]];
 ;
 			this.beh_index = -1;
-			this.func = m[2];
+			this.func = this.runtime.GetObjectReference(m[2]);
 			this.return_string = m[3];
 			if (cr.plugins_.Function && this.func === cr.plugins_.Function.prototype.exps.Call)
 			{
@@ -9486,7 +9607,7 @@ window["cr_setSuspended"] = function(s)
 			this.behavior_type = this.object_type.getBehaviorByName(m[2]);
 ;
 			this.beh_index = this.object_type.getBehaviorIndexByName(m[2]);
-			this.func = m[3];
+			this.func = this.runtime.GetObjectReference(m[3]);
 			this.return_string = m[4];
 			if (m[5])
 				this.instance_expr = new cr.expNode(owner_, m[5]);
@@ -10121,6 +10242,13 @@ cr.system_object.prototype.loadFromJSON = function (o)
         else
             return layer.visible;
     };
+	SysCnds.prototype.LayerEmpty = function (layer)
+    {
+        if (!layer)
+            return false;
+        else
+            return !layer.instances.length;
+    };
 	SysCnds.prototype.LayerCmpOpacity = function (layer, cmp, opacity_)
 	{
 		if (!layer)
@@ -10743,6 +10871,29 @@ cr.system_object.prototype.loadFromJSON = function (o)
 		obj_.applySolToContainer();
 		return cr.xor(!!sol.instances.length, cnd.inverted);
 	};
+	SysCnds.prototype.IsNaN = function (n)
+	{
+		return !!isNaN(n);
+	};
+	SysCnds.prototype.AngleWithin = function (a1, within, a2)
+	{
+		return cr.angleDiff(cr.to_radians(a1), cr.to_radians(a2)) <= cr.to_radians(within);
+	};
+	SysCnds.prototype.IsClockwiseFrom = function (a1, a2)
+	{
+		return cr.angleClockwise(cr.to_radians(a1), cr.to_radians(a2));
+	};
+	SysCnds.prototype.IsBetweenAngles = function (a, la, ua)
+	{
+		var angle = cr.to_clamped_radians(a);
+		var lower = cr.to_clamped_radians(la);
+		var upper = cr.to_clamped_radians(ua);
+		var obtuse = (!cr.angleClockwise(upper, lower));
+		if (obtuse)
+			return !(!cr.angleClockwise(angle, lower) && cr.angleClockwise(angle, upper));
+		else
+			return cr.angleClockwise(angle, lower) && !cr.angleClockwise(angle, upper);
+	};
 	sysProto.cnds = new SysCnds();
     function SysActs() {};
     SysActs.prototype.GoToLayout = function (to)
@@ -11142,6 +11293,18 @@ cr.system_object.prototype.loadFromJSON = function (o)
 		if (!!t === !!layer.transparent)
 			return;
 		layer.transparent = !!t;
+        this.runtime.redraw = true;
+    };
+	SysActs.prototype.SetLayerBlendMode = function (layer, bm)
+    {
+        if (!layer)
+            return;
+		if (layer.blend_mode === bm)
+			return;
+		layer.blend_mode = bm;
+		layer.compositeOp = cr.effectToCompositeOp(layer.blend_mode);
+		if (this.runtime.gl)
+			cr.setGLBlend(layer, layer.blend_mode, this.runtime.gl);
         this.runtime.redraw = true;
     };
 	SysActs.prototype.StopLoop = function ()
@@ -11928,9 +12091,8 @@ cr.system_object.prototype.loadFromJSON = function (o)
 }());
 ;
 (function () {
-	cr.add_common_aces = function (m)
+	cr.add_common_aces = function (m, pluginProto)
 	{
-		var pluginProto = m[0].prototype;
 		var singleglobal_ = m[1];
 		var position_aces = m[3];
 		var size_aces = m[4];
@@ -12960,6 +13122,2934 @@ cr.system_object.prototype.loadFromJSON = function (o)
 	};
 })();
 cr.shaders = {};
+;
+;
+cr.plugins_.Audio = function(runtime)
+{
+	this.runtime = runtime;
+};
+(function ()
+{
+	var pluginProto = cr.plugins_.Audio.prototype;
+	pluginProto.Type = function(plugin)
+	{
+		this.plugin = plugin;
+		this.runtime = plugin.runtime;
+	};
+	var typeProto = pluginProto.Type.prototype;
+	typeProto.onCreate = function()
+	{
+	};
+	var audRuntime = null;
+	var audInst = null;
+	var audTag = "";
+	var appPath = "";			// for PhoneGap only
+	var API_HTML5 = 0;
+	var API_WEBAUDIO = 1;
+	var API_PHONEGAP = 2;
+	var API_APPMOBI = 3;
+	var api = API_HTML5;
+	var context = null;
+	var audioBuffers = [];		// cache of buffers
+	var audioInstances = [];	// cache of instances
+	var lastAudio = null;
+	var useOgg = false;			// determined at create time
+	var timescale_mode = 0;
+	var silent = false;
+	var masterVolume = 1;
+	var listenerX = 0;
+	var listenerY = 0;
+	var panningModel = 1;		// HRTF
+	var distanceModel = 1;		// Inverse
+	var refDistance = 10;
+	var maxDistance = 10000;
+	var rolloffFactor = 1;
+	var micSource = null;
+	var micTag = "";
+	var isMusicWorkaround = false;
+	var musicPlayNextTouch = [];
+	function dbToLinear(x)
+	{
+		var v = dbToLinear_nocap(x);
+		if (v < 0)
+			v = 0;
+		if (v > 1)
+			v = 1;
+		return v;
+	};
+	function linearToDb(x)
+	{
+		if (x < 0)
+			x = 0;
+		if (x > 1)
+			x = 1;
+		return linearToDb_nocap(x);
+	};
+	function dbToLinear_nocap(x)
+	{
+		return Math.pow(10, x / 20);
+	};
+	function linearToDb_nocap(x)
+	{
+		return (Math.log(x) / Math.log(10)) * 20;
+	};
+	var effects = {};
+	function getDestinationForTag(tag)
+	{
+		tag = tag.toLowerCase();
+		if (effects.hasOwnProperty(tag))
+		{
+			if (effects[tag].length)
+				return effects[tag][0].getInputNode();
+		}
+		return context["destination"];
+	};
+	function createGain()
+	{
+		if (context["createGain"])
+			return context["createGain"]();
+		else
+			return context["createGainNode"]();
+	};
+	function createDelay(d)
+	{
+		if (context["createDelay"])
+			return context["createDelay"](d);
+		else
+			return context["createDelayNode"](d);
+	};
+	function startSource(s)
+	{
+		if (s["start"])
+			s["start"](0);
+		else
+			s["noteOn"](0);
+	};
+	function startSourceAt(s, x, d)
+	{
+		if (s["start"])
+			s["start"](0, x);
+		else
+			s["noteGrainOn"](0, x, d - x);
+	};
+	function stopSource(s)
+	{
+		try {
+			if (s["stop"])
+				s["stop"](0);
+			else
+				s["noteOff"](0);
+		}
+		catch (e) {}
+	};
+	function setAudioParam(ap, value, ramp, time)
+	{
+		if (!ap)
+			return;		// iOS is missing some parameters
+		ap["cancelScheduledValues"](0);
+		if (time === 0)
+		{
+			ap["value"] = value;
+			return;
+		}
+		var curTime = context["currentTime"];
+		time += curTime;
+		switch (ramp) {
+		case 0:		// step
+			ap["setValueAtTime"](value, time);
+			break;
+		case 1:		// linear
+			ap["setValueAtTime"](ap["value"], curTime);		// to set what to ramp from
+			ap["linearRampToValueAtTime"](value, time);
+			break;
+		case 2:		// exponential
+			ap["setValueAtTime"](ap["value"], curTime);		// to set what to ramp from
+			ap["exponentialRampToValueAtTime"](value, time);
+			break;
+		}
+	};
+	var filterTypes = ["lowpass", "highpass", "bandpass", "lowshelf", "highshelf", "peaking", "notch", "allpass"];
+	function FilterEffect(type, freq, detune, q, gain, mix)
+	{
+		this.type = "filter";
+		this.params = [type, freq, detune, q, gain, mix];
+		this.inputNode = createGain();
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix;
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - mix;
+		this.filterNode = context["createBiquadFilter"]();
+		if (typeof this.filterNode["type"] === "number")
+			this.filterNode["type"] = type;
+		else
+			this.filterNode["type"] = filterTypes[type];
+		this.filterNode["frequency"]["value"] = freq;
+		if (this.filterNode["detune"])		// iOS 6 doesn't have detune yet
+			this.filterNode["detune"]["value"] = detune;
+		this.filterNode["Q"]["value"] = q;
+		this.filterNode["gain"]["value"] = gain;
+		this.inputNode["connect"](this.filterNode);
+		this.inputNode["connect"](this.dryNode);
+		this.filterNode["connect"](this.wetNode);
+	};
+	FilterEffect.prototype.connectTo = function (node)
+	{
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node);
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node);
+	};
+	FilterEffect.prototype.remove = function ()
+	{
+		this.inputNode["disconnect"]();
+		this.filterNode["disconnect"]();
+		this.wetNode["disconnect"]();
+		this.dryNode["disconnect"]();
+	};
+	FilterEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	FilterEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[5] = value;
+			setAudioParam(this.wetNode["gain"], value, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - value, ramp, time);
+			break;
+		case 1:		// filter frequency
+			this.params[1] = value;
+			setAudioParam(this.filterNode["frequency"], value, ramp, time);
+			break;
+		case 2:		// filter detune
+			this.params[2] = value;
+			setAudioParam(this.filterNode["detune"], value, ramp, time);
+			break;
+		case 3:		// filter Q
+			this.params[3] = value;
+			setAudioParam(this.filterNode["Q"], value, ramp, time);
+			break;
+		case 4:		// filter/delay gain (note value is in dB here)
+			this.params[4] = value;
+			setAudioParam(this.filterNode["gain"], value, ramp, time);
+			break;
+		}
+	};
+	function DelayEffect(delayTime, delayGain, mix)
+	{
+		this.type = "delay";
+		this.params = [delayTime, delayGain, mix];
+		this.inputNode = createGain();
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix;
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - mix;
+		this.mainNode = createGain();
+		this.delayNode = createDelay(delayTime);
+		this.delayNode["delayTime"]["value"] = delayTime;
+		this.delayGainNode = createGain();
+		this.delayGainNode["gain"]["value"] = delayGain;
+		this.inputNode["connect"](this.mainNode);
+		this.inputNode["connect"](this.dryNode);
+		this.mainNode["connect"](this.wetNode);
+		this.mainNode["connect"](this.delayNode);
+		this.delayNode["connect"](this.delayGainNode);
+		this.delayGainNode["connect"](this.mainNode);
+	};
+	DelayEffect.prototype.connectTo = function (node)
+	{
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node);
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node);
+	};
+	DelayEffect.prototype.remove = function ()
+	{
+		this.inputNode["disconnect"]();
+		this.mainNode["disconnect"]();
+		this.delayNode["disconnect"]();
+		this.delayGainNode["disconnect"]();
+		this.wetNode["disconnect"]();
+		this.dryNode["disconnect"]();
+	};
+	DelayEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	DelayEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[2] = value;
+			setAudioParam(this.wetNode["gain"], value, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - value, ramp, time);
+			break;
+		case 4:		// filter/delay gain (note value is passed in dB but needs to be linear here)
+			this.params[1] = dbToLinear(value);
+			setAudioParam(this.delayGainNode["gain"], dbToLinear(value), ramp, time);
+			break;
+		case 5:		// delay time
+			this.params[0] = value;
+			setAudioParam(this.delayNode["delayTime"], value, ramp, time);
+			break;
+		}
+	};
+	function ConvolveEffect(buffer, normalize, mix, src)
+	{
+		this.type = "convolve";
+		this.params = [normalize, mix, src];
+		this.inputNode = createGain();
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix;
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - mix;
+		this.convolveNode = context["createConvolver"]();
+		if (buffer)
+		{
+			this.convolveNode["normalize"] = normalize;
+			this.convolveNode["buffer"] = buffer;
+		}
+		this.inputNode["connect"](this.convolveNode);
+		this.inputNode["connect"](this.dryNode);
+		this.convolveNode["connect"](this.wetNode);
+	};
+	ConvolveEffect.prototype.connectTo = function (node)
+	{
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node);
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node);
+	};
+	ConvolveEffect.prototype.remove = function ()
+	{
+		this.inputNode["disconnect"]();
+		this.convolveNode["disconnect"]();
+		this.wetNode["disconnect"]();
+		this.dryNode["disconnect"]();
+	};
+	ConvolveEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	ConvolveEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[1] = value;
+			setAudioParam(this.wetNode["gain"], value, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - value, ramp, time);
+			break;
+		}
+	};
+	function FlangerEffect(delay, modulation, freq, feedback, mix)
+	{
+		this.type = "flanger";
+		this.params = [delay, modulation, freq, feedback, mix];
+		this.inputNode = createGain();
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - (mix / 2);
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix / 2;
+		this.feedbackNode = createGain();
+		this.feedbackNode["gain"]["value"] = feedback;
+		this.delayNode = createDelay(delay + modulation);
+		this.delayNode["delayTime"]["value"] = delay;
+		this.oscNode = context["createOscillator"]();
+		this.oscNode["frequency"]["value"] = freq;
+		this.oscGainNode = createGain();
+		this.oscGainNode["gain"]["value"] = modulation;
+		this.inputNode["connect"](this.delayNode);
+		this.inputNode["connect"](this.dryNode);
+		this.delayNode["connect"](this.wetNode);
+		this.delayNode["connect"](this.feedbackNode);
+		this.feedbackNode["connect"](this.delayNode);
+		this.oscNode["connect"](this.oscGainNode);
+		this.oscGainNode["connect"](this.delayNode["delayTime"]);
+		startSource(this.oscNode);
+	};
+	FlangerEffect.prototype.connectTo = function (node)
+	{
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node);
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node);
+	};
+	FlangerEffect.prototype.remove = function ()
+	{
+		this.inputNode["disconnect"]();
+		this.delayNode["disconnect"]();
+		this.oscNode["disconnect"]();
+		this.oscGainNode["disconnect"]();
+		this.dryNode["disconnect"]();
+		this.wetNode["disconnect"]();
+		this.feedbackNode["disconnect"]();
+	};
+	FlangerEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	FlangerEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[4] = value;
+			setAudioParam(this.wetNode["gain"], value / 2, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - (value / 2), ramp, time);
+			break;
+		case 6:		// modulation
+			this.params[1] = value / 1000;
+			setAudioParam(this.oscGainNode["gain"], value / 1000, ramp, time);
+			break;
+		case 7:		// modulation frequency
+			this.params[2] = value;
+			setAudioParam(this.oscNode["frequency"], value, ramp, time);
+			break;
+		case 8:		// feedback
+			this.params[3] = value / 100;
+			setAudioParam(this.feedbackNode["gain"], value / 100, ramp, time);
+			break;
+		}
+	};
+	function PhaserEffect(freq, detune, q, modulation, modfreq, mix)
+	{
+		this.type = "phaser";
+		this.params = [freq, detune, q, modulation, modfreq, mix];
+		this.inputNode = createGain();
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - (mix / 2);
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix / 2;
+		this.filterNode = context["createBiquadFilter"]();
+		if (typeof this.filterNode["type"] === "number")
+			this.filterNode["type"] = 7;	// all-pass
+		else
+			this.filterNode["type"] = "allpass";
+		this.filterNode["frequency"]["value"] = freq;
+		if (this.filterNode["detune"])		// iOS 6 doesn't have detune yet
+			this.filterNode["detune"]["value"] = detune;
+		this.filterNode["Q"]["value"] = q;
+		this.oscNode = context["createOscillator"]();
+		this.oscNode["frequency"]["value"] = modfreq;
+		this.oscGainNode = createGain();
+		this.oscGainNode["gain"]["value"] = modulation;
+		this.inputNode["connect"](this.filterNode);
+		this.inputNode["connect"](this.dryNode);
+		this.filterNode["connect"](this.wetNode);
+		this.oscNode["connect"](this.oscGainNode);
+		this.oscGainNode["connect"](this.filterNode["frequency"]);
+		startSource(this.oscNode);
+	};
+	PhaserEffect.prototype.connectTo = function (node)
+	{
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node);
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node);
+	};
+	PhaserEffect.prototype.remove = function ()
+	{
+		this.inputNode["disconnect"]();
+		this.filterNode["disconnect"]();
+		this.oscNode["disconnect"]();
+		this.oscGainNode["disconnect"]();
+		this.dryNode["disconnect"]();
+		this.wetNode["disconnect"]();
+	};
+	PhaserEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	PhaserEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[5] = value;
+			setAudioParam(this.wetNode["gain"], value / 2, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - (value / 2), ramp, time);
+			break;
+		case 1:		// filter frequency
+			this.params[0] = value;
+			setAudioParam(this.filterNode["frequency"], value, ramp, time);
+			break;
+		case 2:		// filter detune
+			this.params[1] = value;
+			setAudioParam(this.filterNode["detune"], value, ramp, time);
+			break;
+		case 3:		// filter Q
+			this.params[2] = value;
+			setAudioParam(this.filterNode["Q"], value, ramp, time);
+			break;
+		case 6:		// modulation
+			this.params[3] = value;
+			setAudioParam(this.oscGainNode["gain"], value, ramp, time);
+			break;
+		case 7:		// modulation frequency
+			this.params[4] = value;
+			setAudioParam(this.oscNode["frequency"], value, ramp, time);
+			break;
+		}
+	};
+	function GainEffect(g)
+	{
+		this.type = "gain";
+		this.params = [g];
+		this.node = createGain();
+		this.node["gain"]["value"] = g;
+	};
+	GainEffect.prototype.connectTo = function (node_)
+	{
+		this.node["disconnect"]();
+		this.node["connect"](node_);
+	};
+	GainEffect.prototype.remove = function ()
+	{
+		this.node["disconnect"]();
+	};
+	GainEffect.prototype.getInputNode = function ()
+	{
+		return this.node;
+	};
+	GainEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 4:		// gain
+			this.params[0] = dbToLinear(value);
+			setAudioParam(this.node["gain"], dbToLinear(value), ramp, time);
+			break;
+		}
+	};
+	function TremoloEffect(freq, mix)
+	{
+		this.type = "tremolo";
+		this.params = [freq, mix];
+		this.node = createGain();
+		this.node["gain"]["value"] = 1 - (mix / 2);
+		this.oscNode = context["createOscillator"]();
+		this.oscNode["frequency"]["value"] = freq;
+		this.oscGainNode = createGain();
+		this.oscGainNode["gain"]["value"] = mix / 2;
+		this.oscNode["connect"](this.oscGainNode);
+		this.oscGainNode["connect"](this.node["gain"]);
+		startSource(this.oscNode);
+	};
+	TremoloEffect.prototype.connectTo = function (node_)
+	{
+		this.node["disconnect"]();
+		this.node["connect"](node_);
+	};
+	TremoloEffect.prototype.remove = function ()
+	{
+		this.oscNode["disconnect"]();
+		this.oscGainNode["disconnect"]();
+		this.node["disconnect"]();
+	};
+	TremoloEffect.prototype.getInputNode = function ()
+	{
+		return this.node;
+	};
+	TremoloEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[1] = value;
+			setAudioParam(this.node["gain"]["value"], 1 - (value / 2), ramp, time);
+			setAudioParam(this.oscGainNode["gain"]["value"], value / 2, ramp, time);
+			break;
+		case 7:		// modulation frequency
+			this.params[0] = value;
+			setAudioParam(this.oscNode["frequency"], value, ramp, time);
+			break;
+		}
+	};
+	function RingModulatorEffect(freq, mix)
+	{
+		this.type = "ringmod";
+		this.params = [freq, mix];
+		this.inputNode = createGain();
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix;
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - mix;
+		this.ringNode = createGain();
+		this.ringNode["gain"]["value"] = 0;
+		this.oscNode = context["createOscillator"]();
+		this.oscNode["frequency"]["value"] = freq;
+		this.oscNode["connect"](this.ringNode["gain"]);
+		startSource(this.oscNode);
+		this.inputNode["connect"](this.ringNode);
+		this.inputNode["connect"](this.dryNode);
+		this.ringNode["connect"](this.wetNode);
+	};
+	RingModulatorEffect.prototype.connectTo = function (node_)
+	{
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node_);
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node_);
+	};
+	RingModulatorEffect.prototype.remove = function ()
+	{
+		this.oscNode["disconnect"]();
+		this.ringNode["disconnect"]();
+		this.inputNode["disconnect"]();
+		this.wetNode["disconnect"]();
+		this.dryNode["disconnect"]();
+	};
+	RingModulatorEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	RingModulatorEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[1] = value;
+			setAudioParam(this.wetNode["gain"], value, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - value, ramp, time);
+			break;
+		case 7:		// modulation frequency
+			this.params[0] = value;
+			setAudioParam(this.oscNode["frequency"], value, ramp, time);
+			break;
+		}
+	};
+	function DistortionEffect(threshold, headroom, drive, makeupgain, mix)
+	{
+		this.type = "distortion";
+		this.params = [threshold, headroom, drive, makeupgain, mix];
+		this.inputNode = createGain();
+		this.preGain = createGain();
+		this.postGain = createGain();
+		this.setDrive(drive, dbToLinear_nocap(makeupgain));
+		this.wetNode = createGain();
+		this.wetNode["gain"]["value"] = mix;
+		this.dryNode = createGain();
+		this.dryNode["gain"]["value"] = 1 - mix;
+		this.waveShaper = context["createWaveShaper"]();
+		this.curve = new Float32Array(65536);
+		this.generateColortouchCurve(threshold, headroom);
+		this.waveShaper.curve = this.curve;
+		this.inputNode["connect"](this.preGain);
+		this.inputNode["connect"](this.dryNode);
+		this.preGain["connect"](this.waveShaper);
+		this.waveShaper["connect"](this.postGain);
+		this.postGain["connect"](this.wetNode);
+	};
+	DistortionEffect.prototype.setDrive = function (drive, makeupgain)
+	{
+		if (drive < 0.01)
+			drive = 0.01;
+		this.preGain["gain"]["value"] = drive;
+		this.postGain["gain"]["value"] = Math.pow(1 / drive, 0.6) * makeupgain;
+	};
+	function e4(x, k)
+	{
+		return 1.0 - Math.exp(-k * x);
+	}
+	DistortionEffect.prototype.shape = function (x, linearThreshold, linearHeadroom)
+	{
+		var maximum = 1.05 * linearHeadroom * linearThreshold;
+		var kk = (maximum - linearThreshold);
+		var sign = x < 0 ? -1 : +1;
+		var absx = x < 0 ? -x : x;
+		var shapedInput = absx < linearThreshold ? absx : linearThreshold + kk * e4(absx - linearThreshold, 1.0 / kk);
+		shapedInput *= sign;
+		return shapedInput;
+	};
+	DistortionEffect.prototype.generateColortouchCurve = function (threshold, headroom)
+	{
+		var linearThreshold = dbToLinear_nocap(threshold);
+		var linearHeadroom = dbToLinear_nocap(headroom);
+		var n = 65536;
+		var n2 = n / 2;
+		var x = 0;
+		for (var i = 0; i < n2; ++i) {
+			x = i / n2;
+			x = this.shape(x, linearThreshold, linearHeadroom);
+			this.curve[n2 + i] = x;
+			this.curve[n2 - i - 1] = -x;
+		}
+	};
+	DistortionEffect.prototype.connectTo = function (node)
+	{
+		this.wetNode["disconnect"]();
+		this.wetNode["connect"](node);
+		this.dryNode["disconnect"]();
+		this.dryNode["connect"](node);
+	};
+	DistortionEffect.prototype.remove = function ()
+	{
+		this.inputNode["disconnect"]();
+		this.preGain["disconnect"]();
+		this.waveShaper["disconnect"]();
+		this.postGain["disconnect"]();
+		this.wetNode["disconnect"]();
+		this.dryNode["disconnect"]();
+	};
+	DistortionEffect.prototype.getInputNode = function ()
+	{
+		return this.inputNode;
+	};
+	DistortionEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+		switch (param) {
+		case 0:		// mix
+			value = value / 100;
+			if (value < 0) value = 0;
+			if (value > 1) value = 1;
+			this.params[4] = value;
+			setAudioParam(this.wetNode["gain"], value, ramp, time);
+			setAudioParam(this.dryNode["gain"], 1 - value, ramp, time);
+			break;
+		}
+	};
+	function CompressorEffect(threshold, knee, ratio, attack, release)
+	{
+		this.type = "compressor";
+		this.params = [threshold, knee, ratio, attack, release];
+		this.node = context["createDynamicsCompressor"]();
+		try {
+			this.node["threshold"]["value"] = threshold;
+			this.node["knee"]["value"] = knee;
+			this.node["ratio"]["value"] = ratio;
+			this.node["attack"]["value"] = attack;
+			this.node["release"]["value"] = release;
+		}
+		catch (e) {}
+	};
+	CompressorEffect.prototype.connectTo = function (node_)
+	{
+		this.node["disconnect"]();
+		this.node["connect"](node_);
+	};
+	CompressorEffect.prototype.remove = function ()
+	{
+		this.node["disconnect"]();
+	};
+	CompressorEffect.prototype.getInputNode = function ()
+	{
+		return this.node;
+	};
+	CompressorEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+	};
+	function AnalyserEffect(fftSize, smoothing)
+	{
+		this.type = "analyser";
+		this.params = [fftSize, smoothing];
+		this.node = context["createAnalyser"]();
+		this.node["fftSize"] = fftSize;
+		this.node["smoothingTimeConstant"] = smoothing;
+		this.freqBins = new Float32Array(this.node["frequencyBinCount"]);
+		this.signal = new Uint8Array(fftSize);
+		this.peak = 0;
+		this.rms = 0;
+	};
+	AnalyserEffect.prototype.tick = function ()
+	{
+		this.node["getFloatFrequencyData"](this.freqBins);
+		this.node["getByteTimeDomainData"](this.signal);
+		var fftSize = this.node["fftSize"];
+		var i = 0;
+		this.peak = 0;
+		var rmsSquaredSum = 0;
+		var s = 0;
+		for ( ; i < fftSize; i++)
+		{
+			s = (this.signal[i] - 128) / 128;
+			if (s < 0)
+				s = -s;
+			if (this.peak < s)
+				this.peak = s;
+			rmsSquaredSum += s * s;
+		}
+		this.peak = linearToDb(this.peak);
+		this.rms = linearToDb(Math.sqrt(rmsSquaredSum / fftSize));
+	};
+	AnalyserEffect.prototype.connectTo = function (node_)
+	{
+		this.node["disconnect"]();
+		this.node["connect"](node_);
+	};
+	AnalyserEffect.prototype.remove = function ()
+	{
+		this.node["disconnect"]();
+	};
+	AnalyserEffect.prototype.getInputNode = function ()
+	{
+		return this.node;
+	};
+	AnalyserEffect.prototype.setParam = function(param, value, ramp, time)
+	{
+	};
+	var OT_POS_SAMPLES = 4;
+	function ObjectTracker()
+	{
+		this.obj = null;
+		this.loadUid = 0;
+		this.speeds = [];
+		this.lastX = 0;
+		this.lastY = 0;
+		this.moveAngle = 0;
+	};
+	ObjectTracker.prototype.setObject = function (obj_)
+	{
+		this.obj = obj_;
+		if (this.obj)
+		{
+			this.lastX = this.obj.x;
+			this.lastY = this.obj.y;
+		}
+		this.speeds.length = 0;
+	};
+	ObjectTracker.prototype.hasObject = function ()
+	{
+		return !!this.obj;
+	};
+	ObjectTracker.prototype.tick = function (dt)
+	{
+		if (!this.obj || dt === 0)
+			return;
+		this.moveAngle = cr.angleTo(this.lastX, this.lastY, this.obj.x, this.obj.y);
+		var s = cr.distanceTo(this.lastX, this.lastY, this.obj.x, this.obj.y) / dt;
+		if (this.speeds.length < OT_POS_SAMPLES)
+			this.speeds.push(s);
+		else
+		{
+			this.speeds.shift();
+			this.speeds.push(s);
+		}
+		this.lastX = this.obj.x;
+		this.lastY = this.obj.y;
+	};
+	ObjectTracker.prototype.getSpeed = function ()
+	{
+		if (!this.speeds.length)
+			return 0;
+		var i, len, sum = 0;
+		for (i = 0, len = this.speeds.length; i < len; i++)
+		{
+			sum += this.speeds[i];
+		}
+		return sum / this.speeds.length;
+	};
+	ObjectTracker.prototype.getVelocityX = function ()
+	{
+		return Math.cos(this.moveAngle) * this.getSpeed();
+	};
+	ObjectTracker.prototype.getVelocityY = function ()
+	{
+		return Math.sin(this.moveAngle) * this.getSpeed();
+	};
+	var iOShadtouch = false;	// has had touch input on iOS to work around web audio API muting
+	function C2AudioBuffer(src_, is_music)
+	{
+		this.src = src_;
+		this.myapi = api;
+		this.is_music = is_music;
+		this.added_end_listener = false;
+		var self = this;
+		this.outNode = null;
+		this.mediaSourceNode = null;
+		this.panWhenReady = [];		// for web audio API positioned sounds
+		this.seekWhenReady = 0;
+		this.pauseWhenReady = false;
+		this.supportWebAudioAPI = false;
+		this.failedToLoad = false;
+		this.wasEverReady = false;	// if a buffer is ever marked as ready, it's permanently considered ready after then.
+		if (api === API_WEBAUDIO && is_music)
+		{
+			this.myapi = API_HTML5;
+			this.outNode = createGain();
+		}
+		this.bufferObject = null;			// actual audio object
+		this.audioData = null;				// web audio api: ajax request result (compressed audio that needs decoding)
+		var request;
+		switch (this.myapi) {
+		case API_HTML5:
+			this.bufferObject = new Audio();
+			this.bufferObject.addEventListener("canplaythrough", function () {
+				self.wasEverReady = true;	// update loaded state so preload is considered complete
+			});
+			if (api === API_WEBAUDIO && context["createMediaElementSource"] && !/wiiu/i.test(navigator.userAgent))
+			{
+				this.supportWebAudioAPI = true;		// can be routed through web audio api
+				this.bufferObject.addEventListener("canplay", function ()
+				{
+					if (!self.mediaSourceNode)		// protect against this event firing twice
+					{
+						self.mediaSourceNode = context["createMediaElementSource"](self.bufferObject);
+						self.mediaSourceNode["connect"](self.outNode);
+					}
+				});
+			}
+			this.bufferObject.autoplay = false;	// this is only a source buffer, not an instance
+			this.bufferObject.preload = "auto";
+			this.bufferObject.src = src_;
+			break;
+		case API_WEBAUDIO:
+			request = new XMLHttpRequest();
+			request.open("GET", src_, true);
+			request.responseType = "arraybuffer";
+			request.onload = function () {
+				self.audioData = request.response;
+				self.decodeAudioBuffer();
+			};
+			request.onerror = function () {
+				self.failedToLoad = true;
+			};
+			request.send();
+			break;
+		case API_PHONEGAP:
+			this.bufferObject = true;
+			break;
+		case API_APPMOBI:
+			this.bufferObject = true;
+			break;
+		}
+	};
+	C2AudioBuffer.prototype.decodeAudioBuffer = function ()
+	{
+		if (this.bufferObject || !this.audioData)
+			return;		// audio already decoded or AJAX request not yet complete
+		var self = this;
+		if (context["decodeAudioData"])
+		{
+			context["decodeAudioData"](this.audioData, function (buffer) {
+					self.bufferObject = buffer;
+					self.audioData = null;		// clear AJAX response to allow GC and save memory, only need the bufferObject now
+					var p, i, len, a;
+					if (!cr.is_undefined(self.playTagWhenReady) && !silent)
+					{
+						if (self.panWhenReady.length)
+						{
+							for (i = 0, len = self.panWhenReady.length; i < len; i++)
+							{
+								p = self.panWhenReady[i];
+								a = new C2AudioInstance(self, p.thistag);
+								a.setPannerEnabled(true);
+								if (typeof p.objUid !== "undefined")
+								{
+									p.obj = audRuntime.getObjectByUID(p.objUid);
+									if (!p.obj)
+										continue;
+								}
+								if (p.obj)
+								{
+									var px = cr.rotatePtAround(p.obj.x, p.obj.y, -p.obj.layer.getAngle(), listenerX, listenerY, true);
+									var py = cr.rotatePtAround(p.obj.x, p.obj.y, -p.obj.layer.getAngle(), listenerX, listenerY, false);
+									a.setPan(px, py, cr.to_degrees(p.obj.angle - p.obj.layer.getAngle()), p.ia, p.oa, p.og);
+									a.setObject(p.obj);
+								}
+								else
+								{
+									a.setPan(p.x, p.y, p.a, p.ia, p.oa, p.og);
+								}
+								a.play(self.loopWhenReady, self.volumeWhenReady, self.seekWhenReady);
+								if (self.pauseWhenReady)
+									a.pause();
+								audioInstances.push(a);
+							}
+							self.panWhenReady.length = 0;
+						}
+						else
+						{
+							a = new C2AudioInstance(self, self.playTagWhenReady);
+							a.play(self.loopWhenReady, self.volumeWhenReady, self.seekWhenReady);
+							if (self.pauseWhenReady)
+								a.pause();
+							audioInstances.push(a);
+						}
+					}
+					else if (!cr.is_undefined(self.convolveWhenReady))
+					{
+						var convolveNode = self.convolveWhenReady.convolveNode;
+						convolveNode["normalize"] = self.normalizeWhenReady;
+						convolveNode["buffer"] = buffer;
+					}
+			}, function (e) {
+				self.failedToLoad = true;
+			});
+		}
+		else
+		{
+			this.bufferObject = context["createBuffer"](this.audioData, false);
+			this.audioData = null;		// clear AJAX response to allow GC and save memory, only need the bufferObject now
+			if (!cr.is_undefined(this.playTagWhenReady) && !silent)
+			{
+				var a = new C2AudioInstance(this, this.playTagWhenReady);
+				a.play(this.loopWhenReady, this.volumeWhenReady, this.seekWhenReady);
+				if (this.pauseWhenReady)
+					a.pause();
+				audioInstances.push(a);
+			}
+			else if (!cr.is_undefined(this.convolveWhenReady))
+			{
+				var convolveNode = this.convolveWhenReady.convolveNode;
+				convolveNode["normalize"] = this.normalizeWhenReady;
+				convolveNode["buffer"] = this.bufferObject;
+			}
+		}
+	};
+	C2AudioBuffer.prototype.isLoaded = function ()
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			var ret = this.bufferObject["readyState"] >= 4;	// HAVE_ENOUGH_DATA
+			if (ret)
+				this.wasEverReady = true;
+			return ret || this.wasEverReady;
+		case API_WEBAUDIO:
+			return !!this.audioData || !!this.bufferObject;
+		case API_PHONEGAP:
+			return true;
+		case API_APPMOBI:
+			return true;
+		}
+		return false;
+	};
+	C2AudioBuffer.prototype.isLoadedAndDecoded = function ()
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			return this.isLoaded();		// no distinction between loaded and decoded in HTML5 audio, just rely on ready state
+		case API_WEBAUDIO:
+			return !!this.bufferObject;
+		case API_PHONEGAP:
+			return true;
+		case API_APPMOBI:
+			return true;
+		}
+		return false;
+	};
+	C2AudioBuffer.prototype.hasFailedToLoad = function ()
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			return !!this.bufferObject["error"];
+		case API_WEBAUDIO:
+			return this.failedToLoad;
+		}
+		return false;
+	};
+	function C2AudioInstance(buffer_, tag_)
+	{
+		var self = this;
+		this.tag = tag_;
+		this.fresh = true;
+		this.stopped = true;
+		this.src = buffer_.src;
+		this.buffer = buffer_;
+		this.myapi = api;
+		this.is_music = buffer_.is_music;
+		this.playbackRate = 1;
+		this.pgended = true;			// for PhoneGap only: ended flag
+		this.resume_me = false;			// make sure resumes when leaving suspend
+		this.is_paused = false;
+		this.resume_position = 0;		// for web audio api to resume from correct playback position
+		this.looping = false;
+		this.is_muted = false;
+		this.is_silent = false;
+		this.volume = 1;
+		this.isTimescaled = ((timescale_mode === 1 && !this.is_music) || timescale_mode === 2);
+		this.mutevol = 1;
+		this.startTime = (this.isTimescaled ? audRuntime.kahanTime.sum : audRuntime.wallTime.sum);
+		this.gainNode = null;
+		this.pannerNode = null;
+		this.pannerEnabled = false;
+		this.objectTracker = null;
+		this.panX = 0;
+		this.panY = 0;
+		this.panAngle = 0;
+		this.panConeInner = 0;
+		this.panConeOuter = 0;
+		this.panConeOuterGain = 0;
+		this.instanceObject = null;
+		var add_end_listener = false;
+		if (this.myapi === API_WEBAUDIO && this.buffer.myapi === API_HTML5 && !this.buffer.supportWebAudioAPI)
+			this.myapi = API_HTML5;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (this.is_music)
+			{
+				this.instanceObject = buffer_.bufferObject;
+				add_end_listener = !buffer_.added_end_listener;
+				buffer_.added_end_listener = true;
+			}
+			else
+			{
+				this.instanceObject = new Audio();
+				this.instanceObject.autoplay = false;
+				this.instanceObject.src = buffer_.bufferObject.src;
+				add_end_listener = true;
+			}
+			if (add_end_listener)
+			{
+				this.instanceObject.addEventListener('ended', function () {
+						audTag = self.tag;
+						self.stopped = true;
+						audRuntime.trigger(cr.plugins_.Audio.prototype.cnds.OnEnded, audInst);
+				});
+			}
+			break;
+		case API_WEBAUDIO:
+			this.gainNode = createGain();
+			this.gainNode["connect"](getDestinationForTag(tag_));
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				if (buffer_.bufferObject)
+				{
+					this.instanceObject = context["createBufferSource"]();
+					this.instanceObject["buffer"] = buffer_.bufferObject;
+					this.instanceObject["connect"](this.gainNode);
+				}
+			}
+			else
+			{
+				this.instanceObject = this.buffer.bufferObject;		// reference the audio element
+				this.buffer.outNode["connect"](this.gainNode);
+			}
+			break;
+		case API_PHONEGAP:
+			this.instanceObject = new window["Media"](appPath + this.src, null, null, function (status) {
+					if (status === window["Media"]["MEDIA_STOPPED"])
+					{
+						self.pgended = true;
+						self.stopped = true;
+						audTag = self.tag;
+						audRuntime.trigger(cr.plugins_.Audio.prototype.cnds.OnEnded, audInst);
+					}
+			});
+			break;
+		case API_APPMOBI:
+			this.instanceObject = true;
+			break;
+		}
+	};
+	C2AudioInstance.prototype.hasEnded = function ()
+	{
+		var time;
+		switch (this.myapi) {
+		case API_HTML5:
+			return this.instanceObject.ended;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				if (!this.fresh && !this.stopped && this.instanceObject["loop"])
+					return false;
+				if (this.is_paused)
+					return false;
+				if (this.isTimescaled)
+					time = audRuntime.kahanTime.sum;
+				else
+					time = audRuntime.wallTime.sum;
+				return (time - this.startTime) > this.buffer.bufferObject["duration"];
+			}
+			else
+				return this.instanceObject.ended;
+		case API_PHONEGAP:
+			return this.pgended;
+		case API_APPMOBI:
+			true;	// recycling an AppMobi sound does not matter because it will just do another throwaway playSound
+		}
+		return true;
+	};
+	C2AudioInstance.prototype.canBeRecycled = function ()
+	{
+		if (this.fresh || this.stopped)
+			return true;		// not yet used or is not playing
+		return this.hasEnded();
+	};
+	C2AudioInstance.prototype.setPannerEnabled = function (enable_)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		if (!this.pannerEnabled && enable_)
+		{
+			if (!this.gainNode)
+				return;
+			if (!this.pannerNode)
+			{
+				this.pannerNode = context["createPanner"]();
+				if (typeof this.pannerNode["panningModel"] === "number")
+					this.pannerNode["panningModel"] = panningModel;
+				else
+					this.pannerNode["panningModel"] = ["equalpower", "HRTF", "soundfield"][panningModel];
+				if (typeof this.pannerNode["distanceModel"] === "number")
+					this.pannerNode["distanceModel"] = distanceModel;
+				else
+					this.pannerNode["distanceModel"] = ["linear", "inverse", "exponential"][distanceModel];
+				this.pannerNode["refDistance"] = refDistance;
+				this.pannerNode["maxDistance"] = maxDistance;
+				this.pannerNode["rolloffFactor"] = rolloffFactor;
+			}
+			this.gainNode["disconnect"]();
+			this.gainNode["connect"](this.pannerNode);
+			this.pannerNode["connect"](getDestinationForTag(this.tag));
+			this.pannerEnabled = true;
+		}
+		else if (this.pannerEnabled && !enable_)
+		{
+			if (!this.gainNode)
+				return;
+			this.pannerNode["disconnect"]();
+			this.gainNode["disconnect"]();
+			this.gainNode["connect"](getDestinationForTag(this.tag));
+			this.pannerEnabled = false;
+		}
+	};
+	C2AudioInstance.prototype.setPan = function (x, y, angle, innerangle, outerangle, outergain)
+	{
+		if (!this.pannerEnabled || api !== API_WEBAUDIO)
+			return;
+		this.pannerNode["setPosition"](x, y, 0);
+		this.pannerNode["setOrientation"](Math.cos(cr.to_radians(angle)), Math.sin(cr.to_radians(angle)), 0);
+		this.pannerNode["coneInnerAngle"] = innerangle;
+		this.pannerNode["coneOuterAngle"] = outerangle;
+		this.pannerNode["coneOuterGain"] = outergain;
+		this.panX = x;
+		this.panY = y;
+		this.panAngle = angle;
+		this.panConeInner = innerangle;
+		this.panConeOuter = outerangle;
+		this.panConeOuterGain = outergain;
+	};
+	C2AudioInstance.prototype.setObject = function (o)
+	{
+		if (!this.pannerEnabled || api !== API_WEBAUDIO)
+			return;
+		if (!this.objectTracker)
+			this.objectTracker = new ObjectTracker();
+		this.objectTracker.setObject(o);
+	};
+	C2AudioInstance.prototype.tick = function (dt)
+	{
+		if (!this.pannerEnabled || api !== API_WEBAUDIO || !this.objectTracker || !this.objectTracker.hasObject() || !this.isPlaying())
+		{
+			return;
+		}
+		this.objectTracker.tick(dt);
+		var inst = this.objectTracker.obj;
+		var px = cr.rotatePtAround(inst.x, inst.y, -inst.layer.getAngle(), listenerX, listenerY, true);
+		var py = cr.rotatePtAround(inst.x, inst.y, -inst.layer.getAngle(), listenerX, listenerY, false);
+		this.pannerNode["setPosition"](px, py, 0);
+		var a = 0;
+		if (typeof this.objectTracker.obj.angle !== "undefined")
+		{
+			a = inst.angle - inst.layer.getAngle();
+			this.pannerNode["setOrientation"](Math.cos(a), Math.sin(a), 0);
+		}
+		px = cr.rotatePtAround(this.objectTracker.getVelocityX(), this.objectTracker.getVelocityY(), -inst.layer.getAngle(), 0, 0, true);
+		py = cr.rotatePtAround(this.objectTracker.getVelocityX(), this.objectTracker.getVelocityY(), -inst.layer.getAngle(), 0, 0, false);
+		this.pannerNode["setVelocity"](px, py, 0);
+	};
+	C2AudioInstance.prototype.play = function (looping, vol, fromPosition)
+	{
+		var instobj = this.instanceObject;
+		this.looping = looping;
+		this.volume = vol;
+		var seekPos = fromPosition || 0;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (instobj.playbackRate !== 1.0)
+				instobj.playbackRate = 1.0;
+			if (instobj.volume !== vol * masterVolume)
+				instobj.volume = vol * masterVolume;
+			if (instobj.loop !== looping)
+				instobj.loop = looping;
+			if (instobj.muted)
+				instobj.muted = false;
+			if (instobj.currentTime !== seekPos)
+			{
+				try {
+					instobj.currentTime = seekPos;
+				}
+				catch (err)
+				{
+;
+				}
+			}
+			if (this.is_music && isMusicWorkaround && !audRuntime.isInUserInputEvent)
+				musicPlayNextTouch.push(this);
+			else
+			{
+				try {
+					this.instanceObject.play();
+				}
+				catch (e) {		// sometimes throws on WP8.1... try not to kill the app
+					if (console && console.log)
+						console.log("[C2] WARNING: exception trying to play audio '" + this.buffer.src + "': ", e);
+				}
+			}
+			break;
+		case API_WEBAUDIO:
+			this.muted = false;
+			this.mutevol = 1;
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				if (!this.fresh)
+				{
+					this.instanceObject = context["createBufferSource"]();
+					this.instanceObject["buffer"] = this.buffer.bufferObject;
+					this.instanceObject["connect"](this.gainNode);
+				}
+				this.instanceObject.loop = looping;
+				this.gainNode["gain"]["value"] = vol * masterVolume;
+				if (seekPos === 0)
+					startSource(this.instanceObject);
+				else
+					startSourceAt(this.instanceObject, seekPos, this.getDuration());
+			}
+			else
+			{
+				if (instobj.playbackRate !== 1.0)
+					instobj.playbackRate = 1.0;
+				if (instobj.loop !== looping)
+					instobj.loop = looping;
+				this.gainNode["gain"]["value"] = vol * masterVolume;
+				if (instobj.currentTime !== seekPos)
+				{
+					try {
+						instobj.currentTime = seekPos;
+					}
+					catch (err)
+					{
+;
+					}
+				}
+				if (this.is_music && isMusicWorkaround && !audRuntime.isInUserInputEvent)
+					musicPlayNextTouch.push(this);
+				else
+					instobj.play();
+			}
+			break;
+		case API_PHONEGAP:
+			if ((!this.fresh && this.stopped) || seekPos !== 0)
+				instobj["seekTo"](seekPos);
+			instobj["play"]();
+			this.pgended = false;
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				AppMobi["context"]["playSound"](this.src, looping);
+			else
+				AppMobi["player"]["playSound"](this.src, looping);
+			break;
+		}
+		this.playbackRate = 1;
+		this.startTime = (this.isTimescaled ? audRuntime.kahanTime.sum : audRuntime.wallTime.sum) - seekPos;
+		this.fresh = false;
+		this.stopped = false;
+		this.is_paused = false;
+	};
+	C2AudioInstance.prototype.stop = function ()
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			if (!this.instanceObject.paused)
+				this.instanceObject.pause();
+			break;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+				stopSource(this.instanceObject);
+			else
+			{
+				if (!this.instanceObject.paused)
+					this.instanceObject.pause();
+			}
+			break;
+		case API_PHONEGAP:
+			this.instanceObject["stop"]();
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				AppMobi["context"]["stopSound"](this.src);
+			break;
+		}
+		this.stopped = true;
+		this.is_paused = false;
+	};
+	C2AudioInstance.prototype.pause = function ()
+	{
+		if (this.fresh || this.stopped || this.hasEnded() || this.is_paused)
+			return;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (!this.instanceObject.paused)
+				this.instanceObject.pause();
+			break;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				this.resume_position = this.getPlaybackTime();
+				if (this.looping)
+					this.resume_position = this.resume_position % this.getDuration();
+				stopSource(this.instanceObject);
+			}
+			else
+			{
+				if (!this.instanceObject.paused)
+					this.instanceObject.pause();
+			}
+			break;
+		case API_PHONEGAP:
+			this.instanceObject["pause"]();
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				AppMobi["context"]["stopSound"](this.src);
+			break;
+		}
+		this.is_paused = true;
+	};
+	C2AudioInstance.prototype.resume = function ()
+	{
+		if (this.fresh || this.stopped || this.hasEnded() || !this.is_paused)
+			return;
+		switch (this.myapi) {
+		case API_HTML5:
+			this.instanceObject.play();
+			break;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				this.instanceObject = context["createBufferSource"]();
+				this.instanceObject["buffer"] = this.buffer.bufferObject;
+				this.instanceObject["connect"](this.gainNode);
+				this.instanceObject.loop = this.looping;
+				this.gainNode["gain"]["value"] = masterVolume * this.volume * this.mutevol;
+				this.startTime = (this.isTimescaled ? audRuntime.kahanTime.sum : audRuntime.wallTime.sum) - this.resume_position;
+				startSourceAt(this.instanceObject, this.resume_position, this.getDuration());
+			}
+			else
+			{
+				this.instanceObject.play();
+			}
+			break;
+		case API_PHONEGAP:
+			this.instanceObject["play"]();
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				AppMobi["context"]["resumeSound"](this.src);
+			break;
+		}
+		this.is_paused = false;
+	};
+	C2AudioInstance.prototype.seek = function (pos)
+	{
+		if (this.fresh || this.stopped || this.hasEnded())
+			return;
+		switch (this.myapi) {
+		case API_HTML5:
+			try {
+				this.instanceObject.currentTime = pos;
+			}
+			catch (e) {}
+			break;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				if (this.is_paused)
+					this.resume_position = pos;
+				else
+				{
+					this.pause();
+					this.resume_position = pos;
+					this.resume();
+				}
+			}
+			else
+			{
+				try {
+					this.instanceObject.currentTime = pos;
+				}
+				catch (e) {}
+			}
+			break;
+		case API_PHONEGAP:
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				AppMobi["context"]["seekSound"](this.src, pos);
+			break;
+		}
+	};
+	C2AudioInstance.prototype.reconnect = function (toNode)
+	{
+		if (this.myapi !== API_WEBAUDIO)
+			return;
+		if (this.pannerEnabled)
+		{
+			this.pannerNode["disconnect"]();
+			this.pannerNode["connect"](toNode);
+		}
+		else
+		{
+			this.gainNode["disconnect"]();
+			this.gainNode["connect"](toNode);
+		}
+	};
+	C2AudioInstance.prototype.getDuration = function ()
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			if (typeof this.instanceObject.duration !== "undefined")
+				return this.instanceObject.duration;
+			else
+				return 0;
+		case API_WEBAUDIO:
+			return this.buffer.bufferObject["duration"];
+		case API_PHONEGAP:
+			return this.instanceObject["getDuration"]();
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				return AppMobi["context"]["getDurationSound"](this.src);
+			else
+				return 0;
+		}
+		return 0;
+	};
+	C2AudioInstance.prototype.getPlaybackTime = function ()
+	{
+		var duration = this.getDuration();
+		var ret = 0;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (typeof this.instanceObject.currentTime !== "undefined")
+				ret = this.instanceObject.currentTime;
+			break;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				if (this.is_paused)
+					return this.resume_position;
+				else
+					ret = (this.isTimescaled ? audRuntime.kahanTime.sum : audRuntime.wallTime.sum) - this.startTime;
+			}
+			else if (typeof this.instanceObject.currentTime !== "undefined")
+				ret = this.instanceObject.currentTime;
+			break;
+		case API_PHONEGAP:
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				ret = AppMobi["context"]["getPlaybackTimeSound"](this.src);
+			break;
+		}
+		if (!this.looping && ret > duration)
+			ret = duration;
+		return ret;
+	};
+	C2AudioInstance.prototype.isPlaying = function ()
+	{
+		return !this.is_paused && !this.fresh && !this.stopped && !this.hasEnded();
+	};
+	C2AudioInstance.prototype.setVolume = function (v)
+	{
+		this.volume = v;
+		this.updateVolume();
+	};
+	C2AudioInstance.prototype.updateVolume = function ()
+	{
+		var volToSet = this.volume * masterVolume;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (this.instanceObject.volume && this.instanceObject.volume !== volToSet)
+				this.instanceObject.volume = volToSet;
+			break;
+		case API_WEBAUDIO:
+			this.gainNode["gain"]["value"] = volToSet * this.mutevol;
+			break;
+		case API_PHONEGAP:
+			break;
+		case API_APPMOBI:
+			break;
+		}
+	};
+	C2AudioInstance.prototype.getVolume = function ()
+	{
+		return this.volume;
+	};
+	C2AudioInstance.prototype.doSetMuted = function (m)
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			if (this.instanceObject.muted !== !!m)
+				this.instanceObject.muted = !!m;
+			break;
+		case API_WEBAUDIO:
+			this.mutevol = (m ? 0 : 1);
+			this.gainNode["gain"]["value"] = masterVolume * this.volume * this.mutevol;
+			break;
+		case API_PHONEGAP:
+			break;
+		case API_APPMOBI:
+			break;
+		}
+	};
+	C2AudioInstance.prototype.setMuted = function (m)
+	{
+		this.is_muted = !!m;
+		this.doSetMuted(this.is_muted || this.is_silent);
+	};
+	C2AudioInstance.prototype.setSilent = function (m)
+	{
+		this.is_silent = !!m;
+		this.doSetMuted(this.is_muted || this.is_silent);
+	};
+	C2AudioInstance.prototype.setLooping = function (l)
+	{
+		this.looping = l;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (this.instanceObject.loop !== !!l)
+				this.instanceObject.loop = !!l;
+			break;
+		case API_WEBAUDIO:
+			if (this.instanceObject.loop !== !!l)
+				this.instanceObject.loop = !!l;
+			break;
+		case API_PHONEGAP:
+			break;
+		case API_APPMOBI:
+			if (audRuntime.isDirectCanvas)
+				AppMobi["context"]["setLoopingSound"](this.src, l);
+			break;
+		}
+	};
+	C2AudioInstance.prototype.setPlaybackRate = function (r)
+	{
+		this.playbackRate = r;
+		this.updatePlaybackRate();
+	};
+	C2AudioInstance.prototype.updatePlaybackRate = function ()
+	{
+		var r = this.playbackRate;
+		if (this.isTimescaled)
+			r *= audRuntime.timescale;
+		switch (this.myapi) {
+		case API_HTML5:
+			if (this.instanceObject.playbackRate !== r)
+				this.instanceObject.playbackRate = r;
+			break;
+		case API_WEBAUDIO:
+			if (this.buffer.myapi === API_WEBAUDIO)
+			{
+				if (this.instanceObject["playbackRate"]["value"] !== r)
+					this.instanceObject["playbackRate"]["value"] = r;
+			}
+			else
+			{
+				if (this.instanceObject.playbackRate !== r)
+					this.instanceObject.playbackRate = r;
+			}
+			break;
+		case API_PHONEGAP:
+			break;
+		case API_APPMOBI:
+			break;
+		}
+	};
+	C2AudioInstance.prototype.setSuspended = function (s)
+	{
+		switch (this.myapi) {
+		case API_HTML5:
+			if (s)
+			{
+				if (this.isPlaying())
+				{
+					this.instanceObject["pause"]();
+					this.resume_me = true;
+				}
+				else
+					this.resume_me = false;
+			}
+			else
+			{
+				if (this.resume_me)
+					this.instanceObject["play"]();
+			}
+			break;
+		case API_WEBAUDIO:
+			if (s)
+			{
+				if (this.isPlaying())
+				{
+					if (this.buffer.myapi === API_WEBAUDIO)
+					{
+						this.resume_position = this.getPlaybackTime();
+						if (this.looping)
+							this.resume_position = this.resume_position % this.getDuration();
+						stopSource(this.instanceObject);
+					}
+					else
+						this.instanceObject["pause"]();
+					this.resume_me = true;
+				}
+				else
+					this.resume_me = false;
+			}
+			else
+			{
+				if (this.resume_me)
+				{
+					if (this.buffer.myapi === API_WEBAUDIO)
+					{
+						this.instanceObject = context["createBufferSource"]();
+						this.instanceObject["buffer"] = this.buffer.bufferObject;
+						this.instanceObject["connect"](this.gainNode);
+						this.instanceObject.loop = this.looping;
+						this.gainNode["gain"]["value"] = masterVolume * this.volume * this.mutevol;
+						this.startTime = (this.isTimescaled ? audRuntime.kahanTime.sum : audRuntime.wallTime.sum) - this.resume_position;
+						startSourceAt(this.instanceObject, this.resume_position, this.getDuration());
+					}
+					else
+					{
+						this.instanceObject["play"]();
+					}
+				}
+			}
+			break;
+		case API_PHONEGAP:
+			if (s)
+			{
+				if (this.isPlaying())
+				{
+					this.instanceObject["pause"]();
+					this.resume_me = true;
+				}
+				else
+					this.resume_me = false;
+			}
+			else
+			{
+				if (this.resume_me)
+					this.instanceObject["play"]();
+			}
+			break;
+		case API_APPMOBI:
+			break;
+		}
+	};
+	pluginProto.Instance = function(type)
+	{
+		this.type = type;
+		this.runtime = type.runtime;
+		audRuntime = this.runtime;
+		audInst = this;
+		this.listenerTracker = null;
+		this.listenerZ = -600;
+		if ((this.runtime.isiOS || (this.runtime.isAndroid && (this.runtime.isChrome || this.runtime.isAndroidStockBrowser))) && !this.runtime.isCrosswalk && !this.runtime.isDomFree)
+		{
+			isMusicWorkaround = true;
+		}
+		context = null;
+		if (typeof AudioContext !== "undefined")
+		{
+			api = API_WEBAUDIO;
+			context = new AudioContext();
+		}
+		else if (typeof webkitAudioContext !== "undefined")
+		{
+			api = API_WEBAUDIO;
+			context = new webkitAudioContext();
+		}
+		if ((this.runtime.isiOS && api === API_WEBAUDIO) || isMusicWorkaround)
+		{
+			document.addEventListener("touchstart", function ()
+			{
+				var i, len, m;
+				if (!iOShadtouch && context)
+				{
+					var buffer = context["createBuffer"](1, 1, 22050);
+					var source = context["createBufferSource"]();
+					source["buffer"] = buffer;
+					source["connect"](context["destination"]);
+					startSource(source);
+					iOShadtouch = true;
+				}
+				if (isMusicWorkaround)
+				{
+					if (!silent)
+					{
+						for (i = 0, len = musicPlayNextTouch.length; i < len; ++i)
+						{
+							m = musicPlayNextTouch[i];
+							if (!m.stopped && !m.is_paused)
+								m.instanceObject.play();
+						}
+					}
+					musicPlayNextTouch.length = 0;
+				}
+			}, true);
+		}
+		if (api !== API_WEBAUDIO)
+		{
+			if (this.runtime.isPhoneGap && typeof window["Media"] !== "undefined")
+				api = API_PHONEGAP;
+			else if (this.runtime.isAppMobi)
+				api = API_APPMOBI;
+		}
+		if (api === API_PHONEGAP)
+		{
+			appPath = location.href;
+			var i = appPath.lastIndexOf("/");
+			if (i > -1)
+				appPath = appPath.substr(0, i + 1);
+			appPath = appPath.replace("file://", "");
+		}
+		if (this.runtime.isSafari && this.runtime.isWindows && typeof Audio === "undefined")
+		{
+			alert("It looks like you're using Safari for Windows without Quicktime.  Audio cannot be played until Quicktime is installed.");
+			this.runtime.DestroyInstance(this);
+		}
+		else
+		{
+			if (this.runtime.isDirectCanvas)
+				useOgg = this.runtime.isAndroid;		// AAC on iOS, OGG on Android
+			else
+			{
+				try {
+					useOgg = !!(new Audio().canPlayType('audio/ogg; codecs="vorbis"'));
+				}
+				catch (e)
+				{
+					useOgg = false;
+				}
+			}
+			switch (api) {
+			case API_HTML5:
+;
+				break;
+			case API_WEBAUDIO:
+;
+				break;
+			case API_PHONEGAP:
+;
+				break;
+			case API_APPMOBI:
+;
+				break;
+			default:
+;
+			}
+			this.runtime.tickMe(this);
+		}
+	};
+	var instanceProto = pluginProto.Instance.prototype;
+	instanceProto.onCreate = function ()
+	{
+		this.runtime.audioInstance = this;
+		timescale_mode = this.properties[0];	// 0 = off, 1 = sounds only, 2 = all
+		this.saveload = this.properties[1];		// 0 = all, 1 = sounds only, 2 = music only, 3 = none
+		this.playinbackground = (this.properties[2] !== 0);
+		panningModel = this.properties[3];		// 0 = equalpower, 1 = hrtf, 3 = soundfield
+		distanceModel = this.properties[4];		// 0 = linear, 1 = inverse, 2 = exponential
+		this.listenerZ = -this.properties[5];
+		refDistance = this.properties[6];
+		maxDistance = this.properties[7];
+		rolloffFactor = this.properties[8];
+		this.listenerTracker = new ObjectTracker();
+		if (api === API_WEBAUDIO)
+		{
+			context["listener"]["speedOfSound"] = this.properties[9];
+			context["listener"]["dopplerFactor"] = this.properties[10];
+			context["listener"]["setPosition"](this.runtime.draw_width / 2, this.runtime.draw_height / 2, this.listenerZ);
+			context["listener"]["setOrientation"](0, 0, 1, 0, -1, 0);
+			window["c2OnAudioMicStream"] = function (localMediaStream, tag)
+			{
+				if (micSource)
+					micSource["disconnect"]();
+				micTag = tag.toLowerCase();
+				micSource = context["createMediaStreamSource"](localMediaStream);
+				micSource["connect"](getDestinationForTag(micTag));
+			};
+		}
+		this.runtime.addSuspendCallback(function(s)
+		{
+			audInst.onSuspend(s);
+		});
+		var self = this;
+		this.runtime.addDestroyCallback(function (inst)
+		{
+			self.onInstanceDestroyed(inst);
+		});
+	};
+	instanceProto.onInstanceDestroyed = function (inst)
+	{
+		var i, len, a;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+		{
+			a = audioInstances[i];
+			if (a.objectTracker)
+			{
+				if (a.objectTracker.obj === inst)
+				{
+					a.objectTracker.obj = null;
+					if (a.pannerEnabled && a.isPlaying() && a.looping)
+						a.stop();
+				}
+			}
+		}
+		if (this.listenerTracker.obj === inst)
+			this.listenerTracker.obj = null;
+	};
+	instanceProto.saveToJSON = function ()
+	{
+		var o = {
+			"silent": silent,
+			"masterVolume": masterVolume,
+			"listenerZ": this.listenerZ,
+			"listenerUid": this.listenerTracker.hasObject() ? this.listenerTracker.obj.uid : -1,
+			"playing": [],
+			"effects": {}
+		};
+		var playingarr = o["playing"];
+		var i, len, a, d, p, panobj, playbackTime;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+		{
+			a = audioInstances[i];
+			if (!a.isPlaying())
+				continue;				// no need to save stopped sounds
+			if (this.saveload === 3)	// not saving/loading any sounds/music
+				continue;
+			if (a.is_music && this.saveload === 1)	// not saving/loading music
+				continue;
+			if (!a.is_music && this.saveload === 2)	// not saving/loading sound
+				continue;
+			playbackTime = a.getPlaybackTime();
+			if (a.looping)
+				playbackTime = playbackTime % a.getDuration();
+			d = {
+				"tag": a.tag,
+				"buffersrc": a.buffer.src,
+				"is_music": a.is_music,
+				"playbackTime": playbackTime,
+				"volume": a.volume,
+				"looping": a.looping,
+				"muted": a.is_muted,
+				"playbackRate": a.playbackRate,
+				"paused": a.is_paused,
+				"resume_position": a.resume_position
+			};
+			if (a.pannerEnabled)
+			{
+				d["pan"] = {};
+				panobj = d["pan"];
+				if (a.objectTracker && a.objectTracker.hasObject())
+				{
+					panobj["objUid"] = a.objectTracker.obj.uid;
+				}
+				else
+				{
+					panobj["x"] = a.panX;
+					panobj["y"] = a.panY;
+					panobj["a"] = a.panAngle;
+				}
+				panobj["ia"] = a.panConeInner;
+				panobj["oa"] = a.panConeOuter;
+				panobj["og"] = a.panConeOuterGain;
+			}
+			playingarr.push(d);
+		}
+		var fxobj = o["effects"];
+		var fxarr;
+		for (p in effects)
+		{
+			if (effects.hasOwnProperty(p))
+			{
+				fxarr = [];
+				for (i = 0, len = effects[p].length; i < len; i++)
+				{
+					fxarr.push({ "type": effects[p][i].type, "params": effects[p][i].params });
+				}
+				fxobj[p] = fxarr;
+			}
+		}
+		return o;
+	};
+	var objectTrackerUidsToLoad = [];
+	instanceProto.loadFromJSON = function (o)
+	{
+		var setSilent = o["silent"];
+		masterVolume = o["masterVolume"];
+		this.listenerZ = o["listenerZ"];
+		this.listenerTracker.setObject(null);
+		var listenerUid = o["listenerUid"];
+		if (listenerUid !== -1)
+		{
+			this.listenerTracker.loadUid = listenerUid;
+			objectTrackerUidsToLoad.push(this.listenerTracker);
+		}
+		var playingarr = o["playing"];
+		var i, len, d, src, is_music, tag, playbackTime, looping, vol, b, a, p, pan, panObjUid;
+		if (this.saveload !== 3)
+		{
+			for (i = 0, len = audioInstances.length; i < len; i++)
+			{
+				a = audioInstances[i];
+				if (a.is_music && this.saveload === 1)
+					continue;		// only saving/loading sound: leave music playing
+				if (!a.is_music && this.saveload === 2)
+					continue;		// only saving/loading music: leave sound playing
+				a.stop();
+			}
+		}
+		var fxarr, fxtype, fxparams, fx;
+		for (p in effects)
+		{
+			if (effects.hasOwnProperty(p))
+			{
+				for (i = 0, len = effects[p].length; i < len; i++)
+					effects[p][i].remove();
+			}
+		}
+		cr.wipe(effects);
+		for (p in o["effects"])
+		{
+			if (o["effects"].hasOwnProperty(p))
+			{
+				fxarr = o["effects"][p];
+				for (i = 0, len = fxarr.length; i < len; i++)
+				{
+					fxtype = fxarr[i]["type"];
+					fxparams = fxarr[i]["params"];
+					switch (fxtype) {
+					case "filter":
+						addEffectForTag(p, new FilterEffect(fxparams[0], fxparams[1], fxparams[2], fxparams[3], fxparams[4], fxparams[5]));
+						break;
+					case "delay":
+						addEffectForTag(p, new DelayEffect(fxparams[0], fxparams[1], fxparams[2]));
+						break;
+					case "convolve":
+						src = fxparams[2];
+						b = this.getAudioBuffer(src, false);
+						if (b.bufferObject)
+						{
+							fx = new ConvolveEffect(b.bufferObject, fxparams[0], fxparams[1], src);
+						}
+						else
+						{
+							fx = new ConvolveEffect(null, fxparams[0], fxparams[1], src);
+							b.normalizeWhenReady = fxparams[0];
+							b.convolveWhenReady = fx;
+						}
+						addEffectForTag(p, fx);
+						break;
+					case "flanger":
+						addEffectForTag(p, new FlangerEffect(fxparams[0], fxparams[1], fxparams[2], fxparams[3], fxparams[4]));
+						break;
+					case "phaser":
+						addEffectForTag(p, new PhaserEffect(fxparams[0], fxparams[1], fxparams[2], fxparams[3], fxparams[4], fxparams[5]));
+						break;
+					case "gain":
+						addEffectForTag(p, new GainEffect(fxparams[0]));
+						break;
+					case "tremolo":
+						addEffectForTag(p, new TremoloEffect(fxparams[0], fxparams[1]));
+						break;
+					case "ringmod":
+						addEffectForTag(p, new RingModulatorEffect(fxparams[0], fxparams[1]));
+						break;
+					case "distortion":
+						addEffectForTag(p, new DistortionEffect(fxparams[0], fxparams[1], fxparams[2], fxparams[3], fxparams[4]));
+						break;
+					case "compressor":
+						addEffectForTag(p, new CompressorEffect(fxparams[0], fxparams[1], fxparams[2], fxparams[3], fxparams[4]));
+						break;
+					case "analyser":
+						addEffectForTag(p, new AnalyserEffect(fxparams[0], fxparams[1]));
+						break;
+					}
+				}
+			}
+		}
+		for (i = 0, len = playingarr.length; i < len; i++)
+		{
+			if (this.saveload === 3)	// not saving/loading any sounds/music
+				continue;
+			d = playingarr[i];
+			src = d["buffersrc"];
+			is_music = d["is_music"];
+			tag = d["tag"];
+			playbackTime = d["playbackTime"];
+			looping = d["looping"];
+			vol = d["volume"];
+			pan = d["pan"];
+			panObjUid = (pan && pan.hasOwnProperty("objUid")) ? pan["objUid"] : -1;
+			if (is_music && this.saveload === 1)	// not saving/loading music
+				continue;
+			if (!is_music && this.saveload === 2)	// not saving/loading sound
+				continue;
+			a = this.getAudioInstance(src, tag, is_music, looping, vol);
+			if (!a)
+			{
+				b = this.getAudioBuffer(src, is_music);
+				b.seekWhenReady = playbackTime;
+				b.pauseWhenReady = d["paused"];
+				if (pan)
+				{
+					if (panObjUid !== -1)
+					{
+						b.panWhenReady.push({ objUid: panObjUid, ia: pan["ia"], oa: pan["oa"], og: pan["og"], thistag: tag });
+					}
+					else
+					{
+						b.panWhenReady.push({ x: pan["x"], y: pan["y"], a: pan["a"], ia: pan["ia"], oa: pan["oa"], og: pan["og"], thistag: tag });
+					}
+				}
+				continue;
+			}
+			a.resume_position = d["resume_position"];
+			a.setPannerEnabled(!!pan);
+			a.play(looping, vol, playbackTime);
+			a.updatePlaybackRate();
+			a.updateVolume();
+			a.doSetMuted(a.is_muted || a.is_silent);
+			if (d["paused"])
+				a.pause();
+			if (d["muted"])
+				a.setMuted(true);
+			a.doSetMuted(a.is_muted || a.is_silent);
+			if (pan)
+			{
+				if (panObjUid !== -1)
+				{
+					a.objectTracker = a.objectTracker || new ObjectTracker();
+					a.objectTracker.loadUid = panObjUid;
+					objectTrackerUidsToLoad.push(a.objectTracker);
+				}
+				else
+				{
+					a.setPan(pan["x"], pan["y"], pan["a"], pan["ia"], pan["oa"], pan["og"]);
+				}
+			}
+		}
+		if (setSilent && !silent)			// setting silent
+		{
+			for (i = 0, len = audioInstances.length; i < len; i++)
+				audioInstances[i].setSilent(true);
+			silent = true;
+		}
+		else if (!setSilent && silent)		// setting not silent
+		{
+			for (i = 0, len = audioInstances.length; i < len; i++)
+				audioInstances[i].setSilent(false);
+			silent = false;
+		}
+	};
+	instanceProto.afterLoad = function ()
+	{
+		var i, len, ot, inst;
+		for (i = 0, len = objectTrackerUidsToLoad.length; i < len; i++)
+		{
+			ot = objectTrackerUidsToLoad[i];
+			inst = this.runtime.getObjectByUID(ot.loadUid);
+			ot.setObject(inst);
+			ot.loadUid = -1;
+			if (inst)
+			{
+				listenerX = inst.x;
+				listenerY = inst.y;
+			}
+		}
+		objectTrackerUidsToLoad.length = 0;
+	};
+	instanceProto.onSuspend = function (s)
+	{
+		if (this.playinbackground)
+			return;
+		if (!s && context && context["resume"])
+			context["resume"]();
+		var i, len;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+			audioInstances[i].setSuspended(s);
+		if (s && context && context["suspend"])
+			context["suspend"]();
+	};
+	instanceProto.tick = function ()
+	{
+		var dt = this.runtime.dt;
+		var i, len, a;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+		{
+			a = audioInstances[i];
+			a.tick(dt);
+			if (a.myapi !== API_HTML5 && a.myapi !== API_APPMOBI)
+			{
+				if (!a.fresh && !a.stopped && a.hasEnded())
+				{
+					a.stopped = true;
+					audTag = a.tag;
+					audRuntime.trigger(cr.plugins_.Audio.prototype.cnds.OnEnded, audInst);
+				}
+			}
+			if (timescale_mode !== 0)
+				a.updatePlaybackRate();
+		}
+		var p, arr, f;
+		for (p in effects)
+		{
+			if (effects.hasOwnProperty(p))
+			{
+				arr = effects[p];
+				for (i = 0, len = arr.length; i < len; i++)
+				{
+					f = arr[i];
+					if (f.tick)
+						f.tick();
+				}
+			}
+		}
+		if (api === API_WEBAUDIO && this.listenerTracker.hasObject())
+		{
+			this.listenerTracker.tick(dt);
+			listenerX = this.listenerTracker.obj.x;
+			listenerY = this.listenerTracker.obj.y;
+			context["listener"]["setPosition"](this.listenerTracker.obj.x, this.listenerTracker.obj.y, this.listenerZ);
+			context["listener"]["setVelocity"](this.listenerTracker.getVelocityX(), this.listenerTracker.getVelocityY(), 0);
+		}
+	};
+	var preload_list = [];
+	instanceProto.setPreloadList = function (arr)
+	{
+		var i, len, p, filename, size, isOgg;
+		var total_size = 0;
+		for (i = 0, len = arr.length; i < len; ++i)
+		{
+			p = arr[i];
+			filename = p[0];
+			size = p[1] * 2;
+			isOgg = (filename.length > 4 && filename.substr(filename.length - 4) === ".ogg");
+			if ((isOgg && useOgg) || (!isOgg && !useOgg))
+			{
+				preload_list.push({
+					filename: filename,
+					size: size,
+					obj: null
+				});
+				total_size += size;
+			}
+		}
+		return total_size;
+	};
+	instanceProto.startPreloads = function ()
+	{
+		var i, len, p, src;
+		for (i = 0, len = preload_list.length; i < len; ++i)
+		{
+			p = preload_list[i];
+			src = this.runtime.files_subfolder + p.filename;
+			p.obj = this.getAudioBuffer(src, false);
+		}
+	};
+	instanceProto.getPreloadedSize = function ()
+	{
+		var completed = 0;
+		var i, len, p;
+		for (i = 0, len = preload_list.length; i < len; ++i)
+		{
+			p = preload_list[i];
+			if (p.obj.isLoadedAndDecoded() || p.obj.hasFailedToLoad() || this.runtime.isDomFree || this.runtime.isAndroidStockBrowser)
+			{
+				completed += p.size;
+			}
+			else if (p.obj.isLoaded())	// downloaded but not decoded: only happens in Web Audio API, count as half-way progress
+			{
+				completed += Math.floor(p.size / 2);
+			}
+		};
+		return completed;
+	};
+	instanceProto.getAudioBuffer = function (src_, is_music)
+	{
+		var i, len, a, ret = null, j, k, lenj, ai;
+		for (i = 0, len = audioBuffers.length; i < len; i++)
+		{
+			a = audioBuffers[i];
+			if (a.src === src_)
+			{
+				ret = a;
+				break;
+			}
+		}
+		if (!ret)
+		{
+			ret = new C2AudioBuffer(src_, is_music);
+			audioBuffers.push(ret);
+		}
+		return ret;
+	};
+	instanceProto.getAudioInstance = function (src_, tag, is_music, looping, vol)
+	{
+		var i, len, a;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+		{
+			a = audioInstances[i];
+			if (a.src === src_ && (a.canBeRecycled() || is_music))
+			{
+				a.tag = tag;
+				return a;
+			}
+		}
+		var b = this.getAudioBuffer(src_, is_music);
+		if (!b.bufferObject)
+		{
+			if (tag !== "<preload>")
+			{
+				b.playTagWhenReady = tag;
+				b.loopWhenReady = looping;
+				b.volumeWhenReady = vol;
+			}
+			return null;
+		}
+		a = new C2AudioInstance(b, tag);
+		audioInstances.push(a);
+		return a;
+	};
+	var taggedAudio = [];
+	function SortByIsPlaying(a, b)
+	{
+		var an = a.isPlaying() ? 1 : 0;
+		var bn = b.isPlaying() ? 1 : 0;
+		if (an === bn)
+			return 0;
+		else if (an < bn)
+			return 1;
+		else
+			return -1;
+	};
+	function getAudioByTag(tag, sort_by_playing)
+	{
+		taggedAudio.length = 0;
+		if (!tag.length)
+		{
+			if (!lastAudio || lastAudio.hasEnded())
+				return;
+			else
+			{
+				taggedAudio.length = 1;
+				taggedAudio[0] = lastAudio;
+				return;
+			}
+		}
+		var i, len, a;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+		{
+			a = audioInstances[i];
+			if (cr.equals_nocase(tag, a.tag))
+				taggedAudio.push(a);
+		}
+		if (sort_by_playing)
+			taggedAudio.sort(SortByIsPlaying);
+	};
+	function reconnectEffects(tag)
+	{
+		var i, len, arr, n, toNode = context["destination"];
+		if (effects.hasOwnProperty(tag))
+		{
+			arr = effects[tag];
+			if (arr.length)
+			{
+				toNode = arr[0].getInputNode();
+				for (i = 0, len = arr.length; i < len; i++)
+				{
+					n = arr[i];
+					if (i + 1 === len)
+						n.connectTo(context["destination"]);
+					else
+						n.connectTo(arr[i + 1].getInputNode());
+				}
+			}
+		}
+		getAudioByTag(tag);
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+			taggedAudio[i].reconnect(toNode);
+		if (micSource && micTag === tag)
+		{
+			micSource["disconnect"]();
+			micSource["connect"](toNode);
+		}
+	};
+	function addEffectForTag(tag, fx)
+	{
+		if (!effects.hasOwnProperty(tag))
+			effects[tag] = [fx];
+		else
+			effects[tag].push(fx);
+		reconnectEffects(tag);
+	};
+	function Cnds() {};
+	Cnds.prototype.OnEnded = function (t)
+	{
+		return cr.equals_nocase(audTag, t);
+	};
+	Cnds.prototype.PreloadsComplete = function ()
+	{
+		var i, len;
+		for (i = 0, len = audioBuffers.length; i < len; i++)
+		{
+			if (!audioBuffers[i].isLoadedAndDecoded() && !audioBuffers[i].hasFailedToLoad())
+				return false;
+		}
+		return true;
+	};
+	Cnds.prototype.AdvancedAudioSupported = function ()
+	{
+		return api === API_WEBAUDIO;
+	};
+	Cnds.prototype.IsSilent = function ()
+	{
+		return silent;
+	};
+	Cnds.prototype.IsAnyPlaying = function ()
+	{
+		var i, len;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+		{
+			if (audioInstances[i].isPlaying())
+				return true;
+		}
+		return false;
+	};
+	Cnds.prototype.IsTagPlaying = function (tag)
+	{
+		getAudioByTag(tag);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+		{
+			if (taggedAudio[i].isPlaying())
+				return true;
+		}
+		return false;
+	};
+	pluginProto.cnds = new Cnds();
+	function Acts() {};
+	Acts.prototype.Play = function (file, looping, vol, tag)
+	{
+		if (silent)
+			return;
+		var v = dbToLinear(vol);
+		var is_music = file[1];
+		var src = this.runtime.files_subfolder + file[0] + (useOgg ? ".ogg" : ".m4a");
+		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
+		if (!lastAudio)
+			return;
+		lastAudio.setPannerEnabled(false);
+		lastAudio.play(looping!==0, v);
+	};
+	Acts.prototype.PlayAtPosition = function (file, looping, vol, x_, y_, angle_, innerangle_, outerangle_, outergain_, tag)
+	{
+		if (silent)
+			return;
+		var v = dbToLinear(vol);
+		var is_music = file[1];
+		var src = this.runtime.files_subfolder + file[0] + (useOgg ? ".ogg" : ".m4a");
+		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
+		if (!lastAudio)
+		{
+			var b = this.getAudioBuffer(src, is_music);
+			b.panWhenReady.push({ x: x_, y: y_, a: angle_, ia: innerangle_, oa: outerangle_, og: dbToLinear(outergain_), thistag: tag });
+			return;
+		}
+		lastAudio.setPannerEnabled(true);
+		lastAudio.setPan(x_, y_, angle_, innerangle_, outerangle_, dbToLinear(outergain_));
+		lastAudio.play(looping!==0, v);
+	};
+	Acts.prototype.PlayAtObject = function (file, looping, vol, obj, innerangle, outerangle, outergain, tag)
+	{
+		if (silent || !obj)
+			return;
+		var inst = obj.getFirstPicked();
+		if (!inst)
+			return;
+		var v = dbToLinear(vol);
+		var is_music = file[1];
+		var src = this.runtime.files_subfolder + file[0] + (useOgg ? ".ogg" : ".m4a");
+		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
+		if (!lastAudio)
+		{
+			var b = this.getAudioBuffer(src, is_music);
+			b.panWhenReady.push({ obj: inst, ia: innerangle, oa: outerangle, og: dbToLinear(outergain), thistag: tag });
+			return;
+		}
+		lastAudio.setPannerEnabled(true);
+		var px = cr.rotatePtAround(inst.x, inst.y, -inst.layer.getAngle(), listenerX, listenerY, true);
+		var py = cr.rotatePtAround(inst.x, inst.y, -inst.layer.getAngle(), listenerX, listenerY, false);
+		lastAudio.setPan(px, py, cr.to_degrees(inst.angle - inst.layer.getAngle()), innerangle, outerangle, dbToLinear(outergain));
+		lastAudio.setObject(inst);
+		lastAudio.play(looping!==0, v);
+	};
+	Acts.prototype.PlayByName = function (folder, filename, looping, vol, tag)
+	{
+		if (silent)
+			return;
+		var v = dbToLinear(vol);
+		var is_music = (folder === 1);
+		var src = this.runtime.files_subfolder + filename.toLowerCase() + (useOgg ? ".ogg" : ".m4a");
+		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
+		if (!lastAudio)
+			return;
+		lastAudio.setPannerEnabled(false);
+		lastAudio.play(looping!==0, v);
+	};
+	Acts.prototype.PlayAtPositionByName = function (folder, filename, looping, vol, x_, y_, angle_, innerangle_, outerangle_, outergain_, tag)
+	{
+		if (silent)
+			return;
+		var v = dbToLinear(vol);
+		var is_music = (folder === 1);
+		var src = this.runtime.files_subfolder + filename.toLowerCase() + (useOgg ? ".ogg" : ".m4a");
+		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
+		if (!lastAudio)
+		{
+			var b = this.getAudioBuffer(src, is_music);
+			b.panWhenReady.push({ x: x_, y: y_, a: angle_, ia: innerangle_, oa: outerangle_, og: dbToLinear(outergain_), thistag: tag });
+			return;
+		}
+		lastAudio.setPannerEnabled(true);
+		lastAudio.setPan(x_, y_, angle_, innerangle_, outerangle_, dbToLinear(outergain_));
+		lastAudio.play(looping!==0, v);
+	};
+	Acts.prototype.PlayAtObjectByName = function (folder, filename, looping, vol, obj, innerangle, outerangle, outergain, tag)
+	{
+		if (silent || !obj)
+			return;
+		var inst = obj.getFirstPicked();
+		if (!inst)
+			return;
+		var v = dbToLinear(vol);
+		var is_music = (folder === 1);
+		var src = this.runtime.files_subfolder + filename.toLowerCase() + (useOgg ? ".ogg" : ".m4a");
+		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
+		if (!lastAudio)
+		{
+			var b = this.getAudioBuffer(src, is_music);
+			b.panWhenReady.push({ obj: inst, ia: innerangle, oa: outerangle, og: dbToLinear(outergain), thistag: tag });
+			return;
+		}
+		lastAudio.setPannerEnabled(true);
+		var px = cr.rotatePtAround(inst.x, inst.y, -inst.layer.getAngle(), listenerX, listenerY, true);
+		var py = cr.rotatePtAround(inst.x, inst.y, -inst.layer.getAngle(), listenerX, listenerY, false);
+		lastAudio.setPan(px, py, cr.to_degrees(inst.angle - inst.layer.getAngle()), innerangle, outerangle, dbToLinear(outergain));
+		lastAudio.setObject(inst);
+		lastAudio.play(looping!==0, v);
+	};
+	Acts.prototype.SetLooping = function (tag, looping)
+	{
+		getAudioByTag(tag);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+			taggedAudio[i].setLooping(looping === 0);
+	};
+	Acts.prototype.SetMuted = function (tag, muted)
+	{
+		getAudioByTag(tag);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+			taggedAudio[i].setMuted(muted === 0);
+	};
+	Acts.prototype.SetVolume = function (tag, vol)
+	{
+		getAudioByTag(tag);
+		var v = dbToLinear(vol);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+			taggedAudio[i].setVolume(v);
+	};
+	Acts.prototype.Preload = function (file)
+	{
+		if (silent)
+			return;
+		var is_music = file[1];
+		var src = this.runtime.files_subfolder + file[0] + (useOgg ? ".ogg" : ".m4a");
+		if (api === API_APPMOBI)
+		{
+			if (this.runtime.isDirectCanvas)
+				AppMobi["context"]["loadSound"](src);
+			else
+				AppMobi["player"]["loadSound"](src);
+			return;
+		}
+		else if (api === API_PHONEGAP)
+		{
+			return;
+		}
+		this.getAudioInstance(src, "<preload>", is_music, false);
+	};
+	Acts.prototype.PreloadByName = function (folder, filename)
+	{
+		if (silent)
+			return;
+		var is_music = (folder === 1);
+		var src = this.runtime.files_subfolder + filename.toLowerCase() + (useOgg ? ".ogg" : ".m4a");
+		if (api === API_APPMOBI)
+		{
+			if (this.runtime.isDirectCanvas)
+				AppMobi["context"]["loadSound"](src);
+			else
+				AppMobi["player"]["loadSound"](src);
+			return;
+		}
+		else if (api === API_PHONEGAP)
+		{
+			return;
+		}
+		this.getAudioInstance(src, "<preload>", is_music, false);
+	};
+	Acts.prototype.SetPlaybackRate = function (tag, rate)
+	{
+		getAudioByTag(tag);
+		if (rate < 0.0)
+			rate = 0;
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+			taggedAudio[i].setPlaybackRate(rate);
+	};
+	Acts.prototype.Stop = function (tag)
+	{
+		getAudioByTag(tag);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+			taggedAudio[i].stop();
+	};
+	Acts.prototype.StopAll = function ()
+	{
+		var i, len;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+			audioInstances[i].stop();
+	};
+	Acts.prototype.SetPaused = function (tag, state)
+	{
+		getAudioByTag(tag);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+		{
+			if (state === 0)
+				taggedAudio[i].pause();
+			else
+				taggedAudio[i].resume();
+		}
+	};
+	Acts.prototype.Seek = function (tag, pos)
+	{
+		getAudioByTag(tag);
+		var i, len;
+		for (i = 0, len = taggedAudio.length; i < len; i++)
+		{
+			taggedAudio[i].seek(pos);
+		}
+	};
+	Acts.prototype.SetSilent = function (s)
+	{
+		var i, len;
+		if (s === 2)					// toggling
+			s = (silent ? 1 : 0);		// choose opposite state
+		if (s === 0 && !silent)			// setting silent
+		{
+			for (i = 0, len = audioInstances.length; i < len; i++)
+				audioInstances[i].setSilent(true);
+			silent = true;
+		}
+		else if (s === 1 && silent)		// setting not silent
+		{
+			for (i = 0, len = audioInstances.length; i < len; i++)
+				audioInstances[i].setSilent(false);
+			silent = false;
+		}
+	};
+	Acts.prototype.SetMasterVolume = function (vol)
+	{
+		masterVolume = dbToLinear(vol);
+		var i, len;
+		for (i = 0, len = audioInstances.length; i < len; i++)
+			audioInstances[i].updateVolume();
+	};
+	Acts.prototype.AddFilterEffect = function (tag, type, freq, detune, q, gain, mix)
+	{
+		if (api !== API_WEBAUDIO || type < 0 || type >= filterTypes.length || !context["createBiquadFilter"])
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new FilterEffect(type, freq, detune, q, gain, mix));
+	};
+	Acts.prototype.AddDelayEffect = function (tag, delay, gain, mix)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new DelayEffect(delay, dbToLinear(gain), mix));
+	};
+	Acts.prototype.AddFlangerEffect = function (tag, delay, modulation, freq, feedback, mix)
+	{
+		if (api !== API_WEBAUDIO || !context["createOscillator"])
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new FlangerEffect(delay / 1000, modulation / 1000, freq, feedback / 100, mix));
+	};
+	Acts.prototype.AddPhaserEffect = function (tag, freq, detune, q, mod, modfreq, mix)
+	{
+		if (api !== API_WEBAUDIO || !context["createOscillator"])
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new PhaserEffect(freq, detune, q, mod, modfreq, mix));
+	};
+	Acts.prototype.AddConvolutionEffect = function (tag, file, norm, mix)
+	{
+		if (api !== API_WEBAUDIO || !context["createConvolver"])
+			return;
+		var doNormalize = (norm === 0);
+		var src = this.runtime.files_subfolder + file[0] + (useOgg ? ".ogg" : ".m4a");
+		var b = this.getAudioBuffer(src, false);
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		var fx;
+		if (b.bufferObject)
+		{
+			fx = new ConvolveEffect(b.bufferObject, doNormalize, mix, src);
+		}
+		else
+		{
+			fx = new ConvolveEffect(null, doNormalize, mix, src);
+			b.normalizeWhenReady = doNormalize;
+			b.convolveWhenReady = fx;
+		}
+		addEffectForTag(tag, fx);
+	};
+	Acts.prototype.AddGainEffect = function (tag, g)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		tag = tag.toLowerCase();
+		addEffectForTag(tag, new GainEffect(dbToLinear(g)));
+	};
+	Acts.prototype.AddMuteEffect = function (tag)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		tag = tag.toLowerCase();
+		addEffectForTag(tag, new GainEffect(0));	// re-use gain effect with 0 gain
+	};
+	Acts.prototype.AddTremoloEffect = function (tag, freq, mix)
+	{
+		if (api !== API_WEBAUDIO || !context["createOscillator"])
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new TremoloEffect(freq, mix));
+	};
+	Acts.prototype.AddRingModEffect = function (tag, freq, mix)
+	{
+		if (api !== API_WEBAUDIO || !context["createOscillator"])
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new RingModulatorEffect(freq, mix));
+	};
+	Acts.prototype.AddDistortionEffect = function (tag, threshold, headroom, drive, makeupgain, mix)
+	{
+		if (api !== API_WEBAUDIO || !context["createWaveShaper"])
+			return;
+		tag = tag.toLowerCase();
+		mix = mix / 100;
+		if (mix < 0) mix = 0;
+		if (mix > 1) mix = 1;
+		addEffectForTag(tag, new DistortionEffect(threshold, headroom, drive, makeupgain, mix));
+	};
+	Acts.prototype.AddCompressorEffect = function (tag, threshold, knee, ratio, attack, release)
+	{
+		if (api !== API_WEBAUDIO || !context["createDynamicsCompressor"])
+			return;
+		tag = tag.toLowerCase();
+		addEffectForTag(tag, new CompressorEffect(threshold, knee, ratio, attack / 1000, release / 1000));
+	};
+	Acts.prototype.AddAnalyserEffect = function (tag, fftSize, smoothing)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		tag = tag.toLowerCase();
+		addEffectForTag(tag, new AnalyserEffect(fftSize, smoothing));
+	};
+	Acts.prototype.RemoveEffects = function (tag)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		tag = tag.toLowerCase();
+		var i, len, arr;
+		if (effects.hasOwnProperty(tag))
+		{
+			arr = effects[tag];
+			if (arr.length)
+			{
+				for (i = 0, len = arr.length; i < len; i++)
+					arr[i].remove();
+				arr.length = 0;
+				reconnectEffects(tag);
+			}
+		}
+	};
+	Acts.prototype.SetEffectParameter = function (tag, index, param, value, ramp, time)
+	{
+		if (api !== API_WEBAUDIO)
+			return;
+		tag = tag.toLowerCase();
+		index = Math.floor(index);
+		var arr;
+		if (!effects.hasOwnProperty(tag))
+			return;
+		arr = effects[tag];
+		if (index < 0 || index >= arr.length)
+			return;
+		arr[index].setParam(param, value, ramp, time);
+	};
+	Acts.prototype.SetListenerObject = function (obj_)
+	{
+		if (!obj_ || api !== API_WEBAUDIO)
+			return;
+		var inst = obj_.getFirstPicked();
+		if (!inst)
+			return;
+		this.listenerTracker.setObject(inst);
+		listenerX = inst.x;
+		listenerY = inst.y;
+	};
+	Acts.prototype.SetListenerZ = function (z)
+	{
+		this.listenerZ = z;
+	};
+	pluginProto.acts = new Acts();
+	function Exps() {};
+	Exps.prototype.Duration = function (ret, tag)
+	{
+		getAudioByTag(tag, true);
+		if (taggedAudio.length)
+			ret.set_float(taggedAudio[0].getDuration());
+		else
+			ret.set_float(0);
+	};
+	Exps.prototype.PlaybackTime = function (ret, tag)
+	{
+		getAudioByTag(tag, true);
+		if (taggedAudio.length)
+			ret.set_float(taggedAudio[0].getPlaybackTime());
+		else
+			ret.set_float(0);
+	};
+	Exps.prototype.Volume = function (ret, tag)
+	{
+		getAudioByTag(tag, true);
+		if (taggedAudio.length)
+		{
+			var v = taggedAudio[0].getVolume();
+			ret.set_float(linearToDb(v));
+		}
+		else
+			ret.set_float(0);
+	};
+	Exps.prototype.MasterVolume = function (ret)
+	{
+		ret.set_float(masterVolume);
+	};
+	Exps.prototype.EffectCount = function (ret, tag)
+	{
+		tag = tag.toLowerCase();
+		var arr = null;
+		if (effects.hasOwnProperty(tag))
+			arr = effects[tag];
+		ret.set_int(arr ? arr.length : 0);
+	};
+	function getAnalyser(tag, index)
+	{
+		var arr = null;
+		if (effects.hasOwnProperty(tag))
+			arr = effects[tag];
+		if (arr && index >= 0 && index < arr.length && arr[index].freqBins)
+			return arr[index];
+		else
+			return null;
+	};
+	Exps.prototype.AnalyserFreqBinCount = function (ret, tag, index)
+	{
+		tag = tag.toLowerCase();
+		index = Math.floor(index);
+		var analyser = getAnalyser(tag, index);
+		ret.set_int(analyser ? analyser.node["frequencyBinCount"] : 0);
+	};
+	Exps.prototype.AnalyserFreqBinAt = function (ret, tag, index, bin)
+	{
+		tag = tag.toLowerCase();
+		index = Math.floor(index);
+		bin = Math.floor(bin);
+		var analyser = getAnalyser(tag, index);
+		if (!analyser)
+			ret.set_float(0);
+		else if (bin < 0 || bin >= analyser.node["frequencyBinCount"])
+			ret.set_float(0);
+		else
+			ret.set_float(analyser.freqBins[bin]);
+	};
+	Exps.prototype.AnalyserPeakLevel = function (ret, tag, index)
+	{
+		tag = tag.toLowerCase();
+		index = Math.floor(index);
+		var analyser = getAnalyser(tag, index);
+		if (analyser)
+			ret.set_float(analyser.peak);
+		else
+			ret.set_float(0);
+	};
+	Exps.prototype.AnalyserRMSLevel = function (ret, tag, index)
+	{
+		tag = tag.toLowerCase();
+		index = Math.floor(index);
+		var analyser = getAnalyser(tag, index);
+		if (analyser)
+			ret.set_float(analyser.rms);
+		else
+			ret.set_float(0);
+	};
+	pluginProto.exps = new Exps();
+}());
 	var OuyaSDK = Object();
 	var OuyaController = {
 		AXIS_LS_X: 0,
@@ -13864,12 +16954,10 @@ cr.plugins_.Sprite = function(runtime)
 				else
 				{
 					frameobj.texture_img = new Image();
-					frameobj.texture_img["idtkLoadDisposed"] = true;
-					frameobj.texture_img.src = frame[0];
 					frameobj.texture_img.cr_src = frame[0];
 					frameobj.texture_img.cr_filesize = frame[1];
 					frameobj.texture_img.c2webGL_texture = null;
-					this.runtime.waitForImageLoad(frameobj.texture_img);
+					this.runtime.waitForImageLoad(frameobj.texture_img, frame[0]);
 				}
 				cr.seal(frameobj);
 				animobj.frames.push(frameobj);
@@ -16144,4668 +19232,75 @@ cr.plugins_.gamepad = function(runtime)
 	};
 	pluginProto.exps = new Exps();
 }());
-cr.getProjectModel = function() { return [
-	null,
-	null,
-	[
-	[
-		cr.plugins_.gamepad,
-		true,
-		false,
-		false,
-		false,
-		false,
-		false,
-		false,
-		false,
-		false
-	]
-,	[
-		cr.plugins_.OuyaSDK,
-		false,
-		true,
-		false,
-		false,
-		false,
-		false,
-		false,
-		false,
-		false
-	]
-,	[
-		cr.plugins_.Sprite,
-		false,
-		true,
-		true,
-		true,
-		true,
-		true,
-		true,
-		true,
-		false
-	]
-,	[
-		cr.plugins_.Text,
-		false,
-		true,
-		true,
-		true,
-		true,
-		true,
-		true,
-		true,
-		false
-	]
-	],
-	[
-	[
-		"t0",
-		cr.plugins_.OuyaSDK,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		1816355922088746,
-		[],
-		null
-	]
-,	[
-		"t1",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			2437243724949428,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		3845775663819566,
-		[],
-		null
-	]
-,	[
-		"t2",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			2152100753366897,
-			[
-				["images/inactivebutton-sheet0.png", 4129, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		109764189234111,
-		[],
-		null
-	]
-,	[
-		"t3",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		9723592817919923,
-		[],
-		null
-	]
-,	[
-		"t4",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			3538045585787557,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		7742472968467399,
-		[],
-		null
-	]
-,	[
-		"t5",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		4509990307326024,
-		[],
-		null
-	]
-,	[
-		"t6",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			9284316694453807,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		5440890953997009,
-		[],
-		null
-	]
-,	[
-		"t7",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		3852784626303387,
-		[],
-		null
-	]
-,	[
-		"t8",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			7345823682098972,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		7819062771636713,
-		[],
-		null
-	]
-,	[
-		"t9",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		786584490012741,
-		[],
-		null
-	]
-,	[
-		"t10",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			9697422949881849,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		2466183789802448,
-		[],
-		null
-	]
-,	[
-		"t11",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		8943505550897707,
-		[],
-		null
-	]
-,	[
-		"t12",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			2437885739091784,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		9304257425631649,
-		[],
-		null
-	]
-,	[
-		"t13",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		1047458370196797,
-		[],
-		null
-	]
-,	[
-		"t14",
-		cr.plugins_.Sprite,
-		false,
-		[],
-		0,
-		0,
-		null,
-		[
-			[
-			"Default",
-			5,
-			false,
-			1,
-			0,
-			false,
-			466390788768884,
-			[
-				["images/activerequestgamerinfo-sheet0.png", 9381, 0, 0, 128, 128, 1, 0.5, 0.5,[],[-0.4296875,-0.4296875,0,-0.5,0.4296879768371582,-0.4296875,0.5,0,0.4296879768371582,0.4296879768371582,0,0.5,-0.4296875,0.4296879768371582,-0.5,0],0]
-			]
-			]
-		],
-		[
-		],
-		false,
-		false,
-		6128795949699308,
-		[],
-		null
-	]
-,	[
-		"t15",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		3911197486367486,
-		[],
-		null
-	]
-,	[
-		"t16",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		8859979300615871,
-		[],
-		null
-	]
-,	[
-		"t17",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		2610749574776171,
-		[],
-		null
-	]
-,	[
-		"t18",
-		cr.plugins_.gamepad,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		6698336474839037,
-		[],
-		null
-		,[25]
-	]
-,	[
-		"t19",
-		cr.plugins_.Text,
-		false,
-		[],
-		0,
-		0,
-		null,
-		null,
-		[
-		],
-		false,
-		false,
-		8365084212652065,
-		[],
-		null
-	]
-	],
-	[
-	],
-	[
-	[
-		"Layout 1",
-		1920,
-		1080,
-		false,
-		"Event sheet 1",
-		1322793236965105,
-		[
-		[
-			"Layer 0",
-			0,
-			276368214109009,
-			true,
-			[101, 156, 239],
-			false,
-			1,
-			1,
-			1,
-			false,
-			1,
-			0,
-			0,
-			[
-			[
-				[1364, 314, 0, 225, 75, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				20,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[1094, 312, 0, 268, 76, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				2,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[656, -62, 0, 50, 50, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				0,
-				0,
-				[
-				],
-				[
-				],
-				[
-					77
-				]
-			]
-,			[
-				[1093, 312, 0, 251, 52, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				1,
-				1,
-				[
-				],
-				[
-				],
-				[
-					1,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[974, 287, 0, 242, 52, 0, 0, 1, 0, 0, 0, 0, []],
-				3,
-				3,
-				[
-				],
-				[
-				],
-				[
-					"Request GamerInfo",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					1,
-					1,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[1557, 313, 0, 108, 66, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				4,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[1682, 312, 0, 99, 72, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				5,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[820, 313, 0, 247, 69, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				6,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[553, 313, 0, 243, 56, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				7,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[290, 309, 0, 247, 69, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				2,
-				8,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[1555, 313, 0, 93, 46, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				4,
-				9,
-				[
-				],
-				[
-				],
-				[
-					1,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[1509, 294, 0, 94, 42, 0, 0, 1, 0, 0, 0, 0, []],
-				5,
-				10,
-				[
-				],
-				[
-				],
-				[
-					"Pause",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					1,
-					1,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[1682, 312, 0, 80, 54, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				6,
-				11,
-				[
-				],
-				[
-				],
-				[
-					1,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[1649, 288, 0, 65, 50, 0, 0, 1, 0, 0, 0, 0, []],
-				7,
-				12,
-				[
-				],
-				[
-				],
-				[
-					"Exit",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					1,
-					1,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[290, 308, 0, 234, 56, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				8,
-				13,
-				[
-				],
-				[
-				],
-				[
-					0,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[184, 295, 0, 245, 45, 0, 0, 1, 0, 0, 0, 0, []],
-				9,
-				14,
-				[
-				],
-				[
-				],
-				[
-					"Request Products",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[552, 312, 0, 229, 42, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				10,
-				15,
-				[
-				],
-				[
-				],
-				[
-					1,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[439, 296, 0, 227, 41, 0, 0, 1, 0, 0, 0, 0, []],
-				11,
-				16,
-				[
-				],
-				[
-				],
-				[
-					"Request Purchase",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[822, 312, 0, 226, 50, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				12,
-				17,
-				[
-				],
-				[
-				],
-				[
-					1,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[712, 298, 0, 231, 41, 0, 0, 1, 0, 0, 0, 0, []],
-				13,
-				18,
-				[
-				],
-				[
-				],
-				[
-					"Request Receipts",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[1364, 316, 0, 209, 56, 0, 0, 1, 0.5, 0.5, 0, 0, []],
-				14,
-				19,
-				[
-				],
-				[
-				],
-				[
-					1,
-					"Default",
-					0,
-					1
-				]
-			]
-,			[
-				[1282, 300, 0, 190, 41, 0, 0, 1, 0, 0, 0, 0, []],
-				15,
-				21,
-				[
-				],
-				[
-				],
-				[
-					"Set Safe Area",
-					0,
-					"20pt Arial",
-					"rgb(0,0,0)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[168, 99, 0, 257, 46, 0, 0, 1, 0, 0, 0, 0, []],
-				16,
-				22,
-				[
-				],
-				[
-				],
-				[
-					"IAP for Construct 2",
-					0,
-					"bold 20pt Arial",
-					"rgb(255,255,255)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[173, 169, 0, 1551, 72, 0, 0, 1, 0, 0, 0, 0, []],
-				17,
-				23,
-				[
-				],
-				[
-				],
-				[
-					"Status:",
-					0,
-					"bold 20pt Arial",
-					"rgb(255,255,255)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-,			[
-				[183, 380, 0, 1543, 629, 0, 0, 1, 0, 0, 0, 0, []],
-				19,
-				25,
-				[
-				],
-				[
-				],
-				[
-					"Receipts",
-					0,
-					"bold 20pt Arial",
-					"rgb(255,255,255)",
-					0,
-					0,
-					0,
-					0,
-					0
-				]
-			]
-			],
-			[			]
-		]
-		],
-		[
-		],
-		[]
-	]
-	],
-	[
-	[
-		"Event sheet 1",
-		[
-		[
-			1,
-			"ButtonIndex",
-			0,
-			0,
-false,false,6507122753107457,false
-		]
-,		[
-			1,
-			"ReceiptIndex",
-			0,
-			0,
-false,false,9806271627475014,false
-		]
-,		[
-			1,
-			"ProductIndex",
-			0,
-			0,
-false,false,4411191228664226,false
-		]
-,		[
-			1,
-			"RequestPurchaseIndex",
-			0,
-			0,
-false,false,9176812289096727,false
-		]
-,		[
-			1,
-			"SafeAreaAmount",
-			0,
-			1,
-false,false,723212796259268,false
-		]
-,		[
-			0,
-			[true, "Initialization"],
-			false,
-			null,
-			7468397773544296,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				7468397773544296,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"Initialization"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			9401638130107824,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.OnLayoutStart,
-				null,
-				1,
-				false,
-				false,
-				false,
-				7414613053935541,
-				false
-			]
-			],
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.acts.addInitOuyaPluginValues,
-				null,
-				9057017637749157,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"tv.ouya.developer_id"
-					]
-				]
-,				[
-					1,
-					[
-						2,
-						"310a8f51-4d6e-4ae5-bda0-b93878e5f5d0"
-					]
-				]
-				]
-			]
-,			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.acts.initOuyaPlugin,
-				null,
-				4570038102442176,
-				false
-			]
-			]
-		]
-,		[
-			0,
-			[true, "Init Callbacks"],
-			false,
-			null,
-			2285188456078748,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2285188456078748,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"Init Callbacks"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			1283853764891728,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessInitOuyaPlugin,
-				null,
-				0,
-				false,
-				false,
-				false,
-				4198006736049561,
-				false
-				,[
-				[
-					0,
-					[
-						0,
-						0
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				2950187982428828,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"initOuyaPlugin onSuccess"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			7650236363582274,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureInitOuyaPlugin,
-				null,
-				0,
-				false,
-				false,
-				false,
-				3769069247496751,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				7398372400544311,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"initOuyaPlugin onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureInitOuyaPlugin,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureInitOuyaPlugin,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "RequestGamerInfo"],
-			false,
-			null,
-			1806015534634735,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				1806015534634735,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"RequestGamerInfo"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			7393966476215984,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestGamerInfo,
-				null,
-				0,
-				false,
-				false,
-				false,
-				4272059251128849,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				9385604162272305,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"requestGamerInfo onSuccess username="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.GamerInfoUsername,
-									true,
-									null
-								]
-							]
-							,[
-								2,
-								" uuid="
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.GamerInfoUuid,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			1798396634425156,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestGamerInfo,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2285216161453839,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				1412876856445716,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"requestGamerInfo onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestGamerInfo,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestGamerInfo,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			6864682842146601,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestGamerInfo,
-				null,
-				0,
-				false,
-				false,
-				false,
-				8547505875367628,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				9233473936054824,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"requestGamerInfo onCancel"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "RequestProducts"],
-			false,
-			null,
-			3409477096734068,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				3409477096734068,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"RequestProducts"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			1835684273389902,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestProducts,
-				null,
-				0,
-				false,
-				false,
-				false,
-				9734008032702044,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				8599985151395008,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							2,
-							"requestProducts onSuccess Count="
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
-							false,
-							null
-						]
-					]
-				]
-				]
-			]
-,			[
-				19,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				7606234152413233,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						""
-					]
-				]
-				]
-			]
-,			[
-				-1,
-				cr.system_object.prototype.acts.SetVar,
-				null,
-				9746196301800118,
-				false
-				,[
-				[
-					11,
-					"ProductIndex"
-				]
-,				[
-					7,
-					[
-						0,
-						0
-					]
-				]
-				]
-			]
-			]
-			,[
-			[
-				0,
-				null,
-				false,
-				null,
-				4078190422696228,
-				[
-				[
-					-1,
-					cr.system_object.prototype.cnds.Repeat,
-					null,
-					0,
-					true,
-					false,
-					false,
-					6901445315987263,
-					false
-					,[
-					[
-						0,
-						[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
-							false,
-							null
-						]
-					]
-					]
-				]
-				],
-				[
-				[
-					19,
-					cr.plugins_.Text.prototype.acts.SetText,
-					null,
-					814834755519058,
-					false
-					,[
-					[
-						7,
-						[
-							10,
-							[
-								10,
-								[
-									10,
-									[
-										10,
-										[
-											10,
-											[
-												10,
-												[
-													10,
-													[
-														10,
-														[
-															10,
-															[
-																20,
-																19,
-																cr.plugins_.Text.prototype.exps.Text,
-																true,
-																null
-															]
-															,[
-																23,
-																"ProductIndex"
-															]
-														]
-														,[
-															2,
-															": identifier="
-														]
-													]
-													,[
-														20,
-														0,
-														cr.plugins_.OuyaSDK.prototype.exps.GetProductsIdentifier,
-														true,
-														null
-														,[
-[
-															23,
-															"ProductIndex"
-														]
-														]
-													]
-												]
-												,[
-													2,
-													" name="
-												]
-											]
-											,[
-												20,
-												0,
-												cr.plugins_.OuyaSDK.prototype.exps.GetProductsName,
-												true,
-												null
-												,[
-[
-													23,
-													"ProductIndex"
-												]
-												]
-											]
-										]
-										,[
-											2,
-											" description="
-										]
-									]
-									,[
-										20,
-										0,
-										cr.plugins_.OuyaSDK.prototype.exps.GetProductsDescription,
-										true,
-										null
-										,[
-[
-											23,
-											"ProductIndex"
-										]
-										]
-									]
-								]
-								,[
-									2,
-									" localPrice="
-								]
-							]
-							,[
-								20,
-								0,
-								cr.plugins_.OuyaSDK.prototype.exps.GetProductsLocalPrice,
-								false,
-								null
-								,[
-[
-									23,
-									"ProductIndex"
-								]
-								]
-							]
-						]
-					]
-					]
-				]
-,				[
-					19,
-					cr.plugins_.Text.prototype.acts.SetText,
-					null,
-					5574088703932139,
-					false
-					,[
-					[
-						7,
-						[
-							10,
-							[
-								20,
-								19,
-								cr.plugins_.Text.prototype.exps.Text,
-								true,
-								null
-							]
-							,[
-								2,
-								"\n\n"
-							]
-						]
-					]
-					]
-				]
-,				[
-					-1,
-					cr.system_object.prototype.acts.SetVar,
-					null,
-					780419189857172,
-					false
-					,[
-					[
-						11,
-						"ProductIndex"
-					]
-,					[
-						7,
-						[
-							4,
-							[
-								23,
-								"ProductIndex"
-							]
-							,[
-								0,
-								1
-							]
-						]
-					]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			3263443987980688,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestProducts,
-				null,
-				0,
-				false,
-				false,
-				false,
-				7726386311501504,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				3382590784826524,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"requestProducts onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestProducts,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestProducts,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			5417482636732164,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestProducts,
-				null,
-				0,
-				false,
-				false,
-				false,
-				87246907906938,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				9754395587856548,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"requestProducts onCancel"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "RequestPurchase"],
-			false,
-			null,
-			2190193246232234,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2190193246232234,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"RequestPurchase"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			4390225652759292,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestPurchase,
-				null,
-				0,
-				false,
-				false,
-				false,
-				1510910644331373,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				4979589167191437,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"requestPurchase onSuccess"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			2247062359125413,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestPurchase,
-				null,
-				0,
-				false,
-				false,
-				false,
-				6196266198917433,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				5266755037901097,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"requestPurchase onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestPurchase,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestPurchase,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			577977535674319,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestPurchase,
-				null,
-				0,
-				false,
-				false,
-				false,
-				8940549369698572,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				9657413770688763,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"requestPurchase onCancel"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "RequestReceipts"],
-			false,
-			null,
-			1955207691642455,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				1955207691642455,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"RequestReceipts"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			6914109755258933,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestReceipts,
-				null,
-				0,
-				false,
-				false,
-				false,
-				5202143714475164,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				5075158241481378,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							2,
-							"requestReceipts onSuccess Count="
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.ReceiptsLength,
-							false,
-							null
-						]
-					]
-				]
-				]
-			]
-,			[
-				19,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				6189535522958232,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						""
-					]
-				]
-				]
-			]
-,			[
-				-1,
-				cr.system_object.prototype.acts.SetVar,
-				null,
-				6095590507223931,
-				false
-				,[
-				[
-					11,
-					"ReceiptIndex"
-				]
-,				[
-					7,
-					[
-						0,
-						0
-					]
-				]
-				]
-			]
-			]
-			,[
-			[
-				0,
-				null,
-				false,
-				null,
-				7394804802675314,
-				[
-				[
-					-1,
-					cr.system_object.prototype.cnds.Repeat,
-					null,
-					0,
-					true,
-					false,
-					false,
-					4230036984727516,
-					false
-					,[
-					[
-						0,
-						[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.ReceiptsLength,
-							false,
-							null
-						]
-					]
-					]
-				]
-				],
-				[
-				[
-					19,
-					cr.plugins_.Text.prototype.acts.SetText,
-					null,
-					9689525073409046,
-					false
-					,[
-					[
-						7,
-						[
-							10,
-							[
-								10,
-								[
-									10,
-									[
-										10,
-										[
-											10,
-											[
-												10,
-												[
-													10,
-													[
-														20,
-														19,
-														cr.plugins_.Text.prototype.exps.Text,
-														true,
-														null
-													]
-													,[
-														23,
-														"ReceiptIndex"
-													]
-												]
-												,[
-													2,
-													": identifier="
-												]
-											]
-											,[
-												20,
-												0,
-												cr.plugins_.OuyaSDK.prototype.exps.GetReceiptsIdentififer,
-												true,
-												null
-												,[
-[
-													23,
-													"ReceiptIndex"
-												]
-												]
-											]
-										]
-										,[
-											2,
-											" generatedDate="
-										]
-									]
-									,[
-										20,
-										0,
-										cr.plugins_.OuyaSDK.prototype.exps.GetReceiptsGeneratedDate,
-										true,
-										null
-										,[
-[
-											23,
-											"ReceiptIndex"
-										]
-										]
-									]
-								]
-								,[
-									2,
-									" localPrice="
-								]
-							]
-							,[
-								20,
-								0,
-								cr.plugins_.OuyaSDK.prototype.exps.GetReceiptsLocalPrice,
-								false,
-								null
-								,[
-[
-									23,
-									"ReceiptIndex"
-								]
-								]
-							]
-						]
-					]
-					]
-				]
-,				[
-					19,
-					cr.plugins_.Text.prototype.acts.SetText,
-					null,
-					3649270349009733,
-					false
-					,[
-					[
-						7,
-						[
-							10,
-							[
-								20,
-								19,
-								cr.plugins_.Text.prototype.exps.Text,
-								true,
-								null
-							]
-							,[
-								2,
-								"\n\n"
-							]
-						]
-					]
-					]
-				]
-,				[
-					-1,
-					cr.system_object.prototype.acts.SetVar,
-					null,
-					7736915587003851,
-					false
-					,[
-					[
-						11,
-						"ReceiptIndex"
-					]
-,					[
-						7,
-						[
-							4,
-							[
-								23,
-								"ReceiptIndex"
-							]
-							,[
-								0,
-								1
-							]
-						]
-					]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			2960185867938325,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestReceipts,
-				null,
-				0,
-				false,
-				false,
-				false,
-				9671931617234026,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				1105372558667428,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"requestReceipts onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestReceipts,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestReceipts,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			6931266365076063,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestReceipts,
-				null,
-				0,
-				false,
-				false,
-				false,
-				6268188737862629,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				5395501906575998,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"requestReceipts onCancel"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "SetSafeArea"],
-			false,
-			null,
-			5986487193480386,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				5986487193480386,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"SetSafeArea"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			4986336524805882,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessSetSafeArea,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2426364767400729,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				7295408859923137,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"setSafeArea onSuccess"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			353977134669885,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureSetSafeArea,
-				null,
-				0,
-				false,
-				false,
-				false,
-				1517483530512936,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				5379053543240727,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"setSafeArea onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureSetSafeArea,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureSetSafeArea,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "Shutdown"],
-			false,
-			null,
-			2401398480635195,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2401398480635195,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"Shutdown"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			1873011839676278,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onSuccessShutdown,
-				null,
-				0,
-				false,
-				false,
-				false,
-				8164695977971964,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				7282305591723388,
-				false
-				,[
-				[
-					7,
-					[
-						2,
-						"shutdown onSuccess"
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			4210393118941293,
-			[
-			[
-				0,
-				cr.plugins_.OuyaSDK.prototype.cnds.onFailureShutdown,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2405597108134111,
-				false
-			]
-			],
-			[
-			[
-				17,
-				cr.plugins_.Text.prototype.acts.SetText,
-				null,
-				9536298815999971,
-				false
-				,[
-				[
-					7,
-					[
-						10,
-						[
-							10,
-							[
-								10,
-								[
-									2,
-									"shutdown onFailure errorCode="
-								]
-								,[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureShutdown,
-									false,
-									null
-								]
-							]
-							,[
-								2,
-								" errorMessage"
-							]
-						]
-						,[
-							20,
-							0,
-							cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureShutdown,
-							true,
-							null
-						]
-					]
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "Buttons"],
-			false,
-			null,
-			9488141934242407,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				9488141934242407,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"Buttons"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			2238277607922801,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2692916935946371,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						0
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				8,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				7163539326471266,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			141635473658362,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				8771239599354657,
-				false
-			]
-			],
-			[
-			[
-				8,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				4187842749954128,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			2961492582229999,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				8511744363555454,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						1
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				10,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				7972072388061499,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			3476988052948849,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				6481596233974167,
-				false
-			]
-			],
-			[
-			[
-				10,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				466858185011648,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			8130748572108196,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				7726475598098548,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						2
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				12,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				8992306020509193,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			5421985918659182,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				9596584163125828,
-				false
-			]
-			],
-			[
-			[
-				12,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				3435031600202455,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			9818752137741763,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				7591566913609753,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						3
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				1,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				6465682364261736,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			7470347538216398,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				3906255216204174,
-				false
-			]
-			],
-			[
-			[
-				1,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				9934381909766578,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			838465809592334,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2367921471733598,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						4
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				14,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				8896084606834302,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			3621698270910685,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				1906782091085487,
-				false
-			]
-			],
-			[
-			[
-				14,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				106093455226581,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			6185049848430441,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				9984303921834531,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						5
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				4,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				5577293116733682,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			8797505834896547,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2890181178599767,
-				false
-			]
-			],
-			[
-			[
-				4,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				6854286258838842,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			2200891424343121,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Compare,
-				null,
-				0,
-				false,
-				false,
-				false,
-				1631176271711189,
-				false
-				,[
-				[
-					7,
-					[
-						23,
-						"ButtonIndex"
-					]
-				]
-,				[
-					8,
-					0
-				]
-,				[
-					7,
-					[
-						0,
-						6
-					]
-				]
-				]
-			]
-			],
-			[
-			[
-				6,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				3636511138835788,
-				false
-				,[
-				[
-					3,
-					1
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			null,
-			false,
-			null,
-			1174964633384176,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.Else,
-				null,
-				0,
-				false,
-				false,
-				false,
-				2960386932595362,
-				false
-			]
-			],
-			[
-			[
-				6,
-				cr.plugins_.Sprite.prototype.acts.SetVisible,
-				null,
-				1072005405403245,
-				false
-				,[
-				[
-					3,
-					0
-				]
-				]
-			]
-			]
-		]
-,		[
-			0,
-			[true, "Input"],
-			false,
-			null,
-			4410490434320422,
-			[
-			[
-				-1,
-				cr.system_object.prototype.cnds.IsGroupActive,
-				null,
-				0,
-				false,
-				false,
-				false,
-				4410490434320422,
-				false
-				,[
-				[
-					1,
-					[
-						2,
-						"Input"
-					]
-				]
-				]
-			]
-			],
-			[
-			]
-			,[
-			[
-				0,
-				null,
-				false,
-				null,
-				6932751500135671,
-				[
-				[
-					18,
-					cr.plugins_.gamepad.prototype.cnds.IsButtonDown,
-					null,
-					0,
-					false,
-					false,
-					false,
-					1277705397689564,
-					false
-					,[
-					[
-						0,
-						[
-							0,
-							0
-						]
-					]
-,					[
-						3,
-						9
-					]
-					]
-				]
-				],
-				[
-				[
-					17,
-					cr.plugins_.Text.prototype.acts.SetText,
-					null,
-					1021057155838252,
-					false
-					,[
-					[
-						7,
-						[
-							2,
-							"Pause detected"
-						]
-					]
-					]
-				]
-,				[
-					-1,
-					cr.system_object.prototype.acts.SetVar,
-					null,
-					3225431100953667,
-					false
-					,[
-					[
-						11,
-						"ButtonIndex"
-					]
-,					[
-						7,
-						[
-							0,
-							5
-						]
-					]
-					]
-				]
-				]
-			]
-,			[
-				0,
-				null,
-				false,
-				null,
-				7787571248173507,
-				[
-				[
-					-1,
-					cr.system_object.prototype.cnds.Else,
-					null,
-					0,
-					false,
-					false,
-					false,
-					5111852022098471,
-					false
-				]
-				],
-				[
-				]
-				,[
-				[
-					0,
-					null,
-					false,
-					null,
-					3198630729564033,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						8365016727987673,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							14
-						]
-						]
-					]
-					],
-					[
-					[
-						-1,
-						cr.system_object.prototype.acts.SetVar,
-						null,
-						6559266591430907,
-						false
-						,[
-						[
-							11,
-							"ButtonIndex"
-						]
-,						[
-							7,
-							[
-								19,
-								cr.system_object.prototype.exps.max
-								,[
-[
-									0,
-									0
-								]
-,[
-									5,
-									[
-										23,
-										"ButtonIndex"
-									]
-									,[
-										0,
-										1
-									]
-								]
-								]
-							]
-						]
-						]
-					]
-					]
-				]
-,				[
-					0,
-					null,
-					false,
-					null,
-					2060028089014266,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						6044401728714711,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							15
-						]
-						]
-					]
-					],
-					[
-					[
-						-1,
-						cr.system_object.prototype.acts.SetVar,
-						null,
-						4139407670828841,
-						false
-						,[
-						[
-							11,
-							"ButtonIndex"
-						]
-,						[
-							7,
-							[
-								19,
-								cr.system_object.prototype.exps.min
-								,[
-[
-									0,
-									6
-								]
-,[
-									4,
-									[
-										23,
-										"ButtonIndex"
-									]
-									,[
-										0,
-										1
-									]
-								]
-								]
-							]
-						]
-						]
-					]
-					]
-				]
-,				[
-					0,
-					null,
-					false,
-					null,
-					5297311642759082,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						6533913228128514,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							12
-						]
-						]
-					]
-					],
-					[
-					]
-					,[
-					[
-						0,
-						null,
-						false,
-						null,
-						3517081234550253,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							1667997230529543,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									1
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							-1,
-							cr.system_object.prototype.acts.SetVar,
-							null,
-							3275102061216195,
-							false
-							,[
-							[
-								11,
-								"RequestPurchaseIndex"
-							]
-,							[
-								7,
-								[
-									19,
-									cr.system_object.prototype.exps.max
-									,[
-[
-										0,
-										0
-									]
-,[
-										19,
-										cr.system_object.prototype.exps.min
-										,[
-[
-											5,
-											[
-												20,
-												0,
-												cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
-												false,
-												null
-											]
-											,[
-												0,
-												1
-											]
-										]
-,[
-											5,
-											[
-												23,
-												"RequestPurchaseIndex"
-											]
-											,[
-												0,
-												1
-											]
-										]
-										]
-									]
-									]
-								]
-							]
-							]
-						]
-,						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							5047321514466906,
-							false
-							,[
-							[
-								7,
-								[
-									10,
-									[
-										2,
-										"Request Purchase Item #"
-									]
-									,[
-										23,
-										"RequestPurchaseIndex"
-									]
-								]
-							]
-							]
-						]
-						]
-					]
-					]
-				]
-,				[
-					0,
-					null,
-					false,
-					null,
-					9374358313745289,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						4761510283522202,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							12
-						]
-						]
-					]
-					],
-					[
-					]
-					,[
-					[
-						0,
-						null,
-						false,
-						null,
-						1085024596155466,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							205502232051062,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									4
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							-1,
-							cr.system_object.prototype.acts.SetVar,
-							null,
-							6213539768210957,
-							false
-							,[
-							[
-								11,
-								"SafeAreaAmount"
-							]
-,							[
-								7,
-								[
-									19,
-									cr.system_object.prototype.exps.min
-									,[
-[
-										0,
-										1
-									]
-,[
-										4,
-										[
-											23,
-											"SafeAreaAmount"
-										]
-										,[
-											1,
-											0.1
-										]
-									]
-									]
-								]
-							]
-							]
-						]
-,						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							2511901172867466,
-							false
-							,[
-							[
-								7,
-								[
-									10,
-									[
-										2,
-										"Setting safe area... "
-									]
-									,[
-										23,
-										"SafeAreaAmount"
-									]
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
-							null,
-							2798750066526453,
-							false
-							,[
-							[
-								0,
-								[
-									23,
-									"SafeAreaAmount"
-								]
-							]
-							]
-						]
-						]
-					]
-					]
-				]
-,				[
-					0,
-					null,
-					false,
-					null,
-					1083152529027286,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						3745087037594735,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							13
-						]
-						]
-					]
-					],
-					[
-					]
-					,[
-					[
-						0,
-						null,
-						false,
-						null,
-						9469133035577634,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							8176801400729995,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									1
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							-1,
-							cr.system_object.prototype.acts.SetVar,
-							null,
-							5107188209360662,
-							false
-							,[
-							[
-								11,
-								"RequestPurchaseIndex"
-							]
-,							[
-								7,
-								[
-									19,
-									cr.system_object.prototype.exps.max
-									,[
-[
-										0,
-										0
-									]
-,[
-										19,
-										cr.system_object.prototype.exps.min
-										,[
-[
-											5,
-											[
-												20,
-												0,
-												cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
-												false,
-												null
-											]
-											,[
-												0,
-												1
-											]
-										]
-,[
-											4,
-											[
-												23,
-												"RequestPurchaseIndex"
-											]
-											,[
-												0,
-												1
-											]
-										]
-										]
-									]
-									]
-								]
-							]
-							]
-						]
-,						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							8411084945771862,
-							false
-							,[
-							[
-								7,
-								[
-									10,
-									[
-										2,
-										"Request Purchase Item #"
-									]
-									,[
-										23,
-										"RequestPurchaseIndex"
-									]
-								]
-							]
-							]
-						]
-						]
-					]
-					]
-				]
-,				[
-					0,
-					null,
-					false,
-					null,
-					8242523447191213,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						6402292622208496,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							13
-						]
-						]
-					]
-					],
-					[
-					]
-					,[
-					[
-						0,
-						null,
-						false,
-						null,
-						8933305522708372,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							6224473523373183,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									4
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							-1,
-							cr.system_object.prototype.acts.SetVar,
-							null,
-							5709864170930921,
-							false
-							,[
-							[
-								11,
-								"SafeAreaAmount"
-							]
-,							[
-								7,
-								[
-									19,
-									cr.system_object.prototype.exps.max
-									,[
-[
-										0,
-										0
-									]
-,[
-										5,
-										[
-											23,
-											"SafeAreaAmount"
-										]
-										,[
-											1,
-											0.1
-										]
-									]
-									]
-								]
-							]
-							]
-						]
-,						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							1557669222885683,
-							false
-							,[
-							[
-								7,
-								[
-									10,
-									[
-										2,
-										"Setting safe area... "
-									]
-									,[
-										23,
-										"SafeAreaAmount"
-									]
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
-							null,
-							7518997218106558,
-							false
-							,[
-							[
-								0,
-								[
-									23,
-									"SafeAreaAmount"
-								]
-							]
-							]
-						]
-						]
-					]
-					]
-				]
-,				[
-					0,
-					null,
-					false,
-					null,
-					945897824287367,
-					[
-					[
-						18,
-						cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
-						null,
-						0,
-						false,
-						false,
-						false,
-						5015849586271966,
-						false
-						,[
-						[
-							0,
-							[
-								0,
-								0
-							]
-						]
-,						[
-							3,
-							0
-						]
-						]
-					]
-					],
-					[
-					]
-					,[
-					[
-						0,
-						null,
-						false,
-						null,
-						9719912352172579,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							7114432344214481,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									0
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							3574825080816646,
-							false
-							,[
-							[
-								7,
-								[
-									2,
-									"Requesting products..."
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.requestProducts,
-							null,
-							2936733828661956,
-							false
-							,[
-							[
-								1,
-								[
-									2,
-									"long_sword,sharp_axe,cool_level,awesome_sauce,__DECLINED__THIS_PURCHASE"
-								]
-							]
-							]
-						]
-						]
-					]
-,					[
-						0,
-						null,
-						false,
-						null,
-						6394848024291024,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							4620840545152214,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									1
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							8522169024672638,
-							false
-							,[
-							[
-								7,
-								[
-									2,
-									"Requesting purchase..."
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.requestPurchase,
-							null,
-							4087691126904722,
-							false
-							,[
-							[
-								1,
-								[
-									20,
-									0,
-									cr.plugins_.OuyaSDK.prototype.exps.GetProductsIdentifier,
-									true,
-									null
-									,[
-[
-										23,
-										"RequestPurchaseIndex"
-									]
-									]
-								]
-							]
-							]
-						]
-						]
-					]
-,					[
-						0,
-						null,
-						false,
-						null,
-						6342561030915192,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							2237088441963891,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									2
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							7210996271392452,
-							false
-							,[
-							[
-								7,
-								[
-									2,
-									"Requesting receipts..."
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.requestReceipts,
-							null,
-							3168736172726648,
-							false
-						]
-						]
-					]
-,					[
-						0,
-						null,
-						false,
-						null,
-						7766526863068454,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							6542964462675556,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									3
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							8226482116839738,
-							false
-							,[
-							[
-								7,
-								[
-									2,
-									"Requesting gamer info..."
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.requestGamerInfo,
-							null,
-							4761493111722674,
-							false
-						]
-						]
-					]
-,					[
-						0,
-						null,
-						false,
-						null,
-						1057356503308401,
-						[
-						[
-							-1,
-							cr.system_object.prototype.cnds.Compare,
-							null,
-							0,
-							false,
-							false,
-							false,
-							5441568810389321,
-							false
-							,[
-							[
-								7,
-								[
-									23,
-									"ButtonIndex"
-								]
-							]
-,							[
-								8,
-								0
-							]
-,							[
-								7,
-								[
-									0,
-									6
-								]
-							]
-							]
-						]
-						],
-						[
-						[
-							17,
-							cr.plugins_.Text.prototype.acts.SetText,
-							null,
-							7197447010518376,
-							false
-							,[
-							[
-								7,
-								[
-									2,
-									"Shutting down..."
-								]
-							]
-							]
-						]
-,						[
-							0,
-							cr.plugins_.OuyaSDK.prototype.acts.shutdown,
-							null,
-							9685800050271275,
-							false
-						]
-						]
-					]
-					]
-				]
-				]
-			]
-			]
-		]
-		]
-	]
-	],
-	[
-	],
-	"media/",
-	false,
-	1920,
-	1080,
-	4,
-	true,
-	true,
-	true,
-	"1.0.0.0",
-	true,
-	false,
-	0,
-	0,
-	26,
-	false,
-	true,
-	1,
-	true,
-	"New project",
-	[
-	]
+cr.getObjectRefTable = function () { return [
+	cr.plugins_.Audio,
+	cr.plugins_.gamepad,
+	cr.plugins_.OuyaSDK,
+	cr.plugins_.Sprite,
+	cr.plugins_.Text,
+	cr.system_object.prototype.cnds.IsGroupActive,
+	cr.system_object.prototype.cnds.OnLayoutStart,
+	cr.plugins_.OuyaSDK.prototype.acts.addInitOuyaPluginValues,
+	cr.plugins_.OuyaSDK.prototype.acts.initOuyaPlugin,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessInitOuyaPlugin,
+	cr.plugins_.Text.prototype.acts.SetText,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureInitOuyaPlugin,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureInitOuyaPlugin,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureInitOuyaPlugin,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestGamerInfo,
+	cr.plugins_.OuyaSDK.prototype.exps.GamerInfoUsername,
+	cr.plugins_.OuyaSDK.prototype.exps.GamerInfoUuid,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestGamerInfo,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestGamerInfo,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestGamerInfo,
+	cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestGamerInfo,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestProducts,
+	cr.plugins_.OuyaSDK.prototype.exps.ProductsLength,
+	cr.system_object.prototype.acts.SetVar,
+	cr.system_object.prototype.cnds.Repeat,
+	cr.plugins_.Text.prototype.exps.Text,
+	cr.plugins_.OuyaSDK.prototype.exps.GetProductsIdentifier,
+	cr.plugins_.OuyaSDK.prototype.exps.GetProductsName,
+	cr.plugins_.OuyaSDK.prototype.exps.GetProductsDescription,
+	cr.plugins_.OuyaSDK.prototype.exps.GetProductsLocalPrice,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestProducts,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestProducts,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestProducts,
+	cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestProducts,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestPurchase,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestPurchase,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestPurchase,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestPurchase,
+	cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestPurchase,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessRequestReceipts,
+	cr.plugins_.OuyaSDK.prototype.exps.ReceiptsLength,
+	cr.plugins_.OuyaSDK.prototype.exps.GetReceiptsIdentififer,
+	cr.plugins_.OuyaSDK.prototype.exps.GetReceiptsGeneratedDate,
+	cr.plugins_.OuyaSDK.prototype.exps.GetReceiptsLocalPrice,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureRequestReceipts,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureRequestReceipts,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureRequestReceipts,
+	cr.plugins_.OuyaSDK.prototype.cnds.onCancelRequestReceipts,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessSetSafeArea,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureSetSafeArea,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureSetSafeArea,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureSetSafeArea,
+	cr.plugins_.OuyaSDK.prototype.cnds.onSuccessShutdown,
+	cr.plugins_.OuyaSDK.prototype.cnds.onFailureShutdown,
+	cr.plugins_.OuyaSDK.prototype.exps.errorCodeOnFailureShutdown,
+	cr.plugins_.OuyaSDK.prototype.exps.errorMessageOnFailureShutdown,
+	cr.system_object.prototype.cnds.Compare,
+	cr.plugins_.Sprite.prototype.acts.SetVisible,
+	cr.system_object.prototype.cnds.Else,
+	cr.plugins_.gamepad.prototype.cnds.IsButtonDown,
+	cr.plugins_.gamepad.prototype.cnds.OnButtonDown,
+	cr.system_object.prototype.exps.max,
+	cr.system_object.prototype.exps.min,
+	cr.plugins_.OuyaSDK.prototype.acts.setSafeArea,
+	cr.plugins_.Audio.prototype.acts.Play,
+	cr.plugins_.OuyaSDK.prototype.acts.requestProducts,
+	cr.plugins_.OuyaSDK.prototype.acts.requestPurchase,
+	cr.plugins_.OuyaSDK.prototype.acts.requestReceipts,
+	cr.plugins_.OuyaSDK.prototype.acts.requestGamerInfo,
+	cr.plugins_.OuyaSDK.prototype.acts.shutdown
 ];};
