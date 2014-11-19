@@ -173,6 +173,66 @@ namespace tv_ouya_sdk_OuyaInputView
 			repeat, metaState, deviceId, scancode, flags, source);
 	}
 
+	bool OuyaInputView::javaDispatchGenericMotionEvent(
+		long long downTime,
+		long long eventTime,
+		int action,
+		int pointerCount,
+		int metaState,
+		int buttonState,
+		float xPrecision,
+		float yPrecision,
+		int deviceId,
+		int edgeFlags,
+		int source,
+		int flags,
+		long long* pointerPropertiesPointId,
+		int* pointerPropertiesToolType,
+		float* pointerCoordsOrientation,
+		float* pointerCoordsPressure,
+		float* pointerCoordsSize,
+		float* pointerCoordsToolMajor,
+		float* pointerCoordsToolMinor,
+		float* pointerCoordsTouchMajor,
+		float* pointerCoordsTouchMinor,
+		float* pointerCoordsX,
+		float* pointerCoordsY,
+		int* axisIndexes,
+		float* axisValues)
+	{
+		return false;
+
+		/*
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not valid!");
+			return false;
+		}
+
+		if (!_jmJavaDispatchKeyEvent)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmJavaDispatchKeyEvent is not valid!");
+			return false;
+		}
+
+		return env->CallBooleanMethod(_instance, _jmJavaDispatchKeyEvent,
+			downTime, eventTime, action, code,
+			repeat, metaState, deviceId, scancode, flags, source);
+		*/
+	}
+
 	jobject OuyaInputView::GetInstance()
 	{
 		return _instance;

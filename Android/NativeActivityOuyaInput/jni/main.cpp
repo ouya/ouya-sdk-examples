@@ -196,7 +196,7 @@ static bool dispatchKeyEvent(AInputEvent* keyEvent)
 {
 	int64_t downTime = AKeyEvent_getDownTime(keyEvent);
 	int64_t eventTime = AKeyEvent_getEventTime(keyEvent);
-	int32_t action = AMotionEvent_getAction(keyEvent);
+	int32_t action = AKeyEvent_getAction(keyEvent);
 	int32_t code = AKeyEvent_getKeyCode(keyEvent);
 	int32_t repeat = AKeyEvent_getRepeatCount(keyEvent);
 	int32_t metaState = AKeyEvent_getMetaState(keyEvent);
@@ -215,18 +215,47 @@ static bool dispatchKeyEvent(AInputEvent* keyEvent)
 
 static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 {
-	float x = AMotionEvent_getX(motionEvent, 0);
-	float y = AMotionEvent_getY(motionEvent, 0);
+	int64_t downTime = AMotionEvent_getDownTime(motionEvent);
+	int64_t eventTime = AMotionEvent_getEventTime(motionEvent);
+	int32_t action = AMotionEvent_getAction(motionEvent);
+	int32_t metaState = AMotionEvent_getMetaState(motionEvent);
 	int32_t pointerCount = AMotionEvent_getPointerCount(motionEvent);
+	int32_t buttonState = AMotionEvent_getButtonState(motionEvent);
+	float xPrecision = AMotionEvent_getXPrecision(motionEvent);
+	float yPrecision = AMotionEvent_getYPrecision(motionEvent);
 	int32_t deviceId = AInputEvent_getDeviceId(motionEvent);
+	int32_t edgeFlags = AMotionEvent_getEdgeFlags(motionEvent);
+	int32_t flags = AMotionEvent_getFlags(motionEvent);
 	int32_t source = AInputEvent_getSource(motionEvent);
 	if (pointerCount > 0)
 	{
-		size_t pointerId = AMotionEvent_getPointerId(motionEvent, 0);
-		LOGI("x=%f y=%f pointerCount=%d pointerId=%d deviceId=%d source=%d",
-			x, y, pointerCount, pointerId,
-			deviceId, source);
-		for (int32_t axis = 0; axis < 50; ++axis)
+		LOGI("pointerCount=%d deviceId=%d source=%d",
+			pointerCount, deviceId, source);
+
+		// MotionEvent.PointerProperties
+		long long pointerId = AMotionEvent_getPointerId(motionEvent, 0);
+		int32_t toolType = AMotionEvent_getToolType(motionEvent, 0);
+
+		LOGI("PointerProperties pointerId=%lld toolType-%d",
+			pointerId, toolType);
+
+		// MotionEvent.PointerCoords
+		float orientation = AMotionEvent_getOrientation(motionEvent, pointerId);
+		float pressure = AMotionEvent_getPressure(motionEvent, pointerId);
+		float size = AMotionEvent_getSize(motionEvent, pointerId);
+		float toolMajor = AMotionEvent_getTouchMajor(motionEvent, pointerId);
+		float toolMinor = AMotionEvent_getToolMinor(motionEvent, pointerId);
+		float touchMajor = AMotionEvent_getTouchMajor(motionEvent, pointerId);
+		float touchMinor = AMotionEvent_getTouchMinor(motionEvent, pointerId);
+		float x = AMotionEvent_getX(motionEvent, pointerId);
+		float y = AMotionEvent_getY(motionEvent, pointerId);
+
+		LOGI("PointerCoords orientation=%f pressure=%f size=%f toolMajor=%f toolMinor=%f touchMajor=%f touchMinor=%f x=%f y=%f",
+			orientation, pressure, size,
+			toolMajor, toolMinor, touchMajor, touchMinor,
+			x, y);
+
+		for (int32_t axis = 0; axis < 50; ++axis) // 50 is based on the AXIS_value range I saw in the documentation
 		{
 			float val = AMotionEvent_getAxisValue(motionEvent, axis, pointerId);
 			if (val != 0.0f)
@@ -235,6 +264,62 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 			}
 		}
 	}
+
+	long long* pointerPropertiesPointId = new long long[pointerCount];
+	int32_t* pointerPropertiesToolType = new int32_t[pointerCount];
+	float* pointerCoordsOrientation = new float[pointerCount];
+	float* pointerCoordsPressure = new float[pointerCount];
+	float* pointerCoordsSize = new float[pointerCount];
+	float* pointerCoordsToolMajor = new float[pointerCount];
+	float* pointerCoordsToolMinor = new float[pointerCount];
+	float* pointerCoordsTouchMajor = new float[pointerCount];
+	float* pointerCoordsTouchMinor = new float[pointerCount];
+	float* pointerCoordsX = new float[pointerCount];
+	float* pointerCoordsY = new float[pointerCount];
+	int* axisIndexes = new int[pointerCount];
+	float* axisValues = new float[pointerCount];
+
+	bool handled = g_ouyaInputView->javaDispatchGenericMotionEvent(
+		downTime,
+		eventTime,
+		action,
+		pointerCount,
+		metaState,
+		buttonState,
+		xPrecision,
+		yPrecision,
+		deviceId,
+		edgeFlags,
+		source,
+		flags,
+		pointerPropertiesPointId,
+		pointerPropertiesToolType,
+		pointerCoordsOrientation,
+		pointerCoordsPressure,
+		pointerCoordsSize,
+		pointerCoordsToolMajor,
+		pointerCoordsToolMinor,
+		pointerCoordsTouchMajor,
+		pointerCoordsTouchMinor,
+		pointerCoordsX,
+		pointerCoordsY,
+		axisIndexes,
+		axisValues);
+
+	delete pointerPropertiesPointId;
+	delete pointerPropertiesToolType;
+	delete pointerCoordsOrientation;
+	delete pointerCoordsPressure;
+	delete pointerCoordsSize;
+	delete pointerCoordsToolMajor;
+	delete pointerCoordsToolMinor;
+	delete pointerCoordsTouchMajor;
+	delete pointerCoordsTouchMinor;
+	delete pointerCoordsX;
+	delete pointerCoordsY;
+	delete axisIndexes;
+	delete axisValues;
+	return handled;
 }
 
 /**

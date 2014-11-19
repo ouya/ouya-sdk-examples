@@ -32,6 +32,33 @@ namespace tv_ouya_sdk_OuyaInputView
 		bool javaDispatchKeyEvent(long long downTime, long long eventTime, int action, int code,
 			int repeat, int metaState, int deviceId, int scancode, int flags, int source);
 
+		bool javaDispatchGenericMotionEvent(
+				long long downTime,
+				long long eventTime,
+				int action,
+				int pointerCount,
+				int metaState,
+				int buttonState,
+				float xPrecision,
+				float yPrecision,
+				int deviceId,
+				int edgeFlags,
+				int source,
+				int flags,
+				long long* pointerPropertiesPointId,
+				int* pointerPropertiesToolType,
+				float* pointerCoordsOrientation,
+				float* pointerCoordsPressure,
+				float* pointerCoordsSize,
+				float* pointerCoordsToolMajor,
+				float* pointerCoordsToolMinor,
+				float* pointerCoordsTouchMajor,
+				float* pointerCoordsTouchMinor,
+				float* pointerCoordsX,
+				float* pointerCoordsY,
+				int* axisIndexes,
+				float* axisValues);
+
 		jobject GetInstance();
 
 	private:

@@ -26,6 +26,8 @@ import android.util.Log;
 import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.MotionEvent.PointerCoords;
+import android.view.MotionEvent.PointerProperties;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -105,19 +107,60 @@ public class OuyaInputView extends View {
 	    return super.dispatchKeyEvent(keyEvent);
 	}
 	
-	@Override
-    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-    	Log.i(TAG, "dispatchGenericMotionEvent");
+    public boolean javaDispatchGenericMotionEvent(
+    		long downTime,
+    		long eventTime,
+    		int action,
+    		int pointerCount,
+    		int metaState,
+    		int buttonState,
+    		float xPrecision,
+    		float yPrecision,
+			int deviceId,
+			int edgeFlags,
+			int source,
+			int flags,			
+			long[] pointerPropertiesPointId,
+			int[] pointerPropertiesToolType,
+			float[] pointerCoordsOrientation,
+			float[] pointerCoordsPressure,
+			float[] pointerCoordsSize,
+			float[] pointerCoordsToolMajor,
+			float[] pointerCoordsToolMinor,
+			float[] pointerCoordsTouchMajor,
+			float[] pointerCoordsTouchMinor,
+			float[] pointerCoordsX,
+			float[] pointerCoordsY,
+			int[] axisIndexes,
+			float[] axisValues) {
+    	Log.i(TAG, "javaDispatchGenericMotionEvent");
+    	
+    	PointerProperties[] pointerProperties = new PointerProperties[pointerCount];
+    	PointerCoords[] pointerCoords = new PointerCoords[pointerCount];
+    	
+    	MotionEvent motionEvent = MotionEvent.obtain(downTime, eventTime, action,
+        		pointerCount, pointerProperties, pointerCoords, 
+        		metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags, source, flags);
     	DebugInput.debugMotionEvent(motionEvent);
     	Activity activity = ((Activity)getContext());		
 		if (null != activity) {
 		    if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
-		    	return OuyaInputMapper.dispatchGenericMotionEvent(activity, motionEvent);
+		    	boolean handled = OuyaInputMapper.dispatchGenericMotionEvent(activity, motionEvent);
+		    	motionEvent.recycle();
+		    	return handled;
 		    }
 	    } else {
 	    	Log.e(TAG, "Activity was not found.");
 	    }
-    	return super.dispatchGenericMotionEvent(motionEvent);
+		boolean handled = super.dispatchGenericMotionEvent(motionEvent);
+		motionEvent.recycle();
+		return handled;
+    }
+	
+	@Override
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+    	Log.i(TAG, "dispatchGenericMotionEvent");
+    	return false;
     }
 	
 	@Override
