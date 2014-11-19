@@ -194,16 +194,16 @@ static void engine_term_display(struct engine* engine) {
 
 static bool dispatchKeyEvent(AInputEvent* keyEvent)
 {
-	long long downTime = 0;
-	long long eventTime = 0;
-	int action = AMotionEvent_getAction(keyEvent);
-	int code = AKeyEvent_getKeyCode(keyEvent);
-	int repeat = 0;
-	int metaState = 0;
-	int deviceId = AInputEvent_getDeviceId(keyEvent);
-	int scancode = 0;
-	int flags = 0;
-	int source = AInputEvent_getSource(keyEvent);
+	int64_t downTime = AKeyEvent_getDownTime(keyEvent);
+	int64_t eventTime = AKeyEvent_getEventTime(keyEvent);
+	int32_t action = AMotionEvent_getAction(keyEvent);
+	int32_t code = AKeyEvent_getKeyCode(keyEvent);
+	int32_t repeat = AKeyEvent_getRepeatCount(keyEvent);
+	int32_t metaState = AKeyEvent_getMetaState(keyEvent);
+	int32_t deviceId = AInputEvent_getDeviceId(keyEvent);
+	int32_t scancode = AKeyEvent_getScanCode(keyEvent);
+	int32_t flags = AKeyEvent_getFlags(keyEvent);
+	int32_t source = AInputEvent_getSource(keyEvent);
 
 	LOGI("downTime=%lld eventTime=%lld action=%d code=%d repeat=%d metaState=%d deviceId=%d scancode=%d flags=%d source=%d",
 		downTime, eventTime, action, code,
@@ -215,6 +215,26 @@ static bool dispatchKeyEvent(AInputEvent* keyEvent)
 
 static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 {
+	float x = AMotionEvent_getX(motionEvent, 0);
+	float y = AMotionEvent_getY(motionEvent, 0);
+	int32_t pointerCount = AMotionEvent_getPointerCount(motionEvent);
+	int32_t deviceId = AInputEvent_getDeviceId(motionEvent);
+	int32_t source = AInputEvent_getSource(motionEvent);
+	if (pointerCount > 0)
+	{
+		size_t pointerId = AMotionEvent_getPointerId(motionEvent, 0);
+		LOGI("x=%f y=%f pointerCount=%d pointerId=%d deviceId=%d source=%d",
+			x, y, pointerCount, pointerId,
+			deviceId, source);
+		for (int32_t axis = 0; axis < 50; ++axis)
+		{
+			float val = AMotionEvent_getAxisValue(motionEvent, axis, pointerId);
+			if (val != 0.0f)
+			{
+				LOGI("axis=%d val=%f", axis, val);
+			}
+		}
+	}
 }
 
 /**
@@ -257,16 +277,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 		}
 	}
 
-
-	/*
-    struct engine* engine = (struct engine*)app->userData;
-    if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-        engine->animating = 1;
-        engine->state.x = AMotionEvent_getX(event, 0);
-        engine->state.y = AMotionEvent_getY(event, 0);
-        return 1;
-    }
-    */
     return 0;
 }
 
