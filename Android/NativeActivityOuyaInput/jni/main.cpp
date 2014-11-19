@@ -26,6 +26,8 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
+#include <vector>
+
 #include "OuyaInputView.h"
 
 using namespace tv_ouya_sdk_OuyaInputView;
@@ -227,6 +229,22 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 	int32_t edgeFlags = AMotionEvent_getEdgeFlags(motionEvent);
 	int32_t flags = AMotionEvent_getFlags(motionEvent);
 	int32_t source = AInputEvent_getSource(motionEvent);
+
+	long long* pointerPropertiesPointId = new long long[pointerCount];
+	int* pointerPropertiesToolType = new int[pointerCount];
+	float* pointerCoordsOrientation = new float[pointerCount];
+	float* pointerCoordsPressure = new float[pointerCount];
+	float* pointerCoordsSize = new float[pointerCount];
+	float* pointerCoordsToolMajor = new float[pointerCount];
+	float* pointerCoordsToolMinor = new float[pointerCount];
+	float* pointerCoordsTouchMajor = new float[pointerCount];
+	float* pointerCoordsTouchMinor = new float[pointerCount];
+	float* pointerCoordsX = new float[pointerCount];
+	float* pointerCoordsY = new float[pointerCount];
+
+	std::vector<int> listAxisIndices;
+	std::vector<float> listAxisValues;
+
 	if (pointerCount > 0)
 	{
 		LOGI("pointerCount=%d deviceId=%d source=%d",
@@ -238,6 +256,9 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 
 		LOGI("PointerProperties pointerId=%lld toolType-%d",
 			pointerId, toolType);
+
+		pointerPropertiesPointId[0] = pointerId;
+		pointerPropertiesToolType[0] = toolType;
 
 		// MotionEvent.PointerCoords
 		float orientation = AMotionEvent_getOrientation(motionEvent, pointerId);
@@ -255,29 +276,41 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 			toolMajor, toolMinor, touchMajor, touchMinor,
 			x, y);
 
+		pointerCoordsOrientation[0] = orientation;
+		pointerCoordsPressure[0] = pressure;
+		pointerCoordsSize[0] = size;
+		pointerCoordsToolMajor[0] = toolMajor;
+		pointerCoordsToolMinor[0] = toolMinor;
+		pointerCoordsTouchMajor[0] = touchMajor;
+		pointerCoordsTouchMinor[0] = touchMinor;
+		pointerCoordsX[0] = x;
+		pointerCoordsY[0] = y;
+
 		for (int32_t axis = 0; axis < 50; ++axis) // 50 is based on the AXIS_value range I saw in the documentation
 		{
 			float val = AMotionEvent_getAxisValue(motionEvent, axis, pointerId);
 			if (val != 0.0f)
 			{
 				LOGI("axis=%d val=%f", axis, val);
+				listAxisIndices.push_back(axis);
+				listAxisValues.push_back(val);
 			}
 		}
 	}
 
-	long long* pointerPropertiesPointId = new long long[pointerCount];
-	int32_t* pointerPropertiesToolType = new int32_t[pointerCount];
-	float* pointerCoordsOrientation = new float[pointerCount];
-	float* pointerCoordsPressure = new float[pointerCount];
-	float* pointerCoordsSize = new float[pointerCount];
-	float* pointerCoordsToolMajor = new float[pointerCount];
-	float* pointerCoordsToolMinor = new float[pointerCount];
-	float* pointerCoordsTouchMajor = new float[pointerCount];
-	float* pointerCoordsTouchMinor = new float[pointerCount];
-	float* pointerCoordsX = new float[pointerCount];
-	float* pointerCoordsY = new float[pointerCount];
-	int* axisIndexes = new int[pointerCount];
-	float* axisValues = new float[pointerCount];
+	int* axisIndexes = new int[listAxisIndices.size()];
+	for (int index = 0; index < listAxisIndices.size(); ++index)
+	{
+		axisIndexes[index] = listAxisIndices[index];
+	}
+	listAxisIndices.clear();
+
+	float* axisValues = new float[listAxisValues.size()];
+	for (int index = 0; index < listAxisValues.size(); ++index)
+	{
+		axisValues[index] = listAxisValues[index];
+	}
+	listAxisValues.clear();
 
 	bool handled = g_ouyaInputView->javaDispatchGenericMotionEvent(
 		downTime,
