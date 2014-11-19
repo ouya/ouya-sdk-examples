@@ -12,19 +12,17 @@ namespace tv_ouya_sdk_OuyaInputView
 	JavaVM* OuyaInputView::_jvm = 0;
 	jclass OuyaInputView::_jcOuyaInputView = 0;
 	jmethodID OuyaInputView::_jmGetInstance = 0;
+	jmethodID OuyaInputView::_jmJavaDispatchKeyEvent = 0;
 
 	int OuyaInputView::InitJNI(JavaVM* jvm)
 	{
-		JNIEnv* env;
-		jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
+		_jvm = jvm;
 
-		/*
 		JNIEnv* env;
-		if (jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
 			return JNI_ERR;
 		}
-		*/
 
 		{
 			const char* strClass = "tv/ouya/sdk/OuyaInputView";
@@ -44,7 +42,7 @@ namespace tv_ouya_sdk_OuyaInputView
 				return JNI_ERR;
 			}
 		}
-		_jvm = jvm;
+
 		JNIFind();
 		return JNI_OK;
 	}
@@ -52,15 +50,10 @@ namespace tv_ouya_sdk_OuyaInputView
 	void OuyaInputView::JNIFind()
 	{
 		JNIEnv* env;
-		_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-
-		/*
-		JNIEnv* env;
-		if (_jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
 			return;
 		}
-		*/
 
 		if (!env)
 		{
@@ -90,20 +83,33 @@ namespace tv_ouya_sdk_OuyaInputView
 				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
 			}
 		}
+
+		{
+			const char* strMethod = "javaDispatchKeyEvent";
+			#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
+			#endif
+			_jmJavaDispatchKeyEvent = env->GetMethodID(_jcOuyaInputView, strMethod, "(JJIIIIIIII)Z");
+			if (_jmJavaDispatchKeyEvent)
+			{
+				#if ENABLE_VERBOSE_LOGGING
+					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+				#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+			}
+		}
 	}
 
 	OuyaInputView* OuyaInputView::getInstance()
 	{
 		JNIEnv* env;
-		_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-
-		/*
-		JNIEnv* env;
-		if (_jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
 			return 0;
 		}
-		*/
 
 		if (!env)
 		{
@@ -133,6 +139,38 @@ namespace tv_ouya_sdk_OuyaInputView
 		OuyaInputView* result = new OuyaInputView();
 		result->_instance = retVal;
 		return result;
+	}
+
+	bool OuyaInputView::javaDispatchKeyEvent(long long downTime, long long eventTime, int action, int code,
+		int repeat, int metaState, int deviceId, int scancode, int flags, int source)
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not valid!");
+			return false;
+		}
+
+		if (!_jmJavaDispatchKeyEvent)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmJavaDispatchKeyEvent is not valid!");
+			return false;
+		}
+
+		return env->CallBooleanMethod(_instance, _jmJavaDispatchKeyEvent,
+			downTime, eventTime, action, code,
+			repeat, metaState, deviceId, scancode, flags, source);
 	}
 
 	jobject OuyaInputView::GetInstance()

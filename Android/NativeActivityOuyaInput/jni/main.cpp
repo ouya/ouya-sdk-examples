@@ -192,6 +192,31 @@ static void engine_term_display(struct engine* engine) {
     engine->surface = EGL_NO_SURFACE;
 }
 
+static bool dispatchKeyEvent(AInputEvent* keyEvent)
+{
+	long long downTime = 0;
+	long long eventTime = 0;
+	int action = AMotionEvent_getAction(keyEvent);
+	int code = AKeyEvent_getKeyCode(keyEvent);
+	int repeat = 0;
+	int metaState = 0;
+	int deviceId = AInputEvent_getDeviceId(keyEvent);
+	int scancode = 0;
+	int flags = 0;
+	int source = AInputEvent_getSource(keyEvent);
+
+	LOGI("downTime=%lld eventTime=%lld action=%d code=%d repeat=%d metaState=%d deviceId=%d scancode=%d flags=%d source=%d",
+		downTime, eventTime, action, code,
+		repeat, metaState, deviceId, scancode, flags, source);
+
+	return g_ouyaInputView->javaDispatchKeyEvent(downTime, eventTime, action, code,
+		repeat, metaState, deviceId, scancode, flags, source);
+}
+
+static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
+{
+}
+
 /**
  * Process the next input event.
  */
@@ -217,6 +242,18 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 		else
 		{
 			LOGE("OuyaInputView is null");
+		}
+	}
+
+	if (g_ouyaInputView)
+	{
+		if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
+		{
+			return dispatchKeyEvent(event);
+		}
+		else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
+		{
+			return dispatchGenericMotionEvent(event);
 		}
 	}
 

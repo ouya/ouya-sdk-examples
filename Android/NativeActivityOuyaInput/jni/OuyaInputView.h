@@ -29,12 +29,16 @@ namespace tv_ouya_sdk_OuyaInputView
 
 		static OuyaInputView* getInstance();
 
+		bool javaDispatchKeyEvent(long long downTime, long long eventTime, int action, int code,
+			int repeat, int metaState, int deviceId, int scancode, int flags, int source);
+
 		jobject GetInstance();
 
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcOuyaInputView;
 		static jmethodID _jmGetInstance;
+		static jmethodID _jmJavaDispatchKeyEvent;
 		jobject _instance;
 	};
 }

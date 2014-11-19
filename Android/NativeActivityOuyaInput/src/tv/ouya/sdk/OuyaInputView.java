@@ -87,6 +87,24 @@ public class OuyaInputView extends View {
 		return mInstance;
 	}
 	
+	public boolean javaDispatchKeyEvent(long downTime, long eventTime, int action, int code, 
+			int repeat, int metaState, int deviceId, int scancode, int flags, int source) {
+		
+		KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code,
+			repeat, metaState, deviceId, scancode, flags, source);
+		
+		Log.i(TAG, "javaDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+		Activity activity = ((Activity)getContext());		
+		if (null != activity) {
+	    	if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
+	    		return OuyaInputMapper.dispatchKeyEvent(activity, keyEvent);
+	    	}
+	    } else {
+	    	Log.e(TAG, "Activity was not found.");
+	    }
+	    return super.dispatchKeyEvent(keyEvent);
+	}
+	
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
     	Log.i(TAG, "dispatchGenericMotionEvent");
@@ -105,15 +123,7 @@ public class OuyaInputView extends View {
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
-		Activity activity = ((Activity)getContext());		
-		if (null != activity) {
-	    	if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
-	    		return OuyaInputMapper.dispatchKeyEvent(activity, keyEvent);
-	    	}
-	    } else {
-	    	Log.e(TAG, "Activity was not found.");
-	    }
-	    return super.dispatchKeyEvent(keyEvent);
+		return false;
     }
     
 	@Override
