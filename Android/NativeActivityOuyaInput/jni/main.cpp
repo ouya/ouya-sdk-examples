@@ -230,7 +230,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 	int32_t flags = AMotionEvent_getFlags(motionEvent);
 	int32_t source = AInputEvent_getSource(motionEvent);
 
-	long long* pointerPropertiesPointId = new long long[pointerCount];
+	long long* pointerPropertiesId = new long long[pointerCount];
 	int* pointerPropertiesToolType = new int[pointerCount];
 	float* pointerCoordsOrientation = new float[pointerCount];
 	float* pointerCoordsPressure = new float[pointerCount];
@@ -257,7 +257,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 		LOGI("PointerProperties pointerId=%lld toolType-%d",
 			pointerId, toolType);
 
-		pointerPropertiesPointId[0] = pointerId;
+		pointerPropertiesId[0] = pointerId;
 		pointerPropertiesToolType[0] = toolType;
 
 		// MotionEvent.PointerCoords
@@ -298,18 +298,15 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 		}
 	}
 
-	int* axisIndexes = new int[listAxisIndices.size()];
-	for (int index = 0; index < listAxisIndices.size(); ++index)
+	int axisCount = listAxisIndices.size();
+	int* axisIndexes = new int[axisCount];
+	float* axisValues = new float[axisCount];
+	for (int index = 0; index < axisCount; ++index)
 	{
 		axisIndexes[index] = listAxisIndices[index];
-	}
-	listAxisIndices.clear();
-
-	float* axisValues = new float[listAxisValues.size()];
-	for (int index = 0; index < listAxisValues.size(); ++index)
-	{
 		axisValues[index] = listAxisValues[index];
 	}
+	listAxisIndices.clear();
 	listAxisValues.clear();
 
 	bool handled = g_ouyaInputView->javaDispatchGenericMotionEvent(
@@ -325,7 +322,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 		edgeFlags,
 		source,
 		flags,
-		pointerPropertiesPointId,
+		pointerPropertiesId,
 		pointerPropertiesToolType,
 		pointerCoordsOrientation,
 		pointerCoordsPressure,
@@ -336,10 +333,11 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 		pointerCoordsTouchMinor,
 		pointerCoordsX,
 		pointerCoordsY,
+		axisCount,
 		axisIndexes,
 		axisValues);
 
-	delete pointerPropertiesPointId;
+	delete pointerPropertiesId;
 	delete pointerPropertiesToolType;
 	delete pointerCoordsOrientation;
 	delete pointerCoordsPressure;

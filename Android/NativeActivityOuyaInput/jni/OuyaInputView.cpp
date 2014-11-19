@@ -186,7 +186,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		int edgeFlags,
 		int source,
 		int flags,
-		long long* pointerPropertiesPointId,
+		long long* pointerPropertiesId,
 		int* pointerPropertiesToolType,
 		float* pointerCoordsOrientation,
 		float* pointerCoordsPressure,
@@ -197,6 +197,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		float* pointerCoordsTouchMinor,
 		float* pointerCoordsX,
 		float* pointerCoordsY,
+		int axisCount,
 		int* axisIndexes,
 		float* axisValues)
 	{

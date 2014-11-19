@@ -120,7 +120,7 @@ public class OuyaInputView extends View {
 			int edgeFlags,
 			int source,
 			int flags,			
-			long[] pointerPropertiesPointId,
+			long[] pointerPropertiesId,
 			int[] pointerPropertiesToolType,
 			float[] pointerCoordsOrientation,
 			float[] pointerCoordsPressure,
@@ -131,6 +131,7 @@ public class OuyaInputView extends View {
 			float[] pointerCoordsTouchMinor,
 			float[] pointerCoordsX,
 			float[] pointerCoordsY,
+			int axisCount,
 			int[] axisIndexes,
 			float[] axisValues) {
     	Log.i(TAG, "javaDispatchGenericMotionEvent");
@@ -138,10 +139,39 @@ public class OuyaInputView extends View {
     	PointerProperties[] pointerProperties = new PointerProperties[pointerCount];
     	PointerCoords[] pointerCoords = new PointerCoords[pointerCount];
     	
+    	if (pointerCount > 0)
+    	{
+    		long pointerIndex = pointerPropertiesId[0];
+
+    		PointerProperties properties = new PointerProperties();
+    		properties.id = (int)pointerIndex;
+    		properties.toolType = pointerPropertiesToolType[0];
+    		
+    		PointerCoords coords = new PointerCoords();
+    		coords.orientation = pointerCoordsOrientation[0];
+    		coords.pressure = pointerCoordsPressure[0];
+    		coords.size = pointerCoordsSize[0];
+    		coords.toolMajor = pointerCoordsToolMajor[0];
+    		coords.toolMinor = pointerCoordsToolMinor[0];
+    		coords.touchMajor = pointerCoordsTouchMajor[0];
+    		coords.touchMinor = pointerCoordsTouchMinor[0];
+    		coords.x = pointerCoordsX[0];
+    		coords.y = pointerCoordsY[0];
+    		for (int index = 0; index < axisCount; ++index)
+    		{
+    			int axis = axisIndexes[index];
+    			float value = axisValues[index];
+    			coords.setAxisValue(axis, value);
+    		}
+    		pointerCoords[0] = coords;
+    	}
+    	
     	MotionEvent motionEvent = MotionEvent.obtain(downTime, eventTime, action,
-        		pointerCount, pointerProperties, pointerCoords, 
-        		metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags, source, flags);
+    		pointerCount, pointerProperties, pointerCoords, 
+    		metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags, source, flags);
+    	
     	DebugInput.debugMotionEvent(motionEvent);
+    	
     	Activity activity = ((Activity)getContext());		
 		if (null != activity) {
 		    if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
