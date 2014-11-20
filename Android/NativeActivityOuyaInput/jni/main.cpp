@@ -26,6 +26,8 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include "OuyaInputView.h"
@@ -35,6 +37,71 @@ using namespace tv_ouya_sdk_OuyaInputView;
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "native-activity", __VA_ARGS__))
+
+#define MAX_CONTROLLERS 4
+
+//axis states
+static std::vector< std::map<int, float> > g_axis;
+
+//button states
+static std::vector< std::map<int, bool> > g_button;
+static std::vector< std::map<int, bool> > g_buttonDown;
+static std::vector< std::map<int, bool> > g_buttonUp;
+
+void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
+	jint playerNum,
+	jint axis,
+	jfloat val)
+{
+	LOGI("Native remapped playerNum=%d axis=%d val=%f", playerNum, axis, val);
+	if (playerNum < 0 ||
+		playerNum >= MAX_CONTROLLERS)
+	{
+		playerNum = 0;
+	}
+	g_axis[playerNum][axis] = val;
+}
+
+void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
+	jint playerNum,
+	jint keyCode,
+	jint action)
+{
+	LOGI("Native remapped playerNum=%d KeyCode=%d Action=%d", playerNum, keyCode, action);
+	if (playerNum < 0 ||
+		playerNum >= MAX_CONTROLLERS)
+	{
+		playerNum = 0;
+	}
+
+	bool buttonDown = action == 0;
+
+	if (g_button[playerNum][keyCode] != buttonDown)
+	{
+		g_button[playerNum][keyCode] = buttonDown;
+		if (buttonDown)
+		{
+			g_buttonDown[playerNum][keyCode] = true;
+		}
+		else
+		{
+			g_buttonUp[playerNum][keyCode] = true;
+		}
+	}
+}
+
+static JNINativeMethod method_table[] = {
+	{ "dispatchGenericMotionEventNative", "(IIF)V", (void *)dispatchGenericMotionEventNative }
+};
+
+static int method_table_size = sizeof(method_table) / sizeof(method_table[0]);
+
+static JNINativeMethod method_table2[] = {
+	{ "dispatchKeyEventNative", "(III)V", (void *)dispatchKeyEventNative }
+};
+
+static int method_table_size2 = sizeof(method_table2) / sizeof(method_table2[0]);
+
 
 /**
  * Our saved state data.
@@ -79,13 +146,137 @@ extern "C"
 		JNIEnv* env;
 		g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
+		// setup sending native input to Java
+
 		LOGI("Initialize the OuyaInputView classes");
 		if (OuyaInputView::InitJNI(g_jvm) == JNI_ERR)
 		{
 			return JNI_ERR;
 		}
 
+		// setup native receiving remapped input
+
+		for (int index = 0; index < MAX_CONTROLLERS; ++index)
+		{
+			g_axis.push_back(std::map<int, float>());
+			g_button.push_back(std::map<int, bool>());
+			g_buttonDown.push_back(std::map<int, bool>());
+			g_buttonUp.push_back(std::map<int, bool>());
+		}
+
+		jclass clazz = env->FindClass("tv/ouya/sdk/OuyaInputView");
+		if (clazz)
+		{
+			jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
+			ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
+			env->DeleteLocalRef(clazz);
+		}
+		else
+		{
+			LOGE("Failed to find OuyaInputView");
+			return JNI_ERR;
+		}
+
 		return JNI_VERSION_1_6;
+	}
+}
+
+extern "C"
+{
+	// get axis value
+	float getAxis(int playerNum, int axis)
+	{
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			playerNum = 0;
+		}
+
+		std::map<int, float>::const_iterator search = g_axis[playerNum].find(axis);
+		if (search != g_axis[playerNum].end())
+		{
+			return search->second;
+		}
+		return 0.0f;
+	}
+
+	// check if a button is pressed
+	bool isPressed(int playerNum, int keyCode)
+	{
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			playerNum = 0;
+		}
+
+		std::map<int, bool>::const_iterator search = g_button[playerNum].find(keyCode);
+		if (search != g_button[playerNum].end())
+		{
+			return search->second;
+		}
+		return false;
+	}
+
+	// check if a button was down
+	bool isPressedDown(int playerNum, int keyCode)
+	{
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			playerNum = 0;
+		}
+
+		std::map<int, bool>::const_iterator search = g_buttonDown[playerNum].find(keyCode);
+		if (search != g_buttonDown[playerNum].end())
+		{
+			return search->second;
+		}
+		return false;
+	}
+
+	// check if a button was up
+	bool isPressedUp(int playerNum, int keyCode)
+	{
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			return false;
+		}
+
+		std::map<int, bool>::const_iterator search = g_buttonUp[playerNum].find(keyCode);
+		if (search != g_buttonUp[playerNum].end())
+		{
+			return search->second;
+		}
+		return false;
+	}
+
+	// clear the button state for detecting up and down
+	void clearButtonStates()
+	{
+		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum)
+		{
+			g_buttonDown[playerNum].clear();
+			g_buttonUp[playerNum].clear();
+		}
+	}
+
+	// clear the axis values
+	void clearAxes()
+	{
+		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum) {
+			g_axis[playerNum].clear();
+		}
+	}
+
+	// clear the button values
+	void clearButtons()
+	{
+		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum) {
+			g_button[playerNum].clear();
+			g_buttonDown[playerNum].clear();
+			g_buttonUp[playerNum].clear();
+		}
 	}
 }
 

@@ -191,11 +191,32 @@ public class OuyaInputView extends View {
     public boolean remappedDispatchGenericMotionEvent(MotionEvent motionEvent) {
     	Log.i(TAG, "remappedDispatchGenericMotionEvent");
     	DebugInput.debugOuyaMotionEvent(motionEvent);
+    	
+    	int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
+    	if (playerNum < 0) {
+    		playerNum = 0;
+    	}
+    	dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+    	dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+    	dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+    	dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+    	dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
+    	dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
     	return true;
     }
 	
     public boolean remappedDispatchKeyEvent(KeyEvent keyEvent) {
 		Log.i(TAG, "remappedDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+		int keyCode = keyEvent.getKeyCode();
+		int action = keyEvent.getAction();
+		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
+		if (playerNum < 0) {
+			playerNum = 0;
+		}
+		dispatchKeyEventNative(playerNum, keyCode, action);
 		return true;
     }
+    
+    public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
+    public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
 }

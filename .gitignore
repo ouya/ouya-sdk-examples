@@ -113,3 +113,6 @@ Unity/OuyaSDK/OuyaSDK-Examples.unitypackage
 Unity/OuyaSDK/OuyaSDK-StarterKit.unitypackage
 Unity/OuyaSDK/Assets/TAGENIGMA Toolbox.meta
 Html5/Caleb/
+Android/NativeActivityOuyaInput/bin/
+Android/NativeActivityOuyaInput/obj/
+Android/VirtualControllerView/gen/
