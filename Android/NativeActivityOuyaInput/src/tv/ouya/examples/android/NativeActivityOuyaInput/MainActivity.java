@@ -37,7 +37,6 @@ public class MainActivity extends NativeActivity {
     	System.loadLibrary("native-activity");
 	}
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -53,15 +52,17 @@ public class MainActivity extends NativeActivity {
 	
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-    	Log.i(TAG, "dispatchGenericMotionEvent");
+    	//Log.i(TAG, "dispatchGenericMotionEvent");
     	//DebugInput.debugMotionEvent(motionEvent);
-    	DebugInput.debugOuyaMotionEvent(motionEvent);
-    	return false;
+    	//DebugInput.debugOuyaMotionEvent(motionEvent);
+    	mInputView.remappedDispatchGenericMotionEvent(motionEvent);
+		return true;
     }
 	
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
-		return false;
+		//Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+		mInputView.remappedDispatchKeyEvent(keyEvent);
+		return true;
 	}
 }

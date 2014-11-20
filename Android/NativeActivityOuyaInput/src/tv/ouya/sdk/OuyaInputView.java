@@ -188,35 +188,14 @@ public class OuyaInputView extends View {
 		return handled;    	
     }
 	
-	@Override
-    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-    	Log.i(TAG, "dispatchGenericMotionEvent");
-    	return false;
+    public boolean remappedDispatchGenericMotionEvent(MotionEvent motionEvent) {
+    	Log.i(TAG, "remappedDispatchGenericMotionEvent");
+    	DebugInput.debugOuyaMotionEvent(motionEvent);
+    	return true;
     }
 	
-	@Override
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
-		return false;
+    public boolean remappedDispatchKeyEvent(KeyEvent keyEvent) {
+		Log.i(TAG, "remappedDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+		return true;
     }
-    
-	@Override
-	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "onGenericMotionEvent");
-		//DebugInput.debugMotionEvent(motionEvent);
-		DebugInput.debugOuyaMotionEvent(motionEvent);
-		return true;
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyUp keyCode=" + keyCode);
-		return true;
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyDown keyCode=" + keyCode);
-		return true;
-	}
 }
