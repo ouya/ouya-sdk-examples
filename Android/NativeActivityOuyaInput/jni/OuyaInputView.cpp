@@ -13,6 +13,7 @@ namespace tv_ouya_sdk_OuyaInputView
 	jclass OuyaInputView::_jcOuyaInputView = 0;
 	jmethodID OuyaInputView::_jmGetInstance = 0;
 	jmethodID OuyaInputView::_jmJavaDispatchKeyEvent = 0;
+	jmethodID OuyaInputView::_jmJavaDispatchMotionEvent = 0;
 
 	int OuyaInputView::InitJNI(JavaVM* jvm)
 	{
@@ -91,6 +92,24 @@ namespace tv_ouya_sdk_OuyaInputView
 			#endif
 			_jmJavaDispatchKeyEvent = env->GetMethodID(_jcOuyaInputView, strMethod, "(JJIIIIIIII)Z");
 			if (_jmJavaDispatchKeyEvent)
+			{
+				#if ENABLE_VERBOSE_LOGGING
+					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+				#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+			}
+		}
+
+		{
+			const char* strMethod = "javaDispatchGenericMotionEvent";
+			#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
+			#endif
+			_jmJavaDispatchMotionEvent = env->GetMethodID(_jcOuyaInputView, strMethod, "(JJIIIIFFIIII[I[I[F[F[F[F[F[F[F[F[FI[I[F)Z");
+			if (_jmJavaDispatchMotionEvent)
 			{
 				#if ENABLE_VERBOSE_LOGGING
 					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
@@ -186,7 +205,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		int edgeFlags,
 		int source,
 		int flags,
-		long long* pointerPropertiesId,
+		int* pointerPropertiesId,
 		int* pointerPropertiesToolType,
 		float* pointerCoordsOrientation,
 		float* pointerCoordsPressure,
@@ -201,9 +220,6 @@ namespace tv_ouya_sdk_OuyaInputView
 		int* axisIndexes,
 		float* axisValues)
 	{
-		return false;
-
-		/*
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
@@ -222,16 +238,83 @@ namespace tv_ouya_sdk_OuyaInputView
 			return false;
 		}
 
-		if (!_jmJavaDispatchKeyEvent)
+		if (!_jmJavaDispatchMotionEvent)
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmJavaDispatchKeyEvent is not valid!");
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmJavaDispatchMotionEvent is not valid!");
 			return false;
 		}
 
-		return env->CallBooleanMethod(_instance, _jmJavaDispatchKeyEvent,
-			downTime, eventTime, action, code,
-			repeat, metaState, deviceId, scancode, flags, source);
-		*/
+		jintArray argPointerPropertiesId = env->NewIntArray(pointerCount);
+		jintArray argpointerPropertiesToolType = env->NewIntArray(pointerCount);
+		jfloatArray argpointerCoordsOrientation = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsPressure = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsSize = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsToolMajor = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsToolMinor = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsTouchMajor = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsTouchMinor = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsX = env->NewFloatArray(pointerCount);
+		jfloatArray argpointerCoordsY = env->NewFloatArray(pointerCount);
+		jintArray argAxisIndexes = env->NewIntArray(axisCount);
+		jfloatArray argAxisValues = env->NewFloatArray(axisCount);
+
+		env->SetIntArrayRegion(argPointerPropertiesId, 0, pointerCount, pointerPropertiesId);
+		env->SetIntArrayRegion(argpointerPropertiesToolType, 0, pointerCount, pointerPropertiesToolType);
+		env->SetFloatArrayRegion(argpointerCoordsOrientation, 0, pointerCount, pointerCoordsOrientation);
+		env->SetFloatArrayRegion(argpointerCoordsPressure, 0, pointerCount, pointerCoordsPressure);
+		env->SetFloatArrayRegion(argpointerCoordsSize, 0, pointerCount, pointerCoordsSize);
+		env->SetFloatArrayRegion(argpointerCoordsToolMajor, 0, pointerCount, pointerCoordsToolMajor);
+		env->SetFloatArrayRegion(argpointerCoordsToolMinor, 0, pointerCount, pointerCoordsToolMinor);
+		env->SetFloatArrayRegion(argpointerCoordsTouchMajor, 0, pointerCount, pointerCoordsTouchMajor);
+		env->SetFloatArrayRegion(argpointerCoordsTouchMinor, 0, pointerCount, pointerCoordsTouchMinor);
+		env->SetFloatArrayRegion(argpointerCoordsX, 0, pointerCount, pointerCoordsX);
+		env->SetFloatArrayRegion(argpointerCoordsY, 0, pointerCount, pointerCoordsY);
+		env->SetIntArrayRegion(argAxisIndexes, 0, axisCount, axisIndexes);
+		env->SetFloatArrayRegion(argAxisValues, 0, axisCount, axisValues);
+
+		bool handled = env->CallBooleanMethod(_instance, _jmJavaDispatchMotionEvent,
+				downTime,
+				eventTime,
+				action,
+				pointerCount,
+				metaState,
+				buttonState,
+				xPrecision,
+				yPrecision,
+				deviceId,
+				edgeFlags,
+				source,
+				flags,
+				argPointerPropertiesId,
+				argpointerPropertiesToolType,
+				argpointerCoordsOrientation,
+				argpointerCoordsPressure,
+				argpointerCoordsSize,
+				argpointerCoordsToolMajor,
+				argpointerCoordsToolMinor,
+				argpointerCoordsTouchMajor,
+				argpointerCoordsTouchMinor,
+				argpointerCoordsX,
+				argpointerCoordsY,
+				axisCount,
+				argAxisIndexes,
+				argAxisValues);
+
+		env->DeleteLocalRef(argPointerPropertiesId);
+		env->DeleteLocalRef(argpointerPropertiesToolType);
+		env->DeleteLocalRef(argpointerCoordsOrientation);
+		env->DeleteLocalRef(argpointerCoordsPressure);
+		env->DeleteLocalRef(argpointerCoordsSize);
+		env->DeleteLocalRef(argpointerCoordsToolMajor);
+		env->DeleteLocalRef(argpointerCoordsToolMinor);
+		env->DeleteLocalRef(argpointerCoordsTouchMajor);
+		env->DeleteLocalRef(argpointerCoordsTouchMinor);
+		env->DeleteLocalRef(argpointerCoordsX);
+		env->DeleteLocalRef(argpointerCoordsY);
+		env->DeleteLocalRef(argAxisIndexes);
+		env->DeleteLocalRef(argAxisValues);
+
+		return handled;
 	}
 
 	jobject OuyaInputView::GetInstance()

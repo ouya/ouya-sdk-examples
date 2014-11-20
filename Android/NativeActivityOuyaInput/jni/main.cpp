@@ -230,7 +230,7 @@ static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
 	int32_t flags = AMotionEvent_getFlags(motionEvent);
 	int32_t source = AInputEvent_getSource(motionEvent);
 
-	long long* pointerPropertiesId = new long long[pointerCount];
+	int* pointerPropertiesId = new int[pointerCount];
 	int* pointerPropertiesToolType = new int[pointerCount];
 	float* pointerCoordsOrientation = new float[pointerCount];
 	float* pointerCoordsPressure = new float[pointerCount];

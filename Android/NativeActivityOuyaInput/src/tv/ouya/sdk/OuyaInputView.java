@@ -120,7 +120,7 @@ public class OuyaInputView extends View {
 			int edgeFlags,
 			int source,
 			int flags,			
-			long[] pointerPropertiesId,
+			int[] pointerPropertiesId,
 			int[] pointerPropertiesToolType,
 			float[] pointerCoordsOrientation,
 			float[] pointerCoordsPressure,
@@ -146,6 +146,7 @@ public class OuyaInputView extends View {
     		PointerProperties properties = new PointerProperties();
     		properties.id = (int)pointerIndex;
     		properties.toolType = pointerPropertiesToolType[0];
+    		pointerProperties[0] = properties; 
     		
     		PointerCoords coords = new PointerCoords();
     		coords.orientation = pointerCoordsOrientation[0];
@@ -170,7 +171,7 @@ public class OuyaInputView extends View {
     		pointerCount, pointerProperties, pointerCoords, 
     		metaState, buttonState, xPrecision, yPrecision, deviceId, edgeFlags, source, flags);
     	
-    	DebugInput.debugMotionEvent(motionEvent);
+    	//DebugInput.debugMotionEvent(motionEvent);
     	
     	Activity activity = ((Activity)getContext());		
 		if (null != activity) {
@@ -184,7 +185,7 @@ public class OuyaInputView extends View {
 	    }
 		boolean handled = super.dispatchGenericMotionEvent(motionEvent);
 		motionEvent.recycle();
-		return handled;
+		return handled;    	
     }
 	
 	@Override
@@ -202,7 +203,8 @@ public class OuyaInputView extends View {
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		Log.i(TAG, "onGenericMotionEvent");
-		DebugInput.debugMotionEvent(motionEvent);
+		//DebugInput.debugMotionEvent(motionEvent);
+		DebugInput.debugOuyaMotionEvent(motionEvent);
 		return true;
 	}
 

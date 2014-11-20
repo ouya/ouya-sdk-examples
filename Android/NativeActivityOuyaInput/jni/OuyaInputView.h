@@ -45,7 +45,7 @@ namespace tv_ouya_sdk_OuyaInputView
 				int edgeFlags,
 				int source,
 				int flags,
-				long long* pointerPropertiesId,
+				int* pointerPropertiesId,
 				int* pointerPropertiesToolType,
 				float* pointerCoordsOrientation,
 				float* pointerCoordsPressure,
@@ -67,6 +67,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		static jclass _jcOuyaInputView;
 		static jmethodID _jmGetInstance;
 		static jmethodID _jmJavaDispatchKeyEvent;
+		static jmethodID _jmJavaDispatchMotionEvent;
 		jobject _instance;
 	};
 }

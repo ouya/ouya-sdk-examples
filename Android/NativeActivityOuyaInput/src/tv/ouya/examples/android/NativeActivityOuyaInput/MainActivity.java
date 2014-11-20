@@ -54,13 +54,14 @@ public class MainActivity extends NativeActivity {
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
     	Log.i(TAG, "dispatchGenericMotionEvent");
-    	DebugInput.debugMotionEvent(motionEvent);
-    	return true;
+    	//DebugInput.debugMotionEvent(motionEvent);
+    	DebugInput.debugOuyaMotionEvent(motionEvent);
+    	return false;
     }
 	
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
-		return true;
+		return false;
 	}
 }
