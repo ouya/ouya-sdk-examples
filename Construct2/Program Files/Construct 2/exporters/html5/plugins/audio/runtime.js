@@ -3171,8 +3171,10 @@ cr.plugins_.Audio = function(runtime)
 		if (navigator != undefined &&
 			navigator.userAgent != undefined &&
 			navigator.userAgent == "Mozilla/5.0 (Linux; Android 4.1.2; OUYA Console Build/JZO54L-OUYA) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/19.77.34.5 Mobile Safari/537.36") {
-			var audio = new Audio(src);
-			audio.play();
+			setTimeout(function(){
+				var audio = new Audio(src);
+				audio.play();
+				}, 0);
 			return;
 		}
 

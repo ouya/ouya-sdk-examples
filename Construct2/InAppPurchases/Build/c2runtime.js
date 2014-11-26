@@ -15563,8 +15563,10 @@ cr.plugins_.Audio = function(runtime)
 		if (navigator != undefined &&
 			navigator.userAgent != undefined &&
 			navigator.userAgent == "Mozilla/5.0 (Linux; Android 4.1.2; OUYA Console Build/JZO54L-OUYA) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/19.77.34.5 Mobile Safari/537.36") {
-			var audio = new Audio(src);
-			audio.play();
+			setTimeout(function(){
+				var audio = new Audio(src);
+				audio.play();
+				}, 0);
 			return;
 		}
 		lastAudio = this.getAudioInstance(src, tag, is_music, looping!==0, v);
@@ -16109,8 +16111,13 @@ cr.plugins_.Audio = function(runtime)
 	function createGamepads() {
 		return Array(createGamepad(0), createGamepad(1), createGamepad(2), createGamepad(3));
 	}
-	var gamepads = createGamepads();
-	navigator["getGamepads"] = function () { return gamepads; }
+	var gamepads = Array();
+	if (navigator != undefined &&
+		navigator.userAgent != undefined &&
+		navigator.userAgent == "Mozilla/5.0 (Linux; Android 4.1.2; OUYA Console Build/JZO54L-OUYA) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/19.77.34.5 Mobile Safari/537.36") {
+		gamepads = createGamepads();
+		navigator["getGamepads"] = function () { return gamepads; }
+	}
 	var onGenericMotionEvent = function (playerNum, axis, val) {
 		var newAxis = axis;
 		switch (axis)
