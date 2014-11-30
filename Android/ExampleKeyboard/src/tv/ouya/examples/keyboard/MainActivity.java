@@ -41,14 +41,14 @@ public class MainActivity extends OuyaActivity {
 	private final String[] SET_KEYS_3 = new String[]{"Y","U","I","H","J","V","B"};	
 	private final String[] SET_KEYS_4 = new String[]{"O","P","K","L","N","M"};
 	
-	private final String[] SUBSET_KEYS_1 = new String[]{"Q","W","E", "A"};
-	private final String[] SUBSET_KEYS_2 = new String[]{"S","Z","X"};
-	private final String[] SUBSET_KEYS_3 = new String[]{"R","T","D"};
-	private final String[] SUBSET_KEYS_4 = new String[]{"F","G","C"};
+	private final String[] SUBSET_KEYS_1 = new String[]{"Q","W","E","A"};
+	private final String[] SUBSET_KEYS_2 = new String[]{"S","Z","X",""};
+	private final String[] SUBSET_KEYS_3 = new String[]{"R","T","D",""};
+	private final String[] SUBSET_KEYS_4 = new String[]{"F","G","C",""};
 	private final String[] SUBSET_KEYS_5 = new String[]{"Y","U","I","J"};
-	private final String[] SUBSET_KEYS_6 = new String[]{"H","V","B"};
-	private final String[] SUBSET_KEYS_7 = new String[]{"O","P","L"};
-	private final String[] SUBSET_KEYS_8 = new String[]{"K","N","M"};
+	private final String[] SUBSET_KEYS_6 = new String[]{"H","V","B",""};
+	private final String[] SUBSET_KEYS_7 = new String[]{"O","P","L",""};
+	private final String[] SUBSET_KEYS_8 = new String[]{"K","N","M",""};
 	
 	private int mButtonPressed = 0;
 	private int mSelectedGroup = 0;
@@ -261,21 +261,21 @@ public class MainActivity extends OuyaActivity {
 	private String[] getLetters() {
 		switch (mSelectedGroup) {
 		case 5:
-			return new String[]{"Q","W","A","E"};
+			return SUBSET_KEYS_1;
 		case 6:
-			return new String[]{"S","Z","X",""};
+			return SUBSET_KEYS_2;
 		case 7:
-			return new String[]{"D","R","T", ""};
+			return SUBSET_KEYS_3;
 		case 8:
-			return new String[]{"F","C","G",""};
+			return SUBSET_KEYS_4;
 		case 9:
-			return new String[]{"Y","U","I","J"};
+			return SUBSET_KEYS_5;
 		case 10:
-			return new String[]{"H","V","B",""};
+			return SUBSET_KEYS_6;
 		case 11:
-			return new String[]{"O","P","L",""};
+			return SUBSET_KEYS_7;
 		case 12:
-			return new String[]{"K","N","M",""};
+			return SUBSET_KEYS_8;
 		}
 		return null;
 	}
@@ -322,6 +322,9 @@ public class MainActivity extends OuyaActivity {
 	
 	private void addKeys(LinearLayout layout, String[] keys) {
 		for (String key : keys) {
+			if (key.equals("")) {
+				continue;
+			}
 			LinearLayout border = new LinearLayout(this);
 			border.setPadding(10, 10, 10, 10);
 			TextView t = new TextView(this);
@@ -341,6 +344,9 @@ public class MainActivity extends OuyaActivity {
 	private void setBackgroundColors(String colorString, String[] keys) {
 		int c = Color.parseColor(colorString);
 		for (String key : keys) {
+			if (key.equals("")) {
+				continue;
+			}
 			TextView t = mKeyMap.get(key);
 			if (null != t) {
 				t.setBackgroundColor(c);
@@ -351,6 +357,9 @@ public class MainActivity extends OuyaActivity {
 	private void setColors(String colorString, String[] keys) {
 		int c = Color.parseColor(colorString);
 		for (String key : keys) {
+			if (key.equals("")) {
+				continue;
+			}
 			TextView t = mKeyMap.get(key);
 			if (null != t) {
 				t.setTextColor(c);
