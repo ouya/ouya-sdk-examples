@@ -38,6 +38,11 @@ public class MainActivity extends OuyaActivity {
 	private final String COLOR_RIGHT_A = "#ff000044";
 	private final String COLOR_RIGHT_B = "#ff444400";
 	
+	private final String[] LAYOUT_ROW_1 = new String[]{"Q","W","E","R","T","Y","U","I","O","P"};
+	private final String[] LAYOUT_ROW_2 = new String[]{"A","S","D","F","G","H","J","K","L"};
+	private final String[] LAYOUT_ROW_3 = new String[]{"Z","X","C","V","B","N","M"};
+	private final String[] LAYOUT_ROW_4 = new String[]{"1","2","3","4","5","6","7","8","9","0"};
+	
 	private final String[] SUBSET_KEYS_1 = new String[]{"Q","W","E","A"};
 	private final String[] SUBSET_KEYS_2 = new String[]{"S","Z","X",""};
 	private final String[] SUBSET_KEYS_3 = new String[]{"R","T","D",""};
@@ -56,7 +61,7 @@ public class MainActivity extends OuyaActivity {
 	private TextView mOverlayU = null;
 	private TextView mOverlayY = null;
 	private TextView mOverlayA = null;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,19 +103,19 @@ public class MainActivity extends OuyaActivity {
 			LinearLayout row = new LinearLayout(this);
 			row.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			row.setOrientation(LinearLayout.HORIZONTAL);
-			addKeys(row, new String[]{"Q","W","E","R","T","Y","U","I","O","P"});
+			addKeys(row, LAYOUT_ROW_1);
 			rows.addView(row);
 			
 			row = new LinearLayout(this);
 			row.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			row.setOrientation(LinearLayout.HORIZONTAL);
-			addKeys(row, new String[]{"A","S","D","F","G","H","J","K","L"});
+			addKeys(row, LAYOUT_ROW_2);
 			rows.addView(row);			
 			
 			row = new LinearLayout(this);
 			row.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			row.setOrientation(LinearLayout.HORIZONTAL);
-			addKeys(row, new String[]{"Z","X","C","V","B","N","M"});
+			addKeys(row, LAYOUT_ROW_3);
 			rows.addView(row);
 			
 			content.addView(rows);
@@ -199,7 +204,7 @@ public class MainActivity extends OuyaActivity {
 		
 		if (mButtonPressed == OuyaController.BUTTON_O) {		
 			if (Math.abs(lx) > DEADZONE &&
-				Math.abs(lx) > DEADZONE) {
+				Math.abs(ly) > DEADZONE) {
 				if (lx < 0 &&
 					ly < 0) {
 					setSelectedGroup(5);
@@ -214,7 +219,7 @@ public class MainActivity extends OuyaActivity {
 					setSelectedGroup(8);
 				}
 			} else if (Math.abs(rx) > DEADZONE &&
-				Math.abs(rx) > DEADZONE) {
+				Math.abs(ry) > DEADZONE) {
 				if (rx < 0 &&
 					ry < 0) {
 					setSelectedGroup(9);
@@ -234,7 +239,7 @@ public class MainActivity extends OuyaActivity {
 			}
 		} else if (mButtonPressed == OuyaController.BUTTON_Y) {
 			if (Math.abs(lx) > DEADZONE &&
-				Math.abs(lx) > DEADZONE) {
+				Math.abs(ly) > DEADZONE) {
 				if (lx < 0 &&
 					ly < 0) {
 					setSelectedGroup(9);
@@ -251,6 +256,20 @@ public class MainActivity extends OuyaActivity {
 			} else {
 				setSelectedGroup(0);
 				hideOverlay();
+			}
+		} else if (mSelectedGroup == 0) {
+			if (Math.abs(lx) > DEADZONE) {
+				if (lx < 0) {
+					for (String key : LAYOUT_ROW_1) {
+						mKeyMap.get(key).setText(key);
+					}
+				} else {
+					int index = 0;
+					for (String key : LAYOUT_ROW_1) {
+						mKeyMap.get(key).setText(LAYOUT_ROW_4[index]);
+						++index;
+					}
+				}
 			}
 		}
 		
@@ -290,7 +309,7 @@ public class MainActivity extends OuyaActivity {
 		switch (keyCode) {
 		case OuyaController.BUTTON_O:
 			if (!letters[2].equals("")) {
-				mSelectedLetter.setText("Selected: "+letters[2]);				
+				mSelectedLetter.setText("Selected: "+mKeyMap.get(letters[2]).getText().toString());				
 				setSelectedGroup(0);
 				hideOverlay();
 				showAllKeys();
@@ -298,7 +317,7 @@ public class MainActivity extends OuyaActivity {
 			break;
 		case OuyaController.BUTTON_U:
 			if (!letters[0].equals("")) {
-				mSelectedLetter.setText("Selected: "+letters[0]);
+				mSelectedLetter.setText("Selected: "+mKeyMap.get(letters[0]).getText().toString());
 				setSelectedGroup(0);
 				hideOverlay();
 				showAllKeys();
@@ -306,7 +325,7 @@ public class MainActivity extends OuyaActivity {
 			break;
 		case OuyaController.BUTTON_Y:
 			if (!letters[1].equals("")) {
-				mSelectedLetter.setText("Selected: "+letters[1]);
+				mSelectedLetter.setText("Selected: "+mKeyMap.get(letters[1]).getText().toString());
 				setSelectedGroup(0);
 				hideOverlay();
 				showAllKeys();
@@ -314,7 +333,7 @@ public class MainActivity extends OuyaActivity {
 			break;
 		case OuyaController.BUTTON_A:
 			if (!letters[3].equals("")) {
-				mSelectedLetter.setText("Selected: "+letters[3]);
+				mSelectedLetter.setText("Selected: "+mKeyMap.get(letters[3]).getText().toString());
 				setSelectedGroup(0);
 				hideOverlay();
 				showAllKeys();
