@@ -1,7 +1,9 @@
 package tv.ouya.examples.keyboard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import tv.ouya.console.api.OuyaActivity;
 import tv.ouya.console.api.OuyaController;
@@ -35,11 +37,6 @@ public class MainActivity extends OuyaActivity {
 	private final String COLOR_LEFT_B = "#ff004400";
 	private final String COLOR_RIGHT_A = "#ff000044";
 	private final String COLOR_RIGHT_B = "#ff444400";
-	
-	private final String[] SET_KEYS_1 = new String[]{"Q","W","E","A","S","Z","X"};	
-	private final String[] SET_KEYS_2 = new String[]{"R","T","D","F","G","C"};	
-	private final String[] SET_KEYS_3 = new String[]{"Y","U","I","H","J","V","B"};	
-	private final String[] SET_KEYS_4 = new String[]{"O","P","K","L","N","M"};
 	
 	private final String[] SUBSET_KEYS_1 = new String[]{"Q","W","E","A"};
 	private final String[] SUBSET_KEYS_2 = new String[]{"S","Z","X",""};
@@ -182,10 +179,12 @@ public class MainActivity extends OuyaActivity {
 			mButtonPressed == OuyaController.BUTTON_O) {
 			mButtonPressed = 0;
 			showSelectedGroup();
+			hideInactiveKeys();
 		} else if (keyCode == OuyaController.BUTTON_Y &&
 			mButtonPressed == OuyaController.BUTTON_Y) {
 			mButtonPressed = 0;
 			showSelectedGroup();
+			hideInactiveKeys();
 		}
 		return true;
 	}
@@ -294,6 +293,7 @@ public class MainActivity extends OuyaActivity {
 				mSelectedLetter.setText("Selected: "+letters[2]);				
 				setSelectedGroup(0);
 				hideOverlay();
+				showAllKeys();
 			}
 			break;
 		case OuyaController.BUTTON_U:
@@ -301,6 +301,7 @@ public class MainActivity extends OuyaActivity {
 				mSelectedLetter.setText("Selected: "+letters[0]);
 				setSelectedGroup(0);
 				hideOverlay();
+				showAllKeys();
 			}
 			break;
 		case OuyaController.BUTTON_Y:
@@ -308,6 +309,7 @@ public class MainActivity extends OuyaActivity {
 				mSelectedLetter.setText("Selected: "+letters[1]);
 				setSelectedGroup(0);
 				hideOverlay();
+				showAllKeys();
 			}
 			break;
 		case OuyaController.BUTTON_A:
@@ -315,6 +317,7 @@ public class MainActivity extends OuyaActivity {
 				mSelectedLetter.setText("Selected: "+letters[3]);
 				setSelectedGroup(0);
 				hideOverlay();
+				showAllKeys();
 			}
 			break;
 		}
@@ -368,24 +371,36 @@ public class MainActivity extends OuyaActivity {
 	}
 	
 	private void setDefaultBackgroundColor() {
-		setBackgroundColors(COLOR_LEFT_A, SET_KEYS_1);
-		setBackgroundColors(COLOR_LEFT_B, SET_KEYS_2);
-		setBackgroundColors(COLOR_RIGHT_A, SET_KEYS_3);
-		setBackgroundColors(COLOR_RIGHT_B, SET_KEYS_4);
+		setBackgroundColors(COLOR_LEFT_A, SUBSET_KEYS_1);
+		setBackgroundColors(COLOR_LEFT_A, SUBSET_KEYS_2);
+		setBackgroundColors(COLOR_LEFT_B, SUBSET_KEYS_3);
+		setBackgroundColors(COLOR_LEFT_B, SUBSET_KEYS_4);
+		setBackgroundColors(COLOR_RIGHT_A, SUBSET_KEYS_5);
+		setBackgroundColors(COLOR_RIGHT_A, SUBSET_KEYS_6);
+		setBackgroundColors(COLOR_RIGHT_B, SUBSET_KEYS_7);
+		setBackgroundColors(COLOR_RIGHT_B, SUBSET_KEYS_8);
 	}
 	
 	private void setDefaultColor() {
-		setColors(COLOR_NORMAL, SET_KEYS_1);
-		setColors(COLOR_NORMAL, SET_KEYS_2);
-		setColors(COLOR_NORMAL, SET_KEYS_3);
-		setColors(COLOR_NORMAL, SET_KEYS_4);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_1);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_2);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_3);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_4);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_5);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_6);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_7);
+		setColors(COLOR_NORMAL, SUBSET_KEYS_8);
 	}
 	
 	private void setInactiveColor() {
-		setColors(COLOR_INACTIVE, SET_KEYS_1);
-		setColors(COLOR_INACTIVE, SET_KEYS_2);
-		setColors(COLOR_INACTIVE, SET_KEYS_3);
-		setColors(COLOR_INACTIVE, SET_KEYS_4);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_1);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_2);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_3);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_4);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_5);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_6);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_7);
+		setColors(COLOR_INACTIVE, SUBSET_KEYS_8);
 	}
 	
 	private void showSelectedGroup() {
@@ -486,5 +501,52 @@ public class MainActivity extends OuyaActivity {
 		mOverlayU.setVisibility(View.INVISIBLE);
 		mOverlayY.setVisibility(View.INVISIBLE);
 		mOverlayA.setVisibility(View.INVISIBLE);
+	}
+	
+	private void showAllKeys() {
+		setDefaultBackgroundColor();
+	}
+	
+	private void hideInactiveKeys() {
+		
+		if (mSelectedGroup == 0) {
+			return;
+		}
+		
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_1);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_2);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_3);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_4);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_5);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_6);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_7);
+		setBackgroundColors(COLOR_INACTIVE, SUBSET_KEYS_8);
+		
+		switch (mSelectedGroup) {
+		case 5:
+			setBackgroundColors(COLOR_LEFT_A, SUBSET_KEYS_1);
+			break;
+		case 6:
+			setBackgroundColors(COLOR_LEFT_A, SUBSET_KEYS_2);
+			break;
+		case 7:
+			setBackgroundColors(COLOR_LEFT_B, SUBSET_KEYS_3);
+			break;
+		case 8:
+			setBackgroundColors(COLOR_LEFT_B, SUBSET_KEYS_4);
+			break;
+		case 9:
+			setBackgroundColors(COLOR_RIGHT_A, SUBSET_KEYS_5);
+			break;
+		case 10:
+			setBackgroundColors(COLOR_RIGHT_A, SUBSET_KEYS_6);
+			break;
+		case 11:
+			setBackgroundColors(COLOR_RIGHT_B, SUBSET_KEYS_7);
+			break;
+		case 12:
+			setBackgroundColors(COLOR_RIGHT_B, SUBSET_KEYS_8);
+			break;
+		}
 	}
 }
