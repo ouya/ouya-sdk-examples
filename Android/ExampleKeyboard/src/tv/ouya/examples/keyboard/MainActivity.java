@@ -50,7 +50,7 @@ public class MainActivity extends OuyaActivity {
 	private final String[] SUBSET_KEYS_7 = new String[]{"O","P","L"};
 	private final String[] SUBSET_KEYS_8 = new String[]{"K","N","M"};
 	
-	private boolean mButtonPressed = false;
+	private int mButtonPressed = 0;
 	private int mSelectedGroup = 0;
 	
 	private TextView mSelectedLetter = null;
@@ -76,6 +76,21 @@ public class MainActivity extends OuyaActivity {
 			TextView hint = new TextView(this);
 			hint.setGravity(Gravity.CENTER);
 			hint.setText("Hold the BUTTON_O with AXIS_LS or AXIS_RS to select a letter.");
+			rows.addView(hint);
+			
+			hint = new TextView(this);
+			hint.setGravity(Gravity.CENTER);
+			hint.setText("Hold the BUTTON_Y with AXIS_LS to select a letter.");
+			rows.addView(hint);
+			
+			hint = new TextView(this);
+			hint.setGravity(Gravity.CENTER);
+			hint.setText("Press the BUTTON_L1 for upper-case letters.");
+			rows.addView(hint);
+			
+			hint = new TextView(this);
+			hint.setGravity(Gravity.CENTER);
+			hint.setText("Press the BUTTON_R1 for lower-case letters.");
 			rows.addView(hint);
 			
 			mSelectedLetter = new TextView(this);
@@ -148,7 +163,10 @@ public class MainActivity extends OuyaActivity {
 					selectLetter(keyCode);
 				} else {
 					if (keyCode == OuyaController.BUTTON_O) {		
-						mButtonPressed = true;
+						mButtonPressed = OuyaController.BUTTON_O;
+						setSelectedGroup(0);
+					} else if (keyCode == OuyaController.BUTTON_Y) {		
+						mButtonPressed = OuyaController.BUTTON_Y;
 						setSelectedGroup(0);
 					}
 					showSelectedGroup();
@@ -160,8 +178,13 @@ public class MainActivity extends OuyaActivity {
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		if (keyCode == OuyaController.BUTTON_O) {
-			mButtonPressed = false;
+		if (keyCode == OuyaController.BUTTON_O &&
+			mButtonPressed == OuyaController.BUTTON_O) {
+			mButtonPressed = 0;
+			showSelectedGroup();
+		} else if (keyCode == OuyaController.BUTTON_Y &&
+			mButtonPressed == OuyaController.BUTTON_Y) {
+			mButtonPressed = 0;
 			showSelectedGroup();
 		}
 		return true;
@@ -175,7 +198,7 @@ public class MainActivity extends OuyaActivity {
 		float rx = motionEvent.getAxisValue(OuyaController.AXIS_RS_X);
 		float ry = motionEvent.getAxisValue(OuyaController.AXIS_RS_Y);
 		
-		if (mButtonPressed) {		
+		if (mButtonPressed == OuyaController.BUTTON_O) {		
 			if (Math.abs(lx) > DEADZONE &&
 				Math.abs(lx) > DEADZONE) {
 				if (lx < 0 &&
@@ -206,6 +229,26 @@ public class MainActivity extends OuyaActivity {
 					ry > 0) {
 					setSelectedGroup(12);
 				}
+			} else {
+				setSelectedGroup(0);
+				hideOverlay();
+			}
+		} else if (mButtonPressed == OuyaController.BUTTON_Y) {
+			if (Math.abs(lx) > DEADZONE &&
+				Math.abs(lx) > DEADZONE) {
+				if (lx < 0 &&
+					ly < 0) {
+					setSelectedGroup(9);
+				} else if (lx < 0 &&
+					ly > 0) {
+					setSelectedGroup(10);
+				} else if (lx > 0 &&
+					ly < 0) {
+					setSelectedGroup(11);
+				} else if (lx > 0 &&
+					ly > 0) {
+					setSelectedGroup(12);
+				}			
 			} else {
 				setSelectedGroup(0);
 				hideOverlay();
@@ -343,7 +386,7 @@ public class MainActivity extends OuyaActivity {
 		switch (mSelectedGroup) {
 		case 0:
 			setDefaultBackgroundColor();
-			if (mButtonPressed) {
+			if (mButtonPressed != 0) {
 				setInactiveColor();
 			} else {
 				setDefaultColor();
