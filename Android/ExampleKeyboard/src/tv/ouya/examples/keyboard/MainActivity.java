@@ -6,13 +6,11 @@ import java.util.HashMap;
 import tv.ouya.console.api.OuyaActivity;
 import tv.ouya.console.api.OuyaController;
 import android.os.Bundle;
-import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -45,12 +43,12 @@ public class MainActivity extends OuyaActivity {
 	
 	private final String[] SUBSET_KEYS_1 = new String[]{"Q","W","E", "A"};
 	private final String[] SUBSET_KEYS_2 = new String[]{"S","Z","X"};
-	private final String[] SUBSET_KEYS_3 = new String[]{"R","T","D","F"};
-	private final String[] SUBSET_KEYS_4 = new String[]{"G","C"};
-	private final String[] SUBSET_KEYS_5 = new String[]{"Y","U","H","V"};
-	private final String[] SUBSET_KEYS_6 = new String[]{"I","J","B"};
-	private final String[] SUBSET_KEYS_7 = new String[]{"O","P","K", "N"};
-	private final String[] SUBSET_KEYS_8 = new String[]{"L","M"};
+	private final String[] SUBSET_KEYS_3 = new String[]{"R","T","D"};
+	private final String[] SUBSET_KEYS_4 = new String[]{"F","G","C"};
+	private final String[] SUBSET_KEYS_5 = new String[]{"Y","U","I","J"};
+	private final String[] SUBSET_KEYS_6 = new String[]{"H","V","B"};
+	private final String[] SUBSET_KEYS_7 = new String[]{"O","P","L"};
+	private final String[] SUBSET_KEYS_8 = new String[]{"K","N","M"};
 	
 	private boolean mButtonPressed = false;
 	private int mSelectedGroup = 0;
@@ -178,107 +176,39 @@ public class MainActivity extends OuyaActivity {
 		float ry = motionEvent.getAxisValue(OuyaController.AXIS_RS_Y);
 		
 		if (mButtonPressed) {		
-			if (Math.abs(lx) > DEADZONE) {
-				if (lx < 0) {
+			if (Math.abs(lx) > DEADZONE &&
+				Math.abs(lx) > DEADZONE) {
+				if (lx < 0 &&
+					ly < 0) {
 					setSelectedGroup(5);
-				} else {
+				} else if (lx < 0 &&
+					ly > 0) {
+					setSelectedGroup(6);
+				} else if (lx > 0 &&
+					ly < 0) {
 					setSelectedGroup(7);
+				} else if (lx > 0 &&
+					ly > 0) {
+					setSelectedGroup(8);
 				}
-			} else if (Math.abs(ly) > DEADZONE) {
-				if (ly < 0) {
-					setSelectedGroup(5);
-				} else {
-					setSelectedGroup(7);
-				}
-			}
-			else if (Math.abs(rx) > DEADZONE) {
-				if (rx < 0) {
+			} else if (Math.abs(rx) > DEADZONE &&
+				Math.abs(rx) > DEADZONE) {
+				if (rx < 0 &&
+					ry < 0) {
 					setSelectedGroup(9);
-				} else {
+				} else if (rx < 0 &&
+					ry > 0) {
+					setSelectedGroup(10);
+				} else if (rx > 0 &&
+					ry < 0) {
 					setSelectedGroup(11);
+				} else if (rx > 0 &&
+					ry > 0) {
+					setSelectedGroup(12);
 				}
-			} else if (Math.abs(ry) > DEADZONE) {
-				if (ry < 0) {
-					setSelectedGroup(9);
-				} else {
-					setSelectedGroup(11);
-				}				
 			} else {
 				setSelectedGroup(0);
 				hideOverlay();
-			}
-		} else {
-			if (mSelectedGroup != 0) {
-				switch (mSelectedGroup) {
-				case 1:
-				case 5:
-				case 6:
-					if (Math.abs(lx) > DEADZONE) {
-						if (lx < 0) {
-							setSelectedGroup(5);
-						} else {
-							setSelectedGroup(6);
-						}
-					} else if (Math.abs(ly) > DEADZONE) {
-						if (ly < 0) {
-							setSelectedGroup(5);
-						} else {
-							setSelectedGroup(6);
-						}
-					}
-					break;
-				case 2:
-				case 7:
-				case 8:
-					if (Math.abs(lx) > DEADZONE) {
-						if (lx < 0) {
-							setSelectedGroup(7);
-						} else {
-							setSelectedGroup(8);
-						}
-					} else if (Math.abs(ly) > DEADZONE) {
-						if (ly < 0) {
-							setSelectedGroup(7);
-						} else {
-							setSelectedGroup(8);
-						}
-					}
-					break;
-				case 3:
-				case 9:
-				case 10:
-					if (Math.abs(rx) > DEADZONE) {
-						if (rx < 0) {
-							setSelectedGroup(9);
-						} else {
-							setSelectedGroup(10);
-						}
-					} else if (Math.abs(ry) > DEADZONE) {
-						if (ry < 0) {
-							setSelectedGroup(9);
-						} else {
-							setSelectedGroup(10);
-						}
-					}
-					break;
-				case 4:
-				case 11:
-				case 12:
-					if (Math.abs(rx) > DEADZONE) {
-						if (rx < 0) {
-							setSelectedGroup(11);
-						} else {
-							setSelectedGroup(12);
-						}
-					} else if (Math.abs(ry) > DEADZONE) {
-						if (ry < 0) {
-							setSelectedGroup(11);
-						} else {
-							setSelectedGroup(12);
-						}
-					}
-					break;
-				}
 			}
 		}
 		
@@ -292,17 +222,17 @@ public class MainActivity extends OuyaActivity {
 		case 6:
 			return new String[]{"S","Z","X",""};
 		case 7:
-			return new String[]{"D","R","F","T"};
+			return new String[]{"D","R","T", ""};
 		case 8:
-			return new String[]{"C","G","",""};
+			return new String[]{"F","C","G",""};
 		case 9:
-			return new String[]{"Y","U","V","H"};
+			return new String[]{"Y","U","I","J"};
 		case 10:
-			return new String[]{"B","J","I",""};
+			return new String[]{"H","V","B",""};
 		case 11:
-			return new String[]{"O","P","N","K"};
+			return new String[]{"O","P","L",""};
 		case 12:
-			return new String[]{"M","L","",""};
+			return new String[]{"K","N","M",""};
 		}
 		return null;
 	}
@@ -419,51 +349,51 @@ public class MainActivity extends OuyaActivity {
 				setDefaultColor();
 			}
 			break;
-		case 1:
-			setColors(COLOR_NORMAL, SET_KEYS_1);
-			setColors(COLOR_SKIPPED, SET_KEYS_2);
-			break;
-		case 2:
-			setColors(COLOR_SKIPPED, SET_KEYS_1);
-			setColors(COLOR_NORMAL, SET_KEYS_2);
-			break;
-		case 3:
-			setColors(COLOR_NORMAL, SET_KEYS_3);
-			setColors(COLOR_SKIPPED, SET_KEYS_4);
-			break;
-		case 4:
-			setColors(COLOR_SKIPPED, SET_KEYS_3);
-			setColors(COLOR_NORMAL, SET_KEYS_4);
-			break;
 		case 5:
 			setColors(COLOR_NORMAL, SUBSET_KEYS_1);
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_2);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_3);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_4);
 			break;
 		case 6:
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_1);
 			setColors(COLOR_NORMAL, SUBSET_KEYS_2);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_3);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_4);
 			break;
 		case 7:
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_1);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_2);
 			setColors(COLOR_NORMAL, SUBSET_KEYS_3);
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_4);
 			break;
 		case 8:
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_1);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_2);
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_3);
 			setColors(COLOR_NORMAL, SUBSET_KEYS_4);
 			break;
 		case 9:
 			setColors(COLOR_NORMAL, SUBSET_KEYS_5);
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_6);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_7);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_8);
 			break;
 		case 10:
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_5);
 			setColors(COLOR_NORMAL, SUBSET_KEYS_6);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_7);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_8);
 			break;
 		case 11:
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_5);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_6);
 			setColors(COLOR_NORMAL, SUBSET_KEYS_7);
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_8);
 			break;
 		case 12:
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_5);
+			setColors(COLOR_SKIPPED, SUBSET_KEYS_6);
 			setColors(COLOR_SKIPPED, SUBSET_KEYS_7);
 			setColors(COLOR_NORMAL, SUBSET_KEYS_8);
 			break;
