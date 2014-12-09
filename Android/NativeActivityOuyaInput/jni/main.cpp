@@ -26,10 +26,6 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
-#include <map>
-#include <string>
-#include <vector>
-
 #include "OuyaInputView.h"
 
 using namespace tv_ouya_sdk_OuyaInputView;
@@ -39,69 +35,6 @@ using namespace tv_ouya_sdk_OuyaInputView;
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "native-activity", __VA_ARGS__))
 
 #define MAX_CONTROLLERS 4
-
-//axis states
-static std::vector< std::map<int, float> > g_axis;
-
-//button states
-static std::vector< std::map<int, bool> > g_button;
-static std::vector< std::map<int, bool> > g_buttonDown;
-static std::vector< std::map<int, bool> > g_buttonUp;
-
-void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
-	jint playerNum,
-	jint axis,
-	jfloat val)
-{
-	LOGI("Native remapped playerNum=%d axis=%d val=%f", playerNum, axis, val);
-	if (playerNum < 0 ||
-		playerNum >= MAX_CONTROLLERS)
-	{
-		playerNum = 0;
-	}
-	g_axis[playerNum][axis] = val;
-}
-
-void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
-	jint playerNum,
-	jint keyCode,
-	jint action)
-{
-	LOGI("Native remapped playerNum=%d KeyCode=%d Action=%d", playerNum, keyCode, action);
-	if (playerNum < 0 ||
-		playerNum >= MAX_CONTROLLERS)
-	{
-		playerNum = 0;
-	}
-
-	bool buttonDown = action == 0;
-
-	if (g_button[playerNum][keyCode] != buttonDown)
-	{
-		g_button[playerNum][keyCode] = buttonDown;
-		if (buttonDown)
-		{
-			g_buttonDown[playerNum][keyCode] = true;
-		}
-		else
-		{
-			g_buttonUp[playerNum][keyCode] = true;
-		}
-	}
-}
-
-static JNINativeMethod method_table[] = {
-	{ "dispatchGenericMotionEventNative", "(IIF)V", (void *)dispatchGenericMotionEventNative }
-};
-
-static int method_table_size = sizeof(method_table) / sizeof(method_table[0]);
-
-static JNINativeMethod method_table2[] = {
-	{ "dispatchKeyEventNative", "(III)V", (void *)dispatchKeyEventNative }
-};
-
-static int method_table_size2 = sizeof(method_table2) / sizeof(method_table2[0]);
-
 
 /**
  * Our saved state data.
@@ -154,29 +87,6 @@ extern "C"
 			return JNI_ERR;
 		}
 
-		// setup native receiving remapped input
-
-		for (int index = 0; index < MAX_CONTROLLERS; ++index)
-		{
-			g_axis.push_back(std::map<int, float>());
-			g_button.push_back(std::map<int, bool>());
-			g_buttonDown.push_back(std::map<int, bool>());
-			g_buttonUp.push_back(std::map<int, bool>());
-		}
-
-		jclass clazz = env->FindClass("tv/ouya/sdk/OuyaInputView");
-		if (clazz)
-		{
-			jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
-			ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
-			env->DeleteLocalRef(clazz);
-		}
-		else
-		{
-			LOGE("Failed to find OuyaInputView");
-			return JNI_ERR;
-		}
-
 		return JNI_VERSION_1_6;
 	}
 }
@@ -186,16 +96,9 @@ extern "C"
 	// get axis value
 	float getAxis(int playerNum, int axis)
 	{
-		if (playerNum < 0 ||
-			playerNum >= MAX_CONTROLLERS)
+		if (g_ouyaInputView)
 		{
-			playerNum = 0;
-		}
-
-		std::map<int, float>::const_iterator search = g_axis[playerNum].find(axis);
-		if (search != g_axis[playerNum].end())
-		{
-			return search->second;
+			return g_ouyaInputView->getAxis(playerNum, axis);
 		}
 		return 0.0f;
 	}
@@ -203,16 +106,9 @@ extern "C"
 	// check if a button is pressed
 	bool isPressed(int playerNum, int keyCode)
 	{
-		if (playerNum < 0 ||
-			playerNum >= MAX_CONTROLLERS)
+		if (g_ouyaInputView)
 		{
-			playerNum = 0;
-		}
-
-		std::map<int, bool>::const_iterator search = g_button[playerNum].find(keyCode);
-		if (search != g_button[playerNum].end())
-		{
-			return search->second;
+			return g_ouyaInputView->isPressed(playerNum, keyCode);
 		}
 		return false;
 	}
@@ -220,16 +116,9 @@ extern "C"
 	// check if a button was down
 	bool isPressedDown(int playerNum, int keyCode)
 	{
-		if (playerNum < 0 ||
-			playerNum >= MAX_CONTROLLERS)
+		if (g_ouyaInputView)
 		{
-			playerNum = 0;
-		}
-
-		std::map<int, bool>::const_iterator search = g_buttonDown[playerNum].find(keyCode);
-		if (search != g_buttonDown[playerNum].end())
-		{
-			return search->second;
+			return g_ouyaInputView->isPressedDown(playerNum, keyCode);
 		}
 		return false;
 	}
@@ -237,16 +126,9 @@ extern "C"
 	// check if a button was up
 	bool isPressedUp(int playerNum, int keyCode)
 	{
-		if (playerNum < 0 ||
-			playerNum >= MAX_CONTROLLERS)
+		if (g_ouyaInputView)
 		{
-			return false;
-		}
-
-		std::map<int, bool>::const_iterator search = g_buttonUp[playerNum].find(keyCode);
-		if (search != g_buttonUp[playerNum].end())
-		{
-			return search->second;
+			return g_ouyaInputView->isPressedUp(playerNum, keyCode);
 		}
 		return false;
 	}
@@ -254,28 +136,27 @@ extern "C"
 	// clear the button state for detecting up and down
 	void clearButtonStates()
 	{
-		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum)
+		if (g_ouyaInputView)
 		{
-			g_buttonDown[playerNum].clear();
-			g_buttonUp[playerNum].clear();
+			return g_ouyaInputView->clearButtonStates();
 		}
 	}
 
 	// clear the axis values
 	void clearAxes()
 	{
-		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum) {
-			g_axis[playerNum].clear();
+		if (g_ouyaInputView)
+		{
+			return g_ouyaInputView->clearAxes();
 		}
 	}
 
 	// clear the button values
 	void clearButtons()
 	{
-		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum) {
-			g_button[playerNum].clear();
-			g_buttonDown[playerNum].clear();
-			g_buttonUp[playerNum].clear();
+		if (g_ouyaInputView)
+		{
+			return g_ouyaInputView->clearButtons();
 		}
 	}
 }
@@ -385,165 +266,6 @@ static void engine_term_display(struct engine* engine) {
     engine->surface = EGL_NO_SURFACE;
 }
 
-static bool dispatchKeyEvent(AInputEvent* keyEvent)
-{
-	int64_t downTime = AKeyEvent_getDownTime(keyEvent);
-	int64_t eventTime = AKeyEvent_getEventTime(keyEvent);
-	int32_t action = AKeyEvent_getAction(keyEvent);
-	int32_t code = AKeyEvent_getKeyCode(keyEvent);
-	int32_t repeat = AKeyEvent_getRepeatCount(keyEvent);
-	int32_t metaState = AKeyEvent_getMetaState(keyEvent);
-	int32_t deviceId = AInputEvent_getDeviceId(keyEvent);
-	int32_t scancode = AKeyEvent_getScanCode(keyEvent);
-	int32_t flags = AKeyEvent_getFlags(keyEvent);
-	int32_t source = AInputEvent_getSource(keyEvent);
-
-	LOGI("downTime=%lld eventTime=%lld action=%d code=%d repeat=%d metaState=%d deviceId=%d scancode=%d flags=%d source=%d",
-		downTime, eventTime, action, code,
-		repeat, metaState, deviceId, scancode, flags, source);
-
-	return g_ouyaInputView->javaDispatchKeyEvent(downTime, eventTime, action, code,
-		repeat, metaState, deviceId, scancode, flags, source);
-}
-
-static bool dispatchGenericMotionEvent(AInputEvent* motionEvent)
-{
-	int64_t downTime = AMotionEvent_getDownTime(motionEvent);
-	int64_t eventTime = AMotionEvent_getEventTime(motionEvent);
-	int32_t action = AMotionEvent_getAction(motionEvent);
-	int32_t metaState = AMotionEvent_getMetaState(motionEvent);
-	int32_t pointerCount = AMotionEvent_getPointerCount(motionEvent);
-	int32_t buttonState = AMotionEvent_getButtonState(motionEvent);
-	float xPrecision = AMotionEvent_getXPrecision(motionEvent);
-	float yPrecision = AMotionEvent_getYPrecision(motionEvent);
-	int32_t deviceId = AInputEvent_getDeviceId(motionEvent);
-	int32_t edgeFlags = AMotionEvent_getEdgeFlags(motionEvent);
-	int32_t flags = AMotionEvent_getFlags(motionEvent);
-	int32_t source = AInputEvent_getSource(motionEvent);
-
-	int* pointerPropertiesId = new int[pointerCount];
-	int* pointerPropertiesToolType = new int[pointerCount];
-	float* pointerCoordsOrientation = new float[pointerCount];
-	float* pointerCoordsPressure = new float[pointerCount];
-	float* pointerCoordsSize = new float[pointerCount];
-	float* pointerCoordsToolMajor = new float[pointerCount];
-	float* pointerCoordsToolMinor = new float[pointerCount];
-	float* pointerCoordsTouchMajor = new float[pointerCount];
-	float* pointerCoordsTouchMinor = new float[pointerCount];
-	float* pointerCoordsX = new float[pointerCount];
-	float* pointerCoordsY = new float[pointerCount];
-
-	std::vector<int> listAxisIndices;
-	std::vector<float> listAxisValues;
-
-	if (pointerCount > 0)
-	{
-		LOGI("pointerCount=%d deviceId=%d source=%d",
-			pointerCount, deviceId, source);
-
-		// MotionEvent.PointerProperties
-		long long pointerId = AMotionEvent_getPointerId(motionEvent, 0);
-		int32_t toolType = AMotionEvent_getToolType(motionEvent, 0);
-
-		LOGI("PointerProperties pointerId=%lld toolType-%d",
-			pointerId, toolType);
-
-		pointerPropertiesId[0] = pointerId;
-		pointerPropertiesToolType[0] = toolType;
-
-		// MotionEvent.PointerCoords
-		float orientation = AMotionEvent_getOrientation(motionEvent, pointerId);
-		float pressure = AMotionEvent_getPressure(motionEvent, pointerId);
-		float size = AMotionEvent_getSize(motionEvent, pointerId);
-		float toolMajor = AMotionEvent_getTouchMajor(motionEvent, pointerId);
-		float toolMinor = AMotionEvent_getToolMinor(motionEvent, pointerId);
-		float touchMajor = AMotionEvent_getTouchMajor(motionEvent, pointerId);
-		float touchMinor = AMotionEvent_getTouchMinor(motionEvent, pointerId);
-		float x = AMotionEvent_getX(motionEvent, pointerId);
-		float y = AMotionEvent_getY(motionEvent, pointerId);
-
-		LOGI("PointerCoords orientation=%f pressure=%f size=%f toolMajor=%f toolMinor=%f touchMajor=%f touchMinor=%f x=%f y=%f",
-			orientation, pressure, size,
-			toolMajor, toolMinor, touchMajor, touchMinor,
-			x, y);
-
-		pointerCoordsOrientation[0] = orientation;
-		pointerCoordsPressure[0] = pressure;
-		pointerCoordsSize[0] = size;
-		pointerCoordsToolMajor[0] = toolMajor;
-		pointerCoordsToolMinor[0] = toolMinor;
-		pointerCoordsTouchMajor[0] = touchMajor;
-		pointerCoordsTouchMinor[0] = touchMinor;
-		pointerCoordsX[0] = x;
-		pointerCoordsY[0] = y;
-
-		for (int32_t axis = 0; axis < 50; ++axis) // 50 is based on the AXIS_value range I saw in the documentation
-		{
-			float val = AMotionEvent_getAxisValue(motionEvent, axis, pointerId);
-			if (val != 0.0f)
-			{
-				LOGI("axis=%d val=%f", axis, val);
-				listAxisIndices.push_back(axis);
-				listAxisValues.push_back(val);
-			}
-		}
-	}
-
-	int axisCount = listAxisIndices.size();
-	int* axisIndexes = new int[axisCount];
-	float* axisValues = new float[axisCount];
-	for (int index = 0; index < axisCount; ++index)
-	{
-		axisIndexes[index] = listAxisIndices[index];
-		axisValues[index] = listAxisValues[index];
-	}
-	listAxisIndices.clear();
-	listAxisValues.clear();
-
-	bool handled = g_ouyaInputView->javaDispatchGenericMotionEvent(
-		downTime,
-		eventTime,
-		action,
-		pointerCount,
-		metaState,
-		buttonState,
-		xPrecision,
-		yPrecision,
-		deviceId,
-		edgeFlags,
-		source,
-		flags,
-		pointerPropertiesId,
-		pointerPropertiesToolType,
-		pointerCoordsOrientation,
-		pointerCoordsPressure,
-		pointerCoordsSize,
-		pointerCoordsToolMajor,
-		pointerCoordsToolMinor,
-		pointerCoordsTouchMajor,
-		pointerCoordsTouchMinor,
-		pointerCoordsX,
-		pointerCoordsY,
-		axisCount,
-		axisIndexes,
-		axisValues);
-
-	delete pointerPropertiesId;
-	delete pointerPropertiesToolType;
-	delete pointerCoordsOrientation;
-	delete pointerCoordsPressure;
-	delete pointerCoordsSize;
-	delete pointerCoordsToolMajor;
-	delete pointerCoordsToolMinor;
-	delete pointerCoordsTouchMajor;
-	delete pointerCoordsTouchMinor;
-	delete pointerCoordsX;
-	delete pointerCoordsY;
-	delete axisIndexes;
-	delete axisValues;
-	return handled;
-}
-
 /**
  * Process the next input event.
  */
@@ -576,11 +298,11 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 	{
 		if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
 		{
-			return dispatchKeyEvent(event);
+			return g_ouyaInputView->dispatchKeyEvent(event);
 		}
 		else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 		{
-			return dispatchGenericMotionEvent(event);
+			return g_ouyaInputView->dispatchGenericMotionEvent(event);
 		}
 	}
 
