@@ -37,6 +37,8 @@ public class OuyaInputView extends View {
 	
 	private static OuyaInputView mInstance = null;
 	
+	private static final boolean mEnableLogging = false;
+	
     public OuyaInputView(Context context, AttributeSet attrs) {
     	super(context, attrs);
         init();
@@ -53,7 +55,9 @@ public class OuyaInputView extends View {
     }
 
     private void init() {
-    	Log.i(TAG, "Construct OuyaInputView");
+    	if (mEnableLogging) {
+    		Log.i(TAG, "Construct OuyaInputView");
+    	}
     	mInstance = this;
 		Activity activity = ((Activity)getContext());		
 		if (null != activity) {			
@@ -95,7 +99,9 @@ public class OuyaInputView extends View {
 		KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code,
 			repeat, metaState, deviceId, scancode, flags, source);
 		
-		Log.i(TAG, "javaDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+		if (mEnableLogging) {
+			Log.i(TAG, "javaDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+		}
 		Activity activity = ((Activity)getContext());		
 		if (null != activity) {
 	    	if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
@@ -134,7 +140,10 @@ public class OuyaInputView extends View {
 			int axisCount,
 			int[] axisIndexes,
 			float[] axisValues) {
-    	Log.i(TAG, "javaDispatchGenericMotionEvent");
+    	
+    	if (mEnableLogging) {
+    		Log.i(TAG, "javaDispatchGenericMotionEvent");
+    	}
     	
     	PointerProperties[] pointerProperties = new PointerProperties[pointerCount];
     	PointerCoords[] pointerCoords = new PointerCoords[pointerCount];
@@ -189,8 +198,10 @@ public class OuyaInputView extends View {
     }
 	
     public boolean remappedDispatchGenericMotionEvent(MotionEvent motionEvent) {
-    	Log.i(TAG, "remappedDispatchGenericMotionEvent");
-    	DebugInput.debugOuyaMotionEvent(motionEvent);
+    	if (mEnableLogging) {
+    		Log.i(TAG, "remappedDispatchGenericMotionEvent");
+    		DebugInput.debugOuyaMotionEvent(motionEvent);
+    	}
     	
     	int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
     	if (playerNum < 0) {
@@ -206,7 +217,10 @@ public class OuyaInputView extends View {
     }
 	
     public boolean remappedDispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "remappedDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+    	if (mEnableLogging) {
+    		Log.i(TAG, "remappedDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+    	}
+    	
 		int keyCode = keyEvent.getKeyCode();
 		int action = keyEvent.getAction();
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());

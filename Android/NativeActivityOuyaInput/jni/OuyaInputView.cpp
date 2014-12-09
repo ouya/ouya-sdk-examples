@@ -70,7 +70,20 @@ namespace tv_ouya_sdk_OuyaInputView
 
 		{
 			jint ret = env->RegisterNatives(_jcOuyaInputView, _nativeMethodTable, _nativeMethodTableSize);
-			ret = env->RegisterNatives(_jcOuyaInputView, _nativeMethodTable2, _nativeMethodTableSize2);
+			if (ret < 0)
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to register native methods");
+				return JNI_ERR;
+			}
+		}
+
+		{
+			jint ret = env->RegisterNatives(_jcOuyaInputView, _nativeMethodTable2, _nativeMethodTableSize2);
+			if (ret < 0)
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to register native methods 2");
+				return JNI_ERR;
+			}
 		}
 
 		for (int index = 0; index < MAX_CONTROLLERS; ++index)
@@ -209,9 +222,11 @@ namespace tv_ouya_sdk_OuyaInputView
 		int32_t flags = AKeyEvent_getFlags(keyEvent);
 		int32_t source = AInputEvent_getSource(keyEvent);
 
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "downTime=%lld eventTime=%lld action=%d code=%d repeat=%d metaState=%d deviceId=%d scancode=%d flags=%d source=%d",
 			downTime, eventTime, action, code,
 			repeat, metaState, deviceId, scancode, flags, source);
+#endif
 
 		return javaDispatchKeyEvent(downTime, eventTime, action, code,
 			repeat, metaState, deviceId, scancode, flags, source);
@@ -249,15 +264,19 @@ namespace tv_ouya_sdk_OuyaInputView
 
 		if (pointerCount > 0)
 		{
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "pointerCount=%d deviceId=%d source=%d",
 				pointerCount, deviceId, source);
+#endif
 
 			// MotionEvent.PointerProperties
 			long long pointerId = AMotionEvent_getPointerId(motionEvent, 0);
 			int32_t toolType = AMotionEvent_getToolType(motionEvent, 0);
 
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "PointerProperties pointerId=%lld toolType-%d",
 				pointerId, toolType);
+#endif
 
 			pointerPropertiesId[0] = pointerId;
 			pointerPropertiesToolType[0] = toolType;
@@ -273,10 +292,12 @@ namespace tv_ouya_sdk_OuyaInputView
 			float x = AMotionEvent_getX(motionEvent, pointerId);
 			float y = AMotionEvent_getY(motionEvent, pointerId);
 
+#if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "PointerCoords orientation=%f pressure=%f size=%f toolMajor=%f toolMinor=%f touchMajor=%f touchMinor=%f x=%f y=%f",
 				orientation, pressure, size,
 				toolMajor, toolMinor, touchMajor, touchMinor,
 				x, y);
+#endif
 
 			pointerCoordsOrientation[0] = orientation;
 			pointerCoordsPressure[0] = pressure;
@@ -293,7 +314,9 @@ namespace tv_ouya_sdk_OuyaInputView
 				float val = AMotionEvent_getAxisValue(motionEvent, axis, pointerId);
 				if (val != 0.0f)
 				{
+#if ENABLE_VERBOSE_LOGGING
 					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "axis=%d val=%f", axis, val);
+#endif
 					listAxisIndices.push_back(axis);
 					listAxisValues.push_back(val);
 				}
@@ -522,7 +545,9 @@ namespace tv_ouya_sdk_OuyaInputView
 		jint axis,
 		jfloat val)
 	{
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Native remapped playerNum=%d axis=%d val=%f", playerNum, axis, val);
+#endif
 		if (playerNum < 0 ||
 			playerNum >= MAX_CONTROLLERS)
 		{
@@ -536,7 +561,9 @@ namespace tv_ouya_sdk_OuyaInputView
 		jint keyCode,
 		jint action)
 	{
+#if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Native remapped playerNum=%d KeyCode=%d Action=%d", playerNum, keyCode, action);
+#endif
 		if (playerNum < 0 ||
 			playerNum >= MAX_CONTROLLERS)
 		{

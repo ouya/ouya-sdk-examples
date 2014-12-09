@@ -34,7 +34,7 @@ using namespace tv_ouya_sdk_OuyaInputView;
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "native-activity", __VA_ARGS__))
 
-#define MAX_CONTROLLERS 4
+#define ENABLE_VERBOSE_LOGGING false
 
 /**
  * Our saved state data.
@@ -72,16 +72,22 @@ extern "C"
 	// JNI OnLoad
 	JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved)
 	{
+#if ENABLE_VERBOSE_LOGGING
 		LOGI("************JNI_OnLoad*************");
+#endif
 		g_jvm = jvm;
 
+#if ENABLE_VERBOSE_LOGGING
 		LOGI("Get the JNI Environment");
+#endif
 		JNIEnv* env;
 		g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
 		// setup sending native input to Java
 
+#if ENABLE_VERBOSE_LOGGING
 		LOGI("Initialize the OuyaInputView classes");
+#endif
 		if (OuyaInputView::InitJNI(g_jvm) == JNI_ERR)
 		{
 			return JNI_ERR;
@@ -270,27 +276,39 @@ static void engine_term_display(struct engine* engine) {
  * Process the next input event.
  */
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
+#if ENABLE_VERBOSE_LOGGING
 	LOGI("Native input event");
+#endif
 
 	if (!g_ouyaInputView &&
 		g_jvm)
 	{
+#if ENABLE_VERBOSE_LOGGING
 		LOGI("Get the JNI Environment");
+#endif
 		JNIEnv* env;
 		g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
+#if ENABLE_VERBOSE_LOGGING
 		LOGI("Attach current thread");
+#endif
 		g_jvm->AttachCurrentThread(&env, 0);
 
+#if ENABLE_VERBOSE_LOGGING
 		LOGI("Getting the OuyaInputView instance");
+#endif
 		g_ouyaInputView = OuyaInputView::getInstance();
 		if (g_ouyaInputView)
 		{
+#if ENABLE_VERBOSE_LOGGING
 			LOGI("OuyaInputView is valid");
+#endif
 		}
 		else
 		{
+#if ENABLE_VERBOSE_LOGGING
 			LOGE("OuyaInputView is null");
+#endif
 		}
 	}
 
