@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 OUYA, Inc.
+ * Copyright (C) 2012-2015 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,5 +161,15 @@ public class IUnrealOuyaActivity
 	public static void SetCallbacksRequestReceipts(CallbacksRequestReceipts callback)
 	{
 		m_callbacksRequestReceipts = callback;
+	}
+	
+	protected static CallbacksContentInit m_callbacksContentInit = null;
+	public static CallbacksContentInit GetCallbacksContentInit()
+	{
+		return m_callbacksContentInit;
+	}
+	public static void SetCallbacksContentInit(CallbacksContentInit callback)
+	{
+		m_callbacksContentInit = callback;
 	}
 }

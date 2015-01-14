@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import tv.ouya.sdk.OuyaInputView;
 import tv.ouya.sdk.unreal.AsyncCppInitOuyaPlugin;
+import tv.ouya.sdk.unreal.AsyncCppOuyaContentInit;
 import tv.ouya.sdk.unreal.IUnrealOuyaActivity;
 import tv.ouya.sdk.unreal.UnrealOuyaPlugin;
 import android.os.Bundle;
@@ -55,6 +56,8 @@ public class MainActivity extends Activity {
 			IUnrealOuyaActivity.SetActivity(this);
 			
 			AsyncCppInitOuyaPlugin.invoke(jsonData);
+			
+			AsyncCppOuyaContentInit.invoke();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2012-2014 OUYA, Inc.
+* Copyright (C) 2012-2015 OUYA, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
+class CallbacksContentInit;
 
 namespace OuyaSDK
 {
@@ -47,6 +48,7 @@ namespace OuyaSDK
 		CallbacksRequestProducts* m_callbacksRequestProducts;
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;
+		CallbacksContentInit* m_callbacksContentInit;
 	};
 };
 

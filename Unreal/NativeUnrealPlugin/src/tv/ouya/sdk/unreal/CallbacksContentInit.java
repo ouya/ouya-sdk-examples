@@ -17,16 +17,20 @@
 package tv.ouya.sdk.unreal;
 
 
-public class AsyncCppOuyaRequestGamerInfo {
+public class CallbacksContentInit {
 
-	public static void invoke() {
+	private final String LOG_TAG  = CallbacksContentInit.class.getSimpleName();
 
-		CallbacksRequestGamerInfo callbacks = new CallbacksRequestGamerInfo();
+	public native void CallbacksContentInitOnInitialized();
+	public native void CallbacksContentInitOnDestroyed();
 
-		// store for access
-		IUnrealOuyaActivity.SetCallbacksRequestGamerInfo(callbacks);
+	public void onInitialized() {
 
-		// invoke service
-		UnrealOuyaPlugin.requestGamerInfo();
+		CallbacksContentInitOnInitialized();
+	}
+
+	public void onDestroyed() {
+
+		CallbacksContentInitOnDestroyed();
 	}
 }

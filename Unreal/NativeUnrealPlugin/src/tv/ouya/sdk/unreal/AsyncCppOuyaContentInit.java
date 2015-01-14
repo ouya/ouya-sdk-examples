@@ -17,16 +17,17 @@
 package tv.ouya.sdk.unreal;
 
 
-public class AsyncCppOuyaRequestGamerInfo {
+public class AsyncCppOuyaContentInit {
 
-	public static void invoke() {
+	public static void invoke()
+			throws Exception {
 
-		CallbacksRequestGamerInfo callbacks = new CallbacksRequestGamerInfo();
+		CallbacksContentInit callbacks = new CallbacksContentInit();
 
 		// store for access
-		IUnrealOuyaActivity.SetCallbacksRequestGamerInfo(callbacks);
+		IUnrealOuyaActivity.SetCallbacksContentInit(callbacks);
 
 		// invoke service
-		UnrealOuyaPlugin.requestGamerInfo();
+		UnrealOuyaPlugin.InitializeContent();
 	}
 }

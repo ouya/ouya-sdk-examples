@@ -14,19 +14,13 @@
 * limitations under the License.
 */
 
-#include "OuyaSDK_CallbacksRequestGamerInfo.h"
+#include "OuyaSDK_CallbacksContentInit.h"
 #include "OuyaSDK_CallbackSingleton.h"
 
-#include <stdio.h>
-
-void CallbacksRequestGamerInfo::OnSuccess(const OuyaSDK::GamerInfo& gamerInfo)
+void CallbacksContentInit::OnInitialized()
 {
 }
 
-void CallbacksRequestGamerInfo::OnFailure(int errorCode, const std::string& errorMessage)
-{
-}
-
-void CallbacksRequestGamerInfo::OnCancel()
+void CallbacksContentInit::OnDestroyed()
 {
 }

@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := \
 	LaunchAndroid.cpp \
 	AndroidJNI.cpp \
 	OuyaSDK_CallbackSingleton.cpp \
+	OuyaSDK_CallbacksContentInit.cpp \
 	OuyaSDK_CallbacksInitOuyaPlugin.cpp \
 	OuyaSDK_CallbacksRequestGamerInfo.cpp \
 	OuyaSDK_CallbacksRequestProducts.cpp \

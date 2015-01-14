@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2012-2014 OUYA, Inc.
+* Copyright (C) 2012-2015 OUYA, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include "OuyaSDK_CallbacksRequestProducts.h"
 #include "OuyaSDK_CallbacksRequestPurchase.h"
 #include "OuyaSDK_CallbacksRequestReceipts.h"
+#include "OuyaSDK_CallbacksContentInit.h"
 #include "OuyaSDK_GamerInfo.h"
 #include "OuyaSDK_Product.h"
 #include "OuyaSDK_Receipt.h"
@@ -57,6 +58,7 @@ namespace OuyaSDK
 		m_callbacksRequestProducts = NULL;
 		m_callbacksRequestPurchase = NULL;
 		m_callbacksRequestReceipts = NULL;
+		m_callbacksContentInit = NULL;
 	}
 
 	CallbackSingleton::~CallbackSingleton()
@@ -344,6 +346,24 @@ namespace OuyaSDK
 				callback->OnCancel();
 			}
 		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnInitialized(JNIEnv* env, jobject thiz)
+		{
+			CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
+			if (callback)
+			{
+				callback->OnInitialized();
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnDestroyed(JNIEnv* env, jobject thiz)
+		{
+			CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
+			if (callback)
+			{
+				callback->OnDestroyed();
+			}
+		}
 	}
 
 	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string className, std::string signature, void* method, JNINativeMethod* savedNativeMethod)
@@ -409,6 +429,13 @@ namespace OuyaSDK
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnSuccess;
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnFailure;
 	JNINativeMethod g_nativeCallbacksRequestReceiptsOnCancel;
+
+	//
+	// Native Callbacks for ContentInit
+	//
+
+	JNINativeMethod g_nativeCallbacksContentInitOnInitialized;
+	JNINativeMethod g_nativeCallbacksContentInitOnDestroyed;
 
 	int CallbackSingleton::InitJNI(JavaVM* jvm)
 	{
@@ -485,6 +512,16 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksRequestReceiptsOnCancel", "tv/ouya/sdk/unreal/CallbacksRequestReceipts", "()V",
 			(void*)&Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel, &g_nativeCallbacksRequestReceiptsOnCancel);
+
+		//
+		// Register Native Callbacks for ContentInit
+		//
+
+		RegisterNativeMethod(env, "CallbacksContentInitOnInitialized", "tv/ouya/sdk/unreal/CallbacksContentInit", "()V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnInitialized, &g_nativeCallbacksContentInitOnInitialized);
+
+		RegisterNativeMethod(env, "CallbacksContentInitOnDestroyed", "tv/ouya/sdk/unreal/CallbacksContentInit", "()V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnDestroyed, &g_nativeCallbacksContentInitOnDestroyed);
 
 		return JNI_OK;
 	}
