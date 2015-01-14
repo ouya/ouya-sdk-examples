@@ -16,25 +16,26 @@
 
 package tv.ouya.sdk.unreal;
 
+import tv.ouya.console.api.content.OuyaMod;
 import android.util.Log;
 
 
-public class CallbacksContentInit {
+public class CallbacksContentSearchPublished {
 
-	private final String TAG  = CallbacksContentInit.class.getSimpleName();
+	private final String TAG  = CallbacksContentSearchPublished.class.getSimpleName();
 
-	public native void CallbacksContentInitOnInitialized();
-	public native void CallbacksContentInitOnDestroyed();
+	public native void CallbacksContentSearchPublishedOnError(int code, String reason);
+	public native void CallbacksContentSearchPublishedOnResults(OuyaMod[] ouyaMods, int count);
 
-	public void onInitialized() {
-		Log.i(TAG, "onInitialized");
+	public void onError(int code, String reason) {
+		Log.e(TAG, "onError code="+code+" reason="+reason);
 		
-		CallbacksContentInitOnInitialized();
+		CallbacksContentSearchPublishedOnError(code, reason);
 	}
 
-	public void onDestroyed() {
-		Log.i(TAG, "onDestroyed");
+	public void onResults(OuyaMod[] ouyaMods, int count) {
+		Log.i(TAG, "onResults count="+count);
 
-		CallbacksContentInitOnDestroyed();
+		CallbacksContentSearchPublishedOnResults(ouyaMods, count);
 	}
 }

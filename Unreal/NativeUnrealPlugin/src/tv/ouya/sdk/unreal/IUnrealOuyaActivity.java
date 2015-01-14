@@ -172,4 +172,74 @@ public class IUnrealOuyaActivity
 	{
 		m_callbacksContentInit = callback;
 	}
+	
+	protected static CallbacksContentSearchInstalled m_callbacksContentSearchInstalled = null;
+	public static CallbacksContentSearchInstalled GetCallbacksContentSearchInstalled()
+	{
+		return m_callbacksContentSearchInstalled;
+	}
+	public static void SetCallbacksContentSearchInstalled(CallbacksContentSearchInstalled callback)
+	{
+		m_callbacksContentSearchInstalled = callback;
+	}
+	
+	protected static CallbacksContentSearchPublished m_callbacksContentSearchPublished = null;
+	public static CallbacksContentSearchPublished GetCallbacksContentSearchPublished()
+	{
+		return m_callbacksContentSearchPublished;
+	}
+	public static void SetCallbacksContentSearchPublished(CallbacksContentSearchPublished callback)
+	{
+		m_callbacksContentSearchPublished = callback;
+	}
+	
+	protected static CallbacksContentSave m_callbacksContentSave = null;
+	public static CallbacksContentSave GetCallbacksContentSave()
+	{
+		return m_callbacksContentSave;
+	}
+	public static void SetCallbacksContentSave(CallbacksContentSave callback)
+	{
+		m_callbacksContentSave = callback;
+	}
+	
+	protected static CallbacksContentPublish m_callbacksContentPublish = null;
+	public static CallbacksContentPublish GetCallbacksContentPublish()
+	{
+		return m_callbacksContentPublish;
+	}
+	public static void SetCallbacksContentPublish(CallbacksContentPublish callback)
+	{
+		m_callbacksContentPublish = callback;
+	}
+	
+	protected static CallbacksContentUnpublish m_callbacksContentUnpublish = null;
+	public static CallbacksContentUnpublish GetCallbacksContentUnpublish()
+	{
+		return m_callbacksContentUnpublish;
+	}
+	public static void SetCallbacksContentUnpublish(CallbacksContentUnpublish callback)
+	{
+		m_callbacksContentUnpublish = callback;
+	}
+	
+	protected static CallbacksContentDelete m_callbacksContentDelete = null;
+	public static CallbacksContentDelete GetCallbacksContentDelete()
+	{
+		return m_callbacksContentDelete;
+	}
+	public static void SetCallbacksContentDelete(CallbacksContentDelete callback)
+	{
+		m_callbacksContentDelete = callback;
+	}
+	
+	protected static CallbacksContentDownload m_callbacksContentDownload = null;
+	public static CallbacksContentDownload GetCallbacksContentDownload()
+	{
+		return m_callbacksContentDownload;
+	}
+	public static void SetCallbacksContentDownload(CallbacksContentDownload callback)
+	{
+		m_callbacksContentDownload = callback;
+	}
 }

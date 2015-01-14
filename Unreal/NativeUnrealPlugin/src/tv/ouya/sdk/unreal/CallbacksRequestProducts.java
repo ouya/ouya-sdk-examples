@@ -22,24 +22,24 @@ import android.util.Log;
 
 public class CallbacksRequestProducts {
 
-	private final String LOG_TAG  = "CallbacksRequestProducts";
+	private final String TAG  = "CallbacksRequestProducts";
 
 	public native void CallbacksRequestProductsOnSuccess(String jsonData);
 	public native void CallbacksRequestProductsOnFailure(int errorCode, String errorMessage);
 	public native void CallbacksRequestProductsOnCancel();
 
 	public void onSuccess(final String jsonData) {
-		Log.i(LOG_TAG, "onSuccess jsonData=" + jsonData);
+		Log.i(TAG, "onSuccess jsonData=" + jsonData);
 		CallbacksRequestProductsOnSuccess(jsonData);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
-		Log.i(LOG_TAG, "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+		Log.i(TAG, "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
 		CallbacksRequestProductsOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
-		Log.i(LOG_TAG, "onCancel");
+		Log.i(TAG, "onCancel");
 		CallbacksRequestProductsOnCancel();
 	}
 }

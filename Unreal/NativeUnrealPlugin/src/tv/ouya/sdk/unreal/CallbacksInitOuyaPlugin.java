@@ -22,18 +22,18 @@ import android.util.Log;
 
 public class CallbacksInitOuyaPlugin {
 
-	private final String LOG_TAG  = CallbacksInitOuyaPlugin.class.getSimpleName();
+	private final String TAG  = CallbacksInitOuyaPlugin.class.getSimpleName();
 
 	public native void CallbacksInitOuyaPluginOnSuccess();
 	public native void CallbacksInitOuyaPluginOnFailure(int errorCode, String errorMessage);
 
 	public void onSuccess() {
-		Log.i(LOG_TAG, "onSuccess");
+		Log.i(TAG, "onSuccess");
 		CallbacksInitOuyaPluginOnSuccess();
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
-		Log.i(LOG_TAG, "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+		Log.i(TAG, "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
 		CallbacksInitOuyaPluginOnFailure(errorCode, errorMessage);
 	}
 }

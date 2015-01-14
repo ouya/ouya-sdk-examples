@@ -22,7 +22,7 @@ import android.util.Log;
 
 public class CallbacksRequestReceipts {
 
-	private final String LOG_TAG  = "CallbacksRequestReceipts";
+	private final String TAG  = CallbacksRequestReceipts.class.getSimpleName();
 
 	public native void CallbacksRequestReceiptsOnSuccess(String jsonData);
 	public native void CallbacksRequestReceiptsOnFailure(int errorCode, String errorMessage);
@@ -30,19 +30,19 @@ public class CallbacksRequestReceipts {
 
 	public void onSuccess(final String jsonData) {
 
-		Log.i("CallbacksRequestReceipts", "onSuccess jsonData=" + jsonData);
+		Log.i(TAG, "onSuccess jsonData=" + jsonData);
 		CallbacksRequestReceiptsOnSuccess(jsonData);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
 
-		Log.i("CallbacksRequestReceipts", "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+		Log.i(TAG, "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
 		CallbacksRequestReceiptsOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
 
-		Log.i("CallbacksRequestReceipts", "onCancel");
+		Log.i(TAG, "onCancel");
 		CallbacksRequestReceiptsOnCancel();
 	}
 }

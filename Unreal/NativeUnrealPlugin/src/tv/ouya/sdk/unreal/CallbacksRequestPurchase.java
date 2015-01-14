@@ -22,7 +22,7 @@ import android.util.Log;
 
 public class CallbacksRequestPurchase {
 
-	private final String LOG_TAG  = "CallbacksRequestPurchase";
+	private final String TAG  = CallbacksRequestPurchase.class.getSimpleName();
 
 	public String m_purchasable = "";
 
@@ -31,17 +31,17 @@ public class CallbacksRequestPurchase {
 	public native void CallbacksRequestPurchaseOnCancel();
 
 	public void onSuccess(final String jsonData) {
-		Log.i("CallbacksRequestPurchase", "onSuccess jsonData=" + jsonData);
+		Log.i(TAG, "onSuccess jsonData=" + jsonData);
 		CallbacksRequestPurchaseOnSuccess(jsonData);
 	}
 
 	public void onFailure(final int errorCode, final String errorMessage) {
-		Log.i("CallbacksRequestPurchase", "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+		Log.i(TAG, "onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
 		CallbacksRequestPurchaseOnFailure(errorCode, errorMessage);
 	}
 
 	public void onCancel() {
-		Log.i("CallbacksRequestPurchase", "onCancel");
+		Log.i(TAG, "onCancel");
 		CallbacksRequestPurchaseOnCancel();
 	}
 }
