@@ -25,13 +25,13 @@ public class CallbacksContentUnpublish {
 
 	private final String TAG  = CallbacksContentUnpublish.class.getSimpleName();
 
-	public native void CallbacksContentUnpublishOnError(OuyaMod ouyaMod, int code, String reason, Bundle bundle);
+	public native void CallbacksContentUnpublishOnError(OuyaMod ouyaMod, int code, String reason);
 	public native void CallbacksContentUnpublishOnSuccess(OuyaMod ouyaMod);
 
-	public void onError(OuyaMod ouyaMod, int code, String reason, Bundle bundle) {
+	public void onError(OuyaMod ouyaMod, int code, String reason) {
 		Log.e(TAG, "onError code="+code+" reason="+reason);
 		
-		CallbacksContentUnpublishOnError(ouyaMod, code, reason, bundle);
+		CallbacksContentUnpublishOnError(ouyaMod, code, reason);
 	}
 
 	public void onSuccess(OuyaMod ouyaMod) {

@@ -104,7 +104,7 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.i(TAG, "InitializeContent: exception: " + e.toString());
+			Log.e(TAG, "InitializeContent: exception: " + e.toString());
 			throw e;
 		}
 	}

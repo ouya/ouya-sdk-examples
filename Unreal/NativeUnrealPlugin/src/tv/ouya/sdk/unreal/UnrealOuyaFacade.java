@@ -312,29 +312,13 @@ public class UnrealOuyaFacade
 			@Override
 			public void onError(int code, String reason) {
 				Log.e(TAG, "InstalledSearchListener: onError code="+code+" reason="+reason);
-				JSONObject json = new JSONObject();
-				try {
-					json.put("code", code);
-					json.put("reason", reason);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentInstalledSearchListenerOnError", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentSearchInstalled().onError(code, reason);
 			}
 
 			@Override
 			public void onResults(List<OuyaMod> ouyaMods, int count) {
-				//Log.i(TAG, "InstalledSearchListener: onResults count="+count+" list count="+ouyaMods.size());
-				for (OuyaMod ouyaMod : ouyaMods) {
-				}
-				JSONObject json = new JSONObject();
-				try {
-					json.put("count", count);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentInstalledSearchListenerOnResults", jsonData);
-				//IUnrealOuyaActivity.SetOuyaContentInstalledResults(ouyaMods);
+				Log.i(TAG, "InstalledSearchListener: onResults count="+count+" list count="+ouyaMods.size());
+				IUnrealOuyaActivity.GetCallbacksContentSearchInstalled().onResults(ouyaMods.toArray(new OuyaMod[ouyaMods.size()]), count);
 			}
 		};
 		
@@ -342,29 +326,13 @@ public class UnrealOuyaFacade
 			@Override
 			public void onError(int code, String reason) {
 				Log.e(TAG, "PublishedSearchListener: onError code="+code+" reason="+reason);
-				JSONObject json = new JSONObject();
-				try {
-					json.put("code", code);
-					json.put("reason", reason);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentPublishedSearchListenerOnError", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentSearchPublished().onError(code, reason);				
 			}
 
 			@Override
 			public void onResults(List<OuyaMod> ouyaMods, int count) {
-				//Log.i(TAG, "PublishedSearchListener: onResults count="+count+" list count="+ouyaMods.size());
-				for (OuyaMod ouyaMod : ouyaMods) {
-				}
-				JSONObject json = new JSONObject();
-				try {
-					json.put("count", count);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentPublishedSearchListenerOnResults", jsonData);
-				//IUnrealOuyaActivity.SetOuyaContentPublishedResults(ouyaMods);
+				Log.i(TAG, "PublishedSearchListener: onResults count="+count+" list count="+ouyaMods.size());
+				IUnrealOuyaActivity.GetCallbacksContentSearchPublished().onResults(ouyaMods.toArray(new OuyaMod[ouyaMods.size()]), count);				
 			}
 		};
 		
@@ -373,21 +341,13 @@ public class UnrealOuyaFacade
 			@Override
 			public void onError(OuyaMod ouyaMod, int code, String reason) {
 				Log.e(TAG, "SaveListener: onError code="+code+" reason="+reason);
-				JSONObject json = new JSONObject();
-				try {
-					json.put("code", code);
-					json.put("reason", reason);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentSaveListenerOnError", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentSave().onError(ouyaMod, code, reason);
 			}
 
 			@Override
 			public void onSuccess(OuyaMod ouyaMod) {
 				Log.i(TAG, "SaveListener: onSuccess");
-				String jsonData = "";
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentSaveListenerOnSuccess", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentSave().onSuccess(ouyaMod);
 			}			
 		};
 		
@@ -396,21 +356,13 @@ public class UnrealOuyaFacade
 			@Override
 			public void onError(OuyaMod ouyaMod, int code, String reason, Bundle bundle) {
 				Log.e(TAG, "PublishListener: onError code="+code+" reason="+reason);
-				JSONObject json = new JSONObject();
-				try {
-					json.put("code", code);
-					json.put("reason", reason);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentPublishListenerOnError", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentPublish().onError(ouyaMod, code, reason, bundle);				
 			}
 
 			@Override
 			public void onSuccess(OuyaMod ouyaMod) {
 				Log.i(TAG, "PublishListener: onSuccess");
-				String jsonData = "";
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentPublishListenerOnSuccess", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentPublish().onSuccess(ouyaMod);
 			}
 	    	
 	    };
@@ -420,21 +372,13 @@ public class UnrealOuyaFacade
 			@Override
 			public void onError(OuyaMod ouyaMod, int code, String reason) {
 				Log.e(TAG, "UnpublishListener: onError code="+code+" reason="+reason);
-				JSONObject json = new JSONObject();
-				try {
-					json.put("code", code);
-					json.put("reason", reason);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentUnpublishListenerOnError", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentUnpublish().onError(ouyaMod, code, reason);
 			}
 
 			@Override
 			public void onSuccess(OuyaMod ouyaMod) {
 				Log.i(TAG, "UnpublishListener: onSuccess");
-				String jsonData = "";
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentUnpublishListenerOnSuccess", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentUnpublish().onSuccess(ouyaMod);
 			}
 	    	
 	    };
@@ -444,21 +388,13 @@ public class UnrealOuyaFacade
 			@Override
 			public void onDeleteFailed(OuyaMod ouyaMod, int code, String reason) {
 				Log.e(TAG, "DeleteListener: onError code="+code+" reason="+reason);
-				JSONObject json = new JSONObject();
-				try {
-					json.put("code", code);
-					json.put("reason", reason);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentDeleteListenerOnDeleteFailed", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentDelete().onDeleteFailed(ouyaMod, code, reason);
 			}
 
 			@Override
 			public void onDeleted(OuyaMod ouyaMod) {
 				Log.i(TAG, "DeleteListener: onDeleted");
-				String jsonData = "";
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentDeleteListenerOnDeleted", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentDelete().onDeleted(ouyaMod);
 			}
 	    	
 	    };
@@ -467,27 +403,18 @@ public class UnrealOuyaFacade
 			
 			@Override
 			public void onProgress(OuyaMod ouyaMod, int progress) {
-				JSONObject json = new JSONObject();
-				try {
-					json.put("progress", progress);
-				} catch (JSONException e) {
-				}
-				String jsonData = json.toString();
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentDownloadListenerOnProgress", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentDownload().onProgress(ouyaMod, progress);				
 			}
 			
 			@Override
 			public void onFailed(OuyaMod ouyaMod) {
-				String jsonData = "";
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentDownloadListenerOnFailed", jsonData);
+				IUnrealOuyaActivity.GetCallbacksContentDownload().onFailed(ouyaMod);
 			}
 			
 			@Override
 			public void onComplete(OuyaMod ouyaMod) {
-				String jsonData = "";
-				//UnityPlayer.UnitySendMessage("OuyaGameObject", "ContentDownloadListenerOnComplete", jsonData);
-			}
-			
+				IUnrealOuyaActivity.GetCallbacksContentDownload().onComplete(ouyaMod);
+			}			
 		};
 	}
 

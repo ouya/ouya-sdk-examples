@@ -22,10 +22,15 @@ public class AsyncCppOuyaContentInit {
 	public static void invoke()
 			throws Exception {
 
-		CallbacksContentInit callbacks = new CallbacksContentInit();
-
-		// store for access
-		IUnrealOuyaActivity.SetCallbacksContentInit(callbacks);
+		// store callbakcs
+		IUnrealOuyaActivity.SetCallbacksContentInit(new CallbacksContentInit());		
+		IUnrealOuyaActivity.SetCallbacksContentDelete(new CallbacksContentDelete());
+		IUnrealOuyaActivity.SetCallbacksContentDownload(new CallbacksContentDownload());
+		IUnrealOuyaActivity.SetCallbacksContentPublish(new CallbacksContentPublish());
+		IUnrealOuyaActivity.SetCallbacksContentSave(new CallbacksContentSave());
+		IUnrealOuyaActivity.SetCallbacksContentSearchInstalled(new CallbacksContentSearchInstalled());
+		IUnrealOuyaActivity.SetCallbacksContentSearchPublished(new CallbacksContentSearchPublished());
+		IUnrealOuyaActivity.SetCallbacksContentUnpublish(new CallbacksContentUnpublish());
 
 		// invoke service
 		UnrealOuyaPlugin.InitializeContent();
