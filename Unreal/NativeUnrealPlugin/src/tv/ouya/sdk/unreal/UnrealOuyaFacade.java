@@ -557,4 +557,9 @@ public class UnrealOuyaFacade
 			IUnrealOuyaActivity.GetCallbacksRequestReceipts().onCancel();
 		}
     }
+    
+    public void Save(OuyaMod.Editor editor) 
+    	throws OuyaModException {
+    	editor.save(mSaveListener);
+    }
 }
