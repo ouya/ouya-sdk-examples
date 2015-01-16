@@ -17,7 +17,7 @@
 #ifndef __TV_OUYA_CONSOLE_API_CONTENT_OUYAMOD_H__
 #define __TV_OUYA_CONSOLE_API_CONTENT_OUYAMOD_H__
 
-//#if PLATFORM_ANDROID
+#if PLATFORM_ANDROID
 
 #include <jni.h>
 
@@ -38,6 +38,6 @@ namespace tv_ouya_console_api_content_OuyaMod
 	};
 }
 
-//#endif
+#endif
 
 #endif

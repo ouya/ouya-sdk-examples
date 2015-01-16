@@ -17,7 +17,7 @@
 #ifndef __PLUGIN_OUYA_H__
 #define __PLUGIN_OUYA_H__
 
-//#if PLATFORM_ANDROID
+#if PLATFORM_ANDROID
 
 #include <jni.h>
 #include <string>
@@ -65,6 +65,6 @@ namespace OuyaSDK
 	};
 }
 
-//#endif
+#endif
 
 #endif

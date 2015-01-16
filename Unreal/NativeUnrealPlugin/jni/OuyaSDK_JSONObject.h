@@ -17,7 +17,7 @@
 #ifndef __ORG_JSON_JSONOBJECT_JSONOBJECT_H__
 #define __ORG_JSON_JSONOBJECT_JSONOBJECT_H__
 
-//#if PLATFORM_ANDROID
+#if PLATFORM_ANDROID
 
 #include <jni.h>
 #include <string>
@@ -64,6 +64,6 @@ namespace org_json_JSONObject
 	};
 }
 
-//#endif
+#endif
 
 #endif

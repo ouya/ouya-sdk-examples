@@ -37,6 +37,7 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_PluginOuya.cpp \
 	OuyaSDK_Product.cpp \
 	OuyaSDK_Receipt.cpp
+LOCAL_CFLAGS    := -DPLATFORM_ANDROID
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 
