@@ -558,7 +558,11 @@ public class UnrealOuyaFacade
 		}
     }
     
-    public void Save(OuyaMod ouyaMod, OuyaMod.Editor editor) {
+    public Boolean isRunningOnOUYASupportedHardware() {
+		return ouyaFacade.isRunningOnOUYASupportedHardware();
+	}
+    
+    public void saveOuyaMod(OuyaMod ouyaMod, OuyaMod.Editor editor) {
     	
     	try {
             editor.save(mSaveListener);
@@ -585,4 +589,57 @@ public class UnrealOuyaFacade
             }
         }
     }
+    
+	public void getOuyaContentInstalled() {
+		if (null == mContent) {
+			Log.e(TAG, "mContent is null");
+		} else if (null == mInstalledSearchListener) {
+			Log.e(TAG, "mInstalledSearchListener is null");
+		} else {
+			mContent.getInstalled(mInstalledSearchListener);
+		}
+	}
+
+	public void getOuyaContentPublished(final OuyaContent.SortMethod sortMethod) {
+		if (null == mContent) {
+			Log.e(TAG, "mContent is null");
+		} else if (null == mPublishedSearchListener) {
+			Log.e(TAG, "mPublishedSearchListener is null");
+		} else {
+			mContent.search(sortMethod, mPublishedSearchListener);
+		}
+	}
+
+	public void contentDelete(final OuyaMod ouyaMod) {
+		if (null == mDeleteListener) {
+			Log.e(TAG, "mDeleteListener is null");
+		} else {
+			ouyaMod.delete(mDeleteListener);
+		}
+
+	}
+
+	public void contentPublish(final OuyaMod ouyaMod) {
+		if (null == mPublishListener) {
+			Log.e(TAG, "mPublishListener is null");
+		} else {
+			ouyaMod.publish(mPublishListener);
+		}
+	}
+
+	public void contentUnpublish(final OuyaMod ouyaMod) {
+		if (null == mUnpublishListener) {
+			Log.e(TAG, "mUnpublishListener is null");
+		} else {
+			ouyaMod.unpublish(mUnpublishListener);
+		}
+	}
+
+	public void contentDownload(final OuyaMod ouyaMod) {
+		if (null == mDownloadListener) {
+			Log.e(TAG, "mDownloadListener is null");
+		} else {
+			ouyaMod.download(mDownloadListener);
+		}
+	}
 }

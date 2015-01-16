@@ -37,7 +37,9 @@ public class MainActivity extends Activity {
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
-	OuyaInputView mInputView = null;
+	private OuyaInputView mInputView = null;
+	
+	private OuyaMod mOuyaMod = null;
 
 	static {
 		System.loadLibrary("native-activity");
@@ -67,6 +69,8 @@ public class MainActivity extends Activity {
 			AsyncCppOuyaContentInit.invoke();
 			
 			testSave();
+			
+			testDownload();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,8 +108,8 @@ public class MainActivity extends Activity {
 						}
 						Log.i(TAG, "OuyaContent is initialize="+ouyaContent.isInitialized());
 						Log.i(TAG, "OuyaContent is available="+ouyaContent.isAvailable());
-						OuyaMod ouyaMod = ouyaContent.create();
-						if (null == ouyaMod) {
+						mOuyaMod = ouyaContent.create();
+						if (null == mOuyaMod) {
 							Log.e(TAG, "OUYA Mod is null");
 							return;
 						}
@@ -114,13 +118,58 @@ public class MainActivity extends Activity {
 							Log.e(TAG, "Unreal OUYA Facade is null");
 							return;
 						}
-						OuyaMod.Editor editor = ouyaMod.edit();
+						OuyaMod.Editor editor = mOuyaMod.edit();
 						if (null == editor) {
 							Log.e(TAG, "OUYA Mod Editor is null");
 							return;
 						}
-						unrealOuyaFacade.Save(ouyaMod, editor);
+						unrealOuyaFacade.saveOuyaMod(mOuyaMod, editor);
+						Log.i(TAG, "Save invoked");
 					} catch (Exception e) {
+						Log.e(TAG, "Save failed");
+						e.printStackTrace();
+					}
+				}
+			};			
+			runOnUiThread(runnable);
+		}		
+	}
+	
+	void testDownload() {
+		if (null == IUnrealOuyaActivity.GetOuyaContent() ||
+			!IUnrealOuyaActivity.GetOuyaContent().isInitialized() ||
+			null == mOuyaMod) {
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					testDownload();
+				}
+			}, 1000);
+		} else {
+			
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{
+			
+					try {
+						OuyaContent ouyaContent = IUnrealOuyaActivity.GetOuyaContent();
+						if (null == ouyaContent) {
+							Log.e(TAG, "OUYA Content is null");
+							return;
+						}
+						Log.i(TAG, "OuyaMod isInstalled="+mOuyaMod.isInstalled());
+						Log.i(TAG, "OuyaMod isDownloading="+mOuyaMod.isDownloading());
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "Unreal OUYA Facade is null");
+							return;
+						}						
+						unrealOuyaFacade.contentDownload(mOuyaMod);
+						Log.i(TAG, "Download invoked");
+					} catch (Exception e) {
+						Log.e(TAG, "Download failed");
 						e.printStackTrace();
 					}
 				}

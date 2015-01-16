@@ -18,6 +18,7 @@ package tv.ouya.sdk.unreal;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +26,18 @@ import android.view.Display;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import tv.ouya.console.api.*;
+import tv.ouya.console.api.content.OuyaContent;
+import tv.ouya.console.api.content.OuyaMod;
+import tv.ouya.console.api.content.OuyaModScreenshot;
 
 public class UnrealOuyaPlugin
 {
@@ -258,5 +265,257 @@ public class UnrealOuyaPlugin
 		};
 		activity.runOnUiThread(runnable);
 		return true;
+	}
+	
+	public static OuyaContent getOuyaContent() {
+		return IUnrealOuyaActivity.GetOuyaContent();
+	}
+
+	public static void saveOuyaMod(final OuyaMod ouyaMod, final OuyaMod.Editor editor) {
+		try
+		{
+			//Log.i(TAG, "saveOuyaMod");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							unrealOuyaFacade.saveOuyaMod(ouyaMod, editor);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "saveOuyaMod: exception=" + e.toString());
+		}
+	}
+
+	public static void getOuyaContentInstalled() {
+		try
+		{
+			//Log.i(TAG, "getOuyaContentInstalled");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						OuyaContent ouyaContent = IUnrealOuyaActivity.GetOuyaContent();
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							unrealOuyaFacade.getOuyaContentInstalled();
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "getOuyaContentInstalled: exception=" + e.toString());
+		}
+	}
+
+	public static OuyaMod[] getOuyaContentInstalledResults() {
+		List<OuyaMod> result = IUnrealOuyaActivity.GetOuyaContentInstalledResults();
+		if (null == result) {
+			return null;
+		}
+		OuyaMod[] retVal = new OuyaMod[result.size()];
+		result.toArray(retVal);
+		return retVal;
+	}
+
+	public static void getOuyaContentPublished(final String sortMethod) {
+		try
+		{
+			//Log.i(TAG, "getOuyaContentPublished");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							OuyaContent.SortMethod sort = OuyaContent.SortMethod.valueOf(sortMethod);
+							//Log.i(TAG, "sortMethod="+sortMethod);
+							unrealOuyaFacade.getOuyaContentPublished(sort);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "getOuyaContentPublished: exception=" + e.toString());
+		}
+	}
+
+	public static OuyaMod[] getOuyaContentPublishedResults() {
+		List<OuyaMod> result = IUnrealOuyaActivity.GetOuyaContentPublishedResults();
+		if (null == result) {
+			Log.e(TAG, "getOuyaContentPublishedResults result is null."); 
+			return null;
+		}
+		//Log.i(TAG, "getOuyaContentPublishedResults returning size="+result.size()); 
+		OuyaMod[] retVal = new OuyaMod[result.size()];
+		result.toArray(retVal);
+		return retVal;
+	}
+
+	public static void contentDelete(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentDelete");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							unrealOuyaFacade.contentDelete(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentDelete: exception=" + e.toString());
+		}
+	}
+
+	public static void contentPublish(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentPublish");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							unrealOuyaFacade.contentPublish(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentPublish: exception=" + e.toString());
+		}
+	}
+
+	public static void contentUnpublish(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentUnpublish");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							unrealOuyaFacade.contentUnpublish(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentUnpublish: exception=" + e.toString());
+		}
+	}
+
+	public static void contentDownload(final OuyaMod ouyaMod) {
+		try
+		{
+			//Log.i(TAG, "contentDownload");
+			final Activity activity = IUnrealOuyaActivity.GetActivity();
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						UnrealOuyaFacade unrealOuyaFacade = IUnrealOuyaActivity.GetUnrealOuyaFacade();
+						if (null == unrealOuyaFacade) {
+							Log.e(TAG, "unrealOuyaFacade is null");
+						} else {
+							unrealOuyaFacade.contentDownload(ouyaMod);
+						}
+					}
+				};
+				activity.runOnUiThread(runnable);			
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "contentDownload: exception=" + e.toString());
+		}
+	}
+	
+	public static float getFloat(Float f) {
+		if (null == f) {
+			return 0;
+		}
+		return f.floatValue();
+	}
+
+	public static Bitmap[] getBitmapArray(List<Bitmap> list) {
+		if (null == list) {
+			return new Bitmap[0];
+		}
+		Bitmap[] retVal = new Bitmap[list.size()];
+		list.toArray(retVal);
+		return retVal;
+	}
+
+	public static OuyaModScreenshot[] getOuyaModScreenshotArray(List<OuyaModScreenshot> list) {
+		if (null == list) {
+			return new OuyaModScreenshot[0];
+		}
+		OuyaModScreenshot[] retVal = new OuyaModScreenshot[list.size()];
+		list.toArray(retVal);
+		return retVal;
+	}
+
+	public static String[] getStringArray(List<String> list) {
+		if (null == list) {
+			return new String[0];
+		}
+		String[] retVal = new String[list.size()];
+		list.toArray(retVal);
+		return retVal;
 	}
 }
