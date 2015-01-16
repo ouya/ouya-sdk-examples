@@ -26,6 +26,7 @@ class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
 class CallbacksContentInit;
+class CallbacksContentSave;
 
 namespace OuyaSDK
 {
@@ -49,6 +50,7 @@ namespace OuyaSDK
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;
 		CallbacksContentInit* m_callbacksContentInit;
+		CallbacksContentSave* m_callbacksContentSave;
 	};
 };
 

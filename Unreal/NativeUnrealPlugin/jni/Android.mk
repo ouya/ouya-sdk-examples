@@ -22,6 +22,7 @@ LOCAL_SRC_FILES := \
 	AndroidJNI.cpp \
 	OuyaSDK_CallbackSingleton.cpp \
 	OuyaSDK_CallbacksContentInit.cpp \
+	OuyaSDK_CallbacksContentSave.cpp \
 	OuyaSDK_CallbacksInitOuyaPlugin.cpp \
 	OuyaSDK_CallbacksRequestGamerInfo.cpp \
 	OuyaSDK_CallbacksRequestProducts.cpp \
@@ -32,6 +33,7 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_JSONObject.cpp \
 	OuyaSDK_OuyaController.cpp \
 	OuyaSDK_OuyaInputView.cpp \
+	OuyaSDK_OuyaMod.cpp \
 	OuyaSDK_PluginOuya.cpp \
 	OuyaSDK_Product.cpp \
 	OuyaSDK_Receipt.cpp

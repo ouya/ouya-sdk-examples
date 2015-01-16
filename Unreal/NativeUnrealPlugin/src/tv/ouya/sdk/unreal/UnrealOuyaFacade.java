@@ -558,8 +558,31 @@ public class UnrealOuyaFacade
 		}
     }
     
-    public void Save(OuyaMod.Editor editor) 
-    	throws OuyaModException {
-    	editor.save(mSaveListener);
+    public void Save(OuyaMod ouyaMod, OuyaMod.Editor editor) {
+    	
+    	try {
+            editor.save(mSaveListener);
+        } catch(OuyaModException e) {
+            switch(e.getCode()) {
+                case OuyaModException.CONTENT_NO_TITLE:
+                	mSaveListener.onError(ouyaMod, e.getCode(), "Title required!");
+                    break;
+                case OuyaModException.CONTENT_NO_CATEGORY:
+                	mSaveListener.onError(ouyaMod, e.getCode(), "Category required!");
+                    break;
+                case OuyaModException.CONTENT_NO_SCREENSHOTS:
+                	mSaveListener.onError(ouyaMod, e.getCode(), "At least one screenshot required!");
+                    break;
+                case OuyaModException.CONTENT_NO_FILES:
+                	mSaveListener.onError(ouyaMod, e.getCode(), "At least one file required!");
+                    break;
+                case OuyaModException.CONTENT_NOT_EDITABLE:
+                	mSaveListener.onError(ouyaMod, e.getCode(), "OuyaMod is not editable!");
+                    break;
+                default:
+                	mSaveListener.onError(ouyaMod, e.getCode(), "Save Exception!");
+                	break;
+            }
+        }
     }
 }

@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
 							Log.e(TAG, "OUYA Mod Editor is null");
 							return;
 						}
-						unrealOuyaFacade.Save(editor);
+						unrealOuyaFacade.Save(ouyaMod, editor);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

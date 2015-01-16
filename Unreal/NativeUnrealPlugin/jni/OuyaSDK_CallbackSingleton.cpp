@@ -15,17 +15,19 @@
 */
 
 #include "OuyaSDK_CallbackSingleton.h"
+#include "OuyaSDK_CallbacksContentInit.h"
+#include "OuyaSDK_CallbacksContentSave.h"
 #include "OuyaSDK_CallbacksRequestGamerInfo.h"
 #include "OuyaSDK_CallbacksInitOuyaPlugin.h"
 #include "OuyaSDK_CallbacksRequestProducts.h"
 #include "OuyaSDK_CallbacksRequestPurchase.h"
 #include "OuyaSDK_CallbacksRequestReceipts.h"
-#include "OuyaSDK_CallbacksContentInit.h"
 #include "OuyaSDK_GamerInfo.h"
 #include "OuyaSDK_Product.h"
 #include "OuyaSDK_Receipt.h"
 #include "OuyaSDK_JSONArray.h"
 #include "OuyaSDK_JSONObject.h"
+#include "OuyaSDK_OuyaMod.h"
 
 #include <android/log.h>
 #include <jni.h>
@@ -34,6 +36,7 @@
 
 using namespace org_json_JSONObject;
 using namespace org_json_JSONArray;
+using namespace tv_ouya_console_api_content_OuyaMod;
 
 #ifdef LOG_TAG
 #undef LOG_TAG
@@ -59,6 +62,7 @@ namespace OuyaSDK
 		m_callbacksRequestPurchase = NULL;
 		m_callbacksRequestReceipts = NULL;
 		m_callbacksContentInit = NULL;
+		m_callbacksContentSave = NULL;
 	}
 
 	CallbackSingleton::~CallbackSingleton()
@@ -77,6 +81,8 @@ namespace OuyaSDK
 
 	extern "C"
 	{
+		/// CallbacksInitOuyaPlugin
+
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess(JNIEnv* env, jobject thiz)
 		{
 #if ENABLE_VERBOSE_LOGGING
@@ -106,6 +112,8 @@ namespace OuyaSDK
 				callback->OnFailure(errorCode, strErrorMessage);
 			}
 		}
+
+		/// CallbacksRequestGamerInfo
 
 		//com.ODK.CallbacksRequestGamerInfo.CallbacksRequestGamerInfoOnSuccess
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
@@ -164,6 +172,8 @@ namespace OuyaSDK
 				callback->OnCancel();
 			}
 		}
+
+		/// CallbacksRequestProducts
 
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
@@ -227,6 +237,8 @@ namespace OuyaSDK
 			}
 		}
 
+		/// CallbacksRequestPurchase
+
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
 			//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
@@ -280,6 +292,8 @@ namespace OuyaSDK
 				callback->OnCancel();
 			}
 		}
+
+		/// CallbacksRequestReceipts
 
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
 		{
@@ -347,6 +361,8 @@ namespace OuyaSDK
 			}
 		}
 
+		/// CallbacksContentInit
+
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnInitialized(JNIEnv* env, jobject thiz)
 		{
 			CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
@@ -362,6 +378,30 @@ namespace OuyaSDK
 			if (callback)
 			{
 				callback->OnDestroyed();
+			}
+		}
+
+		/// CallbacksContentSave
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
+		{
+			std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+			CallbacksContentSave* callback = CallbackSingleton::GetInstance()->m_callbacksContentSave;
+			if (callback)
+			{
+				OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+				callback->OnError(newOuyaMod, code, strReason);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
+		{
+			CallbacksContentSave* callback = CallbackSingleton::GetInstance()->m_callbacksContentSave;
+			if (callback)
+			{
+				OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+				callback->OnSuccess(newOuyaMod);
 			}
 		}
 	}
@@ -436,6 +476,13 @@ namespace OuyaSDK
 
 	JNINativeMethod g_nativeCallbacksContentInitOnInitialized;
 	JNINativeMethod g_nativeCallbacksContentInitOnDestroyed;
+
+	//
+	// Native Callbacks for ContentSave
+	//
+
+	JNINativeMethod g_nativeCallbacksContentSaveOnError;
+	JNINativeMethod g_nativeCallbacksContentSaveOnSuccess;
 
 	int CallbackSingleton::InitJNI(JavaVM* jvm)
 	{
@@ -522,6 +569,20 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksContentInitOnDestroyed", "tv/ouya/sdk/unreal/CallbacksContentInit", "()V",
 			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnDestroyed, &g_nativeCallbacksContentInitOnDestroyed);
+
+		//
+		// Register Native Callbacks for ContentSave
+		//
+
+		RegisterNativeMethod(env, "CallbacksContentSaveOnError", "tv/ouya/sdk/unreal/CallbacksContentSave", "(Ltv/ouya/console/api/content/OuyaMod;ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnError, &g_nativeCallbacksContentSaveOnError);
+
+		RegisterNativeMethod(env, "CallbacksContentSaveOnSuccess", "tv/ouya/sdk/unreal/CallbacksContentSave", "(Ltv/ouya/console/api/content/OuyaMod;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnSuccess, &g_nativeCallbacksContentSaveOnSuccess);
+
+		//
+		// DONE
+		//
 
 		return JNI_OK;
 	}
