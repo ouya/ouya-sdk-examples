@@ -96,6 +96,12 @@ public class MainActivity extends Activity {
 			
 			// expected to succeed
 			testUnpublish2();
+
+			// expected to succeed
+			testDownload2();
+			
+			// expected to succeed
+			//testDelete2();
 			
 			// expected to fail
 			//testSave();
@@ -369,6 +375,67 @@ public class MainActivity extends Activity {
 						Log.i(TAG, "Unpublish2 invoked");
 					} catch (Exception e) {
 						Log.e(TAG, "Unpublish2 failed");
+						e.printStackTrace();
+					}
+				}
+			};			
+			runOnUiThread(runnable);
+		}		
+	}
+	
+	void testDownload2() {
+		if (null == IUnrealOuyaActivity.GetOuyaContent() ||
+			!IUnrealOuyaActivity.GetOuyaContent().isInitialized() ||
+			null == mOuyaMod2) {
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					testDownload2();
+				}
+			}, 1000);
+		} else {			
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{			
+					try {
+						Log.i(TAG, "OuyaMod isInstalled="+mOuyaMod2.isInstalled());
+						Log.i(TAG, "OuyaMod isDownloading="+mOuyaMod2.isDownloading());
+						UnrealOuyaPlugin.contentDownload(mOuyaMod2);
+						Log.i(TAG, "Download2 invoked");
+					} catch (Exception e) {
+						Log.e(TAG, "Download2 failed");
+						e.printStackTrace();
+					}
+				}
+			};			
+			runOnUiThread(runnable);
+		}		
+	}
+	
+	void testDelete2() {
+		if (null == IUnrealOuyaActivity.GetOuyaContent() ||
+			!IUnrealOuyaActivity.GetOuyaContent().isInitialized() ||
+			null == mOuyaMod2) {
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					testDelete2();
+				}
+			}, 1000);
+		} else {			
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{			
+					try {
+						Log.i(TAG, "OuyaMod isInstalled="+mOuyaMod2.isInstalled());
+						UnrealOuyaPlugin.contentDelete(mOuyaMod2);
+						Log.i(TAG, "Delete2 invoked");
+					} catch (Exception e) {
+						Log.e(TAG, "Delete2 failed");
 						e.printStackTrace();
 					}
 				}

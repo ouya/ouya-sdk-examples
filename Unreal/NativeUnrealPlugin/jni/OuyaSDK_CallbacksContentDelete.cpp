@@ -21,10 +21,10 @@
 
 using namespace tv_ouya_console_api_content_OuyaMod;
 
-void CallbacksContentDelete::onDeleteFailed(OuyaMod ouyaMod, int code, const std::string& reason)
+void CallbacksContentDelete::OnDeleteFailed(const OuyaMod& ouyaMod, int code, const std::string& reason)
 {
 }
 
-void CallbacksContentDelete::onDeleted(OuyaMod ouyaMod)
+void CallbacksContentDelete::OnDeleted(const OuyaMod& ouyaMod)
 {
 }

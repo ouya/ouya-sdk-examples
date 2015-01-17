@@ -26,11 +26,11 @@ class CallbacksContentDownload
 {
 public:
 
-	virtual void onProgress(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int progress);
+	virtual void OnProgress(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod, int progress);
 
-	virtual void onFailed(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason);
+	virtual void OnFailed(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod);
 
-	virtual void onComplete(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod);
+	virtual void OnComplete(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod);
 };
 
 #endif

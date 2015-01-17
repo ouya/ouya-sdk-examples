@@ -26,9 +26,9 @@ class CallbacksContentDelete
 {
 public:
 
-	virtual void onDeleteFailed(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason);
+	virtual void OnDeleteFailed(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod, int code, const std::string& reason);
 
-	virtual void onDeleted(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod);
+	virtual void OnDeleted(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod);
 };
 
 #endif

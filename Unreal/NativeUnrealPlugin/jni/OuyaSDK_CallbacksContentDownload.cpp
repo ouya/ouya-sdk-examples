@@ -21,14 +21,14 @@
 
 using namespace tv_ouya_console_api_content_OuyaMod;
 
-void CallbacksContentDownload::onProgress(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int progress)
+void CallbacksContentDownload::OnProgress(const OuyaMod& ouyaMod, int progress)
 {
 }
 
-void CallbacksContentDownload::onFailed(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason)
+void CallbacksContentDownload::OnFailed(const OuyaMod& ouyaMod)
 {
 }
 
-void CallbacksContentDownload::onComplete(OuyaMod ouyaMod)
+void CallbacksContentDownload::OnComplete(const OuyaMod& ouyaMod)
 {
 }
