@@ -505,6 +505,30 @@ namespace OuyaSDK
 				callback->onResults(newOuyaMods, count);
 			}
 		}
+
+		/// CallbacksContentUnpublish
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
+		{
+			std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+			CallbacksContentUnpublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentUnpublish;
+			if (callback)
+			{
+				OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+				callback->OnError(newOuyaMod, code, strReason);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
+		{
+			CallbacksContentUnpublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentUnpublish;
+			if (callback)
+			{
+				OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+				callback->OnSuccess(newOuyaMod);
+			}
+		}
 	}
 
 	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string className, std::string signature, void* method, JNINativeMethod* savedNativeMethod)
@@ -605,6 +629,13 @@ namespace OuyaSDK
 
 	JNINativeMethod g_nativeCallbacksContentSearchPublishedOnError;
 	JNINativeMethod g_nativeCallbacksContentSearchPublishedOnResults;
+
+	//
+	// Native Callbacks for ContentUnpublish
+	//
+
+	JNINativeMethod g_nativeCallbacksContentUnpublishOnError;
+	JNINativeMethod g_nativeCallbacksContentUnpublishOnSuccess;
 
 	int CallbackSingleton::InitJNI(JavaVM* jvm)
 	{
@@ -731,6 +762,16 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksContentSearchPublishedOnResults", "tv/ouya/sdk/unreal/CallbacksContentSearchPublished", "([Ltv/ouya/console/api/content/OuyaMod;I)V",
 			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnResults, &g_nativeCallbacksContentSearchPublishedOnResults);
+
+		//
+		// Register Native Callbacks for ContentUnpublish
+		//
+
+		RegisterNativeMethod(env, "CallbacksContentUnpublishOnError", "tv/ouya/sdk/unreal/CallbacksContentUnpublish", "(Ltv/ouya/console/api/content/OuyaMod;ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnError, &g_nativeCallbacksContentUnpublishOnError);
+
+		RegisterNativeMethod(env, "CallbacksContentUnpublishOnSuccess", "tv/ouya/sdk/unreal/CallbacksContentUnpublish", "(Ltv/ouya/console/api/content/OuyaMod;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnSuccess, &g_nativeCallbacksContentUnpublishOnSuccess);
 
 		//
 		// DONE

@@ -94,11 +94,14 @@ public class MainActivity extends Activity {
 			// expected to succeed
 			testSearchPublished2();
 			
+			// expected to succeed
+			testUnpublish2();
+			
 			// expected to fail
-			testSave();
+			//testSave();
 			
 			// expected to fail without valid saved OuyaMod
-			testDownload();
+			//testDownload();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -336,6 +339,36 @@ public class MainActivity extends Activity {
 						Log.i(TAG, "SearchPublished2 invoked");
 					} catch (Exception e) {
 						Log.e(TAG, "SearchPublished2 failed");
+						e.printStackTrace();
+					}
+				}
+			};			
+			runOnUiThread(runnable);
+		}		
+	}
+	
+	void testUnpublish2() {
+		if (null == IUnrealOuyaActivity.GetOuyaContent() ||
+			!IUnrealOuyaActivity.GetOuyaContent().isInitialized() ||
+			null == mOuyaMod2 ||
+			!mOuyaMod2.isPublished()) {
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					testUnpublish2();
+				}
+			}, 1000);
+		} else {			
+			Runnable runnable = new Runnable()
+			{
+				public void run()
+				{
+					try {
+						UnrealOuyaPlugin.contentUnpublish(mOuyaMod2);
+						Log.i(TAG, "Unpublish2 invoked");
+					} catch (Exception e) {
+						Log.e(TAG, "Unpublish2 failed");
 						e.printStackTrace();
 					}
 				}
