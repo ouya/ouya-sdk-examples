@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+#include "OuyaSDK_Bundle.h"
 #include "OuyaSDK_CallbackSingleton.h"
 #include "OuyaSDK_CallbacksContentDelete.h"
 #include "OuyaSDK_CallbacksContentDownload.h"
@@ -40,6 +41,7 @@
 #include <stdio.h>
 #include <string>
 
+using namespace android_os_Bundle;
 using namespace org_json_JSONObject;
 using namespace org_json_JSONArray;
 using namespace tv_ouya_console_api_content_OuyaMod;
@@ -417,6 +419,31 @@ namespace OuyaSDK
 			}
 		}
 
+		/// CallbacksContentPublish
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason, jobject bundle)
+		{
+			std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+			CallbacksContentPublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentPublish;
+			if (callback)
+			{
+				OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+				Bundle newBundle = Bundle(bundle);
+				callback->OnError(newOuyaMod, code, strReason, newBundle);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
+		{
+			CallbacksContentPublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentPublish;
+			if (callback)
+			{
+				OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+				callback->OnSuccess(newOuyaMod);
+			}
+		}
+
 		/// CallbacksContentSearchInstalled
 
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
@@ -433,6 +460,37 @@ namespace OuyaSDK
 		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
 		{
 			CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
+			if (callback)
+			{
+				std::vector<OuyaMod> newOuyaMods;
+				jsize length = env->GetArrayLength(ouyaMods);
+				for (jsize index(0); index < length; ++index)
+				{
+					jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
+					OuyaMod newOuyaMod = OuyaMod(element);
+					newOuyaMods.push_back(newOuyaMod);
+
+				}
+				callback->onResults(newOuyaMods, count);
+			}
+		}
+
+		/// CallbacksContentSearchPublished
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
+		{
+			std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+			CallbacksContentSearchPublished* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished;
+			if (callback)
+			{
+				callback->OnError(code, strReason);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
+		{
+			CallbacksContentSearchPublished* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished;
 			if (callback)
 			{
 				std::vector<OuyaMod> newOuyaMods;
@@ -528,11 +586,25 @@ namespace OuyaSDK
 	JNINativeMethod g_nativeCallbacksContentSaveOnSuccess;
 
 	//
+	// Native Callbacks for ContentPublish
+	//
+
+	JNINativeMethod g_nativeCallbacksContentPublishOnError;
+	JNINativeMethod g_nativeCallbacksContentPublishOnSuccess;
+
+	//
 	// Native Callbacks for ContentSearchInstalled
 	//
 
 	JNINativeMethod g_nativeCallbacksContentSearchInstalledOnError;
 	JNINativeMethod g_nativeCallbacksContentSearchInstalledOnResults;
+
+	//
+	// Native Callbacks for ContentSearchPublished
+	//
+
+	JNINativeMethod g_nativeCallbacksContentSearchPublishedOnError;
+	JNINativeMethod g_nativeCallbacksContentSearchPublishedOnResults;
 
 	int CallbackSingleton::InitJNI(JavaVM* jvm)
 	{
@@ -621,6 +693,16 @@ namespace OuyaSDK
 			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnDestroyed, &g_nativeCallbacksContentInitOnDestroyed);
 
 		//
+		// Register Native Callbacks for ContentPublish
+		//
+
+		RegisterNativeMethod(env, "CallbacksContentPublishOnError", "tv/ouya/sdk/unreal/CallbacksContentPublish", "(Ltv/ouya/console/api/content/OuyaMod;ILjava/lang/String;Landroid/os/Bundle;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnError, &g_nativeCallbacksContentPublishOnError);
+
+		RegisterNativeMethod(env, "CallbacksContentPublishOnSuccess", "tv/ouya/sdk/unreal/CallbacksContentPublish", "(Ltv/ouya/console/api/content/OuyaMod;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnSuccess, &g_nativeCallbacksContentPublishOnSuccess);
+
+		//
 		// Register Native Callbacks for ContentSave
 		//
 
@@ -639,6 +721,16 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksContentSearchInstalledOnResults", "tv/ouya/sdk/unreal/CallbacksContentSearchInstalled", "([Ltv/ouya/console/api/content/OuyaMod;I)V",
 			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnResults, &g_nativeCallbacksContentSearchInstalledOnResults);
+
+		//
+		// Register Native Callbacks for ContentSearchPublished
+		//
+
+		RegisterNativeMethod(env, "CallbacksContentSearchPublishedOnError", "tv/ouya/sdk/unreal/CallbacksContentSearchPublished", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnError, &g_nativeCallbacksContentSearchPublishedOnError);
+
+		RegisterNativeMethod(env, "CallbacksContentSearchPublishedOnResults", "tv/ouya/sdk/unreal/CallbacksContentSearchPublished", "([Ltv/ouya/console/api/content/OuyaMod;I)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnResults, &g_nativeCallbacksContentSearchPublishedOnResults);
 
 		//
 		// DONE

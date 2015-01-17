@@ -19,12 +19,14 @@
 
 #include <stdio.h>
 
+using namespace android_os_Bundle;
+using namespace std;
 using namespace tv_ouya_console_api_content_OuyaMod;
 
-void CallbacksContentPublish::OnError(OuyaMod ouyaMod, int code, const std::string& reason)
+void CallbacksContentPublish::OnError(const OuyaMod& ouyaMod, int code, const string& reason, const Bundle bundle)
 {
 }
 
-void CallbacksContentPublish::OnSuccess(OuyaMod ouyaMod)
+void CallbacksContentPublish::OnSuccess(const OuyaMod& ouyaMod)
 {
 }

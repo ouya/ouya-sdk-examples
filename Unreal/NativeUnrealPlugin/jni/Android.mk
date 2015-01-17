@@ -20,6 +20,7 @@ LOCAL_MODULE    := native-activity
 LOCAL_SRC_FILES := \
 	LaunchAndroid.cpp \
 	AndroidJNI.cpp \
+	OuyaSDK_Bundle.cpp \
 	OuyaSDK_CallbackSingleton.cpp \
 	OuyaSDK_CallbacksContentInit.cpp \
 	OuyaSDK_CallbacksContentDelete.cpp \

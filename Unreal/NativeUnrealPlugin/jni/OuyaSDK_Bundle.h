@@ -14,22 +14,30 @@
 * limitations under the License.
 */
 
-#ifndef __CALLBACKS_CONTENT_PUBLISH_H__
-#define __CALLBACKS_CONTENT_PUBLISH_H__
+#ifndef __ANDROID_OS_BUNDLE_H__
+#define __ANDROID_OS_BUNDLE_H__
 
-#include "OuyaSDK_Bundle.h"
-#include "OuyaSDK_OuyaMod.h"
+#if PLATFORM_ANDROID
 
-#include <string>
-#include <vector>
+#include <jni.h>
 
-class CallbacksContentPublish
+namespace android_os_Bundle
 {
-public:
+	class Bundle
+	{
+	public:
+		static int InitJNI(JavaVM* jvm);
+		static int FindJNI();
+		Bundle(jobject instance);
+		jobject GetInstance() const;
+		void Dispose() const;
+	private:
+		static JavaVM* _jvm;
+		static jclass _jcBundle;
+		jobject _instance;
+	};
+}
 
-	virtual void OnError(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod, int code, const std::string& reason, const android_os_Bundle::Bundle bundle);
-
-	virtual void OnSuccess(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod);
-};
+#endif
 
 #endif
