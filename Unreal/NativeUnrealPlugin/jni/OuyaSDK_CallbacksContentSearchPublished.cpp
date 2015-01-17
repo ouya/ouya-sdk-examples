@@ -25,6 +25,6 @@ void CallbacksContentSearchPublished::OnError(int code, const std::string& reaso
 {
 }
 
-void CallbacksContentSearchPublished::onResults(const std::vector<tv_ouya_console_api_content_OuyaMod::OuyaMod> ouyaMods, int count)
+void CallbacksContentSearchPublished::OnResults(const std::vector<tv_ouya_console_api_content_OuyaMod::OuyaMod> ouyaMods, int count)
 {
 }

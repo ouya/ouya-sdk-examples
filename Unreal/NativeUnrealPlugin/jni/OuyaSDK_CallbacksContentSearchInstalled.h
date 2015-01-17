@@ -28,7 +28,7 @@ public:
 
 	virtual void OnError(int code, const std::string& reason);
 
-	virtual void onResults(const std::vector<tv_ouya_console_api_content_OuyaMod::OuyaMod> ouyaMods, int count);
+	virtual void OnResults(const std::vector<tv_ouya_console_api_content_OuyaMod::OuyaMod> ouyaMods, int count);
 };
 
 #endif

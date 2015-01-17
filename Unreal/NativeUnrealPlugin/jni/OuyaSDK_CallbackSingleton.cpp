@@ -521,7 +521,7 @@ JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_C
 			newOuyaMods.push_back(newOuyaMod);
 
 		}
-		callback->onResults(newOuyaMods, count);
+		callback->OnResults(newOuyaMods, count);
 	}
 }
 
@@ -552,7 +552,7 @@ JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_C
 			newOuyaMods.push_back(newOuyaMod);
 
 		}
-		callback->onResults(newOuyaMods, count);
+		callback->OnResults(newOuyaMods, count);
 	}
 }
 
