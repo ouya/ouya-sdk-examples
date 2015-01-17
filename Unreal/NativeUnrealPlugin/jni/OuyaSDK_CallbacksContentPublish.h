@@ -14,15 +14,15 @@
 * limitations under the License.
 */
 
-#ifndef __CALLBACKS_CONTENT_SAVE_H__
-#define __CALLBACKS_CONTENT_SAVE_H__
+#ifndef __CALLBACKS_CONTENT_PUBLISH_H__
+#define __CALLBACKS_CONTENT_PUBLISH_H__
 
 #include "OuyaSDK_OuyaMod.h"
 
 #include <string>
 #include <vector>
 
-class CallbacksContentSave
+class CallbacksContentPublish
 {
 public:
 

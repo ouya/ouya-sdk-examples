@@ -15,8 +15,14 @@
 */
 
 #include "OuyaSDK_CallbackSingleton.h"
+#include "OuyaSDK_CallbacksContentDelete.h"
+#include "OuyaSDK_CallbacksContentDownload.h"
 #include "OuyaSDK_CallbacksContentInit.h"
+#include "OuyaSDK_CallbacksContentPublish.h"
 #include "OuyaSDK_CallbacksContentSave.h"
+#include "OuyaSDK_CallbacksContentSearchInstalled.h"
+#include "OuyaSDK_CallbacksContentSearchPublished.h"
+#include "OuyaSDK_CallbacksContentUnpublish.h"
 #include "OuyaSDK_CallbacksRequestGamerInfo.h"
 #include "OuyaSDK_CallbacksInitOuyaPlugin.h"
 #include "OuyaSDK_CallbacksRequestProducts.h"
@@ -56,13 +62,19 @@ namespace OuyaSDK
 	{
 		CallbackSingleton::m_instance = this;
 
+		m_callbacksContentDelete = NULL;
+		m_callbacksContentDownload = NULL;
+		m_callbacksContentInit = NULL;
+		m_callbacksContentPublish = NULL;
+		m_callbacksContentSave = NULL;
+		m_callbacksContentSearchInstalled = NULL;
+		m_callbacksContentSearchPublished = NULL;
+		m_callbacksContentUnpublish = NULL;
 		m_callbacksInitOuyaPlugin = NULL;
 		m_callbacksRequestGamerInfo = NULL;
 		m_callbacksRequestProducts = NULL;
 		m_callbacksRequestPurchase = NULL;
 		m_callbacksRequestReceipts = NULL;
-		m_callbacksContentInit = NULL;
-		m_callbacksContentSave = NULL;
 	}
 
 	CallbackSingleton::~CallbackSingleton()
@@ -404,6 +416,37 @@ namespace OuyaSDK
 				callback->OnSuccess(newOuyaMod);
 			}
 		}
+
+		/// CallbacksContentSearchInstalled
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
+		{
+			std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+			CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
+			if (callback)
+			{
+				callback->OnError(code, strReason);
+			}
+		}
+
+		JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
+		{
+			CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
+			if (callback)
+			{
+				std::vector<OuyaMod> newOuyaMods;
+				jsize length = env->GetArrayLength(ouyaMods);
+				for (jsize index(0); index < length; ++index)
+				{
+					jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
+					OuyaMod newOuyaMod = OuyaMod(element);
+					newOuyaMods.push_back(newOuyaMod);
+
+				}
+				callback->onResults(newOuyaMods, count);
+			}
+		}
 	}
 
 	void RegisterNativeMethod(JNIEnv* env, std::string methodName, std::string className, std::string signature, void* method, JNINativeMethod* savedNativeMethod)
@@ -483,6 +526,13 @@ namespace OuyaSDK
 
 	JNINativeMethod g_nativeCallbacksContentSaveOnError;
 	JNINativeMethod g_nativeCallbacksContentSaveOnSuccess;
+
+	//
+	// Native Callbacks for ContentSearchInstalled
+	//
+
+	JNINativeMethod g_nativeCallbacksContentSearchInstalledOnError;
+	JNINativeMethod g_nativeCallbacksContentSearchInstalledOnResults;
 
 	int CallbackSingleton::InitJNI(JavaVM* jvm)
 	{
@@ -579,6 +629,16 @@ namespace OuyaSDK
 
 		RegisterNativeMethod(env, "CallbacksContentSaveOnSuccess", "tv/ouya/sdk/unreal/CallbacksContentSave", "(Ltv/ouya/console/api/content/OuyaMod;)V",
 			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnSuccess, &g_nativeCallbacksContentSaveOnSuccess);
+
+		//
+		// Register Native Callbacks for ContentSearchInstalled
+		//
+
+		RegisterNativeMethod(env, "CallbacksContentSearchInstalledOnError", "tv/ouya/sdk/unreal/CallbacksContentSearchInstalled", "(ILjava/lang/String;)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnError, &g_nativeCallbacksContentSearchInstalledOnError);
+
+		RegisterNativeMethod(env, "CallbacksContentSearchInstalledOnResults", "tv/ouya/sdk/unreal/CallbacksContentSearchInstalled", "([Ltv/ouya/console/api/content/OuyaMod;I)V",
+			(void*)&Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnResults, &g_nativeCallbacksContentSearchInstalledOnResults);
 
 		//
 		// DONE

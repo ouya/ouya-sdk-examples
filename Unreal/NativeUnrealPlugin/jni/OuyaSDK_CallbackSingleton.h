@@ -20,13 +20,19 @@
 #include <jni.h>
 #include <string>
 
+class CallbacksContentDelete;
+class CallbacksContentDownload;
+class CallbacksContentInit;
+class CallbacksContentPublish;
+class CallbacksContentSave;
+class CallbacksContentSearchInstalled;
+class CallbacksContentSearchPublished;
+class CallbacksContentUnpublish;
 class CallbacksInitOuyaPlugin;
 class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
-class CallbacksContentInit;
-class CallbacksContentSave;
 
 namespace OuyaSDK
 {
@@ -44,13 +50,19 @@ namespace OuyaSDK
 
 		static CallbackSingleton* GetInstance();
 
+		CallbacksContentDelete* m_callbacksContentDelete;
+		CallbacksContentDownload* m_callbacksContentDownload;
+		CallbacksContentInit* m_callbacksContentInit;
+		CallbacksContentPublish* m_callbacksContentPublish;
+		CallbacksContentSave* m_callbacksContentSave;
+		CallbacksContentSearchInstalled* m_callbacksContentSearchInstalled;
+		CallbacksContentSearchPublished* m_callbacksContentSearchPublished;
+		CallbacksContentUnpublish* m_callbacksContentUnpublish;
 		CallbacksInitOuyaPlugin* m_callbacksInitOuyaPlugin;
 		CallbacksRequestGamerInfo* m_callbacksRequestGamerInfo;
 		CallbacksRequestProducts* m_callbacksRequestProducts;
 		CallbacksRequestPurchase* m_callbacksRequestPurchase;
 		CallbacksRequestReceipts* m_callbacksRequestReceipts;
-		CallbacksContentInit* m_callbacksContentInit;
-		CallbacksContentSave* m_callbacksContentSave;
 	};
 };
 

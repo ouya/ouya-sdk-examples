@@ -21,7 +21,7 @@
 
 using namespace tv_ouya_console_api_content_OuyaMod;
 
-void CallbacksContentSave::OnError(OuyaMod ouyaMod, int errorCode, const std::string& errorMessage)
+void CallbacksContentSave::OnError(OuyaMod ouyaMod, int code, const std::string& reason)
 {
 }
 

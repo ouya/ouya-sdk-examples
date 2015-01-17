@@ -22,7 +22,13 @@ LOCAL_SRC_FILES := \
 	AndroidJNI.cpp \
 	OuyaSDK_CallbackSingleton.cpp \
 	OuyaSDK_CallbacksContentInit.cpp \
+	OuyaSDK_CallbacksContentDelete.cpp \
+	OuyaSDK_CallbacksContentDownload.cpp \
+	OuyaSDK_CallbacksContentPublish.cpp \
 	OuyaSDK_CallbacksContentSave.cpp \
+	OuyaSDK_CallbacksContentSearchInstalled.cpp \
+	OuyaSDK_CallbacksContentSearchPublished.cpp \
+	OuyaSDK_CallbacksContentUnpublish.cpp \
 	OuyaSDK_CallbacksInitOuyaPlugin.cpp \
 	OuyaSDK_CallbacksRequestGamerInfo.cpp \
 	OuyaSDK_CallbacksRequestProducts.cpp \

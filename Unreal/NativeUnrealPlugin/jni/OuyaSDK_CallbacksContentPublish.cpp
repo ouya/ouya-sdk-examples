@@ -14,21 +14,17 @@
 * limitations under the License.
 */
 
-#ifndef __CALLBACKS_CONTENT_SAVE_H__
-#define __CALLBACKS_CONTENT_SAVE_H__
+#include "OuyaSDK_CallbacksContentPublish.h"
+#include "OuyaSDK_CallbackSingleton.h"
 
-#include "OuyaSDK_OuyaMod.h"
+#include <stdio.h>
 
-#include <string>
-#include <vector>
+using namespace tv_ouya_console_api_content_OuyaMod;
 
-class CallbacksContentSave
+void CallbacksContentPublish::OnError(OuyaMod ouyaMod, int code, const std::string& reason)
 {
-public:
+}
 
-	virtual void OnError(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason);
-
-	virtual void OnSuccess(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod);
-};
-
-#endif
+void CallbacksContentPublish::OnSuccess(OuyaMod ouyaMod)
+{
+}

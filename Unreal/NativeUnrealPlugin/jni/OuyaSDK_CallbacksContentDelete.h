@@ -14,21 +14,21 @@
 * limitations under the License.
 */
 
-#ifndef __CALLBACKS_CONTENT_SAVE_H__
-#define __CALLBACKS_CONTENT_SAVE_H__
+#ifndef __CALLBACKS_CONTENT_DELETE_H__
+#define __CALLBACKS_CONTENT_DELETE_H__
 
 #include "OuyaSDK_OuyaMod.h"
 
 #include <string>
 #include <vector>
 
-class CallbacksContentSave
+class CallbacksContentDelete
 {
 public:
 
-	virtual void OnError(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason);
+	virtual void onDeleteFailed(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason);
 
-	virtual void OnSuccess(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod);
+	virtual void onDeleted(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod);
 };
 
 #endif

@@ -14,21 +14,21 @@
 * limitations under the License.
 */
 
-#ifndef __CALLBACKS_CONTENT_SAVE_H__
-#define __CALLBACKS_CONTENT_SAVE_H__
+#include "OuyaSDK_CallbacksContentDownload.h"
+#include "OuyaSDK_CallbackSingleton.h"
 
-#include "OuyaSDK_OuyaMod.h"
+#include <stdio.h>
 
-#include <string>
-#include <vector>
+using namespace tv_ouya_console_api_content_OuyaMod;
 
-class CallbacksContentSave
+void CallbacksContentDownload::onProgress(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int progress)
 {
-public:
+}
 
-	virtual void OnError(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason);
+void CallbacksContentDownload::onFailed(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, int code, const std::string& reason)
+{
+}
 
-	virtual void OnSuccess(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod);
-};
-
-#endif
+void CallbacksContentDownload::onComplete(OuyaMod ouyaMod)
+{
+}
