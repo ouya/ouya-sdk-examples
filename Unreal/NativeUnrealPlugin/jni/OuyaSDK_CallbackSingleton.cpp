@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef ECLIPSE
+#include "LaunchPrivatePCH.h"
+#endif
 
 #include "OuyaSDK_Bundle.h"
 #include "OuyaSDK_CallbackSingleton.h"
@@ -56,7 +59,8 @@ using namespace tv_ouya_console_api_content_OuyaMod;
 #endif
 #define ENABLE_VERBOSE_LOGGING true
 
-namespace OuyaSDK {
+namespace OuyaSDK
+{
 CallbackSingleton* CallbackSingleton::m_instance = NULL;
 
 CallbackSingleton::CallbackSingleton() {

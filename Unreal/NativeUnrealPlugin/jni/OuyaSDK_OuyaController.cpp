@@ -13,6 +13,9 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+#ifndef ECLIPSE
+#include "LaunchPrivatePCH.h"
+#endif
 
 #include <android/log.h>
 #include <jni.h>

@@ -13,6 +13,9 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+#ifndef ECLIPSE
+#include "LaunchPrivatePCH.h"
+#endif
 
 #include "OuyaSDK_CallbacksRequestReceipts.h"
 #include "OuyaSDK_CallbackSingleton.h"

@@ -34,9 +34,9 @@ namespace OuyaSDK
 		int PriceInCents;
 
 		void Init();
-//#if defined(ANDROID)
+#if defined(ANDROID)
 		void ParseJSON(const org_json_JSONObject::JSONObject& jsonObject);
-//#endif
+#endif
 	};
 }
 
