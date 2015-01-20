@@ -19,6 +19,7 @@ using System.Collections.Generic;
 #if UNITY_ANDROID && !UNITY_EDITOR
 using tv.ouya.console.api;
 #endif
+using tv.ouya.console.api;
 using UnityEngine;
 using Object=UnityEngine.Object;
 
@@ -55,6 +56,8 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
 
     private DateTime m_timerText = DateTime.MinValue;
     private DateTime m_timerTexture = DateTime.MinValue;
+
+    public Vector2 m_labelPosition = Vector2.zero;
 
     public void OnEnable()
     {
@@ -204,58 +207,29 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
             UpdateCounts();
             m_label = string.Format("c={0} | u={1} | {2:F2}%", m_pixelCount, m_updatePixelCount, m_pixelRatio * 100);
         }
-    }
 
-    void Draw()
-    {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        if (m_plots.Count > 0 &&
-            m_plots[0] == this)
+        if (OuyaSDK.OuyaInput.GetButtonDown(PlayerNum, OuyaController.BUTTON_A))
         {
-            GUILayout.Label(string.Empty);
-
-            int index = 0;
-            foreach (string joystick in OuyaSDK.Joysticks)
+            foreach (OuyaPlotMeshThumbstick plot in m_plots)
             {
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(Screen.width * 0.296f);
-                GUILayout.Label(string.Format("Controller{0}: {1}", index + 1, joystick));
-                GUILayout.EndHorizontal();
-                ++index;
-            }
-
-            if (GUI.Button(new Rect(Screen.width * 0.5f, 50, 250, 40), "Clear Thumbstick Graph"))
-            {
-                foreach (OuyaPlotMeshThumbstick plot in m_plots)
+                if (plot)
                 {
-                    if (plot)
-                    {
-                        plot.ClearTexture();
-                    }
-                }
-            }
-
-            if (GUI.Button(new Rect(Screen.width * 0.5f, 100, 250, 40), "Toggle Thumbstick Graph"))
-            {
-                m_toggleGraph = !m_toggleGraph;
-
-                if (m_toggleGraph)
-                {
-                    m_plotBackground.a = 0.5f;
-                }
-                else
-                {
-                    m_plotBackground.a = 0.99f;
-                }
-                foreach (OuyaPlotMeshThumbstick plot in m_plots)
-                {
-                    if (plot)
-                    {
-                        plot.ClearTexture();
-                    }
+                    plot.ClearTexture();
                 }
             }
         }
 #endif
+    }
+
+    void OnGUI()
+    {
+        if (string.IsNullOrEmpty(m_label) ||
+            m_labelPosition == Vector2.zero)
+        {
+            return;
+        }
+
+        GUI.Label(new Rect(m_labelPosition.x, m_labelPosition.y, 200, 200), m_label);
     }
 }
