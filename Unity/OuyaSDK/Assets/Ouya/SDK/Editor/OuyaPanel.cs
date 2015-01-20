@@ -1165,6 +1165,7 @@ public class OuyaPanel : EditorWindow
             "SceneSafeArea",
             "SceneShowJavaScript",
             "SceneShowProducts",
+            "SceneShowSticks",
             "SceneShowUnityInput",
             "VirtualController",
         };

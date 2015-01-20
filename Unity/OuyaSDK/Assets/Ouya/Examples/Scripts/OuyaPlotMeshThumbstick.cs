@@ -22,7 +22,6 @@ using tv.ouya.console.api;
 using UnityEngine;
 using Object=UnityEngine.Object;
 
-[RequireComponent(typeof(Camera))]
 public class OuyaPlotMeshThumbstick : MonoBehaviour
 {
     public int PlayerNum;
@@ -147,8 +146,8 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         // range -1 to 1
-        float axisX = OuyaSDK.OuyaInput.GetAxis(OuyaShowUnityInput.PlayerNum, AxisX);
-        float axisY = OuyaSDK.OuyaInput.GetAxis(OuyaShowUnityInput.PlayerNum, AxisY);
+        float axisX = OuyaSDK.OuyaInput.GetAxis(PlayerNum, AxisX);
+        float axisY = OuyaSDK.OuyaInput.GetAxis(PlayerNum, AxisY);
 
         // put in 0 to TextureSize range
         int x = (int)((axisX + 1) * 0.5f * (TextureSize - 1));
