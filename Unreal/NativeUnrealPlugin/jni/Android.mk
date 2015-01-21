@@ -38,6 +38,7 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_GamerInfo.cpp \
 	OuyaSDK_JSONArray.cpp \
 	OuyaSDK_JSONObject.cpp \
+	OuyaSDK_OuyaContent.cpp \
 	OuyaSDK_OuyaController.cpp \
 	OuyaSDK_OuyaInputView.cpp \
 	OuyaSDK_OuyaMod.cpp \
