@@ -17,6 +17,8 @@
 #ifndef __CALLBACKS_CONTENT_SEARCH_INSTALLED_H__
 #define __CALLBACKS_CONTENT_SEARCH_INSTALLED_H__
 
+#if PLATFORM_ANDROID
+
 #include "OuyaSDK_OuyaMod.h"
 
 #include <string>
@@ -30,5 +32,7 @@ public:
 
 	virtual void OnResults(const std::vector<tv_ouya_console_api_content_OuyaMod::OuyaMod> ouyaMods, int count);
 };
+
+#endif
 
 #endif

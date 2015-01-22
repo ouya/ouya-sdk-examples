@@ -17,6 +17,8 @@
 #ifndef __CALLBACKS_CONTENT_PUBLISH_H__
 #define __CALLBACKS_CONTENT_PUBLISH_H__
 
+#if PLATFORM_ANDROID
+
 #include "OuyaSDK_Bundle.h"
 #include "OuyaSDK_OuyaMod.h"
 
@@ -31,5 +33,7 @@ public:
 
 	virtual void OnSuccess(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod);
 };
+
+#endif
 
 #endif

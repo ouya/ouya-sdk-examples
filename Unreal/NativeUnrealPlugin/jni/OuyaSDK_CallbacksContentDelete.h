@@ -17,6 +17,8 @@
 #ifndef __CALLBACKS_CONTENT_DELETE_H__
 #define __CALLBACKS_CONTENT_DELETE_H__
 
+#if PLATFORM_ANDROID
+
 #include "OuyaSDK_OuyaMod.h"
 
 #include <string>
@@ -30,5 +32,7 @@ public:
 
 	virtual void OnDeleted(const tv_ouya_console_api_content_OuyaMod::OuyaMod& ouyaMod);
 };
+
+#endif
 
 #endif

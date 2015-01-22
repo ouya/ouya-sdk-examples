@@ -17,6 +17,8 @@
 #ifndef __CALLBACKS_CONTENT_INIT_H__
 #define __CALLBACKS_CONTENT_INIT_H__
 
+#if PLATFORM_ANDROID
+
 class CallbacksContentInit
 {
 public:
@@ -25,5 +27,7 @@ public:
 
 	virtual void OnDestroyed();
 };
+
+#endif
 
 #endif
