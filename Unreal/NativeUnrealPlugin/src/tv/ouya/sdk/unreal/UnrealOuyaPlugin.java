@@ -89,7 +89,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.i(TAG, "InitializePlugin: exception: " + e.toString());
+			Log.e(TAG, "InitializePlugin: exception");
+			e.printStackTrace();
 			throw e;
 		}
 	}
@@ -111,7 +112,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "InitializeContent: exception: " + e.toString());
+			Log.e(TAG, "InitializeContent: exception");
+			e.printStackTrace();
 			throw e;
 		}
 	}
@@ -130,9 +132,10 @@ public class UnrealOuyaPlugin
 
 			IUnrealOuyaActivity.GetUnrealOuyaFacade().requestGamerInfo();
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(TAG, "requestGamerInfo exception: " + ex.toString());
+			Log.e(TAG, "requestGamerInfo exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -150,9 +153,10 @@ public class UnrealOuyaPlugin
 
 			IUnrealOuyaActivity.GetUnrealOuyaFacade().requestProducts(products);
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(TAG, "getProductsAsync exception: " + ex.toString());
+			Log.e(TAG, "getProductsAsync exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -170,9 +174,10 @@ public class UnrealOuyaPlugin
 
 			IUnrealOuyaActivity.GetUnrealOuyaFacade().requestPurchase(product);
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.i(TAG, "requestPurchaseAsync: exception: " + ex.toString());
+			Log.e(TAG, "requestPurchaseAsync: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -190,9 +195,10 @@ public class UnrealOuyaPlugin
 
 			IUnrealOuyaActivity.GetUnrealOuyaFacade().requestReceipts();
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Log.e(TAG, "getReceiptsAsync: exception: " + ex.toString());
+			Log.e(TAG, "getReceiptsAsync: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -294,7 +300,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "saveOuyaMod: exception=" + e.toString());
+			Log.e(TAG, "saveOuyaMod: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -322,7 +329,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "getOuyaContentInstalled: exception=" + e.toString());
+			Log.e(TAG, "getOuyaContentInstalled: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -361,7 +369,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "getOuyaContentPublished: exception=" + e.toString());
+			Log.e(TAG, "getOuyaContentPublished: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -400,7 +409,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "contentDelete: exception=" + e.toString());
+			Log.e(TAG, "contentDelete: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -427,7 +437,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "contentPublish: exception=" + e.toString());
+			Log.e(TAG, "contentPublish: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -454,7 +465,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "contentUnpublish: exception=" + e.toString());
+			Log.e(TAG, "contentUnpublish: exception");
+			e.printStackTrace();
 		}
 	}
 
@@ -481,7 +493,8 @@ public class UnrealOuyaPlugin
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "contentDownload: exception=" + e.toString());
+			Log.e(TAG, "contentDownload: exception");
+			e.printStackTrace();
 		}
 	}
 	

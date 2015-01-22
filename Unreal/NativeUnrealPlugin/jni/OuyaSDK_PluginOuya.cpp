@@ -20,6 +20,7 @@
 #include "OuyaSDK_CallbackSingleton.h"
 #include "OuyaSDK_JSONArray.h"
 #include "OuyaSDK_JSONObject.h"
+#include "OuyaSDK_OuyaContent.h"
 #include "OuyaSDK_PluginOuya.h"
 
 #include <jni.h>
@@ -40,6 +41,7 @@
 
 using namespace org_json_JSONArray;
 using namespace org_json_JSONObject;
+using namespace tv_ouya_console_api_content_OuyaContent;
 
 // If we cause an exception in JNI, we print the exception info to
 // the log, we clear the exception to avoid a pending-exception
@@ -61,6 +63,7 @@ namespace OuyaSDK
 	jclass PluginOuya::jc_AsyncCppOuyaRequestProducts = 0;
 	jclass PluginOuya::jc_AsyncCppOuyaRequestPurchase = 0;
 	jclass PluginOuya::jc_AsyncCppOuyaRequestReceipts = 0;
+	jclass PluginOuya::jc_AsyncCppOuyaContentInit = 0;
 
 	int PluginOuya::InitJNI(JavaVM* jvm)
 	{
@@ -219,7 +222,33 @@ namespace OuyaSDK
 			}
 		}
 
+		{
+			const char* strClass = "tv/ouya/sdk/unreal/AsyncCppOuyaContentInit";
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strClass);
+#endif
+			jclass localRef = env->FindClass(strClass);
+			if (localRef)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
+#endif
+				jc_AsyncCppOuyaContentInit = (jclass)env->NewGlobalRef(localRef);
+				env->DeleteLocalRef(localRef);
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strClass);
+				return JNI_ERR;
+			}
+		}
+
 		if (CallbackSingleton::InitJNI(jvm) == JNI_ERR)
+		{
+			return JNI_ERR;
+		}
+
+		if (OuyaContent::InitJNI(jvm) == JNI_ERR)
 		{
 			return JNI_ERR;
 		}
@@ -423,6 +452,33 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
+	void PluginOuya::AsyncOuyaContentInit(CallbacksContentInit* callbacks)
+	{
+		//LOGI("AsyncOuyaContentInit");
+
+		CallbackSingleton::GetInstance()->m_callbacksContentInit = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		//LOGI("get the invoke method");
+		jmethodID invokeMethod = env->GetStaticMethodID(jc_AsyncCppOuyaContentInit, "invoke", "()V");
+		EXCEPTION_RETURN(env);
+
+		//LOGI("execute the invoke method");
+		env->CallStaticVoidMethod(jc_AsyncCppOuyaContentInit, invokeMethod);
+		EXCEPTION_RETURN(env);
+	}
+
 	bool PluginOuya::updateSafeArea(float amount)
 	{
 		JNIEnv* env;
@@ -491,5 +547,40 @@ namespace OuyaSDK
 		}
 
 		return env->CallStaticBooleanMethod(jc_UnrealOuyaPlugin, method);
+	}
+
+	void PluginOuya::InitializeContent()
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "InitializeContent";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "()V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method);
 	}
 }

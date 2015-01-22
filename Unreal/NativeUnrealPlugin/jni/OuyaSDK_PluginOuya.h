@@ -28,6 +28,7 @@ class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
+class CallbacksContentInit;
 
 namespace OuyaSDK
 {
@@ -47,9 +48,13 @@ namespace OuyaSDK
 
 		void AsyncOuyaRequestReceipts(CallbacksRequestReceipts* callbacks);
 
+		void AsyncOuyaContentInit(CallbacksContentInit* callbacks);
+
 		static bool updateSafeArea(float amount);
 
 		static bool shutdown();
+
+		static void InitializeContent();
 
 	private:
 
@@ -62,6 +67,7 @@ namespace OuyaSDK
 		static jclass jc_AsyncCppOuyaRequestProducts;
 		static jclass jc_AsyncCppOuyaRequestPurchase;
 		static jclass jc_AsyncCppOuyaRequestReceipts;
+		static jclass jc_AsyncCppOuyaContentInit;
 	};
 }
 
