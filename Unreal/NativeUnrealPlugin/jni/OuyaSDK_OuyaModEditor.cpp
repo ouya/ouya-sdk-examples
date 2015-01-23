@@ -101,6 +101,166 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 			return JNI_ERR;
 		}
 
+		{
+			const char* strMethod = "addScreenshot";
+			_jmAddScreenshot = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Landroid/graphics/Bitmap;)Ltv/ouya/console/api/content/OuyaModScreenshot;");
+			if (_jmAddScreenshot)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "addTag";
+			_jmAddTag = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmAddTag)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "deleteFile";
+			_jmDeleteFile = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmDeleteFile)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "newFile";
+			_jmNewFile = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)Ljava/io/OutputStream;");
+			if (_jmNewFile)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "removeScreenshot";
+			_jmRemoveScreenshot = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ltv/ouya/console/api/content/OuyaModScreenshot;)V");
+			if (_jmRemoveScreenshot)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "removeTag";
+			_jmRemoveTag = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmRemoveTag)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "setCategory";
+			_jmSetCategory = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmSetCategory)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "setDescription";
+			_jmSetDescription = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmSetDescription)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "setMetadata";
+			_jmSetMetadata = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmSetMetadata)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "setTitle";
+			_jmSetTitle = env->GetMethodID(_jcOuyaModEditor, strMethod, "(Ljava/lang/String;)V");
+			if (_jmSetTitle)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
 		return JNI_OK;
 	}
 
