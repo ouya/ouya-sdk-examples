@@ -19,7 +19,12 @@
 
 #if PLATFORM_ANDROID
 
+#include "OuyaSDK_Bitmap.h"
+#include "OuyaSDK_OutputStream.h"
+#include "OuyaSDK_OuyaModScreenshot.h"
+
 #include <jni.h>
+#include <string>
 
 namespace tv_ouya_console_api_content_OuyaModEditor
 {
@@ -31,9 +36,29 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 		OuyaModEditor(jobject instance);
 		jobject GetInstance() const;
 		void Dispose() const;
+		tv_ouya_console_api_content_OuyaModScreenshot::OuyaModScreenshot addScreenshot(const android_graphics_Bitmap::Bitmap& bitmap) const;
+		void addTag(const std::string& tag) const;
+		void deleteFile(const std::string& filename) const;
+		java_io_OutputStream::OutputStream newFile(const std::string& filename) const;
+		void removeScreenshot(const tv_ouya_console_api_content_OuyaModScreenshot::OuyaModScreenshot& ouyaModScreenshot) const;
+		void removeTag(const std::string& tag) const;
+		void setCategory(const std::string& category) const;
+		void setDescription(const std::string& description) const;
+		void setMetadata(const std::string& metadata) const;
+		void setTitle(const std::string& title) const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcOuyaModEditor;
+		static jmethodID _jmAddScreenshot;
+		static jmethodID _jmAddTag;
+		static jmethodID _jmDeleteFile;
+		static jmethodID _jmNewFile;
+		static jmethodID _jmRemoveScreenshot;
+		static jmethodID _jmRemoveTag;
+		static jmethodID _jmSetCategory;
+		static jmethodID _jmSetDescription;
+		static jmethodID _jmSetMetadata;
+		static jmethodID _jmSetTitle;
 		jobject _instance;
 	};
 }

@@ -17,7 +17,7 @@
 #include "LaunchPrivatePCH.h"
 #endif
 
-#include "OuyaSDK_OuyaModEditor.h"
+#include "OuyaSDK_Bitmap.h"
 
 #include <android/log.h>
 #include <jni.h>
@@ -25,29 +25,19 @@
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "tv_ouya_console_api_content_OuyaModEditor"
+#define LOG_TAG "android_graphics_Bitmap"
 
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
 #define ENABLE_VERBOSE_LOGGING false
 
-namespace tv_ouya_console_api_content_OuyaModEditor
+namespace android_graphics_Bitmap
 {
-	JavaVM* OuyaModEditor::_jvm = 0;
-	jclass OuyaModEditor::_jcOuyaModEditor = 0;
-	jmethodID OuyaModEditor::_jmAddScreenshot = 0;
-	jmethodID OuyaModEditor::_jmAddTag = 0;
-	jmethodID OuyaModEditor::_jmDeleteFile = 0;
-	jmethodID OuyaModEditor::_jmNewFile = 0;
-	jmethodID OuyaModEditor::_jmRemoveScreenshot = 0;
-	jmethodID OuyaModEditor::_jmRemoveTag = 0;
-	jmethodID OuyaModEditor::_jmSetCategory = 0;
-	jmethodID OuyaModEditor::_jmSetDescription = 0;
-	jmethodID OuyaModEditor::_jmSetMetadata = 0;
-	jmethodID OuyaModEditor::_jmSetTitle = 0;
+	JavaVM* Bitmap::_jvm = 0;
+	jclass Bitmap::_jcBitmap = 0;
 
-	int OuyaModEditor::InitJNI(JavaVM* jvm)
+	int Bitmap::InitJNI(JavaVM* jvm)
 	{
 		_jvm = jvm;
 
@@ -64,7 +54,7 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 		}
 
 		{
-			const char* strClass = "tv/ouya/console/api/content/OuyaMod$Editor";
+			const char* strClass = "android/graphics/Bitmap";
 #if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Searching for %s", strClass);
 #endif
@@ -74,7 +64,7 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found %s", strClass);
 #endif
-				_jcOuyaModEditor = (jclass)env->NewGlobalRef(localRef);
+				_jcBitmap = (jclass)env->NewGlobalRef(localRef);
 				env->DeleteLocalRef(localRef);
 			}
 			else
@@ -87,7 +77,7 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 		return FindJNI();
 	}
 
-	int OuyaModEditor::FindJNI()
+	int Bitmap::FindJNI()
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -104,17 +94,17 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 		return JNI_OK;
 	}
 
-	OuyaModEditor::OuyaModEditor(jobject instance)
+	Bitmap::Bitmap(jobject instance)
 	{
 		_instance = instance;
 	}
 
-	jobject OuyaModEditor::GetInstance() const
+	jobject Bitmap::GetInstance() const
 	{
 		return _instance;
 	}
 
-	void OuyaModEditor::Dispose() const
+	void Bitmap::Dispose() const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {

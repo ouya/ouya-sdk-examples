@@ -20,6 +20,7 @@ LOCAL_MODULE    := native-activity
 LOCAL_SRC_FILES := \
 	LaunchAndroid.cpp \
 	AndroidJNI.cpp \
+	OuyaSDK_Bitmap.cpp \
 	OuyaSDK_Bundle.cpp \
 	OuyaSDK_CallbackSingleton.cpp \
 	OuyaSDK_CallbacksContentInit.cpp \
@@ -38,11 +39,13 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_GamerInfo.cpp \
 	OuyaSDK_JSONArray.cpp \
 	OuyaSDK_JSONObject.cpp \
+	OuyaSDK_OutputStream.cpp \
 	OuyaSDK_OuyaContent.cpp \
 	OuyaSDK_OuyaController.cpp \
 	OuyaSDK_OuyaInputView.cpp \
 	OuyaSDK_OuyaMod.cpp \
 	OuyaSDK_OuyaModEditor.cpp \
+	OuyaSDK_OuyaModScreenshot.cpp \
 	OuyaSDK_PluginOuya.cpp \
 	OuyaSDK_Product.cpp \
 	OuyaSDK_Receipt.cpp
