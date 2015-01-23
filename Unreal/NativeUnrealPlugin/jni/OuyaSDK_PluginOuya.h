@@ -19,6 +19,9 @@
 
 #if PLATFORM_ANDROID
 
+#include "OuyaSDK_OuyaMod.h"
+#include "OuyaSDK_OuyaModEditor.h"
+
 #include <jni.h>
 #include <string>
 #include <vector>
@@ -29,6 +32,7 @@ class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
 class CallbacksContentInit;
+class CallbacksContentSave;
 
 namespace OuyaSDK
 {
@@ -55,6 +59,10 @@ namespace OuyaSDK
 		static bool shutdown();
 
 		static void InitializeContent();
+
+		static void saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
+				tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
+				CallbacksContentSave* callbacks);
 
 	private:
 

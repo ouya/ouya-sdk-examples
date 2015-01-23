@@ -597,4 +597,43 @@ namespace OuyaSDK
 
 		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method);
 	}
+
+	void PluginOuya::saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
+		tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
+		CallbacksContentSave* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentSave = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "saveOuyaMod";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod$Editor;Ltv/ouya/console/api/content/OuyaMod;)V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaModEditor.GetInstance(), ouyaMod.GetInstance());
+	}
 }

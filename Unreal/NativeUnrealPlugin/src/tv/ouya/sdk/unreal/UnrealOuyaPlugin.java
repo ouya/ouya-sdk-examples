@@ -277,7 +277,7 @@ public class UnrealOuyaPlugin
 		return IUnrealOuyaActivity.GetOuyaContent();
 	}
 
-	public static void saveOuyaMod(final OuyaMod ouyaMod, final OuyaMod.Editor editor) {
+	public static void saveOuyaMod(final OuyaMod.Editor editor, final OuyaMod ouyaMod) {
 		try
 		{
 			//Log.i(TAG, "saveOuyaMod");

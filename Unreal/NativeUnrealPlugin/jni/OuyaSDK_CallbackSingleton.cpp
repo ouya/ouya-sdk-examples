@@ -93,496 +93,620 @@ CallbackSingleton* CallbackSingleton::GetInstance() {
 }
 
 extern "C" {
-/// CallbacksInitOuyaPlugin
+	/// CallbacksInitOuyaPlugin
 
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess(JNIEnv* env, jobject thiz)
-{
-#if ENABLE_VERBOSE_LOGGING
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***********Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess***********");
-#endif
-
-	CallbacksInitOuyaPlugin* callback = CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin;
-	if (callback)
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess(JNIEnv* env, jobject thiz)
 	{
-		callback->OnSuccess();
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure***********");
-
-	std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
-	//LOGI(buffer);
-
-	CallbacksInitOuyaPlugin* callback = CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin;
-	if (callback)
-	{
-		callback->OnFailure(errorCode, strErrorMessage);
-	}
-}
-
-/// CallbacksRequestGamerInfo
-
-//com.ODK.CallbacksRequestGamerInfo.CallbacksRequestGamerInfoOnSuccess
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
-{
-#if ENABLE_VERBOSE_LOGGING
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***********Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess***********");
-#endif
-
-	std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess: Returned to C: %s", strJsonData.c_str());
-	//LOGI(buffer);
-
-	JSONObject jsonObject = JSONObject(strJsonData.c_str());
-
-	// Parse example data
-	OuyaSDK::GamerInfo newGamerInfo;
-	newGamerInfo.ParseJSON(jsonObject);
-
-	CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
-	if (callback)
-	{
-		callback->OnSuccess(newGamerInfo);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure***********");
-
-	std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
-	//LOGI(buffer);
-
-	CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
-	if (callback)
-	{
-		callback->OnFailure(errorCode, strErrorMessage);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel(JNIEnv* env, jobject thiz)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel***********");
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel: Returned to C");
-	//LOGI(buffer);
-
-	CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
-	if (callback)
-	{
-		callback->OnCancel();
-	}
-}
-
-/// CallbacksRequestProducts
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
-
-	std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
-	//LOGI(buffer);
-
-	JSONArray jsonArray = JSONArray(strJsonData.c_str());
-
-	std::vector<Product> products;
-
-	for (int i = 0; i < jsonArray.length(); i++)
-	{
-		OuyaSDK::Product newProduct;
-		JSONObject jsonObject = jsonArray.getJSONObject(i);
-		newProduct.ParseJSON(jsonObject);
-
-		products.push_back(newProduct);
-	}
-
-	CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
-	if (callback)
-	{
-		callback->OnSuccess(products);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
-
-	std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
-	//LOGI(buffer);
-
-	CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
-	if (callback)
-	{
-		callback->OnFailure(errorCode, strErrorMessage);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnCancel***********");
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
-	//LOGI(buffer);
-
-	CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
-	if (callback)
-	{
-		callback->OnCancel();
-	}
-}
-
-/// CallbacksRequestPurchase
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
-
-	std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
-	//LOGI(buffer);
-
-	JSONObject jsonObject = JSONObject(strJsonData.c_str());
-
-	OuyaSDK::Product product;
-	product.ParseJSON(jsonObject);
-
-	CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
-	if (callback)
-	{
-		callback->OnSuccess(product);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
-
-	std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
-	//LOGI(buffer);
-
-	CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
-	if (callback)
-	{
-		callback->OnFailure(errorCode, strErrorMessage);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel***********");
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
-	//LOGI(buffer);
-
-	CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
-	if (callback)
-	{
-		callback->OnCancel();
-	}
-}
-
-/// CallbacksRequestReceipts
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
-{
-#if ENABLE_VERBOSE_LOGGING
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***********Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
-#endif
-
-	std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
-
-#if ENABLE_VERBOSE_LOGGING
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
-#endif
-
-	//LOGI("Parsing JSON Data");
-
-	JSONArray jsonArray = JSONArray(strJsonData.c_str());
-
-	std::vector<Receipt> receipts;
-
-	for (int i = 0; i < jsonArray.length(); i++)
-	{
-		OuyaSDK::Receipt newReceipt;
-		JSONObject jsonObject = jsonArray.getJSONObject(i);
-		newReceipt.ParseJSON(jsonObject);
-
-		receipts.push_back(newReceipt);
-	}
-
-	CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
-	if (callback)
-	{
-		callback->OnSuccess(receipts);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
-
-	std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
-	//LOGI(buffer);
-
-	CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
-	if (callback)
-	{
-		callback->OnFailure(errorCode, strErrorMessage);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
-{
-	//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel***********");
-
-	//char buffer[256];
-	//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
-	//LOGI(buffer);
-
-	CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
-	if (callback)
-	{
-		callback->OnCancel();
-	}
-}
-
-/// CallbacksContentDelete
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDelete_CallbacksContentDeleteOnDeleteFailed(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
-{
-	std::string strReason = env->GetStringUTFChars(reason, NULL);
-
-	CallbacksContentDelete* callback = CallbackSingleton::GetInstance()->m_callbacksContentDelete;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnDeleteFailed(newOuyaMod, code, strReason);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDelete_CallbacksContentDeleteOnDeleted(JNIEnv* env, jobject thiz, jobject ouyaMod)
-{
-	CallbacksContentDelete* callback = CallbackSingleton::GetInstance()->m_callbacksContentDelete;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnDeleted(newOuyaMod);
-	}
-}
-
-/// CallbacksContentDownload
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDownload_CallbacksContentDownloadOnProgress(JNIEnv* env, jobject thiz, jobject ouyaMod, jint progress)
-{
-	CallbacksContentDownload* callback = CallbackSingleton::GetInstance()->m_callbacksContentDownload;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnProgress(newOuyaMod, progress);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDownload_CallbacksContentDownloadOnFailed(JNIEnv* env, jobject thiz, jobject ouyaMod)
-{
-	CallbacksContentDownload* callback = CallbackSingleton::GetInstance()->m_callbacksContentDownload;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnFailed(newOuyaMod);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDownload_CallbacksContentDownloadOnComplete(JNIEnv* env, jobject thiz, jobject ouyaMod)
-{
-	CallbacksContentDownload* callback = CallbackSingleton::GetInstance()->m_callbacksContentDownload;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnComplete(newOuyaMod);
-	}
-}
-
-/// CallbacksContentInit
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnInitialized(JNIEnv* env, jobject thiz)
-{
-	CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
-	if (callback)
-	{
-		callback->OnInitialized();
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnDestroyed(JNIEnv* env, jobject thiz)
-{
-	CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
-	if (callback)
-	{
-		callback->OnDestroyed();
-	}
-}
-
-/// CallbacksContentSave
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
-{
-	std::string strReason = env->GetStringUTFChars(reason, NULL);
-
-	CallbacksContentSave* callback = CallbackSingleton::GetInstance()->m_callbacksContentSave;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnError(newOuyaMod, code, strReason);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
-{
-	CallbacksContentSave* callback = CallbackSingleton::GetInstance()->m_callbacksContentSave;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnSuccess(newOuyaMod);
-	}
-}
-
-/// CallbacksContentPublish
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason, jobject bundle)
-{
-	std::string strReason = env->GetStringUTFChars(reason, NULL);
-
-	CallbacksContentPublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentPublish;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		Bundle newBundle = Bundle(bundle);
-		callback->OnError(newOuyaMod, code, strReason, newBundle);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
-{
-	CallbacksContentPublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentPublish;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnSuccess(newOuyaMod);
-	}
-}
-
-/// CallbacksContentSearchInstalled
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
-{
-	std::string strReason = env->GetStringUTFChars(reason, NULL);
-
-	CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
-	if (callback)
-	{
-		callback->OnError(code, strReason);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
-{
-	CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
-	if (callback)
-	{
-		std::vector<OuyaMod> newOuyaMods;
-		jsize length = env->GetArrayLength(ouyaMods);
-		for (jsize index(0); index < length; ++index)
+	#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***********Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnSuccess***********");
+	#endif
+
+		CallbacksInitOuyaPlugin* callback = CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin;
+		if (callback)
 		{
-			jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
-			OuyaMod newOuyaMod = OuyaMod(element);
-			newOuyaMods.push_back(newOuyaMod);
-
+			callback->OnSuccess();
 		}
-		callback->OnResults(newOuyaMods, count);
-	}
-}
-
-/// CallbacksContentSearchPublished
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
-{
-	std::string strReason = env->GetStringUTFChars(reason, NULL);
-
-	CallbacksContentSearchPublished* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished;
-	if (callback)
-	{
-		callback->OnError(code, strReason);
-	}
-}
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
-{
-	CallbacksContentSearchPublished* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished;
-	if (callback)
-	{
-		std::vector<OuyaMod> newOuyaMods;
-		jsize length = env->GetArrayLength(ouyaMods);
-		for (jsize index(0); index < length; ++index)
+		else
 		{
-			jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
-			OuyaMod newOuyaMod = OuyaMod(element);
-			newOuyaMods.push_back(newOuyaMod);
-
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksInitOuyaPlugin is not set");
 		}
-		callback->OnResults(newOuyaMods, count);
 	}
-}
 
-/// CallbacksContentUnpublish
-
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
-{
-	std::string strReason = env->GetStringUTFChars(reason, NULL);
-
-	CallbacksContentUnpublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentUnpublish;
-	if (callback)
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
 	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnError(newOuyaMod, code, strReason);
-	}
-}
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure***********");
 
-JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
-{
-	CallbacksContentUnpublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentUnpublish;
-	if (callback)
-	{
-		OuyaMod newOuyaMod = OuyaMod(ouyaMod);
-		callback->OnSuccess(newOuyaMod);
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksInitOuyaPlugin_CallbacksInitOuyaPluginOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+		//LOGI(buffer);
+
+		CallbacksInitOuyaPlugin* callback = CallbackSingleton::GetInstance()->m_callbacksInitOuyaPlugin;
+		if (callback)
+		{
+			callback->OnFailure(errorCode, strErrorMessage);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksInitOuyaPlugin is not set");
+		}
 	}
-}
+
+	/// CallbacksRequestGamerInfo
+
+	//com.ODK.CallbacksRequestGamerInfo.CallbacksRequestGamerInfoOnSuccess
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+	{
+	#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***********Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess***********");
+	#endif
+
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnSuccess: Returned to C: %s", strJsonData.c_str());
+		//LOGI(buffer);
+
+		JSONObject jsonObject = JSONObject(strJsonData.c_str());
+
+		// Parse example data
+		OuyaSDK::GamerInfo newGamerInfo;
+		newGamerInfo.ParseJSON(jsonObject);
+
+		CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
+		if (callback)
+		{
+			callback->OnSuccess(newGamerInfo);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestGamerInfo is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure***********");
+
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+		//LOGI(buffer);
+
+		CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
+		if (callback)
+		{
+			callback->OnFailure(errorCode, strErrorMessage);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestGamerInfo is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel(JNIEnv* env, jobject thiz)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel***********");
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestGamerInfo_CallbacksRequestGamerInfoOnCancel: Returned to C");
+		//LOGI(buffer);
+
+		CallbacksRequestGamerInfo* callback = CallbackSingleton::GetInstance()->m_callbacksRequestGamerInfo;
+		if (callback)
+		{
+			callback->OnCancel();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestGamerInfo is not set");
+		}
+	}
+
+	/// CallbacksRequestProducts
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess***********");
+
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnSuccess: Returned to C: %s", strJsonData.c_str());
+		//LOGI(buffer);
+
+		JSONArray jsonArray = JSONArray(strJsonData.c_str());
+
+		std::vector<Product> products;
+
+		for (int i = 0; i < jsonArray.length(); i++)
+		{
+			OuyaSDK::Product newProduct;
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+			newProduct.ParseJSON(jsonObject);
+
+			products.push_back(newProduct);
+		}
+
+		CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
+		if (callback)
+		{
+			callback->OnSuccess(products);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestProducts is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnFailure***********");
+
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+		//LOGI(buffer);
+
+		CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
+		if (callback)
+		{
+			callback->OnFailure(errorCode, strErrorMessage);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestProducts is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnCancel(JNIEnv* env, jobject thiz)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnCancel***********");
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestProducts_CallbacksRequestProductsOnCancel: Returned to C");
+		//LOGI(buffer);
+
+		CallbacksRequestProducts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestProducts;
+		if (callback)
+		{
+			callback->OnCancel();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestProducts is not set");
+		}
+	}
+
+	/// CallbacksRequestPurchase
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess***********");
+
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnSuccess: Returned to C: %s", strJsonData.c_str());
+		//LOGI(buffer);
+
+		JSONObject jsonObject = JSONObject(strJsonData.c_str());
+
+		OuyaSDK::Product product;
+		product.ParseJSON(jsonObject);
+
+		CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
+		if (callback)
+		{
+			callback->OnSuccess(product);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestPurchase is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure***********");
+
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+		//LOGI(buffer);
+
+		CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
+		if (callback)
+		{
+			callback->OnFailure(errorCode, strErrorMessage);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestPurchase is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel(JNIEnv* env, jobject thiz)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel***********");
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestPurchase_CallbacksRequestPurchaseOnCancel: Returned to C");
+		//LOGI(buffer);
+
+		CallbacksRequestPurchase* callback = CallbackSingleton::GetInstance()->m_callbacksRequestPurchase;
+		if (callback)
+		{
+			callback->OnCancel();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestPurchase is not set");
+		}
+	}
+
+	/// CallbacksRequestReceipts
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess(JNIEnv* env, jobject thiz, jstring jsonData)
+	{
+	#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "***********Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess***********");
+	#endif
+
+		std::string strJsonData = env->GetStringUTFChars(jsonData, NULL);
+
+	#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnSuccess: Returned to C: %s", strJsonData.c_str());
+	#endif
+
+		//LOGI("Parsing JSON Data");
+
+		JSONArray jsonArray = JSONArray(strJsonData.c_str());
+
+		std::vector<Receipt> receipts;
+
+		for (int i = 0; i < jsonArray.length(); i++)
+		{
+			OuyaSDK::Receipt newReceipt;
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+			newReceipt.ParseJSON(jsonObject);
+
+			receipts.push_back(newReceipt);
+		}
+
+		CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+		if (callback)
+		{
+			callback->OnSuccess(receipts);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestReceipts is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure(JNIEnv* env, jobject thiz, jint errorCode, jstring errorMessage)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure***********");
+
+		std::string strErrorMessage = env->GetStringUTFChars(errorMessage, NULL);
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnFailure: Returned to C: %d %s", errorCode, strGamerUUID.c_str());
+		//LOGI(buffer);
+
+		CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+		if (callback)
+		{
+			callback->OnFailure(errorCode, strErrorMessage);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestReceipts is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel(JNIEnv* env, jobject thiz)
+	{
+		//LOGI("***********Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel***********");
+
+		//char buffer[256];
+		//sprintf(buffer, "Java_tv_ouya_sdk_unreal_CallbacksRequestReceipts_CallbacksRequestReceiptsOnCancel: Returned to C");
+		//LOGI(buffer);
+
+		CallbacksRequestReceipts* callback = CallbackSingleton::GetInstance()->m_callbacksRequestReceipts;
+		if (callback)
+		{
+			callback->OnCancel();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksRequestReceipts is not set");
+		}
+	}
+
+	/// CallbacksContentDelete
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDelete_CallbacksContentDeleteOnDeleteFailed(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
+	{
+		std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+		CallbacksContentDelete* callback = CallbackSingleton::GetInstance()->m_callbacksContentDelete;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnDeleteFailed(newOuyaMod, code, strReason);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentDelete is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDelete_CallbacksContentDeleteOnDeleted(JNIEnv* env, jobject thiz, jobject ouyaMod)
+	{
+		CallbacksContentDelete* callback = CallbackSingleton::GetInstance()->m_callbacksContentDelete;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnDeleted(newOuyaMod);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentDelete is not set");
+		}
+	}
+
+	/// CallbacksContentDownload
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDownload_CallbacksContentDownloadOnProgress(JNIEnv* env, jobject thiz, jobject ouyaMod, jint progress)
+	{
+		CallbacksContentDownload* callback = CallbackSingleton::GetInstance()->m_callbacksContentDownload;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnProgress(newOuyaMod, progress);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentDownload is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDownload_CallbacksContentDownloadOnFailed(JNIEnv* env, jobject thiz, jobject ouyaMod)
+	{
+		CallbacksContentDownload* callback = CallbackSingleton::GetInstance()->m_callbacksContentDownload;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnFailed(newOuyaMod);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentDownload is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentDownload_CallbacksContentDownloadOnComplete(JNIEnv* env, jobject thiz, jobject ouyaMod)
+	{
+		CallbacksContentDownload* callback = CallbackSingleton::GetInstance()->m_callbacksContentDownload;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnComplete(newOuyaMod);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentDownload is not set");
+		}
+	}
+
+	/// CallbacksContentInit
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnInitialized(JNIEnv* env, jobject thiz)
+	{
+		CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
+		if (callback)
+		{
+			callback->OnInitialized();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentInit is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentInit_CallbacksContentInitOnDestroyed(JNIEnv* env, jobject thiz)
+	{
+		CallbacksContentInit* callback = CallbackSingleton::GetInstance()->m_callbacksContentInit;
+		if (callback)
+		{
+			callback->OnDestroyed();
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentInit is not set");
+		}
+	}
+
+	/// CallbacksContentSave
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
+	{
+		std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+		CallbacksContentSave* callback = CallbackSingleton::GetInstance()->m_callbacksContentSave;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnError(newOuyaMod, code, strReason);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentSave is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSave_CallbacksContentSaveOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
+	{
+		CallbacksContentSave* callback = CallbackSingleton::GetInstance()->m_callbacksContentSave;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnSuccess(newOuyaMod);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentSave is not set");
+		}
+	}
+
+	/// CallbacksContentPublish
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason, jobject bundle)
+	{
+		std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+		CallbacksContentPublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentPublish;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			Bundle newBundle = Bundle(bundle);
+			callback->OnError(newOuyaMod, code, strReason, newBundle);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentPublish is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentPublish_CallbacksContentPublishOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
+	{
+		CallbacksContentPublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentPublish;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnSuccess(newOuyaMod);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentPublish is not set");
+		}
+	}
+
+	/// CallbacksContentSearchInstalled
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
+	{
+		std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+		CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
+		if (callback)
+		{
+			callback->OnError(code, strReason);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentSearchInstalled is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchInstalled_CallbacksContentSearchInstalledOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
+	{
+		CallbacksContentSearchInstalled* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled;
+		if (callback)
+		{
+			std::vector<OuyaMod> newOuyaMods;
+			jsize length = env->GetArrayLength(ouyaMods);
+			for (jsize index(0); index < length; ++index)
+			{
+				jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
+				OuyaMod newOuyaMod = OuyaMod(element);
+				newOuyaMods.push_back(newOuyaMod);
+
+			}
+			callback->OnResults(newOuyaMods, count);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentSearchInstalled is not set");
+		}
+	}
+
+	/// CallbacksContentSearchPublished
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnError(JNIEnv* env, jobject thiz, jint code, jstring reason)
+	{
+		std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+		CallbacksContentSearchPublished* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished;
+		if (callback)
+		{
+			callback->OnError(code, strReason);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentSearchPublished is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentSearchPublished_CallbacksContentSearchPublishedOnResults(JNIEnv* env, jobject thiz, jobjectArray ouyaMods, jint count)
+	{
+		CallbacksContentSearchPublished* callback = CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished;
+		if (callback)
+		{
+			std::vector<OuyaMod> newOuyaMods;
+			jsize length = env->GetArrayLength(ouyaMods);
+			for (jsize index(0); index < length; ++index)
+			{
+				jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
+				OuyaMod newOuyaMod = OuyaMod(element);
+				newOuyaMods.push_back(newOuyaMod);
+
+			}
+			callback->OnResults(newOuyaMods, count);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentSearchPublished is not set");
+		}
+	}
+
+	/// CallbacksContentUnpublish
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnError(JNIEnv* env, jobject thiz, jobject ouyaMod, jint code, jstring reason)
+	{
+		std::string strReason = env->GetStringUTFChars(reason, NULL);
+
+		CallbacksContentUnpublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentUnpublish;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnError(newOuyaMod, code, strReason);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentUnpublish is not set");
+		}
+	}
+
+	JNIEXPORT void JNICALL Java_tv_ouya_sdk_unreal_CallbacksContentUnpublish_CallbacksContentUnpublishOnSuccess(JNIEnv* env, jobject thiz, jobject ouyaMod)
+	{
+		CallbacksContentUnpublish* callback = CallbackSingleton::GetInstance()->m_callbacksContentUnpublish;
+		if (callback)
+		{
+			OuyaMod newOuyaMod = OuyaMod(ouyaMod);
+			callback->OnSuccess(newOuyaMod);
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "CallbacksContentUnpublish is not set");
+		}
+	}
 }
 
 void RegisterNativeMethod(JNIEnv* env, std::string methodName,

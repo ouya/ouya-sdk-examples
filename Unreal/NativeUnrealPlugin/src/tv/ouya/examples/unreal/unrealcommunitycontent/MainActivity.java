@@ -255,7 +255,7 @@ public class MainActivity extends Activity {
 						} else {
 							editor.addScreenshot(mScreenshot);
 						}
-						UnrealOuyaPlugin.saveOuyaMod(mOuyaMod2, editor);
+						UnrealOuyaPlugin.saveOuyaMod(editor, mOuyaMod2);
 						Log.i(TAG, "Save2 invoked");
 					} catch (Exception e) {
 						Log.e(TAG, "Save2 failed");
