@@ -21,6 +21,8 @@
 #include "OuyaSDK_JSONArray.h"
 #include "OuyaSDK_JSONObject.h"
 #include "OuyaSDK_OuyaContent.h"
+#include "OuyaSDK_OuyaMod.h"
+#include "OuyaSDK_OuyaModEditor.h"
 #include "OuyaSDK_PluginOuya.h"
 
 #include <jni.h>
@@ -42,6 +44,8 @@
 using namespace org_json_JSONArray;
 using namespace org_json_JSONObject;
 using namespace tv_ouya_console_api_content_OuyaContent;
+using namespace tv_ouya_console_api_content_OuyaMod;
+using namespace tv_ouya_console_api_content_OuyaModEditor;
 
 // If we cause an exception in JNI, we print the exception info to
 // the log, we clear the exception to avoid a pending-exception
@@ -249,6 +253,16 @@ namespace OuyaSDK
 		}
 
 		if (OuyaContent::InitJNI(jvm) == JNI_ERR)
+		{
+			return JNI_ERR;
+		}
+
+		if (OuyaMod::InitJNI(jvm) == JNI_ERR)
+		{
+			return JNI_ERR;
+		}
+
+		if (OuyaModEditor::InitJNI(jvm) == JNI_ERR)
 		{
 			return JNI_ERR;
 		}

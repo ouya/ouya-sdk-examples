@@ -17,30 +17,27 @@
 #include "LaunchPrivatePCH.h"
 #endif
 
-#include "OuyaSDK_OuyaMod.h"
+#include "OuyaSDK_OuyaModEditor.h"
 
 #include <android/log.h>
 #include <jni.h>
 
-using namespace tv_ouya_console_api_content_OuyaModEditor;
-
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "tv_ouya_console_api_content_OuyaMod"
+#define LOG_TAG "tv_ouya_console_api_content_OuyaModEditor"
 
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
 #define ENABLE_VERBOSE_LOGGING false
 
-namespace tv_ouya_console_api_content_OuyaMod
+namespace tv_ouya_console_api_content_OuyaModEditor
 {
-	JavaVM* OuyaMod::_jvm = 0;
-	jclass OuyaMod::_jcOuyaMod = 0;
-	jmethodID OuyaMod::_jmEdit = 0;
+	JavaVM* OuyaModEditor::_jvm = 0;
+	jclass OuyaModEditor::_jcOuyaModEditor = 0;
 
-	int OuyaMod::InitJNI(JavaVM* jvm)
+	int OuyaModEditor::InitJNI(JavaVM* jvm)
 	{
 		_jvm = jvm;
 
@@ -57,7 +54,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		{
-			const char* strClass = "tv/ouya/console/api/content/OuyaMod";
+			const char* strClass = "tv/ouya/console/api/content/OuyaMod$Editor";
 #if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Searching for %s", strClass);
 #endif
@@ -67,7 +64,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found %s", strClass);
 #endif
-				_jcOuyaMod = (jclass)env->NewGlobalRef(localRef);
+				_jcOuyaModEditor = (jclass)env->NewGlobalRef(localRef);
 				env->DeleteLocalRef(localRef);
 			}
 			else
@@ -80,7 +77,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		return FindJNI();
 	}
 
-	int OuyaMod::FindJNI()
+	int OuyaModEditor::FindJNI()
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -94,36 +91,20 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return JNI_ERR;
 		}
 
-		{
-			const char* strMethod = "edit";
-			_jmEdit = env->GetMethodID(_jcOuyaMod, strMethod, "()Ltv/ouya/console/api/content/OuyaMod$Editor;");
-			if (_jmEdit)
-			{
-#if ENABLE_VERBOSE_LOGGING
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
-#endif
-			}
-			else
-			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
-				return JNI_ERR;
-			}
-		}
-
 		return JNI_OK;
 	}
 
-	OuyaMod::OuyaMod(jobject instance)
+	OuyaModEditor::OuyaModEditor(jobject instance)
 	{
 		_instance = instance;
 	}
 
-	jobject OuyaMod::GetInstance() const
+	jobject OuyaModEditor::GetInstance() const
 	{
 		return _instance;
 	}
 
-	void OuyaMod::Dispose() const
+	void OuyaModEditor::Dispose() const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -136,38 +117,5 @@ namespace tv_ouya_console_api_content_OuyaMod
 		{
 			env->DeleteGlobalRef(_instance);
 		}
-	}
-
-	OuyaModEditor OuyaMod::edit() const
-	{
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return OuyaModEditor(0);
-		}
-
-		if (!_instance)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
-			return OuyaModEditor(0);
-		}
-
-		if (!_jmEdit)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmEdit is not initialized");
-			return OuyaModEditor(0);
-		}
-
-		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmEdit);
-		if (!localRef)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "edit returned null");
-			return OuyaModEditor(0);
-		}
-
-		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
-		env->DeleteLocalRef(localRef);
-
-		return OuyaModEditor(globalRef);
 	}
 }

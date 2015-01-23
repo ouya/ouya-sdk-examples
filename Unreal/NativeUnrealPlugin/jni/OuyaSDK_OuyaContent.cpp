@@ -18,9 +18,12 @@
 #endif
 
 #include "OuyaSDK_OuyaContent.h"
+#include "OuyaSDK_OuyaMod.h"
 
 #include <android/log.h>
 #include <jni.h>
+
+using namespace tv_ouya_console_api_content_OuyaMod;
 
 #ifdef LOG_TAG
 #undef LOG_TAG
@@ -36,6 +39,7 @@ namespace tv_ouya_console_api_content_OuyaContent
 {
 	JavaVM* OuyaContent::_jvm = 0;
 	jclass OuyaContent::_jcOuyaContent = 0;
+	jmethodID OuyaContent::_jmCreate = 0;
 	jmethodID OuyaContent::_jmGetInstance = 0;
 
 	int OuyaContent::InitJNI(JavaVM* jvm)
@@ -90,6 +94,22 @@ namespace tv_ouya_console_api_content_OuyaContent
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
 			return JNI_ERR;
+		}
+
+		{
+			const char* strMethod = "create";
+			_jmCreate = env->GetMethodID(_jcOuyaContent, strMethod, "()Ltv/ouya/console/api/content/OuyaMod;");
+			if (_jmCreate)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
 		}
 
 		{
@@ -163,9 +183,42 @@ namespace tv_ouya_console_api_content_OuyaContent
 			return OuyaContent(0);
 		}
 
-		jobject globalRef = (jclass)env->NewGlobalRef(localRef);
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
 		env->DeleteLocalRef(localRef);
 
 		return OuyaContent(globalRef);
+	}
+
+	OuyaMod OuyaContent::create()
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return OuyaMod(0);
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return OuyaMod(0);
+		}
+
+		if (!_jmCreate)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmCreate is not initialized");
+			return OuyaMod(0);
+		}
+
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmCreate);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "create returned null");
+			return OuyaMod(0);
+		}
+
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+
+		return OuyaMod(globalRef);
 	}
 }

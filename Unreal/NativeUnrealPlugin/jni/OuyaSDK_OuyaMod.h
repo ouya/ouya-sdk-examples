@@ -19,6 +19,8 @@
 
 #if PLATFORM_ANDROID
 
+#include "OuyaSDK_OuyaModEditor.h"
+
 #include <jni.h>
 
 namespace tv_ouya_console_api_content_OuyaMod
@@ -31,9 +33,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		OuyaMod(jobject instance);
 		jobject GetInstance() const;
 		void Dispose() const;
+		tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor edit() const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcOuyaMod;
+		static jmethodID _jmEdit;
 		jobject _instance;
 	};
 }

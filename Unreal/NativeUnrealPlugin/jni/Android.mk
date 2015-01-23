@@ -42,6 +42,7 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_OuyaController.cpp \
 	OuyaSDK_OuyaInputView.cpp \
 	OuyaSDK_OuyaMod.cpp \
+	OuyaSDK_OuyaModEditor.cpp \
 	OuyaSDK_PluginOuya.cpp \
 	OuyaSDK_Product.cpp \
 	OuyaSDK_Receipt.cpp
