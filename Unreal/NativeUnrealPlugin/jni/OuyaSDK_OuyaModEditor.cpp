@@ -32,6 +32,11 @@
 #endif
 #define ENABLE_VERBOSE_LOGGING false
 
+using namespace android_graphics_Bitmap;
+using namespace java_io_OutputStream;
+using namespace std;
+using namespace tv_ouya_console_api_content_OuyaModScreenshot;
+
 namespace tv_ouya_console_api_content_OuyaModEditor
 {
 	JavaVM* OuyaModEditor::_jvm = 0;
@@ -287,5 +292,285 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 		{
 			env->DeleteGlobalRef(_instance);
 		}
+	}
+
+	OuyaModScreenshot OuyaModEditor::addScreenshot(const Bitmap& bitmap) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return OuyaModScreenshot(0);
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return OuyaModScreenshot(0);
+		}
+
+		if (!_jmAddScreenshot)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmAddScreenshot is not initialized");
+			return OuyaModScreenshot(0);
+		}
+
+		if (!bitmap.GetInstance())
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "bitmap is not initialized");
+			return OuyaModScreenshot(0);
+		}
+
+		jobject arg1 = bitmap.GetInstance();
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmAddScreenshot, arg1);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "addScreenshot returned null");
+			return OuyaModScreenshot(0);
+		}
+
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+
+		return OuyaModScreenshot(globalRef);
+	}
+
+	void OuyaModEditor::addTag(const string& tag) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmAddTag)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmAddScreenshot is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(tag.c_str());
+		env->CallVoidMethod(_instance, _jmAddTag, arg1);
+		env->DeleteLocalRef(arg1);
+	}
+
+	void OuyaModEditor::deleteFile(const string& filename) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmDeleteFile)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmDeleteFile is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(filename.c_str());
+		env->CallVoidMethod(_instance, _jmDeleteFile, arg1);
+		env->DeleteLocalRef(arg1);
+	}
+
+	OutputStream OuyaModEditor::newFile(const string& filename) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return OutputStream(0);
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return OutputStream(0);
+		}
+
+		if (!_jmNewFile)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmNewFile is not initialized");
+			return OutputStream(0);
+		}
+
+		jstring arg1 = env->NewStringUTF(filename.c_str());
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmNewFile, arg1);
+		env->DeleteLocalRef(arg1);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "newFile returned null");
+			return OutputStream(0);
+		}
+
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+
+		return OutputStream(globalRef);
+	}
+
+	void OuyaModEditor::removeScreenshot(const OuyaModScreenshot& ouyaModScreenshot) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmRemoveScreenshot)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmRemoveScreenshot is not initialized");
+			return;
+		}
+
+		if (!ouyaModScreenshot.GetInstance())
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "ouyaModScreenshot is not initialized");
+			return;
+		}
+
+		jobject arg1 = ouyaModScreenshot.GetInstance();
+		env->CallVoidMethod(_instance, _jmRemoveScreenshot, arg1);
+	}
+
+	void OuyaModEditor::removeTag(const string& tag) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmRemoveTag)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmRemoveTag is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(tag.c_str());
+		env->CallVoidMethod(_instance, _jmRemoveTag, arg1);
+		env->DeleteLocalRef(arg1);
+	}
+
+	void OuyaModEditor::setCategory(const string& category) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmSetCategory)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetCategory is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(category.c_str());
+		env->CallVoidMethod(_instance, _jmSetCategory, arg1);
+		env->DeleteLocalRef(arg1);
+	}
+
+	void OuyaModEditor::setDescription(const string& description) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmSetDescription)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetDescription is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(description.c_str());
+		env->CallVoidMethod(_instance, _jmSetDescription, arg1);
+		env->DeleteLocalRef(arg1);
+	}
+
+	void OuyaModEditor::setMetadata(const string& metadata) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmSetMetadata)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetMetadata is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(metadata.c_str());
+		env->CallVoidMethod(_instance, _jmSetMetadata, arg1);
+		env->DeleteLocalRef(arg1);
+	}
+
+	void OuyaModEditor::setTitle(const string& title) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmSetTitle)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetTitle is not initialized");
+			return;
+		}
+
+		jstring arg1 = env->NewStringUTF(title.c_str());
+		env->CallVoidMethod(_instance, _jmSetTitle, arg1);
+		env->DeleteLocalRef(arg1);
 	}
 }
