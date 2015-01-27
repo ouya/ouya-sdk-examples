@@ -16,6 +16,7 @@
 
 package tv.ouya.examples.unreal.unrealcommunitycontent;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -34,6 +35,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.Menu;
@@ -255,6 +259,26 @@ public class MainActivity extends Activity {
 						} else {
 							editor.addScreenshot(mScreenshot);
 						}
+						Bitmap bitmap = Bitmap.createBitmap(1920, 1080, Config.ARGB_8888);
+						int x = 0;
+						int y = 0;
+						int alpha = 1;
+						int red = 1;
+						int green = 1;
+						int blue = 1;
+						int color = Color.argb(alpha, red, green, blue);
+						bitmap.setPixel(x, y, color);
+						ByteArrayOutputStream stream = new ByteArrayOutputStream();
+						bitmap.compress(CompressFormat.PNG, 100, stream);
+						editor.addScreenshot(bitmap);
+						if (stream.size() >= 0)
+						{
+							byte[] buffer = stream.toByteArray();
+							if (null == buffer) {
+								Log.e(TAG, "Buffer is null");
+							}
+						}
+						stream.close();
 						UnrealOuyaPlugin.saveOuyaMod(editor, mOuyaMod2);
 						Log.i(TAG, "Save2 invoked");
 					} catch (Exception e) {

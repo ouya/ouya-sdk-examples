@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := \
 	LaunchAndroid.cpp \
 	AndroidJNI.cpp \
 	OuyaSDK_Bitmap.cpp \
+	OuyaSDK_BitmapConfig.cpp \
 	OuyaSDK_Bundle.cpp \
 	OuyaSDK_CallbackSingleton.cpp \
 	OuyaSDK_CallbacksContentInit.cpp \

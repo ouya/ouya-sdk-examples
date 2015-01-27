@@ -14,30 +14,28 @@
 * limitations under the License.
 */
 
-#ifndef __ANDROID_GRAPHICS_BITMAP_H__
-#define __ANDROID_GRAPHICS_BITMAP_H__
+#ifndef __ANDROID_GRAPHICS_BITMAP_CONFIG_H__
+#define __ANDROID_GRAPHICS_BITMAP_CONFIG_H__
 
 #if PLATFORM_ANDROID
 
-#include "OuyaSDK_BitmapConfig.h"
-
 #include <jni.h>
 
-namespace android_graphics_Bitmap
+namespace android_graphics_Bitmap_Config
 {
-	class Bitmap
+	class Config
 	{
 	public:
 		static int InitJNI(JavaVM* jvm);
 		static int FindJNI();
-		Bitmap(jobject instance);
+		Config(jobject instance);
 		jobject GetInstance() const;
 		void Dispose() const;
-		static Bitmap createBitmap(int width, int height, android_graphics_Bitmap_Config::Config config);
+		static Config ARGB_8888();
 	private:
 		static JavaVM* _jvm;
-		static jclass _jcBitmap;
-		static jmethodID _jmCreateBitmap;
+		static jclass _jcConfig;
+		static jfieldID _jfARGB_8888;
 		jobject _instance;
 	};
 }

@@ -17,31 +17,28 @@
 #include "LaunchPrivatePCH.h"
 #endif
 
-#include "OuyaSDK_Bitmap.h"
 #include "OuyaSDK_BitmapConfig.h"
 
 #include <android/log.h>
 #include <jni.h>
 
-using namespace android_graphics_Bitmap_Config;
-
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "android_graphics_Bitmap"
+#define LOG_TAG "android_graphics_Bitmap_Config"
 
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
 #define ENABLE_VERBOSE_LOGGING false
 
-namespace android_graphics_Bitmap
+namespace android_graphics_Bitmap_Config
 {
-	JavaVM* Bitmap::_jvm = 0;
-	jclass Bitmap::_jcBitmap = 0;
-	jmethodID Bitmap::_jmCreateBitmap = 0;
+	JavaVM* Config::_jvm = 0;
+	jfieldID Config::_jfARGB_8888 = 0;
+	jclass Config::_jcConfig = 0;
 
-	int Bitmap::InitJNI(JavaVM* jvm)
+	int Config::InitJNI(JavaVM* jvm)
 	{
 		_jvm = jvm;
 
@@ -58,7 +55,7 @@ namespace android_graphics_Bitmap
 		}
 
 		{
-			const char* strClass = "android/graphics/Bitmap";
+			const char* strClass = "android/graphics/Bitmap$Config";
 #if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Searching for %s", strClass);
 #endif
@@ -68,7 +65,7 @@ namespace android_graphics_Bitmap
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found %s", strClass);
 #endif
-				_jcBitmap = (jclass)env->NewGlobalRef(localRef);
+				_jcConfig = (jclass)env->NewGlobalRef(localRef);
 				env->DeleteLocalRef(localRef);
 			}
 			else
@@ -81,7 +78,7 @@ namespace android_graphics_Bitmap
 		return FindJNI();
 	}
 
-	int Bitmap::FindJNI()
+	int Config::FindJNI()
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -96,17 +93,17 @@ namespace android_graphics_Bitmap
 		}
 
 		{
-			const char* strMethod = "createBitmap";
-			_jmCreateBitmap = env->GetStaticMethodID(_jcBitmap, strMethod, "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
-			if (_jmCreateBitmap)
+			const char* strField = "ARGB_8888";
+			_jfARGB_8888 = env->GetStaticFieldID(_jcConfig, strField, "Landroid/graphics/Bitmap$Config;");
+			if (_jfARGB_8888)
 			{
 #if ENABLE_VERBOSE_LOGGING
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strField);
 #endif
 			}
 			else
 			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strField);
 				return JNI_ERR;
 			}
 		}
@@ -114,17 +111,17 @@ namespace android_graphics_Bitmap
 		return JNI_OK;
 	}
 
-	Bitmap::Bitmap(jobject instance)
+	Config::Config(jobject instance)
 	{
 		_instance = instance;
 	}
 
-	jobject Bitmap::GetInstance() const
+	jobject Config::GetInstance() const
 	{
 		return _instance;
 	}
 
-	void Bitmap::Dispose() const
+	void Config::Dispose() const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -139,48 +136,34 @@ namespace android_graphics_Bitmap
 		}
 	}
 
-	Bitmap Bitmap::createBitmap(int width, int height, Config config)
+	Config Config::ARGB_8888()
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return Bitmap(0);
+			return Config(0);
 		}
 
-		if (!env)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return Bitmap(0);
+		if (!_jcConfig) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcConfig is null");
+			return Config(0);
 		}
 
-		if (!_jcBitmap) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcBitmap is null");
-			return Bitmap(0);
+		if (!_jfARGB_8888) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jfARGB_8888 is null");
+			return Config(0);
 		}
 
-		if (!_jmCreateBitmap) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmCreateBitmap is null");
-			return Bitmap(0);
-		}
-
-		if (!config.GetInstance()) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "config reference is null");
-			return Bitmap(0);
-		}
-
-		int arg1 = width;
-		int arg2 = height;
-		jobject arg3 = config.GetInstance();
-		jobject localRef = env->CallStaticObjectMethod(_jcBitmap, _jmCreateBitmap, arg1, arg2, arg3);
+		jobject localRef = env->GetStaticObjectField(_jcConfig, _jfARGB_8888);
 		if (!localRef)
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "createBitmap returned null");
-			return Bitmap(0);
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jfARGB_8888 field returned null");
+			return Config(0);
 		}
 
 		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
 		env->DeleteLocalRef(localRef);
 
-		return Bitmap(globalRef);
+		return Config(globalRef);
 	}
 }
