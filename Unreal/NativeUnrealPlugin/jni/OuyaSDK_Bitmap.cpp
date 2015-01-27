@@ -41,6 +41,7 @@ namespace android_graphics_Bitmap
 	jclass Bitmap::_jcBitmap = 0;
 	jmethodID Bitmap::_jmCreateBitmap = 0;
 	jmethodID Bitmap::_jmSetPixel = 0;
+	jmethodID Bitmap::_jmSetPixels = 0;
 
 	int Bitmap::InitJNI(JavaVM* jvm)
 	{
@@ -128,6 +129,22 @@ namespace android_graphics_Bitmap
 			}
 		}
 
+		{
+			const char* strMethod = "setPixels";
+			_jmSetPixels = env->GetMethodID(_jcBitmap, strMethod, "([IIIIIII)V");
+			if (_jmSetPixels)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
 		return JNI_OK;
 	}
 
@@ -185,8 +202,8 @@ namespace android_graphics_Bitmap
 			return Bitmap(0);
 		}
 
-		int arg1 = width;
-		int arg2 = height;
+		jint arg1 = width;
+		jint arg2 = height;
 		jobject arg3 = config.GetInstance();
 		jobject localRef = env->CallStaticObjectMethod(_jcBitmap, _jmCreateBitmap, arg1, arg2, arg3);
 		if (!localRef)
@@ -215,8 +232,8 @@ namespace android_graphics_Bitmap
 			return;
 		}
 
-		if (!_jcBitmap) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcBitmap is null");
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
 			return;
 		}
 
@@ -225,9 +242,45 @@ namespace android_graphics_Bitmap
 			return;
 		}
 
-		int arg1 = x;
-		int arg2 = y;
-		int arg3 = color;
-		env->CallVoidMethod(_jcBitmap, _jmSetPixel, arg1, arg2, arg3);
+		jint arg1 = x;
+		jint arg2 = y;
+		jint arg3 = color;
+		env->CallVoidMethod(_instance, _jmSetPixel, arg1, arg2, arg3);
+	}
+
+	void Bitmap::setPixels(int* pixels, int pixelCount, int offset, int stride, int x, int y, int width, int height)
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return;
+		}
+
+		if (!_jmSetPixels) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetPixels is null");
+			return;
+		}
+
+		jintArray arg1 = env->NewIntArray(pixelCount);
+		env->SetIntArrayRegion(arg1, 0, pixelCount, pixels);
+		jint arg2 = offset;
+		jint arg3 = stride;
+		jint arg4 = x;
+		jint arg5 = y;
+		jint arg6 = width;
+		jint arg7 = height;
+		env->CallVoidMethod(_instance, _jmSetPixels, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+		env->DeleteLocalRef(arg1);
 	}
 }
