@@ -17,32 +17,30 @@
 #include "LaunchPrivatePCH.h"
 #endif
 
-#include "OuyaSDK_Bitmap.h"
-#include "OuyaSDK_BitmapConfig.h"
+#include "OuyaSDK_Color.h"
 
 #include <android/log.h>
 #include <jni.h>
 
-using namespace android_graphics_Bitmap_Config;
+using namespace android_graphics_Color;
 
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "android_graphics_Bitmap"
+#define LOG_TAG "android_graphics_Color"
 
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
 #define ENABLE_VERBOSE_LOGGING false
 
-namespace android_graphics_Bitmap
+namespace android_graphics_Color
 {
-	JavaVM* Bitmap::_jvm = 0;
-	jclass Bitmap::_jcBitmap = 0;
-	jmethodID Bitmap::_jmCreateBitmap = 0;
-	jmethodID Bitmap::_jmSetPixel = 0;
+	JavaVM* Color::_jvm = 0;
+	jclass Color::_jcColor = 0;
+	jmethodID Color::_jmArgb = 0;
 
-	int Bitmap::InitJNI(JavaVM* jvm)
+	int Color::InitJNI(JavaVM* jvm)
 	{
 		_jvm = jvm;
 
@@ -59,7 +57,7 @@ namespace android_graphics_Bitmap
 		}
 
 		{
-			const char* strClass = "android/graphics/Bitmap";
+			const char* strClass = "android/graphics/Color";
 #if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Searching for %s", strClass);
 #endif
@@ -69,7 +67,7 @@ namespace android_graphics_Bitmap
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found %s", strClass);
 #endif
-				_jcBitmap = (jclass)env->NewGlobalRef(localRef);
+				_jcColor = (jclass)env->NewGlobalRef(localRef);
 				env->DeleteLocalRef(localRef);
 			}
 			else
@@ -82,7 +80,7 @@ namespace android_graphics_Bitmap
 		return FindJNI();
 	}
 
-	int Bitmap::FindJNI()
+	int Color::FindJNI()
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -97,25 +95,9 @@ namespace android_graphics_Bitmap
 		}
 
 		{
-			const char* strMethod = "createBitmap";
-			_jmCreateBitmap = env->GetStaticMethodID(_jcBitmap, strMethod, "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
-			if (_jmCreateBitmap)
-			{
-#if ENABLE_VERBOSE_LOGGING
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
-#endif
-			}
-			else
-			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
-				return JNI_ERR;
-			}
-		}
-
-		{
-			const char* strMethod = "setPixel";
-			_jmSetPixel = env->GetMethodID(_jcBitmap, strMethod, "(III)V");
-			if (_jmSetPixel)
+			const char* strMethod = "argb";
+			_jmArgb = env->GetStaticMethodID(_jcColor, strMethod, "(IIII)I");
+			if (_jmArgb)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
@@ -131,17 +113,17 @@ namespace android_graphics_Bitmap
 		return JNI_OK;
 	}
 
-	Bitmap::Bitmap(jobject instance)
+	Color::Color(jobject instance)
 	{
 		_instance = instance;
 	}
 
-	jobject Bitmap::GetInstance() const
+	jobject Color::GetInstance() const
 	{
 		return _instance;
 	}
 
-	void Bitmap::Dispose() const
+	void Color::Dispose() const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -156,78 +138,35 @@ namespace android_graphics_Bitmap
 		}
 	}
 
-	Bitmap Bitmap::createBitmap(int width, int height, Config config)
+	int Color::argb(int alpha, int red, int green, int blue)
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return Bitmap(0);
+			return 0;
 		}
 
 		if (!env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return Bitmap(0);
+			return 0;
 		}
 
-		if (!_jcBitmap) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcBitmap is null");
-			return Bitmap(0);
+		if (!_jcColor) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcColor is null");
+			return 0;
 		}
 
-		if (!_jmCreateBitmap) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmCreateBitmap is null");
-			return Bitmap(0);
+		if (!_jmArgb) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmArgb is null");
+			return 0;
 		}
 
-		if (!config.GetInstance()) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "config reference is null");
-			return Bitmap(0);
-		}
-
-		int arg1 = width;
-		int arg2 = height;
-		jobject arg3 = config.GetInstance();
-		jobject localRef = env->CallStaticObjectMethod(_jcBitmap, _jmCreateBitmap, arg1, arg2, arg3);
-		if (!localRef)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "createBitmap returned null");
-			return Bitmap(0);
-		}
-
-		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
-		env->DeleteLocalRef(localRef);
-
-		return Bitmap(globalRef);
-	}
-
-	void Bitmap::setPixel(int x, int y, int color)
-	{
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return;
-		}
-
-		if (!env)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return;
-		}
-
-		if (!_jcBitmap) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcBitmap is null");
-			return;
-		}
-
-		if (!_jmSetPixel) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetPixel is null");
-			return;
-		}
-
-		int arg1 = x;
-		int arg2 = y;
-		int arg3 = color;
-		env->CallVoidMethod(_jcBitmap, _jmSetPixel, arg1, arg2, arg3);
+		int arg1 = alpha;
+		int arg2 = red;
+		int arg3 = green;
+		int arg4 = blue;
+		jint result = env->CallStaticIntMethod(_jcColor, _jmArgb, arg1, arg2, arg3, arg4);
+		return result;
 	}
 }

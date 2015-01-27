@@ -37,6 +37,7 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_CallbacksRequestProducts.cpp \
 	OuyaSDK_CallbacksRequestPurchase.cpp \
 	OuyaSDK_CallbacksRequestReceipts.cpp \
+	OuyaSDK_Color.cpp \
 	OuyaSDK_GamerInfo.cpp \
 	OuyaSDK_JSONArray.cpp \
 	OuyaSDK_JSONObject.cpp \
