@@ -14,33 +14,29 @@
 * limitations under the License.
 */
 
-#ifndef __JAVA_IO_OUTPUTSTREAM_H__
-#define __JAVA_IO_OUTPUTSTREAM_H__
+#ifndef __JAVA_LANG_STRING_H__
+#define __JAVA_LANG_STRING_H__
 
 #if PLATFORM_ANDROID
 
 #include <jni.h>
 
-namespace java_io_OutputStream
+namespace java_lang_String
 {
-	class OutputStream
+	class String
 	{
 	public:
 		static int InitJNI(JavaVM* jvm);
 		static int FindJNI();
-		OutputStream(jobject instance);
-		jobject GetInstance() const;
+		String(jstring instance);
+		jstring GetInstance() const;
 		void Dispose() const;
-		void close() const;
-		void write(int* buffer, int length) const;
-		void flush() const;
+		int* getBytes(int& length) const;
 	private:
 		static JavaVM* _jvm;
-		static jclass _jcOutputStream;
-		static jmethodID _jmClose;
-		static jmethodID _jmFlush;
-		static jmethodID _jmWrite;
-		jobject _instance;
+		static jclass _jcString;
+		static jmethodID _jmGetBytes;
+		jstring _instance;
 	};
 }
 

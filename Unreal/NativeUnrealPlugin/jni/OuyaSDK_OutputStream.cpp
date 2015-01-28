@@ -36,6 +36,9 @@ namespace java_io_OutputStream
 {
 	JavaVM* OutputStream::_jvm = 0;
 	jclass OutputStream::_jcOutputStream = 0;
+	jmethodID OutputStream::_jmClose = 0;
+	jmethodID OutputStream::_jmFlush = 0;
+	jmethodID OutputStream::_jmWrite = 0;
 
 	int OutputStream::InitJNI(JavaVM* jvm)
 	{
@@ -91,6 +94,54 @@ namespace java_io_OutputStream
 			return JNI_ERR;
 		}
 
+		{
+			const char* strMethod = "close";
+			_jmClose = env->GetMethodID(_jcOutputStream, strMethod, "()V");
+			if (_jmClose)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "flush";
+			_jmFlush = env->GetMethodID(_jcOutputStream, strMethod, "()V");
+			if (_jmFlush)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "write";
+			_jmWrite = env->GetMethodID(_jcOutputStream, strMethod, "([B)V");
+			if (_jmWrite)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
 		return JNI_OK;
 	}
 
@@ -116,6 +167,119 @@ namespace java_io_OutputStream
 			_instance)
 		{
 			env->DeleteGlobalRef(_instance);
+		}
+	}
+
+	void OutputStream::close() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return;
+		}
+
+		if (!_jmClose) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmClose is null");
+			return;
+		}
+
+		env->CallVoidMethod(_instance, _jmClose);
+
+		if (env->ExceptionCheck())
+		{
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to close");
+		}
+	}
+
+	void OutputStream::write(int* buffer, int length) const
+	{
+		if (!buffer)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "buffer is null");
+			return;
+		}
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return;
+		}
+
+		if (!_jmWrite) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmWrite is null");
+			return;
+		}
+
+		jintArray arg1 = env->NewIntArray(length);
+		env->SetIntArrayRegion(arg1, 0, length, buffer);
+
+		env->CallVoidMethod(_instance, _jmWrite, arg1);
+
+		if (env->ExceptionCheck())
+		{
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to write");
+		}
+
+		env->DeleteLocalRef(arg1);
+	}
+
+	void OutputStream::flush() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return;
+		}
+
+		if (!_jmFlush) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmFlush is null");
+			return;
+		}
+
+		env->CallVoidMethod(_instance, _jmFlush);
+
+		if (env->ExceptionCheck())
+		{
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to flush");
 		}
 	}
 }

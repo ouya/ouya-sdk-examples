@@ -50,7 +50,8 @@ LOCAL_SRC_FILES := \
 	OuyaSDK_OuyaModScreenshot.cpp \
 	OuyaSDK_PluginOuya.cpp \
 	OuyaSDK_Product.cpp \
-	OuyaSDK_Receipt.cpp
+	OuyaSDK_Receipt.cpp \
+	OuyaSDK_String.cpp
 LOCAL_CFLAGS    := -DPLATFORM_ANDROID -DANDROID -DECLIPSE
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := android_native_app_glue

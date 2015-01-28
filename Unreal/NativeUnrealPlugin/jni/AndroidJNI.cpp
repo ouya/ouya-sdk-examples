@@ -1,8 +1,10 @@
 #include "AndroidJNI.h"
 
 // OUYA handles remapping native input
+#include "OuyaSDK_OutputStream.h"
 #include "OuyaSDK_OuyaInputView.h"
 #include "OuyaSDK_PluginOuya.h"
+#include "OuyaSDK_String.h"
 
 #ifdef LOG_TAG
 #undef LOG_TAG
@@ -20,6 +22,8 @@ JavaVM* GJavaVM;
 
 // OUYA handles remapping native input
 // Include the OUYA namespace
+
+using namespace java_io_OutputStream;
 using namespace OuyaSDK;
 using namespace tv_ouya_sdk_OuyaInputView;
 
@@ -59,6 +63,37 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* InJavaVM, void* InReserved)
 	/*
 		END OF OUYA-SDK
 	*/
+
+
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "++++++++++++++");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "++++++++++++++");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "+++NATIVE++++");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "+++++UNIT++++");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "++++TESTS++++");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "++++++++++++++");
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "++++++++++++++");
+
+	jstring testString = env->NewStringUTF("Hello World Test String");
+	java_lang_String::String javaString = java_lang_String::String(testString);
+	int length;
+	int* bytes = javaString.getBytes(length);
+	if (!bytes)
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get bytes");
+	}
+	else
+	{
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Bytes are valid length=%d", length);
+
+		//OutputStream os = OutputStream();
+		//os.write(bytes, length);
+		//os.flush();
+		//os.close();
+
+		delete bytes;
+	}
+	env->DeleteLocalRef(testString);
+
 
 	return JNI_CURRENT_VERSION;
 }

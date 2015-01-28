@@ -30,6 +30,7 @@
 #include "OuyaSDK_OuyaModScreenshot.h"
 #include "OuyaSDK_OutputStream.h"
 #include "OuyaSDK_PluginOuya.h"
+#include "OuyaSDK_String.h"
 
 #include <jni.h>
 #include <android/log.h>
@@ -315,6 +316,11 @@ namespace OuyaSDK
 		}
 
 		if (OuyaModScreenshot::InitJNI(jvm) == JNI_ERR)
+		{
+			return JNI_ERR;
+		}
+
+		if (java_lang_String::String::InitJNI(jvm) == JNI_ERR)
 		{
 			return JNI_ERR;
 		}
