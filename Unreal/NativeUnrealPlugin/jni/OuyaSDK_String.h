@@ -19,6 +19,8 @@
 
 #if PLATFORM_ANDROID
 
+#include <string>
+
 #include <jni.h>
 
 namespace java_lang_String
@@ -28,6 +30,7 @@ namespace java_lang_String
 	public:
 		static int InitJNI(JavaVM* jvm);
 		static int FindJNI();
+		String(const std::string& val);
 		String(jstring instance);
 		jstring GetInstance() const;
 		void Dispose() const;

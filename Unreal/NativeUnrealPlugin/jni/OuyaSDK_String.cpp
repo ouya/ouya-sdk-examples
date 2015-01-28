@@ -111,6 +111,25 @@ namespace java_lang_String
 		return JNI_OK;
 	}
 
+	String::String(const std::string& val)
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		jstring localRef = env->NewStringUTF(val.c_str());
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to convert to jstring");
+			return;
+		}
+
+		_instance = (jstring)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+	}
+
 	String::String(jstring instance)
 	{
 		_instance = instance;
