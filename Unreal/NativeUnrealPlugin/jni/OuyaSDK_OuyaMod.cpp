@@ -26,6 +26,7 @@
 using namespace OuyaSDK;
 using namespace std;
 using namespace tv_ouya_console_api_content_OuyaModEditor;
+using namespace tv_ouya_console_api_content_OuyaModScreenshot;
 
 #ifdef LOG_TAG
 #undef LOG_TAG
@@ -49,6 +50,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 	jmethodID OuyaMod::_jmGetMetadata = 0;
 	jmethodID OuyaMod::_jmGetRatingAverage = 0;
 	jmethodID OuyaMod::_jmGetRatingCount = 0;
+	jmethodID OuyaMod::_jmGetScreenshots = 0;
 	jmethodID OuyaMod::_jmGetTags = 0;
 	jmethodID OuyaMod::_jmGetTitle = 0;
 	jmethodID OuyaMod::_jmGetUserRating = 0;
@@ -244,6 +246,22 @@ namespace tv_ouya_console_api_content_OuyaMod
 			const char* strMethod = "getTags";
 			_jmGetRatingCount = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/util/List;");
 			if (_jmGetRatingCount)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getScreenshots";
+			_jmGetScreenshots = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/util/List;");
+			if (_jmGetScreenshots)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
@@ -571,7 +589,6 @@ namespace tv_ouya_console_api_content_OuyaMod
 #endif
 
 		return results;
-
 	}
 
 	string OuyaMod::getMetadata() const
@@ -669,6 +686,45 @@ namespace tv_ouya_console_api_content_OuyaMod
 #endif
 
 		return result;
+	}
+
+	vector<OuyaModScreenshot> OuyaMod::getScreenshots() const
+	{
+		vector<OuyaModScreenshot> results;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return results;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return results;
+		}
+
+		if (!_jmGetScreenshots)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetScreenshots is not initialized");
+			return results;
+		}
+
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmGetScreenshots);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getScreenshots returned null");
+			return results;
+		}
+
+		results = PluginOuya::getOuyaModScreenshotArray(localRef);
+		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getScreenshots count=%d", results.size());
+#endif
+
+		return results;
 	}
 
 	vector<string> OuyaMod::getTags() const

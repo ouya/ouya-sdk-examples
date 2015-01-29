@@ -20,6 +20,7 @@
 #if PLATFORM_ANDROID
 
 #include "OuyaSDK_OuyaModEditor.h"
+#include "OuyaSDK_OuyaModScreenshot.h"
 
 #include <string>
 #include <vector>
@@ -44,6 +45,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		std::string getMetadata() const;
 		float getRatingAverage() const;
 		float getRatingCount() const;
+		std::vector<tv_ouya_console_api_content_OuyaModScreenshot::OuyaModScreenshot> getScreenshots() const;
 		std::vector<std::string> getTags() const;
 		std::string getTitle() const;
 		float getUserRating() const;
@@ -63,6 +65,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		static jmethodID _jmGetMetadata;
 		static jmethodID _jmGetRatingAverage;
 		static jmethodID _jmGetRatingCount;
+		static jmethodID _jmGetScreenshots;
 		static jmethodID _jmGetTags;
 		static jmethodID _jmGetTitle;
 		static jmethodID _jmGetUserRating;
