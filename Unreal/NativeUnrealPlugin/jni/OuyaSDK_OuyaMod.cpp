@@ -35,7 +35,7 @@ using namespace tv_ouya_console_api_content_OuyaModEditor;
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
 
 namespace tv_ouya_console_api_content_OuyaMod
 {
@@ -449,6 +449,10 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return;
 		}
 
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Invoke flag");
+#endif
+
 		env->CallVoidMethod(_instance, _jmFlag);
 	}
 
@@ -483,6 +487,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		std::string result = nativeString;
 		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getCategory=%s", result.c_str());
+#endif
+
 		return result;
 	}
 
@@ -517,6 +526,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		std::string result = nativeString;
 		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getDescription=%s", result.c_str());
+#endif
+
 		return result;
 	}
 
@@ -551,6 +565,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 
 		results = PluginOuya::getStringArray(localRef);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getFilenames count=%d", results.size());
+#endif
+
 		return results;
 
 	}
@@ -586,6 +605,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		std::string result = nativeString;
 		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getMetadata=%s", result.c_str());
+#endif
+
 		return result;
 	}
 
@@ -610,6 +634,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		float result = env->CallFloatMethod(_instance, _jmGetRatingAverage);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getRatingAverage=%f", result);
+#endif
+
 		return result;
 	}
 
@@ -634,6 +663,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		int result = env->CallIntMethod(_instance, _jmGetRatingCount);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getRatingCount=%d", result);
+#endif
+
 		return result;
 	}
 
@@ -668,6 +702,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 
 		results = PluginOuya::getStringArray(localRef);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getTags count=%d", results.size());
+#endif
+
 		return results;
 	}
 
@@ -702,6 +741,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		std::string result = nativeString;
 		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getTitle=%s", result.c_str());
+#endif
+
 		return result;
 	}
 
@@ -733,6 +777,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		float result = PluginOuya::getFloat(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "getUserRating=%f", result);
+#endif
+
 		return result;
 	}
 
@@ -757,6 +806,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		bool result = env->CallBooleanMethod(_instance, _jmIsDownloading);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "isDownloading=%s", result ? "true" : "false");
+#endif
+
 		return result;
 	}
 
@@ -781,6 +835,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		bool result = env->CallBooleanMethod(_instance, _jmIsFlagged);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "isFlagged=%s", result ? "true" : "false");
+#endif
+
 		return result;
 	}
 
@@ -805,6 +864,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		bool result = env->CallBooleanMethod(_instance, _jmIsInstalled);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "isInstalled=%s", result ? "true" : "false");
+#endif
+
 		return result;
 	}
 
@@ -829,6 +893,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 		bool result = env->CallBooleanMethod(_instance, _jmIsPublished);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "isPublished=%s", result ? "true" : "false");
+#endif
+
 		return result;
 	}
 
@@ -851,6 +920,10 @@ namespace tv_ouya_console_api_content_OuyaMod
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmRate is not initialized");
 			return;
 		}
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "invoke rate");
+#endif
 
 		env->CallVoidMethod(_instance, _jmRate);
 	}
