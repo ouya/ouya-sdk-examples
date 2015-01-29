@@ -479,7 +479,9 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return "";
 		}
 
-		std::string result = env->GetStringUTFChars(localRef, NULL);
+		const char* nativeString = env->GetStringUTFChars(localRef, 0);
+		std::string result = nativeString;
+		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
 		return result;
 	}
@@ -511,7 +513,9 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return "";
 		}
 
-		std::string result = env->GetStringUTFChars(localRef, NULL);
+		const char* nativeString = env->GetStringUTFChars(localRef, 0);
+		std::string result = nativeString;
+		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
 		return result;
 	}
@@ -545,6 +549,8 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return results;
 		}
 
+		results = PluginOuya::getStringArray(localRef);
+		env->DeleteLocalRef(localRef);
 		return results;
 
 	}
@@ -576,7 +582,9 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return "";
 		}
 
-		std::string result = env->GetStringUTFChars(localRef, NULL);
+		const char* nativeString = env->GetStringUTFChars(localRef, 0);
+		std::string result = nativeString;
+		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
 		return result;
 	}
@@ -658,6 +666,8 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return results;
 		}
 
+		results = PluginOuya::getStringArray(localRef);
+		env->DeleteLocalRef(localRef);
 		return results;
 	}
 
@@ -688,7 +698,9 @@ namespace tv_ouya_console_api_content_OuyaMod
 			return "";
 		}
 
-		std::string result = env->GetStringUTFChars(localRef, NULL);
+		const char* nativeString = env->GetStringUTFChars(localRef, 0);
+		std::string result = nativeString;
+		env->ReleaseStringUTFChars(localRef, nativeString);
 		env->DeleteLocalRef(localRef);
 		return result;
 	}
