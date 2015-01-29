@@ -46,7 +46,7 @@
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
 
 using namespace android_graphics_Bitmap;
 using namespace android_graphics_Bitmap_Config;
@@ -684,6 +684,80 @@ namespace OuyaSDK
 		}
 
 		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaModEditor.GetInstance(), ouyaMod.GetInstance());
+	}
+
+	void PluginOuya::getOuyaContentInstalled(CallbacksContentSearchInstalled* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentSearchInstalled = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "getOuyaContentInstalled";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "()V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method);
+	}
+
+	void PluginOuya::getOuyaContentPublished(string sortMethod, CallbacksContentSearchPublished* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentSearchPublished = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "getOuyaContentPublished";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ljava/lang/String;)V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method);
 	}
 
 	float PluginOuya::getFloat(jobject fFloat)

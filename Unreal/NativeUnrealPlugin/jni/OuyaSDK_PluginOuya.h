@@ -35,6 +35,8 @@ class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
 class CallbacksContentInit;
 class CallbacksContentSave;
+class CallbacksContentSearchInstalled;
+class CallbacksContentSearchPublished;
 
 namespace OuyaSDK
 {
@@ -65,6 +67,10 @@ namespace OuyaSDK
 		static void saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
 				tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
 				CallbacksContentSave* callbacks);
+
+		static void getOuyaContentInstalled(CallbacksContentSearchInstalled* callbacks);
+
+		static void getOuyaContentPublished(std::string sortMethod, CallbacksContentSearchPublished* callbacks);
 
 		static float getFloat(jobject fFloat);
 
