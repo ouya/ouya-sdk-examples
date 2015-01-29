@@ -21,6 +21,9 @@
 
 #include "OuyaSDK_OuyaModEditor.h"
 
+#include <string>
+#include <vector>
+
 #include <jni.h>
 
 namespace tv_ouya_console_api_content_OuyaMod
@@ -34,10 +37,40 @@ namespace tv_ouya_console_api_content_OuyaMod
 		jobject GetInstance() const;
 		void Dispose() const;
 		tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor edit() const;
+		void flag() const;
+		std::string getCategory() const;
+		std::string getDescription() const;
+		std::vector<std::string> getFilenames() const;
+		std::string getMetadata() const;
+		float getRatingAverage() const;
+		float getRatingCount() const;
+		std::vector<std::string> getTags() const;
+		std::string getTitle() const;
+		float getUserRating() const;
+		bool isDownloading() const;
+		bool isFlagged() const;
+		bool isInstalled() const;
+		bool isPublished() const;
+		void rate() const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcOuyaMod;
 		static jmethodID _jmEdit;
+		static jmethodID _jmFlag;
+		static jmethodID _jmGetCategory;
+		static jmethodID _jmGetDescription;
+		static jmethodID _jmGetFilenames;
+		static jmethodID _jmGetMetadata;
+		static jmethodID _jmGetRatingAverage;
+		static jmethodID _jmGetRatingCount;
+		static jmethodID _jmGetTags;
+		static jmethodID _jmGetTitle;
+		static jmethodID _jmGetUserRating;
+		static jmethodID _jmIsDownloading;
+		static jmethodID _jmIsFlagged;
+		static jmethodID _jmIsInstalled;
+		static jmethodID _jmIsPublished;
+		static jmethodID _jmRate;
 		jobject _instance;
 	};
 }

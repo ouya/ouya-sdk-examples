@@ -19,8 +19,10 @@
 
 #if PLATFORM_ANDROID
 
+#include "OuyaSDK_Bitmap.h"
 #include "OuyaSDK_OuyaMod.h"
 #include "OuyaSDK_OuyaModEditor.h"
+#include "OuyaSDK_OuyaModScreenshot.h"
 
 #include <jni.h>
 #include <string>
@@ -63,6 +65,14 @@ namespace OuyaSDK
 		static void saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
 				tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
 				CallbacksContentSave* callbacks);
+
+		static float getFloat(jobject fFloat);
+
+		static std::vector<android_graphics_Bitmap::Bitmap> getBitmapArray(jobject listBitmaps);
+
+		static std::vector<tv_ouya_console_api_content_OuyaModScreenshot::OuyaModScreenshot> getOuyaModScreenshotArray(jobject listOuyaModScreenshots);
+
+		static std::vector<std::string> getStringArray(jobject listStrings);
 
 	private:
 

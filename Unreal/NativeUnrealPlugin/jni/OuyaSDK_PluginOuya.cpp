@@ -55,6 +55,7 @@ using namespace android_os_Bundle;
 using namespace java_io_OutputStream;
 using namespace org_json_JSONArray;
 using namespace org_json_JSONObject;
+using namespace std;
 using namespace tv_ouya_console_api_content_OuyaContent;
 using namespace tv_ouya_console_api_content_OuyaMod;
 using namespace tv_ouya_console_api_content_OuyaModEditor;
@@ -328,7 +329,7 @@ namespace OuyaSDK
 		return JNI_OK;
 	}
 
-	void PluginOuya::AsyncInitOuyaPlugin(const std::string& jsonData, CallbacksInitOuyaPlugin* callbacks)
+	void PluginOuya::AsyncInitOuyaPlugin(const string& jsonData, CallbacksInitOuyaPlugin* callbacks)
 	{
 #if ENABLE_VERBOSE_LOGGING
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "AsyncInitOuyaPlugin");
@@ -415,7 +416,7 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaRequestProducts(const std::vector<std::string>& productIds, CallbacksRequestProducts* callbacks)
+	void PluginOuya::AsyncOuyaRequestProducts(const vector<string>& productIds, CallbacksRequestProducts* callbacks)
 	{
 		//LOGI("AsyncOuyaRequestProducts");
 
@@ -456,7 +457,7 @@ namespace OuyaSDK
 		EXCEPTION_RETURN(env);
 	}
 
-	void PluginOuya::AsyncOuyaRequestPurchase(const std::string& purchasable, CallbacksRequestPurchase* callbacks)
+	void PluginOuya::AsyncOuyaRequestPurchase(const string& purchasable, CallbacksRequestPurchase* callbacks)
 	{
 		//LOGI("AsyncOuyaRequestPurchase");
 
@@ -683,5 +684,242 @@ namespace OuyaSDK
 		}
 
 		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaModEditor.GetInstance(), ouyaMod.GetInstance());
+	}
+
+	float PluginOuya::getFloat(jobject fFloat)
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return 0;
+		}
+
+		if (!jc_UnrealOuyaPlugin)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "jc_UnrealOuyaPlugin is not initialized");
+			return 0;
+		}
+
+		if (!fFloat)
+		{
+			return 0;
+		}
+
+		jmethodID method;
+		{
+			const char* strMethod = "getFloat";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ljava/lang/Float;)F");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return 0;
+			}
+		}
+
+		jobject arg1 = fFloat;
+		float result = env->CallStaticFloatMethod(jc_UnrealOuyaPlugin, method, arg1);
+		return result;
+	}
+
+	vector<Bitmap> PluginOuya::getBitmapArray(jobject listBitmaps)
+	{
+		vector<Bitmap> results;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return results;
+		}
+
+		if (!jc_UnrealOuyaPlugin)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "jc_UnrealOuyaPlugin is not initialized");
+			return results;
+		}
+
+		if (!listBitmaps)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "listBitmaps reference is null");
+			return results;
+		}
+
+		jmethodID method;
+		{
+			const char* strMethod = "getBitmapArray";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ljava/util/List;)[Landroid/graphics/Bitmap;");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return results;
+			}
+		}
+
+		jobject arg1 = listBitmaps;
+		jobject result = (jarray)env->CallStaticObjectMethod(jc_UnrealOuyaPlugin, method, arg1);
+		if (!result)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getBitmapArray returned null");
+			return results;
+		}
+
+		jsize length = env->GetArrayLength((jarray)result);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getBitmapArray returned %d elements", length);
+#endif
+
+		for (jsize index(0); index < length; ++index)
+		{
+			jobject localRef = (jobject)env->GetObjectArrayElement((jobjectArray)result, index);
+			jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+			env->DeleteLocalRef(localRef);
+			Bitmap bitmap = Bitmap(globalRef);
+			results.push_back(bitmap);
+		}
+
+		env->DeleteLocalRef(result);
+
+		return results;
+	}
+
+	vector<OuyaModScreenshot> PluginOuya::getOuyaModScreenshotArray(jobject listOuyaModScreenshots)
+	{
+		vector<OuyaModScreenshot> results;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return results;
+		}
+
+		if (!jc_UnrealOuyaPlugin)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "jc_UnrealOuyaPlugin is not initialized");
+			return results;
+		}
+
+		if (!listOuyaModScreenshots)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "listOuyaModScreenshots reference is null");
+			return results;
+		}
+
+		jmethodID method;
+		{
+			const char* strMethod = "getOuyaModScreenshotArray";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ljava/util/List;)[Ltv/ouya/console/api/content/OuyaModScreenshot;");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return results;
+			}
+		}
+
+		jobject arg1 = listOuyaModScreenshots;
+		jobject result = (jarray)env->CallStaticObjectMethod(jc_UnrealOuyaPlugin, method, arg1);
+		if (!result)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getOuyaModScreenshotArray returned null");
+			return results;
+		}
+
+		jsize length = env->GetArrayLength((jarray)result);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getBitmapArray returned %d elements", length);
+#endif
+
+		for (jsize index(0); index < length; ++index)
+		{
+			jobject localRef = (jobject)env->GetObjectArrayElement((jobjectArray)result, index);
+			jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+			env->DeleteLocalRef(localRef);
+			OuyaModScreenshot ouyaModScreenshot = OuyaModScreenshot(globalRef);
+			results.push_back(ouyaModScreenshot);
+		}
+
+		env->DeleteLocalRef(result);
+
+		return results;
+	}
+
+	vector<string> PluginOuya::getStringArray(jobject listStrings)
+	{
+		vector<string> results;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return results;
+		}
+
+		if (!jc_UnrealOuyaPlugin)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "jc_UnrealOuyaPlugin is not initialized");
+			return results;
+		}
+
+		jmethodID method;
+		{
+			const char* strMethod = "getStringArray";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ljava/util/List;)[Ljava/lang/String;");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return results;
+			}
+		}
+
+		jobject arg1 = listStrings;
+		jobject result = (jarray)env->CallStaticObjectMethod(jc_UnrealOuyaPlugin, method, arg1);
+		if (!result)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getStringArray returned null");
+			return results;
+		}
+
+		jsize length = env->GetArrayLength((jarray)result);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getStringArray returned %d elements", length);
+#endif
+
+		for (jsize index(0); index < length; ++index)
+		{
+			jstring localRef = (jstring)env->GetObjectArrayElement((jobjectArray)result, index);
+			const char* nativeString = env->GetStringUTFChars(localRef, 0);
+			std::string element = nativeString;
+			env->ReleaseStringUTFChars(localRef, nativeString);
+			env->DeleteLocalRef(localRef);
+			results.push_back(element);
+		}
+
+		env->DeleteLocalRef(result);
+
+		return results;
 	}
 }

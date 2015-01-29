@@ -18,10 +18,13 @@
 #endif
 
 #include "OuyaSDK_OuyaMod.h"
+#include "OuyaSDK_PluginOuya.h"
 
 #include <android/log.h>
 #include <jni.h>
 
+using namespace OuyaSDK;
+using namespace std;
 using namespace tv_ouya_console_api_content_OuyaModEditor;
 
 #ifdef LOG_TAG
@@ -39,6 +42,21 @@ namespace tv_ouya_console_api_content_OuyaMod
 	JavaVM* OuyaMod::_jvm = 0;
 	jclass OuyaMod::_jcOuyaMod = 0;
 	jmethodID OuyaMod::_jmEdit = 0;
+	jmethodID OuyaMod::_jmFlag = 0;
+	jmethodID OuyaMod::_jmGetCategory = 0;
+	jmethodID OuyaMod::_jmGetDescription = 0;
+	jmethodID OuyaMod::_jmGetFilenames = 0;
+	jmethodID OuyaMod::_jmGetMetadata = 0;
+	jmethodID OuyaMod::_jmGetRatingAverage = 0;
+	jmethodID OuyaMod::_jmGetRatingCount = 0;
+	jmethodID OuyaMod::_jmGetTags = 0;
+	jmethodID OuyaMod::_jmGetTitle = 0;
+	jmethodID OuyaMod::_jmGetUserRating = 0;
+	jmethodID OuyaMod::_jmIsDownloading = 0;
+	jmethodID OuyaMod::_jmIsFlagged = 0;
+	jmethodID OuyaMod::_jmIsInstalled = 0;
+	jmethodID OuyaMod::_jmIsPublished = 0;
+	jmethodID OuyaMod::_jmRate = 0;
 
 	int OuyaMod::InitJNI(JavaVM* jvm)
 	{
@@ -110,6 +128,246 @@ namespace tv_ouya_console_api_content_OuyaMod
 			}
 		}
 
+		{
+			const char* strMethod = "flag";
+			_jmFlag = env->GetMethodID(_jcOuyaMod, strMethod, "()V");
+			if (_jmFlag)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getCategory";
+			_jmGetCategory = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/lang/String;");
+			if (_jmGetCategory)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getDescription";
+			_jmGetDescription = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/lang/String;");
+			if (_jmGetDescription)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getFilenames";
+			_jmGetFilenames = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/util/List;");
+			if (_jmGetFilenames)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getMetaData";
+			_jmGetMetadata = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/lang/String;");
+			if (_jmGetMetadata)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getRatingAverage";
+			_jmGetRatingAverage = env->GetMethodID(_jcOuyaMod, strMethod, "()F");
+			if (_jmGetRatingAverage)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getRatingCount";
+			_jmGetRatingCount = env->GetMethodID(_jcOuyaMod, strMethod, "()I");
+			if (_jmGetRatingCount)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getTags";
+			_jmGetRatingCount = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/util/List;");
+			if (_jmGetRatingCount)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getTitle";
+			_jmGetTitle = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/lang/String;");
+			if (_jmGetTitle)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getUserRating";
+			_jmGetUserRating = env->GetMethodID(_jcOuyaMod, strMethod, "()Ljava/lang/Float;");
+			if (_jmGetUserRating)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "isDownloading";
+			_jmIsDownloading = env->GetMethodID(_jcOuyaMod, strMethod, "()Z");
+			if (_jmIsDownloading)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "isFlagged";
+			_jmIsFlagged = env->GetMethodID(_jcOuyaMod, strMethod, "()Z");
+			if (_jmIsFlagged)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "isInstalled";
+			_jmIsInstalled = env->GetMethodID(_jcOuyaMod, strMethod, "()Z");
+			if (_jmIsInstalled)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "isPublished";
+			_jmIsPublished = env->GetMethodID(_jcOuyaMod, strMethod, "()Z");
+			if (_jmIsPublished)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "rate";
+			_jmRate = env->GetMethodID(_jcOuyaMod, strMethod, "()V");
+			if (_jmRate)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
 		return JNI_OK;
 	}
 
@@ -169,5 +427,419 @@ namespace tv_ouya_console_api_content_OuyaMod
 		env->DeleteLocalRef(localRef);
 
 		return OuyaModEditor(globalRef);
+	}
+
+	void OuyaMod::flag() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmFlag)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmFlag is not initialized");
+			return;
+		}
+
+		env->CallVoidMethod(_instance, _jmFlag);
+	}
+
+	string OuyaMod::getCategory() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return "";
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return "";
+		}
+
+		if (!_jmGetCategory)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetCategory is not initialized");
+			return "";
+		}
+
+		jstring localRef = (jstring)env->CallObjectMethod(_instance, _jmGetCategory);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getCategory returned null");
+			return "";
+		}
+
+		std::string result = env->GetStringUTFChars(localRef, NULL);
+		env->DeleteLocalRef(localRef);
+		return result;
+	}
+
+	string OuyaMod::getDescription() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return "";
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return "";
+		}
+
+		if (!_jmGetDescription)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetDescription is not initialized");
+			return "";
+		}
+
+		jstring localRef = (jstring)env->CallObjectMethod(_instance, _jmGetDescription);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getDescription returned null");
+			return "";
+		}
+
+		std::string result = env->GetStringUTFChars(localRef, NULL);
+		env->DeleteLocalRef(localRef);
+		return result;
+	}
+
+	vector<string> OuyaMod::getFilenames() const
+	{
+		vector<string> results;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return results;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return results;
+		}
+
+		if (!_jmGetFilenames)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetFilenames is not initialized");
+			return results;
+		}
+
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmGetFilenames);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getFilenames returned null");
+			return results;
+		}
+
+		return results;
+
+	}
+
+	string OuyaMod::getMetadata() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return "";
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return "";
+		}
+
+		if (!_jmGetMetadata)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetMetadata is not initialized");
+			return "";
+		}
+
+		jstring localRef = (jstring)env->CallObjectMethod(_instance, _jmGetMetadata);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getMetadata returned null");
+			return "";
+		}
+
+		std::string result = env->GetStringUTFChars(localRef, NULL);
+		env->DeleteLocalRef(localRef);
+		return result;
+	}
+
+	float OuyaMod::getRatingAverage() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return 0;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return 0;
+		}
+
+		if (!_jmGetRatingAverage)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetRatingAverage is not initialized");
+			return 0;
+		}
+
+		float result = env->CallFloatMethod(_instance, _jmGetRatingAverage);
+		return result;
+	}
+
+	float OuyaMod::getRatingCount() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return 0;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return 0;
+		}
+
+		if (!_jmGetRatingCount)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetRatingCount is not initialized");
+			return 0;
+		}
+
+		int result = env->CallIntMethod(_instance, _jmGetRatingCount);
+		return result;
+	}
+
+	vector<string> OuyaMod::getTags() const
+	{
+		vector<string> results;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return results;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return results;
+		}
+
+		if (!_jmGetTags)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetTags is not initialized");
+			return results;
+		}
+
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmGetTags);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getTags returned null");
+			return results;
+		}
+
+		return results;
+	}
+
+	string OuyaMod::getTitle() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return "";
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return "";
+		}
+
+		if (!_jmGetTitle)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetTitle is not initialized");
+			return "";
+		}
+
+		jstring localRef = (jstring)env->CallObjectMethod(_instance, _jmGetTitle);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getTitle returned null");
+			return "";
+		}
+
+		std::string result = env->GetStringUTFChars(localRef, NULL);
+		env->DeleteLocalRef(localRef);
+		return result;
+	}
+
+	float OuyaMod::getUserRating() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return 0;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return 0;
+		}
+
+		if (!_jmGetUserRating)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetUserRating is not initialized");
+			return 0;
+		}
+
+		jobject localRef = (jobject)env->CallObjectMethod(_instance, _jmGetUserRating);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getUserRating returned null");
+			return 0;
+		}
+
+		float result = PluginOuya::getFloat(localRef);
+		return result;
+	}
+
+	bool OuyaMod::isDownloading() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return false;
+		}
+
+		if (!_jmIsDownloading)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmIsDownloading is not initialized");
+			return false;
+		}
+
+		bool result = env->CallBooleanMethod(_instance, _jmIsDownloading);
+		return result;
+	}
+
+	bool OuyaMod::isFlagged() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return false;
+		}
+
+		if (!_jmIsFlagged)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmIsFlagged is not initialized");
+			return false;
+		}
+
+		bool result = env->CallBooleanMethod(_instance, _jmIsFlagged);
+		return result;
+	}
+
+	bool OuyaMod::isInstalled() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return false;
+		}
+
+		if (!_jmIsInstalled)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmIsInstalled is not initialized");
+			return false;
+		}
+
+		bool result = env->CallBooleanMethod(_instance, _jmIsInstalled);
+		return result;
+	}
+
+	bool OuyaMod::isPublished() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return false;
+		}
+
+		if (!_jmIsPublished)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmIsPublished is not initialized");
+			return false;
+		}
+
+		bool result = env->CallBooleanMethod(_instance, _jmIsPublished);
+		return result;
+	}
+
+	void OuyaMod::rate() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return;
+		}
+
+		if (!_jmRate)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmRate is not initialized");
+			return;
+		}
+
+		env->CallVoidMethod(_instance, _jmRate);
 	}
 }
