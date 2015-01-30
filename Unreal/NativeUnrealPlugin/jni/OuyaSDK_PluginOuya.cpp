@@ -757,7 +757,9 @@ namespace OuyaSDK
 			}
 		}
 
-		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method);
+		jstring arg1 = env->NewStringUTF(sortMethod.c_str());
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, arg1);
+		env->DeleteLocalRef(arg1);
 	}
 
 	float PluginOuya::getFloat(jobject fFloat)
