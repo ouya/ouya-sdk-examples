@@ -28,15 +28,19 @@
 #include <string>
 #include <vector>
 
+class CallbacksContentInit;
+class CallbacksContentDelete;
+class CallbacksContentDownload;
+class CallbacksContentPublish;
+class CallbacksContentSave;
+class CallbacksContentSearchInstalled;
+class CallbacksContentSearchPublished;
+class CallbacksContentUnpublish;
 class CallbacksInitOuyaPlugin;
 class CallbacksRequestGamerInfo;
 class CallbacksRequestProducts;
 class CallbacksRequestPurchase;
 class CallbacksRequestReceipts;
-class CallbacksContentInit;
-class CallbacksContentSave;
-class CallbacksContentSearchInstalled;
-class CallbacksContentSearchPublished;
 
 namespace OuyaSDK
 {
@@ -64,13 +68,21 @@ namespace OuyaSDK
 
 		static void InitializeContent();
 
-		static void saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
-				tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
-				CallbacksContentSave* callbacks);
+		static void contentDelete(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, CallbacksContentDelete* callbacks);
+
+		static void contentDownload(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, CallbacksContentDownload* callbacks);
+
+		static void contentPublish(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, CallbacksContentPublish* callbacks);
+
+		static void contentUnpublish(tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod, CallbacksContentUnpublish* callbacks);
 
 		static void getOuyaContentInstalled(CallbacksContentSearchInstalled* callbacks);
 
 		static void getOuyaContentPublished(std::string sortMethod, CallbacksContentSearchPublished* callbacks);
+
+		static void saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
+				tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
+				CallbacksContentSave* callbacks);
 
 		static float getFloat(jobject fFloat);
 

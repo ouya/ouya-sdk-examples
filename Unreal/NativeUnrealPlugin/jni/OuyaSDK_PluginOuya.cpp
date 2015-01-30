@@ -647,8 +647,156 @@ namespace OuyaSDK
 		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method);
 	}
 
+	void PluginOuya::contentDelete(OuyaMod ouyaMod, CallbacksContentDelete* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentDelete = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "contentDelete";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaMod.GetInstance());
+	}
+
+	void PluginOuya::contentDownload(OuyaMod ouyaMod, CallbacksContentDownload* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentDownload = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "contentDownload";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaMod.GetInstance());
+	}
+
+	void PluginOuya::contentPublish(OuyaMod ouyaMod, CallbacksContentPublish* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentPublish = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "contentPublish";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaMod.GetInstance());
+	}
+
+	void PluginOuya::contentUnpublish(OuyaMod ouyaMod, CallbacksContentUnpublish* callbacks)
+	{
+		CallbackSingleton::GetInstance()->m_callbacksContentUnpublish = callbacks;
+
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		jmethodID method;
+
+		{
+			const char* strMethod = "contentUnpublish";
+			method = env->GetStaticMethodID(jc_UnrealOuyaPlugin, strMethod, "(Ltv/ouya/console/api/content/OuyaMod;)V");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return;
+			}
+		}
+
+		env->CallStaticVoidMethod(jc_UnrealOuyaPlugin, method, ouyaMod.GetInstance());
+	}
+
 	void PluginOuya::saveOuyaMod(tv_ouya_console_api_content_OuyaModEditor::OuyaModEditor ouyaModEditor,
-		tv_ouya_console_api_content_OuyaMod::OuyaMod ouyaMod,
+		OuyaMod ouyaMod,
 		CallbacksContentSave* callbacks)
 	{
 		CallbackSingleton::GetInstance()->m_callbacksContentSave = callbacks;
