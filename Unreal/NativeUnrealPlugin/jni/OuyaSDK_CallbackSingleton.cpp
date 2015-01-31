@@ -624,8 +624,10 @@ extern "C" {
 			jsize length = env->GetArrayLength(ouyaMods);
 			for (jsize index(0); index < length; ++index)
 			{
-				jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
-				OuyaMod newOuyaMod = OuyaMod(element);
+				jobject localRef = (jobject)env->GetObjectArrayElement(ouyaMods, index);
+				jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+				env->DeleteLocalRef(localRef);
+				OuyaMod newOuyaMod = OuyaMod(globalRef);
 				newOuyaMods.push_back(newOuyaMod);
 
 			}
@@ -663,8 +665,10 @@ extern "C" {
 			jsize length = env->GetArrayLength(ouyaMods);
 			for (jsize index(0); index < length; ++index)
 			{
-				jobject element = (jobject)env->GetObjectArrayElement(ouyaMods, index);
-				OuyaMod newOuyaMod = OuyaMod(element);
+				jobject localRef = (jobject)env->GetObjectArrayElement(ouyaMods, index);
+				jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+				env->DeleteLocalRef(localRef);
+				OuyaMod newOuyaMod = OuyaMod(globalRef);
 				newOuyaMods.push_back(newOuyaMod);
 
 			}
