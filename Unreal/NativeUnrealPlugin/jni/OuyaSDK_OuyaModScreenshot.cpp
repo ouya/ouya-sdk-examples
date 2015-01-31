@@ -30,7 +30,9 @@
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
+
+using namespace android_graphics_Bitmap;
 
 namespace tv_ouya_console_api_content_OuyaModScreenshot
 {
@@ -117,5 +119,97 @@ namespace tv_ouya_console_api_content_OuyaModScreenshot
 		{
 			env->DeleteGlobalRef(_instance);
 		}
+	}
+
+	Bitmap OuyaModScreenshot::getImage() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return Bitmap(0);
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return Bitmap(0);
+		}
+
+		jmethodID method;
+		{
+			const char* strMethod = "getImage";
+			method = env->GetStaticMethodID(_jcOuyaModScreenshot, strMethod, "()Landroid/graphics/Bitmap;");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return Bitmap(0);
+			}
+		}
+
+		jobject localRef = env->CallStaticObjectMethod(_jcOuyaModScreenshot, method);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getImage returned null");
+			return Bitmap(0);
+		}
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getImage returned Bitmap");
+#endif
+		return Bitmap(globalRef);
+	}
+
+	Bitmap OuyaModScreenshot::getThumbnail() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return Bitmap(0);
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return Bitmap(0);
+		}
+
+		jmethodID method;
+		{
+			const char* strMethod = "getThumbnail";
+			method = env->GetStaticMethodID(_jcOuyaModScreenshot, strMethod, "()Landroid/graphics/Bitmap;");
+			if (method)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return Bitmap(0);
+			}
+		}
+
+		jobject localRef = env->CallStaticObjectMethod(_jcOuyaModScreenshot, method);
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getThumbnail returned null");
+			return Bitmap(0);
+		}
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getThumbnail returned Bitmap");
+#endif
+		return Bitmap(globalRef);
 	}
 }

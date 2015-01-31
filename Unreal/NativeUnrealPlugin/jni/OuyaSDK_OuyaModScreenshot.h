@@ -19,6 +19,8 @@
 
 #if PLATFORM_ANDROID
 
+#include "OuyaSDK_Bitmap.h"
+
 #include <jni.h>
 
 namespace tv_ouya_console_api_content_OuyaModScreenshot
@@ -31,6 +33,8 @@ namespace tv_ouya_console_api_content_OuyaModScreenshot
 		OuyaModScreenshot(jobject instance);
 		jobject GetInstance() const;
 		void Dispose() const;
+		android_graphics_Bitmap::Bitmap getImage() const;
+		android_graphics_Bitmap::Bitmap getThumbnail() const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcOuyaModScreenshot;
