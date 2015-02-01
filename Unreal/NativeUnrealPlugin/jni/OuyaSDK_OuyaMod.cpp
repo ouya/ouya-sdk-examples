@@ -19,10 +19,13 @@
 
 #include "OuyaSDK_OuyaMod.h"
 #include "OuyaSDK_PluginOuya.h"
+#include "OuyaSDK_String.h"
 
 #include <android/log.h>
 #include <jni.h>
 
+using namespace java_io_InputStream;
+using namespace java_lang_String;
 using namespace OuyaSDK;
 using namespace std;
 using namespace tv_ouya_console_api_content_OuyaModEditor;
@@ -58,6 +61,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 	jmethodID OuyaMod::_jmIsFlagged = 0;
 	jmethodID OuyaMod::_jmIsInstalled = 0;
 	jmethodID OuyaMod::_jmIsPublished = 0;
+	jmethodID OuyaMod::_jmOpenFile = 0;
 	jmethodID OuyaMod::_jmRate = 0;
 
 	int OuyaMod::InitJNI(JavaVM* jvm)
@@ -358,6 +362,22 @@ namespace tv_ouya_console_api_content_OuyaMod
 			const char* strMethod = "isPublished";
 			_jmIsPublished = env->GetMethodID(_jcOuyaMod, strMethod, "()Z");
 			if (_jmIsPublished)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "openFile";
+			_jmOpenFile = env->GetMethodID(_jcOuyaMod, strMethod, "(Ljava/lang/String;)Ljava/io/InputStream;");
+			if (_jmOpenFile)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
@@ -955,6 +975,46 @@ namespace tv_ouya_console_api_content_OuyaMod
 #endif
 
 		return result;
+	}
+
+	InputStream OuyaMod::openFile(const string& filename)
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return InputStream(0);
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return InputStream(0);
+		}
+
+		if (!_jmOpenFile)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmOpenFile is not initialized");
+			return InputStream(0);
+		}
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "invoke openFile");
+#endif
+
+		String javaFilename = String(filename);
+		jstring arg1 = javaFilename.GetInstance();
+		jobject localRef = env->CallObjectMethod(_instance, _jmOpenFile, arg1);
+		javaFilename.Dispose();
+
+		if (!localRef)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "openFile returned null");
+			return InputStream(0);
+		}
+
+		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
+		env->DeleteLocalRef(localRef);
+		return InputStream(globalRef);
 	}
 
 	void OuyaMod::rate() const

@@ -54,7 +54,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		bool isFlagged() const;
 		bool isInstalled() const;
 		bool isPublished() const;
-		java_io_InputStream::InputStream openFile(std::string filename);
+		java_io_InputStream::InputStream openFile(const std::string& filename);
 		void rate() const;
 	private:
 		static JavaVM* _jvm;
@@ -75,6 +75,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		static jmethodID _jmIsFlagged;
 		static jmethodID _jmIsInstalled;
 		static jmethodID _jmIsPublished;
+		static jmethodID _jmOpenFile;
 		static jmethodID _jmRate;
 		jobject _instance;
 	};
