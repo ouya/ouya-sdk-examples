@@ -19,6 +19,7 @@
 
 #if PLATFORM_ANDROID
 
+#include "OuyaSDK_InputStream.h"
 #include "OuyaSDK_OuyaModEditor.h"
 #include "OuyaSDK_OuyaModScreenshot.h"
 
@@ -53,6 +54,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		bool isFlagged() const;
 		bool isInstalled() const;
 		bool isPublished() const;
+		java_io_InputStream::InputStream openFile(std::string filename);
 		void rate() const;
 	private:
 		static JavaVM* _jvm;
