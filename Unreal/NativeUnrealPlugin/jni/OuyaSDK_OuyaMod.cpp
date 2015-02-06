@@ -998,14 +998,12 @@ namespace tv_ouya_console_api_content_OuyaMod
 		}
 
 #if ENABLE_VERBOSE_LOGGING
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "invoke openFile");
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "invoke openFile on %s", filename.c_str());
 #endif
 
-		String javaFilename = String(filename);
-		jstring arg1 = javaFilename.GetInstance();
+		jstring arg1 = env->NewStringUTF(filename.c_str());
 		jobject localRef = env->CallObjectMethod(_instance, _jmOpenFile, arg1);
-		javaFilename.Dispose();
-
+		env->DeleteLocalRef(arg1);
 		if (!localRef)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "openFile returned null");
@@ -1014,6 +1012,11 @@ namespace tv_ouya_console_api_content_OuyaMod
 
 		jobject globalRef = (jobject)env->NewGlobalRef(localRef);
 		env->DeleteLocalRef(localRef);
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Opened file with openFile on %s", filename.c_str());
+#endif
+
 		return InputStream(globalRef);
 	}
 

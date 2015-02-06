@@ -41,6 +41,7 @@ namespace tv_ouya_console_api_content_OuyaContent
 	jclass OuyaContent::_jcOuyaContent = 0;
 	jmethodID OuyaContent::_jmCreate = 0;
 	jmethodID OuyaContent::_jmGetInstance = 0;
+	jmethodID OuyaContent::_jmIsInitialized = 0;
 
 	int OuyaContent::InitJNI(JavaVM* jvm)
 	{
@@ -116,6 +117,22 @@ namespace tv_ouya_console_api_content_OuyaContent
 			const char* strMethod = "getInstance";
 			_jmGetInstance = env->GetStaticMethodID(_jcOuyaContent, strMethod, "()Ltv/ouya/console/api/content/OuyaContent;");
 			if (_jmGetInstance)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "isInitialized";
+			_jmIsInitialized = env->GetMethodID(_jcOuyaContent, strMethod, "()Z");
+			if (_jmIsInitialized)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
@@ -220,5 +237,29 @@ namespace tv_ouya_console_api_content_OuyaContent
 		env->DeleteLocalRef(localRef);
 
 		return OuyaMod(globalRef);
+	}
+
+	bool OuyaContent::isInitialized() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return false;
+		}
+
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not initialized");
+			return false;
+		}
+
+		if (!_jmIsInitialized)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmIsInitialized is not initialized");
+			return false;
+		}
+
+		bool result = env->CallBooleanMethod(_instance, _jmIsInitialized);
+		return result;
 	}
 }

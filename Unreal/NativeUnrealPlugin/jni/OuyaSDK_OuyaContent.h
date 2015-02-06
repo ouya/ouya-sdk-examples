@@ -36,11 +36,13 @@ namespace tv_ouya_console_api_content_OuyaContent
 
 		static OuyaContent getInstance();
 		tv_ouya_console_api_content_OuyaMod::OuyaMod create();
+		bool isInitialized() const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcOuyaContent;
 		static jmethodID _jmCreate;
 		static jmethodID _jmGetInstance;
+		static jmethodID _jmIsInitialized;
 		jobject _instance;
 	};
 }

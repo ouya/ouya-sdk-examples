@@ -18,12 +18,15 @@ package tv.ouya.examples.unreal.unrealcommunitycontent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import tv.ouya.console.api.content.OuyaContent;
+import tv.ouya.console.api.content.OuyaContent.SaveListener;
 import tv.ouya.console.api.content.OuyaMod;
 import tv.ouya.sdk.OuyaInputView;
 import tv.ouya.sdk.unreal.AsyncCppInitOuyaPlugin;
@@ -279,7 +282,55 @@ public class MainActivity extends Activity {
 							}
 						}
 						stream.close();
-						UnrealOuyaPlugin.saveOuyaMod(editor, mOuyaMod2);
+						editor.save(new SaveListener() {
+
+							@Override
+							public void onError(OuyaMod ouyaMod, int code,
+									String reason) {
+								Log.e(TAG, "Failed to save OuyaMod code="+code+" reason="+reason);
+							}
+
+							@Override
+							public void onSuccess(OuyaMod ouyaMod) {
+								Log.i(TAG, "-----------------");
+								Log.i(TAG, "-----------------");
+								Log.i(TAG, "-----------------");
+								Log.i(TAG, "-----------------");
+								Log.i(TAG, "isDownloading="+ouyaMod.isDownloading());
+								Log.i(TAG, "isInstalled="+ouyaMod.isInstalled());
+								Log.i(TAG, "isPublished="+ouyaMod.isPublished());
+								List<String> filenames = ouyaMod.getFilenames();
+								Log.i(TAG, "Found files count="+filenames.size());
+								for (int count = 0; count < 5; ++count) {
+									for (String filename : filenames) {
+										Log.i(TAG, "Found: "+filename);
+										InputStream is = ouyaMod.openFile(filename);
+										byte[] buffer = new byte[10000];
+										int bytesRead = 0;
+										try {
+											bytesRead = is.read(buffer);
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}
+										Log.i(TAG, "Read bytes="+bytesRead);
+										byte[] contents = new byte[bytesRead];
+										System.arraycopy(buffer, 0, contents, 0, bytesRead);							
+										Log.i(TAG, "Contents="+new String(contents));
+										try {
+											is.close();
+										} catch (IOException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+									}
+								}
+								
+								unitTestNative(ouyaMod);
+							}
+							
+						});
+						UnrealOuyaPlugin.saveOuyaMod(editor, mOuyaMod2);						
 						Log.i(TAG, "Save2 invoked");
 					} catch (Exception e) {
 						Log.e(TAG, "Save2 failed");
@@ -467,4 +518,6 @@ public class MainActivity extends Activity {
 			runOnUiThread(runnable);
 		}		
 	}
+	
+	public native void unitTestNative(OuyaMod ouyaMod);
 }

@@ -32,7 +32,7 @@ namespace java_io_InputStream
 		jobject GetInstance() const;
 		void Dispose() const;
 		void close() const;
-		int read(int* buffer, int length) const;
+		int read(signed char buffer[], int length) const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcInputStream;

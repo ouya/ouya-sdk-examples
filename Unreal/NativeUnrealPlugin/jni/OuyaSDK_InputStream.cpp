@@ -30,7 +30,7 @@
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
 
 namespace java_io_InputStream
 {
@@ -111,7 +111,7 @@ namespace java_io_InputStream
 
 		{
 			const char* strMethod = "read";
-			_jmRead = env->GetMethodID(_jcInputStream, strMethod, "([B)V");
+			_jmRead = env->GetMethodID(_jcInputStream, strMethod, "([B)I");
 			if (_jmRead)
 			{
 #if ENABLE_VERBOSE_LOGGING
@@ -155,6 +155,8 @@ namespace java_io_InputStream
 
 	void InputStream::close() const
 	{
+		FindJNI();
+
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
@@ -177,6 +179,9 @@ namespace java_io_InputStream
 			return;
 		}
 
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Invoking close");
+#endif
 		env->CallVoidMethod(_instance, _jmClose);
 
 		if (env->ExceptionCheck())
@@ -187,13 +192,20 @@ namespace java_io_InputStream
 		}
 	}
 
-	int InputStream::read(int* buffer, int length) const
+	int InputStream::read(signed char buffer[], int length) const
 	{
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "read");
+#endif
+
 		if (!buffer)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "buffer is null");
 			return 0;
 		}
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "buffer is valid");
+#endif
 
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -207,20 +219,39 @@ namespace java_io_InputStream
 			return 0;
 		}
 
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "env is valid");
+#endif
+
 		if (!_instance) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
 			return 0;
 		}
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "_instance is valid");
+#endif
 
 		if (!_jmRead) {
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmRead is null");
 			return 0;
 		}
 
-		jintArray arg1 = env->NewIntArray(length);
-		env->SetIntArrayRegion(arg1, 0, length, buffer);
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "_jmRead is valid");
+#endif
 
-		env->CallVoidMethod(_instance, _jmRead, arg1);
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Building byte array length=%d", length);
+#endif
+		jbyteArray arg1 = env->NewByteArray(length);
+
+
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Reading bytes...");
+#endif
+
+		int bytesRead = env->CallIntMethod(_instance, _jmRead, arg1);
 
 		if (env->ExceptionCheck())
 		{
@@ -229,8 +260,18 @@ namespace java_io_InputStream
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to read");
 		}
 
-		env->DeleteLocalRef(arg1);
+		if (bytesRead <= 0)
+		{
+			env->DeleteLocalRef(arg1);
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to read any bytes");
+			return 0;
+		}
 
-		return 0;
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Reading array buffer bytes...");
+#endif
+		env->GetByteArrayRegion(arg1, 0, bytesRead, buffer);
+		env->DeleteLocalRef(arg1);
+		return bytesRead;
 	}
 }

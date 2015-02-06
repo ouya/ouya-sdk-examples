@@ -22,6 +22,7 @@
 #include "OuyaSDK_Bundle.h"
 #include "OuyaSDK_CallbackSingleton.h"
 #include "OuyaSDK_Color.h"
+#include "OuyaSDK_InputStream.h"
 #include "OuyaSDK_JSONArray.h"
 #include "OuyaSDK_JSONObject.h"
 #include "OuyaSDK_OuyaContent.h"
@@ -52,6 +53,7 @@ using namespace android_graphics_Bitmap;
 using namespace android_graphics_Bitmap_Config;
 using namespace android_graphics_Color;
 using namespace android_os_Bundle;
+using namespace java_io_InputStream;
 using namespace java_io_OutputStream;
 using namespace org_json_JSONArray;
 using namespace org_json_JSONObject;
@@ -282,6 +284,11 @@ namespace OuyaSDK
 		}
 
 		if (Config::InitJNI(jvm) == JNI_ERR)
+		{
+			return JNI_ERR;
+		}
+
+		if (InputStream::InitJNI(jvm) == JNI_ERR)
 		{
 			return JNI_ERR;
 		}
