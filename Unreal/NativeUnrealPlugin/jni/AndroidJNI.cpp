@@ -150,6 +150,11 @@ void unitTestReadScreenshots(const OuyaMod& ouyaMod)
 			continue;
 		}
 		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot image is valid");
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		int* imagePixels = new int[imageWidth*imageHeight];
+		image.getPixels(imagePixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+		delete[] imagePixels;
 		image.Dispose();
 
 		Bitmap thumbnail = ouyaModScreenshot.getThumbnail();
@@ -159,6 +164,11 @@ void unitTestReadScreenshots(const OuyaMod& ouyaMod)
 			continue;
 		}
 		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot thumbnail is valid");
+		int thumbnailWidth = thumbnail.getWidth();
+		int thumbnailHeight = thumbnail.getHeight();
+		int* thumbnailPixels = new int[thumbnailWidth*thumbnailHeight];
+		thumbnail.getPixels(thumbnailPixels, 0, thumbnailWidth, 0, 0, thumbnailWidth, thumbnailHeight);
+		delete[] thumbnailPixels;
 		thumbnail.Dispose();
 
 		ouyaModScreenshot.Dispose();

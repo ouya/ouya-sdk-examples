@@ -34,12 +34,18 @@ namespace android_graphics_Bitmap
 		jobject GetInstance() const;
 		void Dispose() const;
 		static Bitmap createBitmap(int width, int height, android_graphics_Bitmap_Config::Config config);
-		void setPixel(int x, int y, int color);
-		void setPixels(int* pixels, int pixelCount, int offset, int stride, int x, int y, int width, int height);
+		int getHeight() const;
+		void getPixels(int* pixels, int offset, int stride, int x, int y, int width, int height) const;
+		int getWidth() const;
+		void setPixel(int x, int y, int color) const;
+		void setPixels(int* pixels, int offset, int stride, int x, int y, int width, int height) const;
 	private:
 		static JavaVM* _jvm;
 		static jclass _jcBitmap;
 		static jmethodID _jmCreateBitmap;
+		static jmethodID _jmGetHeight;
+		static jmethodID _jmGetPixels;
+		static jmethodID _jmGetWidth;
 		static jmethodID _jmSetPixel;
 		static jmethodID _jmSetPixels;
 		jobject _instance;

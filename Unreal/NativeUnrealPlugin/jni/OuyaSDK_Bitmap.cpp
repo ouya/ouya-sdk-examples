@@ -33,13 +33,16 @@ using namespace android_graphics_Bitmap_Config;
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
 
 namespace android_graphics_Bitmap
 {
 	JavaVM* Bitmap::_jvm = 0;
 	jclass Bitmap::_jcBitmap = 0;
 	jmethodID Bitmap::_jmCreateBitmap = 0;
+	jmethodID Bitmap::_jmGetHeight = 0;
+	jmethodID Bitmap::_jmGetPixels = 0;
+	jmethodID Bitmap::_jmGetWidth = 0;
 	jmethodID Bitmap::_jmSetPixel = 0;
 	jmethodID Bitmap::_jmSetPixels = 0;
 
@@ -101,6 +104,54 @@ namespace android_graphics_Bitmap
 			const char* strMethod = "createBitmap";
 			_jmCreateBitmap = env->GetStaticMethodID(_jcBitmap, strMethod, "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
 			if (_jmCreateBitmap)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getHeight";
+			_jmGetHeight = env->GetMethodID(_jcBitmap, strMethod, "()I");
+			if (_jmGetHeight)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getPixels";
+			_jmGetPixels = env->GetMethodID(_jcBitmap, strMethod, "([IIIIIII)V");
+			if (_jmGetPixels)
+			{
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
+				return JNI_ERR;
+			}
+		}
+
+		{
+			const char* strMethod = "getWidth";
+			_jmGetWidth = env->GetMethodID(_jcBitmap, strMethod, "()I");
+			if (_jmGetWidth)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
@@ -218,7 +269,107 @@ namespace android_graphics_Bitmap
 		return Bitmap(globalRef);
 	}
 
-	void Bitmap::setPixel(int x, int y, int color)
+	int Bitmap::getHeight() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return 0;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return 0;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return 0;
+		}
+
+		if (!_jmGetHeight) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetHeight is null");
+			return 0;
+		}
+
+		int result = env->CallIntMethod(_instance, _jmGetHeight);
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getHeight returned %d", result);
+#endif
+		return result;
+	}
+
+	void Bitmap::getPixels(int* pixels, int offset, int stride, int x, int y, int width, int height) const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return;
+		}
+
+		if (!_jmGetPixels) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetPixels is null");
+			return;
+		}
+
+		int pixelCount = width*height;
+
+		jintArray arg1 = env->NewIntArray(pixelCount);
+		jint arg2 = offset;
+		jint arg3 = stride;
+		jint arg4 = x;
+		jint arg5 = y;
+		jint arg6 = width;
+		jint arg7 = height;
+		env->CallVoidMethod(_instance, _jmGetPixels, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+		env->GetIntArrayRegion(arg1, 0, pixelCount, pixels);
+		env->DeleteLocalRef(arg1);
+	}
+
+	int Bitmap::getWidth() const
+	{
+		JNIEnv* env;
+		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
+			return 0;
+		}
+
+		if (!env)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
+			return 0;
+		}
+
+		if (!_instance) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null");
+			return 0;
+		}
+
+		if (!_jmGetWidth) {
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetWidth is null");
+			return 0;
+		}
+
+		int result = env->CallIntMethod(_instance, _jmGetWidth);
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "getWidth returned %d", result);
+#endif
+		return result;
+	}
+
+	void Bitmap::setPixel(int x, int y, int color) const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -248,7 +399,7 @@ namespace android_graphics_Bitmap
 		env->CallVoidMethod(_instance, _jmSetPixel, arg1, arg2, arg3);
 	}
 
-	void Bitmap::setPixels(int* pixels, int pixelCount, int offset, int stride, int x, int y, int width, int height)
+	void Bitmap::setPixels(int* pixels, int offset, int stride, int x, int y, int width, int height) const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -271,6 +422,8 @@ namespace android_graphics_Bitmap
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmSetPixels is null");
 			return;
 		}
+
+		int pixelCount = width*height;
 
 		jintArray arg1 = env->NewIntArray(pixelCount);
 		env->SetIntArrayRegion(arg1, 0, pixelCount, pixels);
