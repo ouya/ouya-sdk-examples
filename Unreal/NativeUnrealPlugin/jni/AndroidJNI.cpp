@@ -1,6 +1,7 @@
 #include "AndroidJNI.h"
 
 // OUYA handles remapping native input
+#include "OuyaSDK_Bitmap.h"
 #include "OuyaSDK_CallbacksContentSave.h"
 #include "OuyaSDK_InputStream.h"
 #include "OuyaSDK_OutputStream.h"
@@ -8,6 +9,7 @@
 #include "OuyaSDK_OuyaInputView.h"
 #include "OuyaSDK_OuyaMod.h"
 #include "OuyaSDK_OuyaModEditor.h"
+#include "OuyaSDK_OuyaModScreenshot.h"
 #include "OuyaSDK_PluginOuya.h"
 #include "OuyaSDK_String.h"
 
@@ -28,6 +30,7 @@ JavaVM* GJavaVM;
 // OUYA handles remapping native input
 // Include the OUYA namespace
 
+using namespace android_graphics_Bitmap;
 using namespace java_io_InputStream;
 using namespace java_io_OutputStream;
 using namespace OuyaSDK;
@@ -35,6 +38,7 @@ using namespace std;
 using namespace tv_ouya_console_api_content_OuyaContent;
 using namespace tv_ouya_console_api_content_OuyaMod;
 using namespace tv_ouya_console_api_content_OuyaModEditor;
+using namespace tv_ouya_console_api_content_OuyaModScreenshot;
 using namespace tv_ouya_sdk_OuyaInputView;
 
 void unitTestReadFiles(const OuyaMod& ouyaMod)
@@ -88,15 +92,8 @@ public:
 	}
 };
 
-void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
+void unitTestAddTextFile(const OuyaMod& ouyaMod)
 {
-	jobject globalRef = (jobject)env->NewGlobalRef(localOuyaMod);
-	env->DeleteLocalRef(localOuyaMod);
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Invoked unitTestNative");
-	OuyaMod ouyaMod = OuyaMod(globalRef);
-
-	unitTestReadFiles(ouyaMod);
-
 	OuyaModEditor ouyaModEditor = ouyaMod.edit();
 
 	OutputStream outputStream = ouyaModEditor.newFile("AnotherFile.AnotherExtension");
@@ -126,6 +123,61 @@ void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
 	PluginOuya::saveOuyaMod(ouyaModEditor, ouyaMod, callbacks);
 
 	ouyaModEditor.Dispose();
+}
+
+void unitTestReadScreenshots(const OuyaMod& ouyaMod)
+{
+	vector<OuyaModScreenshot> ouyaModScreenshots = ouyaMod.getScreenshots();
+
+#if ENABLE_VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "unitTestReadScreenshots found %d screenshots", ouyaModScreenshots.size());
+#endif
+
+	for (int index = 0; index < ouyaModScreenshots.size(); ++index)
+	{
+		const OuyaModScreenshot& ouyaModScreenshot = ouyaModScreenshots[index];
+		if (!ouyaModScreenshot.GetInstance())
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot reference is null");
+			continue;
+		}
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot is valid");
+
+		Bitmap image = ouyaModScreenshot.getImage();
+		if (!image.GetInstance())
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot image reference is null");
+			continue;
+		}
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot image is valid");
+		image.Dispose();
+
+		Bitmap thumbnail = ouyaModScreenshot.getThumbnail();
+		if (!thumbnail.GetInstance())
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot thumbnail reference is null");
+			continue;
+		}
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "unitTestReadScreenshots ouyaModScreenshot thumbnail is valid");
+		thumbnail.Dispose();
+
+		ouyaModScreenshot.Dispose();
+	}
+}
+
+void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
+{
+	jobject globalRef = (jobject)env->NewGlobalRef(localOuyaMod);
+	env->DeleteLocalRef(localOuyaMod);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Invoked unitTestNative");
+	OuyaMod ouyaMod = OuyaMod(globalRef);
+
+	unitTestReadFiles(ouyaMod);
+
+	unitTestReadScreenshots(ouyaMod);
+
+	unitTestAddTextFile(ouyaMod);
+
 	ouyaMod.Dispose();
 }
 

@@ -135,10 +135,16 @@ namespace tv_ouya_console_api_content_OuyaModScreenshot
 			return Bitmap(0);
 		}
 
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null!");
+			return Bitmap(0);
+		}
+
 		jmethodID method;
 		{
 			const char* strMethod = "getImage";
-			method = env->GetStaticMethodID(_jcOuyaModScreenshot, strMethod, "()Landroid/graphics/Bitmap;");
+			method = env->GetMethodID(_jcOuyaModScreenshot, strMethod, "()Landroid/graphics/Bitmap;");
 			if (method)
 			{
 #if ENABLE_VERBOSE_LOGGING
@@ -152,7 +158,7 @@ namespace tv_ouya_console_api_content_OuyaModScreenshot
 			}
 		}
 
-		jobject localRef = env->CallStaticObjectMethod(_jcOuyaModScreenshot, method);
+		jobject localRef = env->CallObjectMethod(_instance, method);
 		if (!localRef)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getImage returned null");
@@ -181,10 +187,16 @@ namespace tv_ouya_console_api_content_OuyaModScreenshot
 			return Bitmap(0);
 		}
 
+		if (!_instance)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is null!");
+			return Bitmap(0);
+		}
+
 		jmethodID method;
 		{
 			const char* strMethod = "getThumbnail";
-			method = env->GetStaticMethodID(_jcOuyaModScreenshot, strMethod, "()Landroid/graphics/Bitmap;");
+			method = env->GetMethodID(_jcOuyaModScreenshot, strMethod, "()Landroid/graphics/Bitmap;");
 			if (method)
 			{
 #if ENABLE_VERBOSE_LOGGING
@@ -198,7 +210,7 @@ namespace tv_ouya_console_api_content_OuyaModScreenshot
 			}
 		}
 
-		jobject localRef = env->CallStaticObjectMethod(_jcOuyaModScreenshot, method);
+		jobject localRef = env->CallObjectMethod(_instance, method);
 		if (!localRef)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "getThumbnail returned null");
