@@ -54,7 +54,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		bool isFlagged() const;
 		bool isInstalled() const;
 		bool isPublished() const;
-		java_io_InputStream::InputStream openFile(const std::string& filename);
+		java_io_InputStream::InputStream openFile(const std::string& filename) const;
 		void rate() const;
 	private:
 		static JavaVM* _jvm;

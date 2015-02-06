@@ -30,7 +30,7 @@
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
 
 using namespace android_graphics_Bitmap;
 using namespace java_io_OutputStream;
@@ -522,6 +522,17 @@ namespace tv_ouya_console_api_content_OuyaModEditor
 		jstring arg1 = env->NewStringUTF(description.c_str());
 		env->CallVoidMethod(_instance, _jmSetDescription, arg1);
 		env->DeleteLocalRef(arg1);
+
+#if ENABLE_VERBOSE_LOGGING
+		if (description.c_str())
+		{
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "setDescription=%s", description.c_str());
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "setDescription=null");
+		}
+#endif
 	}
 
 	void OuyaModEditor::setMetadata(const string& metadata) const

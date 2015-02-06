@@ -204,7 +204,7 @@ namespace java_io_OutputStream
 		}
 	}
 
-	void OutputStream::write(int* buffer, int length) const
+	void OutputStream::write(signed char buffer[], int length) const
 	{
 		if (!buffer)
 		{
@@ -234,8 +234,8 @@ namespace java_io_OutputStream
 			return;
 		}
 
-		jintArray arg1 = env->NewIntArray(length);
-		env->SetIntArrayRegion(arg1, 0, length, buffer);
+		jbyteArray arg1 = env->NewByteArray(length);
+		env->SetByteArrayRegion(arg1, 0, length, buffer);
 
 		env->CallVoidMethod(_instance, _jmWrite, arg1);
 

@@ -32,7 +32,7 @@ namespace java_io_OutputStream
 		jobject GetInstance() const;
 		void Dispose() const;
 		void close() const;
-		void write(int* buffer, int length) const;
+		void write(signed char buffer[], int length) const;
 		void flush() const;
 	private:
 		static JavaVM* _jvm;

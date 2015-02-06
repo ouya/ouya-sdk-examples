@@ -977,7 +977,7 @@ namespace tv_ouya_console_api_content_OuyaMod
 		return result;
 	}
 
-	InputStream OuyaMod::openFile(const string& filename)
+	InputStream OuyaMod::openFile(const string& filename) const
 	{
 		JNIEnv* env;
 		if (_jvm->GetEnv((void**)&env, JNI_VERSION_1_6) != JNI_OK) {

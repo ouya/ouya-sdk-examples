@@ -1,11 +1,13 @@
 #include "AndroidJNI.h"
 
 // OUYA handles remapping native input
+#include "OuyaSDK_CallbacksContentSave.h"
 #include "OuyaSDK_InputStream.h"
 #include "OuyaSDK_OutputStream.h"
 #include "OuyaSDK_OuyaContent.h"
 #include "OuyaSDK_OuyaInputView.h"
 #include "OuyaSDK_OuyaMod.h"
+#include "OuyaSDK_OuyaModEditor.h"
 #include "OuyaSDK_PluginOuya.h"
 #include "OuyaSDK_String.h"
 
@@ -17,7 +19,7 @@
 #ifdef ENABLE_VERBOSE_LOGGING
 #undef ENABLE_VERBOSE_LOGGING
 #endif
-#define ENABLE_VERBOSE_LOGGING false
+#define ENABLE_VERBOSE_LOGGING true
 
 #define JNI_CURRENT_VERSION JNI_VERSION_1_6
 
@@ -32,14 +34,11 @@ using namespace OuyaSDK;
 using namespace std;
 using namespace tv_ouya_console_api_content_OuyaContent;
 using namespace tv_ouya_console_api_content_OuyaMod;
+using namespace tv_ouya_console_api_content_OuyaModEditor;
 using namespace tv_ouya_sdk_OuyaInputView;
 
-void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
+void unitTestReadFiles(const OuyaMod& ouyaMod)
 {
-	jobject globalRef = (jobject)env->NewGlobalRef(localOuyaMod);
-	env->DeleteLocalRef(localOuyaMod);
-	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Invoked unitTestNative");
-	OuyaMod ouyaMod = OuyaMod(globalRef);
 	vector<string> filenames = ouyaMod.getFilenames();
 	for (int index = 0; index < filenames.size(); ++index)
 	{
@@ -49,7 +48,7 @@ void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
 
 		InputStream inputStream = ouyaMod.openFile(filename);
 
-		const int length = 2048;
+		const int length = 100000;
 		signed char buffer[length];
 		int readAmount = inputStream.read(buffer, length);
 		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Read %d bytes", readAmount);
@@ -68,6 +67,65 @@ void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
 		inputStream.close();
 		inputStream.Dispose();
 	}
+}
+
+class UnitTestCallbacksContentSave : public CallbacksContentSave
+{
+public:
+
+	void OnError(OuyaMod ouyaMod, int code, const std::string& reason)
+	{
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "UnitTestCallbacksContentSave::OnError: code=%d reason=%s", code, reason.c_str());
+	}
+
+	void OnSuccess(OuyaMod ouyaMod)
+	{
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "UnitTestCallbacksContentSave::OnSuccess");
+#endif
+
+		unitTestReadFiles(ouyaMod);
+	}
+};
+
+void unitTestNative(JNIEnv* env, jobject thiz, jobject localOuyaMod)
+{
+	jobject globalRef = (jobject)env->NewGlobalRef(localOuyaMod);
+	env->DeleteLocalRef(localOuyaMod);
+	__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Invoked unitTestNative");
+	OuyaMod ouyaMod = OuyaMod(globalRef);
+
+	unitTestReadFiles(ouyaMod);
+
+	OuyaModEditor ouyaModEditor = ouyaMod.edit();
+
+	OutputStream outputStream = ouyaModEditor.newFile("AnotherFile.AnotherExtension");
+	if (outputStream.GetInstance())
+	{
+		const char* contents = "Hello UE4 World!";
+		int length = strlen(contents);
+	#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Bytes are valid length=%d", length);
+	#endif
+		signed char* buffer = new signed char[length];
+		for (int index = 0; index < length; ++index)
+		{
+			buffer[index] = contents[index];
+		}
+
+		outputStream.write(buffer, length);
+		outputStream.flush();
+		outputStream.close();
+
+		delete[] buffer;
+
+		outputStream.Dispose();
+	}
+
+	UnitTestCallbacksContentSave* callbacks = new UnitTestCallbacksContentSave();
+	PluginOuya::saveOuyaMod(ouyaModEditor, ouyaMod, callbacks);
+
+	ouyaModEditor.Dispose();
 	ouyaMod.Dispose();
 }
 
