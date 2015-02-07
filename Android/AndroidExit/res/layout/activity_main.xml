@@ -8,12 +8,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="tv.ouya.examples.android.androidexit.MainActivity" >
 
-    <Button
-		android:id="@+id/btnExit"
-		android:text="Exit"
-		android:layout_width="250dp"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:gravity="center"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="#F000">
+    
+	    <Button
+			android:id="@+id/btnExit"
+			android:text="@string/exit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:gravity="center"/>
+	    
+	</LinearLayout>
 
 </RelativeLayout>
