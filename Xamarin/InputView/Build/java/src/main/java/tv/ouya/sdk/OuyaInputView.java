@@ -16,9 +16,14 @@
 
 package tv.ouya.sdk;
 
+import tv.ouya.console.api.DebugInput;
+import tv.ouya.console.api.OuyaController;
+import tv.ouya.console.api.OuyaInputMapper;
 import android.app.Activity;
 import android.content.Context;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,53 +33,101 @@ public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
 
-	private Activity mActivity = null;
+    public OuyaInputView(Context context, AttributeSet attrs) {
+    	super(context, attrs);
+		//Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs)");
+        init();
+    }
 
-	public OuyaInputView(Activity activity, Context context) {
-		super(context);
-		Log.i(TAG, "OuyaInputView");
-		mActivity = activity;
-		if (null != mActivity) {
+    public OuyaInputView(Context context, AttributeSet attrs, int defStyle) {
+    	super(context, attrs, defStyle);
+		//Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs, int defStyle)");
+        init();
+    }
 
+    public OuyaInputView(Context context) {
+        super(context);
+		//Log.d(TAG, "OuyaInputView(Context context)");
+        init();
+    }
+
+    private void init() {
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+				
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
-			content.addView(this);
-			Log.i(TAG, "Added OuyaInputView to content");
+			if (null != content) {
+				content.addView(this);
+				//Log.d(TAG, "Added view");
+			} else {
+				Log.e(TAG, "Content view is missing");
+			}
+
+			OuyaInputMapper.init(activity);
+
+			activity.takeKeyEvents(true);
 
 			setFocusable(true);
 			requestFocus();
-			Log.i(TAG, "Give the custom view focus");
 		} else {
 			Log.e(TAG, "Activity is null");
 		}
 	}
 
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
-		return super.dispatchKeyEvent(keyEvent);
-	}
+	public void shutdown() {
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+    		OuyaInputMapper.shutdown(activity);
+    	} else {
+    		Log.e(TAG, "Activity was not found.");
+    	}
+    }
 
 	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "dispatchGenericMotionEvent");
-		return super.dispatchGenericMotionEvent(motionEvent);
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+    	//Log.i(TAG, "dispatchGenericMotionEvent");
+    	//DebugInput.debugMotionEvent(motionEvent);
+    	Activity activity = ((Activity)getContext());
+		if (null != activity) {
+		    if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
+		    	return OuyaInputMapper.dispatchGenericMotionEvent(activity, motionEvent);
+		    }
+	    } else {
+	    	Log.e(TAG, "Activity was not found.");
+	    }
+    	return super.dispatchGenericMotionEvent(motionEvent);
+    }
+
+	@Override
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+	    	if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
+	    		return OuyaInputMapper.dispatchKeyEvent(activity, keyEvent);
+	    	}
+	    } else {
+	    	Log.e(TAG, "Activity was not found.");
+	    }
+	    return super.dispatchKeyEvent(keyEvent);
     }
 
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "onGenericMotionEvent");
-		return super.onGenericMotionEvent(motionEvent);
+		//Log.i(TAG, "onGenericMotionEvent");
+		//DebugInput.debugMotionEvent(motionEvent);
+		DebugInput.debugOuyaMotionEvent(motionEvent);
+		return true;
 	}
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyUp keyCode=" + keyCode);
-		return super.onKeyUp(keyCode, keyEvent);
+		Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
+		return true;
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyDown keyCode=" + keyCode);
-		return super.onKeyDown(keyCode, keyEvent);
+		Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
+		return true;
 	}
 }

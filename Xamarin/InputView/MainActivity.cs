@@ -22,12 +22,10 @@ namespace InputView
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
 
-			using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this, ApplicationContext))
+			using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this))
 			{
 				// do nothing
 			}
 		}
 	}
 }
-
-

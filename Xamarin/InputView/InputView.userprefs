@@ -1,30 +1,18 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="MainActivity.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.015d4b33c2401c06" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="XamarinOuyaPlugin\Transforms\Metadata.xml">
     <Files>
-      <File FileName="MainActivity.cs" Line="28" Column="15" />
-      <File FileName="OuyaInputView.cs" Line="24" Column="1" />
+      <File FileName="MainActivity.cs" Line="1" Column="1" />
+      <File FileName="Resources\values\Strings.xml" Line="1" Column="1" />
+      <File FileName="Properties\AndroidManifest.xml" Line="1" Column="1" />
+      <File FileName="XamarinOuyaPlugin\Transforms\Metadata.xml" Line="1" Column="1" />
+      <File FileName="XamarinOuyaPlugin\Transforms\EnumMethods.xml" Line="26" Column="26" />
+      <File FileName="XamarinOuyaPlugin\Transforms\EnumFields.xml" Line="23" Column="23" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
-          <Node name="InputView" expanded="True">
-            <Node name="Assets" expanded="True" />
-            <Node name="Properties" expanded="True" />
-            <Node name="Resources" expanded="True">
-              <Node name="layout" expanded="True" />
-            </Node>
-          </Node>
-          <Node name="XamarinOuyaPlugin" expanded="True">
-            <Node name="Jars" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.InputView AndroidDeviceId-Debug="192.168.2.185:5555" />
+  <MonoDevelop.Ide.ItemProperties.InputView AndroidDeviceId-Debug="192.168.2.82:5555" />
 </Properties>

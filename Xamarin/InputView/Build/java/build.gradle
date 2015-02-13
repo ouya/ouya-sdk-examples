@@ -11,7 +11,7 @@ buildscript {
 
 dependencies {
     // OUYA SDK
-    compile files('../../Jars/ouya-sdk.jar')
+    compile files('../../XamarinOuyaPlugin/Jars/ouya-sdk.jar')
 }
 
 android {
