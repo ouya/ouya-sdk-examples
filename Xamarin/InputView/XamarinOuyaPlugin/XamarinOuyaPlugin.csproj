@@ -57,4 +57,9 @@
     <EmbeddedJar Include="Jars\XamarinOuyaPlugin.jar" />
     <EmbeddedJar Include="Jars\ouya-sdk.jar" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedNativeLibrary Include="Libs\armeabi\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="Libs\x86\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="Libs\armeabi-v7a\lib-ouya-ndk.so" />
+  </ItemGroup>
 </Project>
