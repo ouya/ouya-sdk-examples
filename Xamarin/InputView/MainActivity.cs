@@ -4,15 +4,17 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Android.Util;
 using System;
 
 namespace InputView
 {
-	[Activity (Label = "Xamarin InputView", MainLauncher = true)]
+	[Activity (Label = "Xamarin InputView", MainLauncher = true, Theme = "@android:style/Theme.NoTitleBar.Fullscreen")]
 	[IntentFilter(new[] { Intent.ActionMain }
 		, Categories = new[] { Intent.CategoryLauncher, CategoryGame })]
 	public class MainActivity : Activity
 	{
+		public const String TAG = "MainActivity";
 		public const String CategoryGame = "tv.ouya.intent.category.GAME";
 
 		protected override void OnCreate (Bundle bundle)
@@ -25,6 +27,74 @@ namespace InputView
 			using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this))
 			{
 				// do nothing
+			}
+
+			FrameLayout content = (FrameLayout)FindViewById(Android.Resource.Id.Content);
+			if (null == content) {
+				Log.Info(TAG, "Failed to get content");
+				return;
+			}
+
+			RelativeLayout relativeLayout = new RelativeLayout (this);
+			content.AddView (relativeLayout);
+			FrameLayout.LayoutParams relativeLayoutParams = new FrameLayout.LayoutParams (FrameLayout.LayoutParams.MatchParent, FrameLayout.LayoutParams.MatchParent);
+			relativeLayout.LayoutParameters = relativeLayoutParams;
+			relativeLayout.SetPadding(0, 0, 0, 0);
+
+			LinearLayout verticalLayout = new LinearLayout (this);
+			relativeLayout.AddView (verticalLayout);
+			RelativeLayout.LayoutParams verticalLayoutParams = new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.MatchParent, RelativeLayout.LayoutParams.MatchParent);
+			verticalLayout.LayoutParameters = verticalLayoutParams;
+			verticalLayout.Orientation = Orientation.Vertical;
+			verticalLayout.SetGravity (GravityFlags.Center);
+			verticalLayout.SetPadding(0, 0, 0, 0);
+
+			for (int y = 0; y < 2; ++y) {
+				LinearLayout horizontalLayout = new LinearLayout (this);
+				verticalLayout.AddView (horizontalLayout);
+				LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams (LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.WrapContent);
+				horizontalLayout.LayoutParameters = horizontalLayoutParams;
+				horizontalLayout.Orientation = Orientation.Horizontal;
+				horizontalLayout.SetGravity (GravityFlags.Center);
+				horizontalLayout.SetPadding(0, 0, 0, 0);
+
+				int[] resources = {
+					Resource.Drawable.controller,
+					Resource.Drawable.a,
+					Resource.Drawable.dpad_down,
+					Resource.Drawable.dpad_left,
+					Resource.Drawable.dpad_right,
+					Resource.Drawable.dpad_up,
+					Resource.Drawable.lb,
+					Resource.Drawable.lt,
+					Resource.Drawable.l_stick,
+					Resource.Drawable.menu,
+					Resource.Drawable.o,
+					Resource.Drawable.rb,
+					Resource.Drawable.rt,
+					Resource.Drawable.r_stick,
+					Resource.Drawable.thumbl,
+					Resource.Drawable.thumbr,
+					Resource.Drawable.u,
+					Resource.Drawable.y,
+				};
+
+				for (int x = 0; x < 2; ++x) {
+					RelativeLayout controllerView = new RelativeLayout (this);
+					horizontalLayout.AddView (controllerView);
+					LinearLayout.LayoutParams controllerLayoutParams = new LinearLayout.LayoutParams (512, 512);
+					controllerView.LayoutParameters = controllerLayoutParams;
+					controllerView.SetGravity (GravityFlags.Center);
+					controllerView.SetPadding(100, 0, 0, 0);
+
+					foreach (int resourceId in resources) {
+
+						ImageView imageView = new ImageView (this);
+						controllerView.AddView (imageView);
+						imageView.SetImageResource (resourceId);
+					}
+					Log.Info (TAG, "Added ImageView");
+				}
 			}
 		}
 	}

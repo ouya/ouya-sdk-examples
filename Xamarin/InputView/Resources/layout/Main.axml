@@ -3,9 +3,14 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <TextView
-        android:id="@+id/txtSomeText"
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Check your adb logcat as Java should be logging motion and key events" />
+        android:layout_height="fill_parent">
+        <TextView
+            android:id="@+id/txtSomeText"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="Check your adb logcat as Java should be logging motion and key events" />
+    </RelativeLayout>
 </LinearLayout>

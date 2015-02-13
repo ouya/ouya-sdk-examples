@@ -58,6 +58,24 @@
     <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable\Icon.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\a.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\controller.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\dpad_down.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\dpad_left.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\dpad_right.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\dpad_up.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\lb.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\lt.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\l_stick.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\menu.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\o.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\rb.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\rt.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\r_stick.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\thumbl.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\thumbr.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\u.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\y.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -65,5 +83,8 @@
       <Project>{7130C9E8-1BF8-4BB6-903A-68C36DE88E05}</Project>
       <Name>XamarinOuyaPlugin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\drawable-mdpi\" />
   </ItemGroup>
 </Project>
