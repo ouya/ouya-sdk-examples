@@ -120,6 +120,8 @@ namespace InputView
 						views[Resource.Drawable.thumbr],
 						views[Resource.Drawable.u],
 						views[Resource.Drawable.y]);
+
+					_controllers.Add (controller);
 				}
 			}
 
@@ -141,6 +143,8 @@ namespace InputView
 					foreach (VirtualControllerView controller in _controllers) {
 						controller.Update ();
 					}
+
+					NdkWrapper.clearButtonStates();
 				};
 
 				RunOnUiThread (action);

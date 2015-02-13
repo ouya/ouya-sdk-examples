@@ -11,6 +11,11 @@ namespace InputView
 {
 	public class VirtualControllerView
 	{
+		const float DEAD_ZONE = 0.25f;
+
+		const float AXIS_SCALER = 4f;
+
+
 		int _playerNum;
 		View _controller = null;
 		View _buttonA = null;
@@ -30,6 +35,8 @@ namespace InputView
 		View _axisR3Inactive = null;
 		View _buttonU = null;
 		View _buttonY = null;
+
+		DateTime _menuDetected = DateTime.MinValue;
 
 		public VirtualControllerView (
 			int playerNum,
@@ -92,8 +99,86 @@ namespace InputView
 			_buttonY.Visibility = ViewStates.Invisible;
 		}
 
+		private void SetVisibility(View view, bool visible)
+		{
+			if (visible) {
+				view.Visibility = ViewStates.Visible;
+			} else {
+				view.Visibility = ViewStates.Invisible;
+			}
+		}
+
 		public void Update()
 		{
+			SetVisibility (_buttonO, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_O));
+			SetVisibility (_buttonU, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_U));
+			SetVisibility (_buttonY, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_Y));
+			SetVisibility (_buttonA, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_A));
+			SetVisibility (_buttonDpadDown, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_DPAD_DOWN));
+			SetVisibility (_buttonDpadLeft, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_DPAD_LEFT));
+			SetVisibility (_buttonDpadRight, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_DPAD_RIGHT));
+			SetVisibility (_buttonDpadUp, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_DPAD_UP));
+			SetVisibility (_buttonL1, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_L1));
+			SetVisibility (_buttonR1, NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_R1));
+
+			if (NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_L3)) {
+				SetVisibility (_axisL3Active, true);
+				SetVisibility (_axisL3Inactive, false);
+			} else {
+				SetVisibility (_axisL3Active, false);
+				SetVisibility (_axisL3Inactive, true);
+			}
+
+			if (NdkWrapper.isPressed (_playerNum, OuyaController.BUTTON_R3)) {
+				SetVisibility (_axisR3Active, true);
+				SetVisibility (_axisR3Inactive, false);
+			} else {
+				SetVisibility (_axisR3Active, false);
+				SetVisibility (_axisR3Inactive, true);
+			}
+
+			if (NdkWrapper.isPressedUp (_playerNum, OuyaController.BUTTON_MENU)) {
+				_menuDetected = DateTime.Now + TimeSpan.FromSeconds (1);
+			}
+
+			if (Math.Abs (NdkWrapper.getAxis (_playerNum, OuyaController.AXIS_L2)) > DEAD_ZONE) {
+				SetVisibility (_axisL2, true);
+			} else {
+				SetVisibility (_axisL2, false);
+			}
+
+			if (Math.Abs (NdkWrapper.getAxis (_playerNum, OuyaController.AXIS_R2)) > DEAD_ZONE) {
+				SetVisibility (_axisR2, true);
+			} else {
+				SetVisibility (_axisR2, false);
+			}
+
+			SetVisibility (_buttonMenu, DateTime.Now < _menuDetected);
+
+			//rotate input by N degrees to match image
+			float degrees = 135;
+			float radians = degrees / 180f * 3.14f;
+			float cos = (float)Math.Cos(radians);
+			float sin = (float)Math.Sin(radians);
+
+			float lx = NdkWrapper.getAxis (_playerNum, OuyaController.AXIS_LS_X);
+			float ly = NdkWrapper.getAxis (_playerNum, OuyaController.AXIS_LS_Y);
+
+			_axisL3Active.SetX (_controller.GetX() + AXIS_SCALER * (lx * cos - ly * sin));
+			_axisL3Active.SetY (_controller.GetY() + AXIS_SCALER * (lx * sin + ly * cos));
+
+			_axisL3Inactive.SetX (_controller.GetX() + AXIS_SCALER * (lx * cos - ly * sin));
+			_axisL3Inactive.SetY (_controller.GetY() + AXIS_SCALER * (lx * sin + ly * cos));
+
+			float rx = NdkWrapper.getAxis (_playerNum, OuyaController.AXIS_RS_X);
+			float ry = NdkWrapper.getAxis (_playerNum, OuyaController.AXIS_RS_Y);
+
+			_axisR3Active.SetX (_controller.GetX() + AXIS_SCALER * (rx * cos - ry * sin));
+			_axisR3Active.SetY (_controller.GetY() + AXIS_SCALER * (rx * sin + ry * cos));
+
+			_axisR3Inactive.SetX (_controller.GetX() + AXIS_SCALER * (rx * cos - ry * sin));
+			_axisR3Inactive.SetY (_controller.GetY() + AXIS_SCALER * (rx * sin + ry * cos));
+
 		}
 	}
 }
