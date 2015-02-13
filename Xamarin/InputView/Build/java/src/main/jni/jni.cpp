@@ -24,7 +24,7 @@ void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 	jint axis,
 	jfloat val)
 {
-	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d axis=%d val=%f", deviceId, axis, val);
+	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d axis=%d val=%f", deviceId, axis, val);
 	if (deviceId < 0 ||
 		deviceId >= MAX_CONTROLLERS)
 	{
@@ -38,7 +38,7 @@ void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
 	jint keyCode,
 	jint action)
 {
-	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
+	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
 	if (deviceId < 0 ||
 		deviceId >= MAX_CONTROLLERS)
 	{
@@ -96,7 +96,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 	{
 		jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
 		ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Native Plugin Initialized");
+		//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Native Plugin Initialized");
 		jfieldID fieldNativeInitialized = env->GetStaticFieldID(clazz, "_nativeInitialized", "Z");	
 		env->SetStaticBooleanField(clazz, fieldNativeInitialized, true);
 		env->DeleteLocalRef(clazz);
