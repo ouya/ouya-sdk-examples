@@ -6,6 +6,8 @@ using Android.Widget;
 using Android.OS;
 using Android.Util;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace InputView
 {
@@ -14,8 +16,10 @@ namespace InputView
 		, Categories = new[] { Intent.CategoryLauncher, CategoryGame })]
 	public class MainActivity : Activity
 	{
-		public const String TAG = "MainActivity";
-		public const String CategoryGame = "tv.ouya.intent.category.GAME";
+		private const String TAG = "MainActivity";
+		private const String CategoryGame = "tv.ouya.intent.category.GAME";
+		private List<VirtualControllerView> _controllers = new List<VirtualControllerView> ();
+		private bool _keepRunning = true;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -87,14 +91,60 @@ namespace InputView
 					controllerView.SetGravity (GravityFlags.Center);
 					controllerView.SetPadding(100, 0, 0, 0);
 
+					Dictionary<int, ImageView> views = new Dictionary<int, ImageView> ();
+
 					foreach (int resourceId in resources) {
 
 						ImageView imageView = new ImageView (this);
 						controllerView.AddView (imageView);
 						imageView.SetImageResource (resourceId);
+						views [resourceId] = imageView;
 					}
-					Log.Info (TAG, "Added ImageView");
+
+					VirtualControllerView controller = new VirtualControllerView (_controllers.Count, 
+						views[Resource.Drawable.controller],
+						views[Resource.Drawable.a],
+						views[Resource.Drawable.dpad_down],
+						views[Resource.Drawable.dpad_left],
+						views[Resource.Drawable.dpad_right],
+						views[Resource.Drawable.dpad_up],
+						views[Resource.Drawable.lb],
+						views[Resource.Drawable.lt],
+						views[Resource.Drawable.l_stick],
+						views[Resource.Drawable.menu],
+						views[Resource.Drawable.o],
+						views[Resource.Drawable.rb],
+						views[Resource.Drawable.rt],
+						views[Resource.Drawable.r_stick],
+						views[Resource.Drawable.thumbl],
+						views[Resource.Drawable.thumbr],
+						views[Resource.Drawable.u],
+						views[Resource.Drawable.y]);
 				}
+			}
+
+			ThreadStart ts = new ThreadStart (UpdateWorker);
+			Thread thread = new Thread (ts);
+			thread.Start ();
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+			_keepRunning = false;
+		}
+
+		void UpdateWorker()
+		{
+			while (_keepRunning) {
+				Action action = () => {
+					foreach (VirtualControllerView controller in _controllers) {
+						controller.Update ();
+					}
+				};
+
+				RunOnUiThread (action);
+				Thread.Sleep (1);
 			}
 		}
 	}
