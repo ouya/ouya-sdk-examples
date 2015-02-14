@@ -110,58 +110,70 @@ namespace InputView
 		{
 			#region Track Axis States
 
-			m_axisStates[OuyaController.AXIS_LS_X] = OuyaInput.getAxis(Index, OuyaController.AXIS_LS_X);
-			m_axisStates[OuyaController.AXIS_LS_Y] = OuyaInput.getAxis(Index, OuyaController.AXIS_LS_Y);
-			m_axisStates[OuyaController.AXIS_RS_X] = OuyaInput.getAxis(Index, OuyaController.AXIS_RS_X);
-			m_axisStates[OuyaController.AXIS_RS_Y] = OuyaInput.getAxis(Index, OuyaController.AXIS_RS_Y);
-			m_axisStates[OuyaController.AXIS_L2] = OuyaInput.getAxis(Index, OuyaController.AXIS_L2);
-			m_axisStates[OuyaController.AXIS_R2] = OuyaInput.getAxis(Index, OuyaController.AXIS_R2);
+			lock (m_axisStates)
+			{
+				m_axisStates[OuyaController.AXIS_LS_X] = OuyaInput.getAxis(Index, OuyaController.AXIS_LS_X);
+				m_axisStates[OuyaController.AXIS_LS_Y] = OuyaInput.getAxis(Index, OuyaController.AXIS_LS_Y);
+				m_axisStates[OuyaController.AXIS_RS_X] = OuyaInput.getAxis(Index, OuyaController.AXIS_RS_X);
+				m_axisStates[OuyaController.AXIS_RS_Y] = OuyaInput.getAxis(Index, OuyaController.AXIS_RS_Y);
+				m_axisStates[OuyaController.AXIS_L2] = OuyaInput.getAxis(Index, OuyaController.AXIS_L2);
+				m_axisStates[OuyaController.AXIS_R2] = OuyaInput.getAxis(Index, OuyaController.AXIS_R2);
+			}
 
 			#endregion
 
 			#region Track Button Up / Down States
 
-			m_buttonStates[OuyaController.BUTTON_O] = OuyaInput.isPressed(Index, OuyaController.BUTTON_O);
-			m_buttonStates[OuyaController.BUTTON_U] = OuyaInput.isPressed(Index, OuyaController.BUTTON_U);
-			m_buttonStates[OuyaController.BUTTON_Y] = OuyaInput.isPressed(Index, OuyaController.BUTTON_Y);
-			m_buttonStates[OuyaController.BUTTON_A] = OuyaInput.isPressed(Index, OuyaController.BUTTON_A);
-			m_buttonStates[OuyaController.BUTTON_L1] = OuyaInput.isPressed(Index, OuyaController.BUTTON_L1);
-			m_buttonStates[OuyaController.BUTTON_R1] = OuyaInput.isPressed(Index, OuyaController.BUTTON_R1);
-			m_buttonStates[OuyaController.BUTTON_L3] = OuyaInput.isPressed(Index, OuyaController.BUTTON_L3);
-			m_buttonStates[OuyaController.BUTTON_R3] = OuyaInput.isPressed(Index, OuyaController.BUTTON_R3);
-			m_buttonStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_UP);
-			m_buttonStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_DOWN);
-			m_buttonStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_RIGHT);
-			m_buttonStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_LEFT);
-			m_buttonStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressed(Index, OuyaController.BUTTON_MENU);
+			lock (m_buttonStates)
+			{
+				m_buttonStates[OuyaController.BUTTON_O] = OuyaInput.isPressed(Index, OuyaController.BUTTON_O);
+				m_buttonStates[OuyaController.BUTTON_U] = OuyaInput.isPressed(Index, OuyaController.BUTTON_U);
+				m_buttonStates[OuyaController.BUTTON_Y] = OuyaInput.isPressed(Index, OuyaController.BUTTON_Y);
+				m_buttonStates[OuyaController.BUTTON_A] = OuyaInput.isPressed(Index, OuyaController.BUTTON_A);
+				m_buttonStates[OuyaController.BUTTON_L1] = OuyaInput.isPressed(Index, OuyaController.BUTTON_L1);
+				m_buttonStates[OuyaController.BUTTON_R1] = OuyaInput.isPressed(Index, OuyaController.BUTTON_R1);
+				m_buttonStates[OuyaController.BUTTON_L3] = OuyaInput.isPressed(Index, OuyaController.BUTTON_L3);
+				m_buttonStates[OuyaController.BUTTON_R3] = OuyaInput.isPressed(Index, OuyaController.BUTTON_R3);
+				m_buttonStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_UP);
+				m_buttonStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_DOWN);
+				m_buttonStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_RIGHT);
+				m_buttonStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_LEFT);
+				m_buttonStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressed(Index, OuyaController.BUTTON_MENU);
+			}
 
-			m_buttonDownStates[OuyaController.BUTTON_O] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_O);
-			m_buttonDownStates[OuyaController.BUTTON_U] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_U);
-			m_buttonDownStates[OuyaController.BUTTON_Y] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_Y);
-			m_buttonDownStates[OuyaController.BUTTON_A] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_A);
-			m_buttonDownStates[OuyaController.BUTTON_L1] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_L1);
-			m_buttonDownStates[OuyaController.BUTTON_R1] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_R1);
-			m_buttonDownStates[OuyaController.BUTTON_L3] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_L3);
-			m_buttonDownStates[OuyaController.BUTTON_R3] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_R3);
-			m_buttonDownStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_UP);
-			m_buttonDownStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_DOWN);
-			m_buttonDownStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_RIGHT);
-			m_buttonDownStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_LEFT);
-			m_buttonDownStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_MENU);
+			lock (m_buttonDownStates)
+			{
+				m_buttonDownStates[OuyaController.BUTTON_O] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_O);
+				m_buttonDownStates[OuyaController.BUTTON_U] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_U);
+				m_buttonDownStates[OuyaController.BUTTON_Y] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_Y);
+				m_buttonDownStates[OuyaController.BUTTON_A] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_A);
+				m_buttonDownStates[OuyaController.BUTTON_L1] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_L1);
+				m_buttonDownStates[OuyaController.BUTTON_R1] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_R1);
+				m_buttonDownStates[OuyaController.BUTTON_L3] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_L3);
+				m_buttonDownStates[OuyaController.BUTTON_R3] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_R3);
+				m_buttonDownStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_UP);
+				m_buttonDownStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_DOWN);
+				m_buttonDownStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_RIGHT);
+				m_buttonDownStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_LEFT);
+				m_buttonDownStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_MENU);
+			}
 
-			m_buttonUpStates[OuyaController.BUTTON_O] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_O);
-			m_buttonUpStates[OuyaController.BUTTON_U] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_U);
-			m_buttonUpStates[OuyaController.BUTTON_Y] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_Y);
-			m_buttonUpStates[OuyaController.BUTTON_A] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_A);
-			m_buttonUpStates[OuyaController.BUTTON_L1] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_L1);
-			m_buttonUpStates[OuyaController.BUTTON_R1] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_R1);
-			m_buttonUpStates[OuyaController.BUTTON_L3] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_L3);
-			m_buttonUpStates[OuyaController.BUTTON_R3] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_R3);
-			m_buttonUpStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_UP);
-			m_buttonUpStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_DOWN);
-			m_buttonUpStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_RIGHT);
-			m_buttonUpStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_LEFT);
-			m_buttonUpStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_MENU);
+			lock (m_buttonUpStates)
+			{
+				m_buttonUpStates[OuyaController.BUTTON_O] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_O);
+				m_buttonUpStates[OuyaController.BUTTON_U] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_U);
+				m_buttonUpStates[OuyaController.BUTTON_Y] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_Y);
+				m_buttonUpStates[OuyaController.BUTTON_A] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_A);
+				m_buttonUpStates[OuyaController.BUTTON_L1] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_L1);
+				m_buttonUpStates[OuyaController.BUTTON_R1] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_R1);
+				m_buttonUpStates[OuyaController.BUTTON_L3] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_L3);
+				m_buttonUpStates[OuyaController.BUTTON_R3] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_R3);
+				m_buttonUpStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_UP);
+				m_buttonUpStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_DOWN);
+				m_buttonUpStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_RIGHT);
+				m_buttonUpStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_LEFT);
+				m_buttonUpStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_MENU);
+			}
 
 			#endregion
 
@@ -170,37 +182,45 @@ namespace InputView
 
 		private float GetAxis(int axis)
 		{
-			if (m_axisStates.ContainsKey (axis)) {
-				return m_axisStates [axis];
-			} else {
-				return 0f;
+			lock (m_axisStates) {
+				if (m_axisStates.ContainsKey (axis)) {
+					return m_axisStates [axis];
+				} else {
+					return 0f;
+				}
 			}
 		}
 
 		private bool GetButton(int button)
 		{
-			if (m_buttonStates.ContainsKey (button)) {
-				return m_buttonStates [button];
-			} else {
-				return false;
+			lock (m_buttonStates) {
+				if (m_buttonStates.ContainsKey (button)) {
+					return m_buttonStates [button];
+				} else {
+					return false;
+				}
 			}
 		}
 
 		private bool GetButtonDown(int button)
 		{
-			if (m_buttonDownStates.ContainsKey (button)) {
-				return m_buttonDownStates [button];
-			} else {
-				return false;
+			lock (m_buttonDownStates) {
+				if (m_buttonDownStates.ContainsKey (button)) {
+					return m_buttonDownStates [button];
+				} else {
+					return false;
+				}
 			}
 		}
 
 		private bool GetButtonUp(int button)
 		{
-			if (m_buttonUpStates.ContainsKey (button)) {
-				return m_buttonUpStates [button];
-			} else {
-				return false;
+			lock (m_buttonUpStates) {
+				if (m_buttonUpStates.ContainsKey (button)) {
+					return m_buttonUpStates [button];
+				} else {
+					return false;
+				}
 			}
 		}
 
