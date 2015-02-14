@@ -306,12 +306,12 @@ namespace InputView
 
             #region Triggers
 
-			if (OuyaInput.getAxis(Index, OuyaController.AXIS_L2) > DeadZone)
+			if (GetAxis(OuyaController.AXIS_L2) > DeadZone)
             {
                 Draw(spriteBatch, LeftTrigger);
             }
 
-			if (OuyaInput.getAxis(Index, OuyaController.AXIS_R2) > DeadZone)
+			if (GetAxis(OuyaController.AXIS_R2) > DeadZone)
             {
                 Draw(spriteBatch, RightTrigger);
             }
@@ -328,9 +328,7 @@ namespace InputView
 
 			Vector2 input = new Vector2(GetAxis(OuyaController.AXIS_LS_X), GetAxis(OuyaController.AXIS_LS_Y));
 
-			if (OuyaInput.isPressed(Index, OuyaController.BUTTON_L3) ||
-                Math.Abs(input.X) > DeadZone ||
-                Math.Abs(input.Y) > DeadZone)
+			if (GetButton(OuyaController.BUTTON_L3))
             {
                 Draw(spriteBatch, LeftStickActive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
@@ -342,9 +340,7 @@ namespace InputView
             //rotate by same degrees
 			input = new Vector2(GetAxis(OuyaController.AXIS_RS_X), GetAxis(OuyaController.AXIS_RS_Y));
 
-			if (OuyaInput.isPressed(Index, OuyaController.BUTTON_R3) ||
-                Math.Abs(input.X) > DeadZone ||
-                Math.Abs(input.Y) > DeadZone)
+			if (GetButton(OuyaController.BUTTON_R3))
             {
                 Draw(spriteBatch, RightStickActive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
