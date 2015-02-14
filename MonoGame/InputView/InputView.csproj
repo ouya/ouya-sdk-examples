@@ -18,8 +18,8 @@
     <MandroidI18n />
     <TargetFrameworkVersion>v4.1</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <AndroidUseLatestPlatformSdk />
-    <JavaMaximumHeapSize />
+    <JavaMaximumHeapSize>
+    </JavaMaximumHeapSize>
     <JavaOptions />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -43,27 +43,47 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
-    <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\MonoGame.Framework.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>Libs\MonoGame.Framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity1.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OuyaController.cs" />
+    <Compile Include="VirtualControllerSprite.cs" />
+    <Compile Include="OuyaInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Content\spriteFont1.xnb" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidAsset Include="Assets\Content\Graphics\a.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\controller.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\dpad_down.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\dpad_left.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\dpad_right.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\dpad_up.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\lb.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\lt.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\l_stick.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\menu.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\o.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\rb.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\rt.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\r_stick.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\thumbl.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\thumbr.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\u.xnb" />
+    <AndroidAsset Include="Assets\Content\Graphics\y.xnb" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Values\Strings.xml" />
@@ -73,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Layout\" />
+    <Folder Include="Assets\Content\Graphics\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Splash.png" />
@@ -85,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="MonoGameOuyaPlugin\MonoGameOuyaPlugin.csproj">
-      <Project>{02686415-6bd8-45e7-8e38-45b103caaf7b}</Project>
+      <Project>{02686415-6BD8-45E7-8E38-45B103CAAF7B}</Project>
       <Name>MonoGameOuyaPlugin</Name>
     </ProjectReference>
   </ItemGroup>
