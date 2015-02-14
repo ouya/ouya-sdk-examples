@@ -28,7 +28,7 @@ namespace InputView
             var g = new Game1();
             SetContentView(g.Window);
 
-            using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this, ApplicationContext))
+            using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this))
             {
                 // do nothing
             }

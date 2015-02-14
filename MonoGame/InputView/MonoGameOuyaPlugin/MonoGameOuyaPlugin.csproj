@@ -55,5 +55,14 @@
   <Import Project="$(MSBuildExtensionsPath)\Novell\Xamarin.Android.Bindings.targets" />
   <ItemGroup>
     <EmbeddedJar Include="Jars\MonoGameOuyaPlugin.jar" />
+    <EmbeddedJar Include="Jars\ouya-sdk.jar" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Libs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedNativeLibrary Include="Libs\armeabi\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="Libs\armeabi-v7a\lib-ouya-ndk.so" />
+    <EmbeddedNativeLibrary Include="Libs\x86\lib-ouya-ndk.so" />
   </ItemGroup>
 </Project>
