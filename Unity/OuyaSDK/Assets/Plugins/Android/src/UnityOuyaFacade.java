@@ -137,11 +137,6 @@ public class UnityOuyaFacade {
         }
 	}
 
-	public class ErrorResponse {
-		public int errorCode = 0;
-		public String errorMessage = "";
-	}
-
 	private void Init(Bundle developerInfo) {
         
 		ouyaFacade.init(context, developerInfo);
@@ -350,7 +345,6 @@ public class UnityOuyaFacade {
 
 		mContent = OuyaContent.getInstance();
 		IOuyaActivity.SetOuyaContent(mContent);
-		mContent.init(context, mPublicKey);
 
 		mContentInitListener = new OuyaContent.InitializedListener() {
 
@@ -367,6 +361,8 @@ public class UnityOuyaFacade {
 			}
 			
 		};
+
+		mContent.init(context, mPublicKey);
 		
 		mContent.registerInitializedListener(mContentInitListener);
 

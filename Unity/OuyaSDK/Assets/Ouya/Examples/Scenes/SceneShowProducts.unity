@@ -81,6 +81,14 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: Purchasables.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -123,10 +131,6 @@ Prefab:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
-      propertyPath: Purchasables.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: Purchasables.Array.data[0]
       value: long_sword
       objectReference: {fileID: 0}
@@ -141,6 +145,14 @@ Prefab:
     - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: UseIapTestMode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.data[1].Key
+      value: tv.ouya.product_id_list
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.data[1].Value
+      value: long_sword,sharp_axe
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
@@ -190,6 +202,8 @@ MonoBehaviour:
   OuyaPluginInitValues:
   - Key: tv.ouya.developer_id
     Value: 310a8f51-4d6e-4ae5-bda0-b93878e5f5d0
+  - Key: tv.ouya.product_id_list
+    Value: long_sword,sharp_axe
   m_useInputThreading: 0
 --- !u!1 &1233174275
 GameObject:

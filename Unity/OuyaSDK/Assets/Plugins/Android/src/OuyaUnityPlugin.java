@@ -85,7 +85,19 @@ public class OuyaUnityPlugin
 							JSONObject jsonObject = jsonArray.getJSONObject(index);
 							String name = jsonObject.getString("key");
 							String value = jsonObject.getString("value");
-							developerInfo.putString(name, value);
+							if (null == name ||
+								null == value) {
+								continue;
+							}
+							if (name.equals("tv.ouya.product_id_list")) {
+								String[] productIds = value.split(",");
+								if (null == productIds) {
+									continue;
+								}
+								developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
+							} else {
+								developerInfo.putString(name, value);
+							}
 						}
 
 						UnityOuyaFacade unityOuyaFacade =
