@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 #if UNITY_ANDROID && !UNITY_EDITOR
 using tv.ouya.console.api;
-using tv.ouya.sdk;
 #endif
 using UnityEngine;
 
@@ -249,12 +248,10 @@ public class OuyaShowProducts : MonoBehaviour
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
-            GUILayout.Label(string.Format("App Name: {0}", OuyaUnityPlugin.getStringResource("app_name")));
+            GUILayout.Label(string.Format("App Name: {0}", OuyaSDK.getStringResource("app_name")));
             GUILayout.EndHorizontal();
-#endif
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);

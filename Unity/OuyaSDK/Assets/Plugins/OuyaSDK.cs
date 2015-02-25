@@ -33,7 +33,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "2.0.1.2";
+    public const string VERSION = "2.0.1.3";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -589,6 +589,22 @@ public static class OuyaSDK
         }
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.clearFocus();
+#endif
+    }
+
+    /// <summary>
+    /// Get localized string resource
+    /// </summary>
+    public static string getStringResource(string key)
+    {
+        if (!m_iapInitComplete)
+        {
+            return string.Empty;
+        }
+#if UNITY_ANDROID && !UNITY_EDITOR
+        return OuyaUnityPlugin.getStringResource(key);
+#else
+        return string.Empty;
 #endif
     }
 
