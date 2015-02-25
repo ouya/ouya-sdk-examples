@@ -39,6 +39,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmGetBitmapArray = IntPtr.Zero;
         private static IntPtr _jmGetOuyaModScreenshotArray = IntPtr.Zero;
         private static IntPtr _jmGetStringArray = IntPtr.Zero;
+        private static IntPtr _jmGetStringResource = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         /// <summary>
@@ -481,6 +482,22 @@ namespace tv.ouya.sdk
                     string strMethod = "getStringArray";
                     _jmGetStringArray = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/util/List;)[Ljava/lang/String;");
                     if (_jmGetStringArray != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "getStringResource";
+                    _jmGetStringResource = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
+                    if (_jmGetStringResource != IntPtr.Zero)
                     {
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
@@ -1202,6 +1219,38 @@ namespace tv.ouya.sdk
                 items.Add(item);
             }
             return items;
+        }
+
+        public static string getStringResource(string key)
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return null;
+            }
+            if (_jmGetStringResource == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetStringResource is not initialized");
+                return null;
+            }
+
+            IntPtr arg1 = AndroidJNI.NewStringUTF(key);
+            IntPtr localRef = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetStringResource, new jvalue[] { new jvalue() { l = arg1 } });
+            AndroidJNI.DeleteLocalRef(arg1);
+            if (localRef == IntPtr.Zero)
+            {
+                Debug.LogError("_jmGetStringResource returned null");
+                return null;
+            }
+
+            string result = AndroidJNI.GetStringUTFChars(localRef);
+            AndroidJNI.DeleteLocalRef(localRef);
+            return result;
         }
 
     }

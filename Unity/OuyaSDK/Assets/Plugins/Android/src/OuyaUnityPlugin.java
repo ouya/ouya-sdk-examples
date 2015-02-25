@@ -18,6 +18,7 @@ package tv.ouya.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -601,5 +602,21 @@ public class OuyaUnityPlugin
 		String[] retVal = new String[list.size()];
 		list.toArray(retVal);
 		return retVal;
+	}
+
+	public static String getStringResource(String name) {
+		final Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			return "";
+		}
+		Resources resources = activity.getResources();
+		if (null == resources) {
+			return "";
+		}
+		int id = resources.getIdentifier(name, "string", activity.getPackageName());
+		if (id <= 0) {
+			return "";
+		}
+		return resources.getString(id);
 	}
 }
