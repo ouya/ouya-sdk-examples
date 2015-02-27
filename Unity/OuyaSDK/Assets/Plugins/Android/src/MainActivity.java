@@ -81,6 +81,9 @@ public class MainActivity extends OuyaUnityActivity
 		LayoutParams lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mainLayout.setLayoutParams(lp);
 
+		// disable the screensaver
+		mainLayout.setKeepScreenOn(true);
+
 		LinearLayout linearLayout = new LinearLayout(this);
 		lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		linearLayout.setOrientation(LinearLayout.VERTICAL);
