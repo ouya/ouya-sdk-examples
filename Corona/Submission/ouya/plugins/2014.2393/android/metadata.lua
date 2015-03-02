@@ -8,6 +8,9 @@ local metadata =
             permissions = {},
             usesPermissions =
             {
+            	"com.xiaomi.sdk.permission.PAYMENT",
+            	"android.permission.GET_TASKS",
+            	"android.permission.READ_PHONE_STATE",
             },
             usesFeatures = {},
             applicationChildElements =
