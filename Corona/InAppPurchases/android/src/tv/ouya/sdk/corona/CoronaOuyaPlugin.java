@@ -37,7 +37,7 @@ public class CoronaOuyaPlugin
 	public static void initOuyaPlugin(String jsonData)
 		throws Exception
 	{
-		try		
+		try
 		{
 			if (null == IOuyaActivity.GetActivity())
 			{
@@ -52,27 +52,39 @@ public class CoronaOuyaPlugin
 			Bundle developerInfo = new Bundle();
 
 	        developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, IOuyaActivity.GetApplicationKey());
-	        
+
 	        JSONArray jsonArray = new JSONArray(jsonData);
 			for (int index = 0; index < jsonArray.length(); ++index) {
 				JSONObject jsonObject = jsonArray.getJSONObject(index);
 				String key = jsonObject.getString("key");
 				String value = jsonObject.getString("value");
 				//Log.i(TAG, "key="+key+" value="+value);
-				developerInfo.putString(key, value);
+				if (null == name ||
+					null == value) {
+					continue;
+				}
+				if (name.equals("tv.ouya.product_id_list")) {
+					String[] productIds = value.split(",");
+					if (null == productIds) {
+						continue;
+					}
+					developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
+				} else {
+					developerInfo.putString(name, value);
+				}
 			}
 
 			//Log.i(TAG, "Developer info was set.");
-			
+
 			CoronaOuyaFacade coronaOuyaFacade =
 				new CoronaOuyaFacade(IOuyaActivity.GetActivity(), IOuyaActivity.GetSavedInstanceState(), developerInfo);
-			
+
 			//make facade accessible by activity
 			IOuyaActivity.SetCoronaOuyaFacade(coronaOuyaFacade);
 
 			Log.i(TAG, "Corona Plugin Initialized.");
 		}
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			Log.i(TAG, "initOuyaPlugin exception: " + e.toString());
 			throw e;
@@ -89,11 +101,11 @@ public class CoronaOuyaPlugin
 			}
 			else
 			{
-				
+
 				IOuyaActivity.GetCoronaOuyaFacade().requestGamerInfo();
 			}
 		}
-		catch (Exception ex) 
+		catch (Exception ex)
 		{
 			Log.i(TAG, "CoronaOuyaPlugin: requestGamerInfo exception: " + ex.toString());
 		}
@@ -112,7 +124,7 @@ public class CoronaOuyaPlugin
 				IOuyaActivity.GetCoronaOuyaFacade().requestProducts(products);
 			}
 		}
-		catch (Exception ex) 
+		catch (Exception ex)
 		{
 			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
@@ -129,11 +141,11 @@ public class CoronaOuyaPlugin
 			else
 			{
 				Product product = new Product(identifier, "", 0, 0, "", 0, 0, "", "", Product.Type.ENTITLEMENT);
-				
+
 				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);
 			}
 		}
-		catch (Exception ex) 
+		catch (Exception ex)
 		{
 			Log.i(TAG, "requestPurchaseAsync exception: " + ex.toString());
 		}
@@ -153,7 +165,7 @@ public class CoronaOuyaPlugin
 				IOuyaActivity.GetCoronaOuyaFacade().requestReceipts();
 			}
 		}
-		catch (Exception ex) 
+		catch (Exception ex)
 		{
 			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
