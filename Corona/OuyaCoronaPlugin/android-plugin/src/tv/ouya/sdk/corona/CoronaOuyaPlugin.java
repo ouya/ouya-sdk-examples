@@ -56,10 +56,22 @@ public class CoronaOuyaPlugin
 	        JSONArray jsonArray = new JSONArray(jsonData);
 			for (int index = 0; index < jsonArray.length(); ++index) {
 				JSONObject jsonObject = jsonArray.getJSONObject(index);
-				String key = jsonObject.getString("key");
+				String name = jsonObject.getString("key");
 				String value = jsonObject.getString("value");
 				//Log.i(TAG, "key="+key+" value="+value);
-				developerInfo.putString(key, value);
+				if (null == name ||
+					null == value) {
+					continue;
+				}
+				if (name.equals("tv.ouya.product_id_list")) {
+					String[] productIds = value.split(",");
+					if (null == productIds) {
+						continue;
+					}
+					developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
+				} else {
+					developerInfo.putString(name, value);
+				}
 			}
 
 			//Log.i(TAG, "Developer info was set.");
