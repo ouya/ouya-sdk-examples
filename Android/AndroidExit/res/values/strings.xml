@@ -3,5 +3,7 @@
 
     <string name="app_name">Android Exit</string>
     <string name="exit">Exit</string>
+    <string name="is_running_on_ouya_supported_hardware">You are running on OUYA supported hardware.</string>
+    <string name="not_running_on_ouya_supported_hardware">You are NOT running on OUYA supported hardware.</string>
 
 </resources>

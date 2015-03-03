@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import tv.ouya.console.api.*;
 
 public class MainActivity extends Activity {
 	
@@ -48,5 +49,11 @@ public class MainActivity extends Activity {
 		
 		Log.d(TAG, "Localized string: app_name="+getStringResource("app_name"));
 		Log.d(TAG, "Localized string: exit="+getStringResource("exit"));
+		
+		if (OuyaFacade.isRunningOnOUYASupportedHardware(this)) {
+			Log.d(TAG, getStringResource("is_running_on_ouya_supported_hardware"));
+		} else {
+			Log.d(TAG, getStringResource("not_running_on_ouya_supported_hardware"));
+		}
 	}
 }
