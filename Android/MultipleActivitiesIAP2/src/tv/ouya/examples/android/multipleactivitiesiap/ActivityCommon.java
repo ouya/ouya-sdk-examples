@@ -38,33 +38,19 @@ public class ActivityCommon extends Activity
 	private static final String TAG = ActivityCommon.class.getSimpleName();
 
 	// Your game talks to the OuyaFacade, which hides all the mechanics of doing an in-app purchase.
-	private OuyaFacade mOuyaFacade = null;
+	private static OuyaFacade sOuyaFacade = null;
 	
 	// listener for getting receipts
-	private OuyaResponseListener<Collection<Receipt>> m_requestReceiptsListener = null;
+	private static OuyaResponseListener<Collection<Receipt>> sRequestReceiptsListener = null;
 	
+	public static ActivityCommon sReceiptCallback = null;
 	
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		Log.i(TAG, "onPause class="+getClass().getSimpleName());
-		if (null != mOuyaFacade) {
-			mOuyaFacade.shutdown();
-			mOuyaFacade = null;
-		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.i(TAG, "onResume class="+getClass().getSimpleName());
-		init();
-	}
-
 	private void init() {
 		
-		if (mOuyaFacade != null) {
+		sReceiptCallback = this;
+		
+		if (sOuyaFacade != null) {
+			Log.d(TAG, "OuyaFacade already initialized.");
 			return;
 		}
 		
@@ -92,16 +78,16 @@ public class ActivityCommon extends Activity
 		developerInfo.putString(OuyaFacade.OUYA_DEVELOPER_ID, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
 		developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
 		
-		mOuyaFacade = OuyaFacade.getInstance();
-		mOuyaFacade.init(context, developerInfo);
+		sOuyaFacade = OuyaFacade.getInstance();
+		sOuyaFacade.init(context, developerInfo);
 		
-		m_requestReceiptsListener = new OuyaResponseListener<Collection<Receipt>>() {
+		sRequestReceiptsListener = new OuyaResponseListener<Collection<Receipt>>() {
 
 			 // Handle the successful fetching of the data for the receipts from the server.
 			@Override
 			public void onSuccess(Collection<Receipt> receipts) {
 				Log.i(TAG, "requestReceipts onSuccess: received "+receipts.size() + " receipts");
-				onSuccessRequestReceipts(receipts);
+				sReceiptCallback.onSuccessRequestReceipts(receipts);
 			}
 
 			// Handle a failure. Because displaying the receipts is not critical to the application we just show an error
@@ -109,7 +95,7 @@ public class ActivityCommon extends Activity
 			@Override
 			public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
 				Log.e(TAG, "requestReceipts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
-				onFailureRequestReceipts(errorCode, errorMessage, optionalData);
+				sReceiptCallback.onFailureRequestReceipts(errorCode, errorMessage, optionalData);
 			}
 
 			/**
@@ -119,6 +105,7 @@ public class ActivityCommon extends Activity
 			@Override
 			public void onCancel() {
 				Log.i(TAG, "requestReceipts onCancel");
+				sReceiptCallback.onCancelRequestReceipts();
 			}
 		};
 	}
@@ -128,29 +115,41 @@ public class ActivityCommon extends Activity
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.i(TAG, "Processing activity result");
         
-        if (null == mOuyaFacade) {
+        if (null == sOuyaFacade) {
         	return;
         }
 
         // Forward this result to the facade, in case it is waiting for any activity results
-        if (mOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+        if (sOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
             return;
         }
     }
 	
 	protected void requestReceipts() {
-		if (null == m_requestReceiptsListener) {
-			Log.e(TAG, "requestReceipts: m_requestReceiptsListener is null");
+		if (null == sRequestReceiptsListener) {
+			Log.e(TAG, "requestReceipts: sRequestReceiptsListener is null");
 			return;
 		}
-		mOuyaFacade.requestReceipts(this, m_requestReceiptsListener);
+		sOuyaFacade.requestReceipts(this, sRequestReceiptsListener);
 	}
 	
 	// override this method in the activity to show in the text status field
 	protected void onSuccessRequestReceipts(Collection<Receipt> receipts) {
+		Log.i(TAG, "onSuccessRequestReceipts");
 	}
 
 	// override this method in the activity to show in the text status field
 	protected void onFailureRequestReceipts(int errorCode, String errorMessage, Bundle optionalData) {
+		Log.i(TAG, "onFailureRequestReceipts");
+	}
+	
+	protected void onCancelRequestReceipts() {
+		Log.i(TAG, "onCancelRequestReceipts");
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		init();
 	}
 }

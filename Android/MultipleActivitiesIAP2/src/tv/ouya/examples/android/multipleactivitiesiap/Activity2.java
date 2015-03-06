@@ -43,8 +43,6 @@ public class Activity2 extends ActivityCommon
         m_btnRequestReceipts = (Button)findViewById(R.id.btnRequestReceipts);
         m_txtStatus = (TextView)findViewById(R.id.txtStatus);
         
-        m_txtStatus.setText("Status: Loaded "+getClass().getSimpleName());
-        
         m_btnActivity.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -61,6 +59,12 @@ public class Activity2 extends ActivityCommon
 			}
 		});
     }
+    
+    @Override
+	public void onResume() {
+		super.onResume();
+		m_txtStatus.setText("Status: Loaded "+getClass().getSimpleName());		
+	}
     
     // override this method in the activity to show in the text status field
     @Override
