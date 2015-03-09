@@ -7,10 +7,10 @@
   <coltolerance>0</coltolerance>
   <sepmasks>0</sepmasks>
   <bboxmode>0</bboxmode>
-  <bbox_left>0</bbox_left>
-  <bbox_right>335</bbox_right>
-  <bbox_top>0</bbox_top>
-  <bbox_bottom>335</bbox_bottom>
+  <bbox_left>164</bbox_left>
+  <bbox_right>190</bbox_right>
+  <bbox_top>121</bbox_top>
+  <bbox_bottom>138</bbox_bottom>
   <HTile>0</HTile>
   <VTile>0</VTile>
   <TextureGroups>
@@ -20,6 +20,6 @@
   <width>336</width>
   <height>336</height>
   <frames>
-    <frame index="0">images\sprite17_disabled_0.png</frame>
+    <frame index="0">images\sprite18_menu_0.png</frame>
   </frames>
 </sprite>
