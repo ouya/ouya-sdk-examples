@@ -15,20 +15,20 @@
  */
 package tv.ouya.examples.android.multipleactivitiesiap;
 
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-
-import tv.ouya.console.api.OuyaFacade;
-import tv.ouya.console.api.OuyaResponseListener;
-import tv.ouya.console.api.Receipt;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import tv.ouya.console.api.*;
 
 // Common code used by both activities
 // Isolate the purchase IAP code here
@@ -40,14 +40,24 @@ public class ActivityCommon extends Activity
 	// Your game talks to the OuyaFacade, which hides all the mechanics of doing an in-app purchase.
 	private static OuyaFacade sOuyaFacade = null;
 	
+	// listener for fetching gamer info
+	private static CancelIgnoringOuyaResponseListener<GamerInfo> sRequestGamerInfoListener = null;
+
+		// listener for getting products
+	private static CancelIgnoringOuyaResponseListener<List<Product>> sRequestProductsListener = null;
+	
+	// listener for requesting purchase
+	private OuyaResponseListener<PurchaseResult> sRequestPurchaseListener = null;
+	
 	// listener for getting receipts
 	private static OuyaResponseListener<Collection<Receipt>> sRequestReceiptsListener = null;
 	
-	public static ActivityCommon sReceiptCallback = null;
+	// the active callback listener
+	public static ActivityCommon sCallbacks = null;
 	
 	private void init() {
 		
-		sReceiptCallback = this;
+		sCallbacks = this;
 		
 		if (sOuyaFacade != null) {
 			Log.d(TAG, "OuyaFacade already initialized.");
@@ -75,37 +85,88 @@ public class ActivityCommon extends Activity
 		}
 		
 		Bundle developerInfo = new Bundle();
-		developerInfo.putString(OuyaFacade.OUYA_DEVELOPER_ID, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
-		developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
-		
+
+        developerInfo.putString(OuyaFacade.OUYA_DEVELOPER_ID, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+        developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
+        developerInfo.putString(OuyaFacade.XIAOMI_APPLICATION_ID, "0000000000000");
+        developerInfo.putString(OuyaFacade.XIAOMI_APPLICATION_KEY, "000000000000000000");
+        
+        String[] products = new String[] {
+            "sharp_axe",
+        };
+
+        developerInfo.putStringArray(OuyaFacade.OUYA_PRODUCT_ID_LIST, products);
+        
 		sOuyaFacade = OuyaFacade.getInstance();
 		sOuyaFacade.init(context, developerInfo);
 		
+		sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
+            @Override
+            public void onSuccess(GamerInfo info) {
+            	Log.i(TAG, "sRequestGamerInfoListener: onSuccess");
+            	sCallbacks.onSuccessRequestGamerInfo(info);
+            }
+
+            @Override
+            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            	Log.i(TAG, "sRequestGamerInfoListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+            	sCallbacks.onFailureRequestGamerInfo(errorCode, errorMessage, optionalData);
+            }
+        };
+        
+		sRequestProductsListener = new CancelIgnoringOuyaResponseListener<List<Product>>() {
+			@Override
+			public void onSuccess(final List<Product> products) {
+				Log.i(TAG, "sRequestProductsListener: onSuccess");
+				sCallbacks.onSuccessRequestProducts(products);
+			}
+
+			@Override
+			public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				Log.i(TAG, "sRequestProductsListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+				sCallbacks.onFailureRequestProducts(errorCode, errorMessage, optionalData);
+			}
+		};
+
+		sRequestPurchaseListener = new OuyaResponseListener<PurchaseResult>() {
+
+			@Override
+			public void onSuccess(PurchaseResult result) {
+				Log.i(TAG, "sRequestPurchaseListener: onSuccess");
+				sCallbacks.onSuccessRequestPurchase(result);
+			}
+
+			@Override
+			public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				Log.i(TAG, "sRequestPurchaseListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+				sCallbacks.onFailureRequestPurchase(errorCode, errorMessage, optionalData);
+			}
+
+			@Override
+			public void onCancel() {
+				Log.i(TAG, "sRequestPurchaseListener: onCancel");
+				sCallbacks.onCancelRequestPurchase();
+			}
+		};
+		
 		sRequestReceiptsListener = new OuyaResponseListener<Collection<Receipt>>() {
 
-			 // Handle the successful fetching of the data for the receipts from the server.
 			@Override
 			public void onSuccess(Collection<Receipt> receipts) {
 				Log.i(TAG, "requestReceipts onSuccess: received "+receipts.size() + " receipts");
-				sReceiptCallback.onSuccessRequestReceipts(receipts);
+				sCallbacks.onSuccessRequestReceipts(receipts);
 			}
 
-			// Handle a failure. Because displaying the receipts is not critical to the application we just show an error
-			// message rather than asking the user to authenticate themselves just to start the application up.
 			@Override
 			public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
 				Log.e(TAG, "requestReceipts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
-				sReceiptCallback.onFailureRequestReceipts(errorCode, errorMessage, optionalData);
+				sCallbacks.onFailureRequestReceipts(errorCode, errorMessage, optionalData);
 			}
 
-			/**
-			 * Handle the cancel event.
-			 *
-			 */
 			@Override
 			public void onCancel() {
 				Log.i(TAG, "requestReceipts onCancel");
-				sReceiptCallback.onCancelRequestReceipts();
+				sCallbacks.onCancelRequestReceipts();
 			}
 		};
 	}
@@ -124,6 +185,34 @@ public class ActivityCommon extends Activity
             return;
         }
     }
+    
+    protected void requestGamerInfo() {
+		if (null == sRequestGamerInfoListener) {
+			Log.e(TAG, "requestGamerInfo: sRequestGamerInfoListener is null");
+			return;
+		}
+		sOuyaFacade.requestGamerInfo(this, sRequestGamerInfoListener);
+	}
+    
+    protected void requestProducts() {
+		if (null == sRequestProductsListener) {
+			Log.e(TAG, "requestProducts: sRequestProductsListener is null");
+			return;
+		}
+		ArrayList<Purchasable> products = new ArrayList<Purchasable>();
+		Purchasable purchasable = new Purchasable("kt_game_000");
+		products.add(purchasable);
+		sOuyaFacade.requestProductList(this, products, sRequestProductsListener);
+	}
+    
+	protected void requestPurchase() {
+		if (null == sRequestPurchaseListener) {
+			Log.e(TAG, "requestPurchase: sRequestPurchaseListener is null");
+			return;
+		}
+		Purchasable purchasable = new Purchasable("kt_game_000");
+		sOuyaFacade.requestPurchase(this, purchasable, sRequestPurchaseListener);
+	}
 	
 	protected void requestReceipts() {
 		if (null == sRequestReceiptsListener) {
@@ -131,6 +220,41 @@ public class ActivityCommon extends Activity
 			return;
 		}
 		sOuyaFacade.requestReceipts(this, sRequestReceiptsListener);
+	}
+	
+	// override this method in the activity to show in the text status field
+	protected void onSuccessRequestGamerInfo(GamerInfo info) {
+		Log.i(TAG, "onSuccessRequestGamerInfo");
+	}
+
+	// override this method in the activity to show in the text status field
+	protected void onFailureRequestGamerInfo(int errorCode, String errorMessage, Bundle optionalData) {
+		Log.i(TAG, "onFailureRequestGamerInfo");
+	}
+	
+	// override this method in the activity to show in the text status field
+	protected void onSuccessRequestProducts(final List<Product> products) {
+		Log.i(TAG, "onSuccessRequestProducts");
+	}
+
+	// override this method in the activity to show in the text status field
+	protected void onFailureRequestProducts(int errorCode, String errorMessage, Bundle optionalData) {
+		Log.i(TAG, "onFailureRequestProducts");
+	}
+
+	// override this method in the activity to show in the text status field
+	protected void onSuccessRequestPurchase(PurchaseResult result) {
+		Log.i(TAG, "onSuccessRequestPurchase");
+	}
+
+	// override this method in the activity to show in the text status field
+	protected void onFailureRequestPurchase(int errorCode, String errorMessage, Bundle optionalData) {
+		Log.i(TAG, "onFailureRequestPurchase");
+	}
+	
+	// override this method in the activity to show in the text status field
+	protected void onCancelRequestPurchase() {
+		Log.i(TAG, "onCancelRequestPurchase");
 	}
 	
 	// override this method in the activity to show in the text status field
@@ -143,6 +267,7 @@ public class ActivityCommon extends Activity
 		Log.i(TAG, "onFailureRequestReceipts");
 	}
 	
+	// override this method in the activity to show in the text status field
 	protected void onCancelRequestReceipts() {
 		Log.i(TAG, "onCancelRequestReceipts");
 	}

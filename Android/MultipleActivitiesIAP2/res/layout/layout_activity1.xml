@@ -44,8 +44,36 @@ limitations under the License.
     	android:layout_gravity="center"
 		android:gravity="center"/>
     <Button
+        android:id="@+id/btnRequestGamerInfo"
+        android:text="Request GamerInfo"
+        android:layout_width="250dp"
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+		android:gravity="center"/>
+    <Button
+        android:id="@+id/btnRequestProducts"
+        android:text="Request Products"
+        android:layout_width="250dp"
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+		android:gravity="center"/>
+    <Button
+        android:id="@+id/btnRequestPurchase"
+        android:text="Request Purchase"
+        android:layout_width="250dp"
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+		android:gravity="center"/>
+    <Button
         android:id="@+id/btnRequestReceipts"
         android:text="Request Receipts"
+        android:layout_width="250dp"
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+		android:gravity="center"/>
+    <Button
+        android:id="@+id/btnExit"
+        android:text="Exit"
         android:layout_width="250dp"
     	android:layout_height="wrap_content"
     	android:layout_gravity="center"

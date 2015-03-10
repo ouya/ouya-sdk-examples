@@ -16,20 +16,30 @@
 package tv.ouya.examples.android.multipleactivitiesiap;
 
 import java.util.Collection;
+import java.util.List;
 
+import tv.ouya.console.api.GamerInfo;
+import tv.ouya.console.api.Product;
+import tv.ouya.console.api.PurchaseResult;
 import tv.ouya.console.api.Receipt;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.os.Bundle;
 
 
 public class Activity1 extends ActivityCommon
 {
-	Button m_btnActivity = null;
-	Button m_btnRequestReceipts = null;
-	TextView m_txtStatus = null;
+	Button mBtnActivity = null;
+	Button mBtnRequestGamerInfo = null;
+	Button mBtnRequestProducts = null;
+	Button mBtnRequestPurchase = null;
+	Button mBtnRequestReceipts = null;
+	Button mBtnExit = null;
+	TextView mTxtStatus = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -39,11 +49,21 @@ public class Activity1 extends ActivityCommon
         
         setContentView(R.layout.layout_activity1);
         
-        m_btnActivity = (Button)findViewById(R.id.btnActivity);
-        m_btnRequestReceipts = (Button)findViewById(R.id.btnRequestReceipts);
-        m_txtStatus = (TextView)findViewById(R.id.txtStatus);
+        FrameLayout content = (FrameLayout)findViewById(android.R.id.content);
+        if (null != content) {
+            // Disable screensaver
+            content.setKeepScreenOn(true);
+        }
         
-        m_btnActivity.setOnClickListener(new View.OnClickListener() {
+        mBtnActivity = (Button)findViewById(R.id.btnActivity);
+        mBtnRequestGamerInfo = (Button)findViewById(R.id.btnRequestGamerInfo);
+        mBtnRequestProducts = (Button)findViewById(R.id.btnRequestProducts);
+        mBtnRequestPurchase = (Button)findViewById(R.id.btnRequestPurchase);
+        mBtnRequestReceipts = (Button)findViewById(R.id.btnRequestReceipts);
+        mBtnExit = (Button)findViewById(R.id.btnExit);
+        mTxtStatus = (TextView)findViewById(R.id.txtStatus);
+        
+        mBtnActivity.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent openIntent = new Intent(getPackageName()+".ACTION2");
@@ -52,11 +72,43 @@ public class Activity1 extends ActivityCommon
 			}
 		});
         
-        m_btnRequestReceipts.setOnClickListener(new View.OnClickListener() {
+        mBtnRequestGamerInfo.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				m_txtStatus.setText("Status: Requesting Receipts...");
+				mTxtStatus.setText("Status: Requesting GamerInfo...");
+				requestGamerInfo();
+			}
+		});
+        
+        mBtnRequestProducts.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mTxtStatus.setText("Status: Requesting Products...");
+				requestProducts();
+			}
+		});
+        
+        mBtnRequestPurchase.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mTxtStatus.setText("Status: Requesting Purchase...");
+				requestPurchase();
+			}
+		});
+        
+        mBtnRequestReceipts.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mTxtStatus.setText("Status: Requesting Receipts...");
 				requestReceipts();
+			}
+		});
+        
+        mBtnExit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mTxtStatus.setText("Status: Exiting...");
+				finish();
 			}
 		});
     }
@@ -64,18 +116,65 @@ public class Activity1 extends ActivityCommon
     @Override
 	public void onResume() {
 		super.onResume();
-		m_txtStatus.setText("Status: Loaded "+getClass().getSimpleName());		
+		mTxtStatus.setText("Status: Loaded "+getClass().getSimpleName());		
+	}
+    
+	// override this method in the activity to show in the text status field
+    @Override
+	protected void onSuccessRequestGamerInfo(GamerInfo info) {
+    	mTxtStatus.setText("requestGamerInfo onSuccess uuid="+info.getUuid()+" username="+info.getUsername());
+	}
+
+	// override this method in the activity to show in the text status field
+	@Override
+	protected void onFailureRequestGamerInfo(int errorCode, String errorMessage, Bundle optionalData) {
+		mTxtStatus.setText("requestGamerInfo onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
+	}
+	
+	// override this method in the activity to show in the text status field
+	@Override
+	protected void onSuccessRequestProducts(final List<Product> products) {
+		mTxtStatus.setText("requestProducts onSuccess: received "+products.size() + " products");
+	}
+	
+	// override this method in the activity to show in the text status field
+	@Override
+	protected void onFailureRequestProducts(int errorCode, String errorMessage, Bundle optionalData) {
+		mTxtStatus.setText("requestProducts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
+	}
+    
+	// override this method in the activity to show in the text status field
+    @Override
+    protected void onSuccessRequestPurchase(PurchaseResult result) {
+    	mTxtStatus.setText("requestPurchase onSuccess: "+result.getProductIdentifier());
+	}
+
+	// override this method in the activity to show in the text status field
+	@Override
+	protected void onFailureRequestPurchase(int errorCode, String errorMessage, Bundle optionalData) {
+		mTxtStatus.setText("requestPurchase onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
+	}
+	
+	// override this method in the activity to show in the text status field
+	@Override
+	protected void onCancelRequestPurchase() {
+		mTxtStatus.setText("requestPurchase onCancel");
 	}
     
     // override this method in the activity to show in the text status field
     @Override
     protected void onSuccessRequestReceipts(Collection<Receipt> receipts) {
-    	m_txtStatus.setText("requestReceipts onSuccess: received "+receipts.size() + " receipts");
+    	mTxtStatus.setText("requestReceipts onSuccess: received "+receipts.size() + " receipts");
  	}
 
  	// override this method in the activity to show in the text status field
     @Override
     protected void onFailureRequestReceipts(int errorCode, String errorMessage, Bundle optionalData) {
-    	m_txtStatus.setText("requestReceipts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
- 	}    
+    	mTxtStatus.setText("requestReceipts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
+ 	}
+    
+    // override this method in the activity to show in the text status field
+    protected void onCancelRequestReceipts() {
+    	mTxtStatus.setText("requestReceipts onCancel");
+    }
 }
