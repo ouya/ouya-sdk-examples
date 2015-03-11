@@ -59,18 +59,18 @@ public class CoronaOuyaPlugin
 				String key = jsonObject.getString("key");
 				String value = jsonObject.getString("value");
 				//Log.i(TAG, "key="+key+" value="+value);
-				if (null == name ||
+				if (null == key ||
 					null == value) {
 					continue;
 				}
-				if (name.equals("tv.ouya.product_id_list")) {
+				if (key.equals("tv.ouya.product_id_list")) {
 					String[] productIds = value.split(",");
 					if (null == productIds) {
 						continue;
 					}
-					developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
+					developerInfo.putStringArray(key, productIds);
 				} else {
-					developerInfo.putString(name, value);
+					developerInfo.putString(key, value);
 				}
 			}
 
