@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-using System;
+#define XIAOMI
+
+using System.Collections;
 using System.Collections.Generic;
 #if UNITY_ANDROID && !UNITY_EDITOR
 using tv.ouya.console.api;
@@ -76,6 +78,11 @@ public class OuyaShowProducts : MonoBehaviour
     /// The game data to display what was stored
     /// </summary>
     private string m_gameData = string.Empty;
+
+    /// <summary>
+    /// Check for is running on OUYA Hardware
+    /// </summary>
+    private bool m_isRunningOnOUYAHardware = false;
 
     /// <summary>
     /// Buttons
@@ -247,6 +254,11 @@ public class OuyaShowProducts : MonoBehaviour
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            GUILayout.Label(string.Format("IsRunningOnOUYAHardware: {0}", m_isRunningOnOUYAHardware));
+            GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
@@ -436,7 +448,7 @@ public class OuyaShowProducts : MonoBehaviour
 
     #region Focus Handling
 
-    void Start()
+    public IEnumerator Start()
     {
         m_focusManager.Mappings[m_btnRequestGamerInfo] = new FocusManager.ButtonMapping()
         {
@@ -466,6 +478,18 @@ public class OuyaShowProducts : MonoBehaviour
 
         // set default selection
         m_focusManager.SelectedButton = m_btnRequestGamerInfo;
+
+#if XIAOMI
+        m_isRunningOnOUYAHardware = true;
+        yield break;
+#else
+        while (!OuyaSDK.isIAPInitComplete())
+        {
+            yield return null;
+        }
+
+        m_isRunningOnOUYAHardware = OuyaSDK.isRunningOnOUYASupportedHardware();
+#endif
     }
 
     private void Update()
