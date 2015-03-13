@@ -36,8 +36,7 @@ namespace org_json_JSONObject
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found %s", strClass);
 #endif
-				_jcJsonObject = (jclass)_env->NewGlobalRef(localRef);
-				_env->DeleteLocalRef(localRef);
+				_jcJsonObject = localRef;
 			}
 			else
 			{
