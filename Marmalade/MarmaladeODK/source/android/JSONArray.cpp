@@ -28,12 +28,14 @@ namespace org_json_JSONArray
 #if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strClass);
 #endif
-			_jcJsonArray = env->FindClass(strClass);
-			if (_jcJsonArray)
+			jclass localRef = (jclass)env->FindClass(strClass);
+			if (localRef)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
 #endif
+				_jcJsonArray = (jclass)_env->NewGlobalRef(localRef);
+				_env->DeleteLocalRef(localRef);
 			}
 			else
 			{
