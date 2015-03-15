@@ -151,7 +151,8 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
     if (button_index == 1)
     {
         text_message = "Status: Requesting purchase...";
-        if (products_index < array_length_1d(product_ids))
+        if (products_index < array_length_1d(product_ids) &&
+            products_length > 0)
         {
             OuyaSDK_RequestPurchase(product_ids[products_index]);
         }
