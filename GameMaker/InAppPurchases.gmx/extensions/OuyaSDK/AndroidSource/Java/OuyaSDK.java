@@ -1,18 +1,25 @@
 package ${YYAndroidPackageName};
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.os.Bundle;
 import android.util.Log;
-import android.widget.FrameLayout;
-import com.yoyogames.runner.RunnerJNILib;
-import java.lang.String;
-import tv.ouya.sdk.OuyaInputView;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.app.Dialog;
 import android.view.MotionEvent;
-import tv.ouya.console.api.OuyaController;
+import android.widget.FrameLayout;
+import com.yoyogames.runner.RunnerJNILib;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.String;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import tv.ouya.console.api.*;
+import tv.ouya.sdk.OuyaInputView;
 
 import ${YYAndroidPackageName}.R;
 import ${YYAndroidPackageName}.RunnerActivity;
@@ -28,6 +35,21 @@ public class OuyaSDK extends RunnerSocial {
 	
 	private static OuyaInputView sInputView = null;
 	
+	// Your game talks to the OuyaFacade, which hides all the mechanics of doing an in-app purchase.
+	private static OuyaFacade sOuyaFacade = null;
+	
+	// listener for fetching gamer info
+	private static CancelIgnoringOuyaResponseListener<GamerInfo> sRequestGamerInfoListener = null;
+
+	// listener for getting products
+	private static CancelIgnoringOuyaResponseListener<List<Product>> sRequestProductsListener = null;
+	
+	// listener for requesting purchase
+	private OuyaResponseListener<PurchaseResult> sRequestPurchaseListener = null;
+	
+	// listener for getting receipts
+	private static OuyaResponseListener<Collection<Receipt>> sRequestReceiptsListener = null;
+	
 	@Override
 	public void onResume() {
 		Log.i(TAG, "onResume called in MyExtensionClass extension");
@@ -40,7 +62,21 @@ public class OuyaSDK extends RunnerSocial {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.i(TAG, "onActivityResult called in MyExtensionClass extension");
+		
+		/*
+		if (mEnableLogging) {
+			Log.i(TAG, "onActivityResult called in MyExtensionClass extension");
+		}
+		*/
+
+		if (null == sOuyaFacade) {
+        	return;
+        }
+		
+        // Forward this result to the facade, in case it is waiting for any activity results
+        if (sOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
 	}
 	
 	public String init(String json) {
@@ -56,6 +92,35 @@ public class OuyaSDK extends RunnerSocial {
 		} else {
 			Log.d(TAG, "Current activity is valid");
 		}
+		
+		byte[] applicationKey = null;
+		
+		// load the application key from assets
+		try {
+			AssetManager assetManager = activity.getAssets();
+			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
+			applicationKey = new byte[inputStream.available()];
+			inputStream.read(applicationKey);
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (null == applicationKey) {
+			Log.e(TAG, "Failed to load signing key");
+			activity.finish();
+		}
+		
+		if (mEnableLogging) {
+			Log.i(TAG, "************");
+			Log.i(TAG, "************");
+			Log.i(TAG, "************");
+			Log.i(TAG, "************");
+			Log.i(TAG, "************");
+			Log.i(TAG, "Signing key loaded!");
+		}
+		
+		Bundle developerInfo = new Bundle();
 		
 		final FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
         if (null == content) {

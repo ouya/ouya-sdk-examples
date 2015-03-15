@@ -168,5 +168,21 @@
       </functions>
       <constants/>
     </file>
+    <file>
+      <filename>key.der</filename>
+      <origname>extensions\key.der</origname>
+      <init></init>
+      <final></final>
+      <kind>4</kind>
+      <uncompress>0</uncompress>
+      <ConfigOptions>
+        <Config name="Default">
+          <CopyToMask>8</CopyToMask>
+        </Config>
+      </ConfigOptions>
+      <ProxyFiles/>
+      <functions/>
+      <constants/>
+    </file>
   </files>
 </extension>
