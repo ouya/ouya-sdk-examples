@@ -143,18 +143,28 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
     if (button_index == 0)
     {
         text_message = "Status: Requesting products...";
-        OuyaSDK_RequestProducts("long_sword,sharp_axe,cool_level,awesome_sauce,__DECLINED__THIS_PURCHASE");
+        products_index = 0;
+        products_length = 0;
+        OuyaSDK_RequestProducts(strPurchasables);
     }
     
     if (button_index == 1)
     {
         text_message = "Status: Requesting purchase...";
-        OuyaSDK_RequestPurchase("sharp_axe");
+        if (products_index < array_length_1d(product_ids))
+        {
+            OuyaSDK_RequestPurchase(product_ids[products_index]);
+        }
+        else
+        {
+            text_message = "Status: Be sure to add an item to your init purchasables array...";
+        }
     }    
     
     if (button_index == 2)
     {
         text_message = "Status: Requesting receipts...";
+        receipts_length = 0;
         OuyaSDK_RequestReceipts();
     }    
     
@@ -173,6 +183,45 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
     if (button_index == 5)
     {
         text_message = "Status: Pause detected...";
+    }
+}
+
+if (button_index == 0 ||
+    button_index == 1)
+{
+    if (OuyaSDK_GetAnyButtonUp(BUTTON_DPAD_UP))
+    {
+        if (products_index > 0) {
+            --products_index;
+        }
+    }
+    if (OuyaSDK_GetAnyButtonUp(BUTTON_DPAD_DOWN))
+    {
+        if ((products_index+1) < products_length) {
+            ++products_index;
+        }
+    }
+    x = 150;
+    y = 260;
+    for (index = 0; index < products_length; ++index)
+    {
+        if (index == products_index) {
+            draw_text_colour(x, y, "* "+products[index], c_white, c_white, c_white, c_white, 1);
+        } else {
+            draw_text_colour(x, y, products[index], c_white, c_white, c_white, c_white, 1);
+        }
+        y += 25;
+    }
+}
+
+if (button_index == 2)
+{
+    x = 150;
+    y = 260;
+    for (index = 0; index < receipts_length; ++index)
+    {
+        draw_text_colour(x, y, receipts[index], c_white, c_white, c_white, c_white, 1);
+        y += 25;
     }
 }
 
@@ -196,11 +245,19 @@ if (asyncResult != undefined &&
         }
         else if (asyncMethod == "onSuccessRequestProducts") {
             var count = OuyaSDK_GetAsyncDataArrayCount();
+            products_length = count;
             text_message = "Status: RequestProducts count="+string(count);
             if (count > 0) {
-                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier")
-                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice")
+                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier");
+                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice");
                 text_message = "Status: RequestProducts count="+string(count)+" identifier"+identifier+" localPrice="+string(localPrice);
+            }
+            for (var index = 0; index < products_length; ++index)
+            {
+                var identifier = OuyaSDK_GetAsyncDataArrayString(string(index), "identifier");
+                var localPrice = OuyaSDK_GetAsyncDataArrayDouble(string(index), "localPrice");
+                products[index] = "Product identifier="+identifier+" localPrice="+string(localPrice);
+                product_ids[index] = identifier;
             }
         }
         else if (asyncMethod == "onFailureRequestProducts") {
@@ -222,11 +279,18 @@ if (asyncResult != undefined &&
         }
         else if (asyncMethod == "onSuccessRequestReceipts") {
             var count = OuyaSDK_GetAsyncDataArrayCount();
+            receipts_length = count;
             text_message = "Status: RequestReceipts count="+string(count);
             if (count > 0) {
-                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier")
-                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice")
+                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier");
+                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice");
                 text_message = "Status: RequestReceipts count="+string(count)+" identifier"+identifier+" localPrice="+string(localPrice);
+            }
+            for (var index = 0; index < receipts_length; ++index)
+            {
+                var identifier = OuyaSDK_GetAsyncDataArrayString(string(index), "identifier");
+                var localPrice = OuyaSDK_GetAsyncDataArrayDouble(string(index), "localPrice");
+                receipts[index] = "Receipt identifier="+identifier+" localPrice="+string(localPrice);
             }
         }
         else if (asyncMethod == "onFailureRequestReceipts") {
