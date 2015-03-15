@@ -187,12 +187,45 @@ if (asyncResult != undefined &&
         if (asyncMethod == "onSuccessRequestGamerInfo") {
             var uuid = OuyaSDK_GetAsyncDataString("uuid");
             var username = OuyaSDK_GetAsyncDataString("username");            
-            text_message = "Status: GamerInfo uuid="+uuid+" username="+username;
+            text_message = "Status: RequestGamerInfo uuid="+uuid+" username="+username;
         }
         else if (asyncMethod == "onFailureRequestGamerInfo") {
             var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
             var errorMessage = OuyaSDK_GetAsyncDataString("errorMessage");            
-            text_message = "Status: GamerInfo errorCode="+errorCode+" errorMessage="+errorMessage;
+            text_message = "Status: RequestGamerInfo errorCode="+errorCode+" errorMessage="+errorMessage;
+        }
+        else if (asyncMethod == "onSuccessRequestProducts") {
+            //var count = OuyaSDK_GetAsyncDataArrayCount();
+            //text_message = "Status: RequestProducts count="+count;
+        }
+        else if (asyncMethod == "onFailureRequestProducts") {
+            var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
+            var errorMessage = OuyaSDK_GetAsyncDataString("errorMessage");            
+            text_message = "Status: RequestProducts errorCode="+errorCode+" errorMessage="+errorMessage;
+        }
+        else if (asyncMethod == "onSuccessRequestPurchase") {
+            var identifier = OuyaSDK_GetAsyncDataString("identifier");
+            text_message = "Status: RequestPurchase identifier="+identifier;
+        }
+        else if (asyncMethod == "onFailureRequestPurchase") {
+            var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
+            var errorMessage = OuyaSDK_GetAsyncDataString("errorMessage");            
+            text_message = "Status: RequestPurchase errorCode="+errorCode+" errorMessage="+errorMessage;
+        }
+        else if (asyncMethod == "onCancelRequestPurchase") {
+            text_message = "Status: RequestPurchase cancelled!";
+        }
+        else if (asyncMethod == "onSuccessRequestReceipts") {
+            //var count = OuyaSDK_GetAsyncDataArrayCount();
+            //text_message = "Status: RequestReceipts count="+count;
+        }
+        else if (asyncMethod == "onFailureRequestReceipts") {
+            var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
+            var errorMessage = OuyaSDK_GetAsyncDataString("errorMessage");            
+            text_message = "Status: RequestReceipts errorCode="+errorCode+" errorMessage="+errorMessage;
+        }
+        else if (asyncMethod == "onCancelRequestReceipts") {
+            text_message = "Status: RequestReceipts cancelled!";
         }
     }
     OuyaSDK_PopAsyncResult();

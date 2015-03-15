@@ -178,7 +178,13 @@ public class OuyaSDK extends RunnerSocial {
 					sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
 						@Override
 						public void onSuccess(GamerInfo info) {
-							Log.i(TAG, "sRequestGamerInfoListener: onSuccess uuid="+info.getUuid()+" username="+info.getUsername());
+							if (null == info) {
+								Log.e(TAG, "GamerInfo is null!");
+								return;
+							}
+							if (sEnableLogging) {
+								Log.i(TAG, "sRequestGamerInfoListener: onSuccess uuid="+info.getUuid()+" username="+info.getUsername());
+							}
 							JSONObject json = new JSONObject();
 							try {
 								json.put("method", "onSuccessRequestGamerInfo");
@@ -194,7 +200,9 @@ public class OuyaSDK extends RunnerSocial {
 
 						@Override
 						public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-							Log.e(TAG, "sRequestGamerInfoListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							if (sEnableLogging) {
+								Log.e(TAG, "sRequestGamerInfoListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							}
 							JSONObject json = new JSONObject();
 							try {
 								json.put("method", "onFailureRequestGamerInfo");
@@ -212,12 +220,57 @@ public class OuyaSDK extends RunnerSocial {
 					sRequestProductsListener = new CancelIgnoringOuyaResponseListener<List<Product>>() {
 						@Override
 						public void onSuccess(final List<Product> products) {
-							Log.i(TAG, "sRequestProductsListener: onSuccess");
+							if (null == products) {
+								Log.e(TAG, "Products are null!");
+								return;
+							}
+							if (sEnableLogging) {
+								Log.i(TAG, "sRequestProductsListener: onSuccess");
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onSuccessRequestProducts");
+								JSONArray data = new JSONArray();
+								int index = 0;
+								for (Product product : products) {
+									JSONObject item = new JSONObject();
+									try {
+										item.put("currencyCode", product.getCurrencyCode());
+										item.put("description", product.getDescription());
+										item.put("identifier", product.getIdentifier());
+										item.put("localPrice", product.getLocalPrice());
+										item.put("name", product.getName());
+										item.put("originalPrice", product.getOriginalPrice());
+										item.put("percentOff", product.getPercentOff());
+										item.put("developerName", product.getDeveloperName());
+										data.put(index, item);
+										++index;
+									} catch (JSONException e2) {
+									}
+								}
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-							Log.i(TAG, "sRequestProductsListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							if (sEnableLogging) {
+								Log.e(TAG, "sRequestProductsListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onFailureRequestProducts");
+								JSONObject data = new JSONObject();
+								data.put("errorCode", Integer.toString(errorCode));
+								data.put("errorMessage", errorMessage);
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 					};
 
@@ -225,17 +278,55 @@ public class OuyaSDK extends RunnerSocial {
 
 						@Override
 						public void onSuccess(PurchaseResult result) {
-							Log.i(TAG, "sRequestPurchaseListener: onSuccess");
+							if (null == result) {
+								Log.e(TAG, "PurchaseResult is null!");
+								return;
+							}
+							if (sEnableLogging) {
+								Log.i(TAG, "sRequestPurchaseListener: onSuccess");
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onSuccessRequestPurchase");
+								JSONObject data = new JSONObject();
+								data.put("identifier", result.getProductIdentifier());
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-							Log.e(TAG, "sRequestPurchaseListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							if (sEnableLogging) {
+								Log.e(TAG, "sRequestPurchaseListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onFailureRequestPurchase");
+								JSONObject data = new JSONObject();
+								data.put("errorCode", Integer.toString(errorCode));
+								data.put("errorMessage", errorMessage);
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 
 						@Override
 						public void onCancel() {
-							Log.i(TAG, "sRequestPurchaseListener: onCancel");
+							if (sEnableLogging) {
+								Log.i(TAG, "sRequestPurchaseListener: onCancel");
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onCancelRequestPurchase");
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 					};
 					
@@ -243,17 +334,71 @@ public class OuyaSDK extends RunnerSocial {
 
 						@Override
 						public void onSuccess(Collection<Receipt> receipts) {
-							Log.i(TAG, "requestReceipts onSuccess: received "+receipts.size() + " receipts");
+							if (null == receipts) {
+								Log.e(TAG, "Receipts are null!");
+								return;
+							}
+							if (sEnableLogging) {
+								Log.i(TAG, "requestReceipts onSuccess: received "+receipts.size() + " receipts");
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onSuccessRequestReceipts");
+								JSONArray data = new JSONArray();
+								int index = 0;
+								for (Receipt receipt : receipts)
+								{
+									JSONObject item = new JSONObject();
+									try {
+										item.put("identifier", receipt.getIdentifier());
+										item.put("purchaseDate", receipt.getPurchaseDate());
+										item.put("gamer", receipt.getGamer());
+										item.put("uuid", receipt.getUuid());
+										item.put("localPrice", receipt.getLocalPrice());
+										item.put("currency", receipt.getCurrency());
+										item.put("generatedDate", receipt.getGeneratedDate());
+										data.put(index, item);
+										++index;
+									} catch (JSONException e2) {
+									}
+								}
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
-							Log.e(TAG, "requestReceipts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
+							if (sEnableLogging) {
+								Log.e(TAG, "requestReceipts onFailure: errorCode="+errorCode+" errorMessage="+errorMessage);
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onFailureRequestReceipts");
+								JSONObject data = new JSONObject();
+								data.put("errorCode", Integer.toString(errorCode));
+								data.put("errorMessage", errorMessage);
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 
 						@Override
 						public void onCancel() {
-							Log.i(TAG, "requestReceipts onCancel");
+							if (sEnableLogging) {
+								Log.i(TAG, "requestReceipts onCancel");
+							}
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onCancelRequestReceipts");
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 					};
 					
