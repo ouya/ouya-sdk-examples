@@ -165,6 +165,55 @@
           <argCount>0</argCount>
           <args/>
         </function>
+        <function>
+          <name>OuyaSDK_IsInitialized</name>
+          <externalName>isInitialized</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_RequestGamerInfo</name>
+          <externalName>requestGamerInfo</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_RequestProducts</name>
+          <externalName>requestProducts</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_RequestPurchase</name>
+          <externalName>requestPurchase</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_RequestReceipts</name>
+          <externalName>requestReceipts</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
       </functions>
       <constants/>
     </file>

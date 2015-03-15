@@ -137,21 +137,25 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
     if (button_index == 0)
     {
         text_message = "Status: Requesting products...";
+        OuyaSDK_RequestProducts("long_sword,sharp_axe,cool_level,awesome_sauce,__DECLINED__THIS_PURCHASE");
     }
     
     if (button_index == 1)
     {
         text_message = "Status: Requesting purchase...";
+        OuyaSDK_RequestProducts("sharp_axe");
     }    
     
     if (button_index == 2)
     {
         text_message = "Status: Requesting receipts...";
+        OuyaSDK_RequestReceipts();
     }    
     
     if (button_index == 3)
     {
         text_message = "Status: Requesting gamer info...";
+        OuyaSDK_RequestGamerInfo();
     }    
 
     if (button_index == 4)
