@@ -50,8 +50,10 @@
           <kind>11</kind>
           <help></help>
           <returnType>1</returnType>
-          <argCount>-1</argCount>
-          <args/>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
         </function>
         <function>
           <name>OuyaSDK_GetButton</name>

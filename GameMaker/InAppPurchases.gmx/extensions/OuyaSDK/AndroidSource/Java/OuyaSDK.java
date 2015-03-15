@@ -24,6 +24,7 @@ public class OuyaSDK extends RunnerSocial {
 	
 	private static final String sFalse = "false";
 	private static final String sTrue = "true";
+	private static final double sNoop = 0;
 	
 	private static OuyaInputView sInputView = null;
 	
@@ -42,7 +43,12 @@ public class OuyaSDK extends RunnerSocial {
 		Log.i(TAG, "onActivityResult called in MyExtensionClass extension");
 	}
 	
-	public String init() {
+	public String init(String json) {
+		
+		if (mEnableLogging) {
+			Log.i(TAG, "init: json="+json);
+		}
+		
 		final Activity activity = RunnerActivity.CurrentActivity;
 		if (null == activity) {
 			Log.d(TAG, "Current activity is null");
@@ -238,6 +244,22 @@ public class OuyaSDK extends RunnerSocial {
 	
 	public double clearButtonStatesPressedReleased() {
 		OuyaInputView.clearButtonStatesPressedReleased();
-		return 0;
+		return sNoop;
+	}
+	
+	public double requestGamerInfo() {
+		return sNoop;
+	}
+	
+	public double requestProducts(String json) {
+		return sNoop;
+	}
+	
+	public double requestPurchase(String identifier) {
+		return sNoop;
+	}
+	
+	public double requestReceipts() {
+		return sNoop;
 	}
 }
