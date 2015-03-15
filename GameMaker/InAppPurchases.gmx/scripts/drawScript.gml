@@ -195,8 +195,8 @@ if (asyncResult != undefined &&
             text_message = "Status: RequestGamerInfo errorCode="+errorCode+" errorMessage="+errorMessage;
         }
         else if (asyncMethod == "onSuccessRequestProducts") {
-            //var count = OuyaSDK_GetAsyncDataArrayCount();
-            //text_message = "Status: RequestProducts count="+count;
+            var count = OuyaSDK_GetAsyncDataArrayCount();
+            text_message = "Status: RequestProducts count="+string(count);
         }
         else if (asyncMethod == "onFailureRequestProducts") {
             var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
@@ -216,8 +216,8 @@ if (asyncResult != undefined &&
             text_message = "Status: RequestPurchase cancelled!";
         }
         else if (asyncMethod == "onSuccessRequestReceipts") {
-            //var count = OuyaSDK_GetAsyncDataArrayCount();
-            //text_message = "Status: RequestReceipts count="+count;
+            var count = OuyaSDK_GetAsyncDataArrayCount();
+            text_message = "Status: RequestReceipts count="+string(count);
         }
         else if (asyncMethod == "onFailureRequestReceipts") {
             var errorCode = OuyaSDK_GetAsyncDataString("errorCode");

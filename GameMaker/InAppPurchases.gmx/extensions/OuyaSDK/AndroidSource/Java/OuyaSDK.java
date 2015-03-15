@@ -478,6 +478,28 @@ public class OuyaSDK extends RunnerSocial {
 		return "";
 	}
 	
+	public double getAsyncDataArrayCount() {
+		if (sAsyncResults.size() > 0) {
+			String jsonData = sAsyncResults.get(0);
+			if (null == jsonData) {
+				return 0;
+			}
+			try {
+				JSONObject json = new JSONObject(jsonData);
+				if (json.has("data")) {
+					JSONArray data = json.getJSONArray("data");
+					if (null == data) {
+						return 0;
+					} else {
+						return data.length();
+					}
+				}
+			} catch (JSONException e) {
+			}
+		}
+		return 0;
+	}
+	
 	public String isInitialized() {
 		return Boolean.toString(sInitialized);
 	}

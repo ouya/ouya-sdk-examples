@@ -252,6 +252,15 @@
             <arg>1</arg>
           </args>
         </function>
+        <function>
+          <name>OuyaSDK_GetAsyncDataArrayCount</name>
+          <externalName>getAsyncDataArrayCount</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
       </functions>
       <constants/>
     </file>
