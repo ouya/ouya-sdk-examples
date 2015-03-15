@@ -249,9 +249,7 @@ if (asyncResult != undefined &&
             products_length = count;
             text_message = "Status: RequestProducts count="+string(count);
             if (count > 0) {
-                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier");
-                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice");
-                text_message = "Status: RequestProducts count="+string(count)+" identifier"+identifier+" localPrice="+string(localPrice);
+                text_message = "Status: RequestProducts count="+string(count);
             }
             for (var index = 0; index < products_length; ++index)
             {
@@ -283,9 +281,7 @@ if (asyncResult != undefined &&
             receipts_length = count;
             text_message = "Status: RequestReceipts count="+string(count);
             if (count > 0) {
-                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier");
-                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice");
-                text_message = "Status: RequestReceipts count="+string(count)+" identifier"+identifier+" localPrice="+string(localPrice);
+                text_message = "Status: RequestReceipts count="+string(count);
             }
             for (var index = 0; index < receipts_length; ++index)
             {
