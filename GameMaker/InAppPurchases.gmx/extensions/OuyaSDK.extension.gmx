@@ -261,6 +261,30 @@
           <argCount>0</argCount>
           <args/>
         </function>
+        <function>
+          <name>OuyaSDK_GetAsyncDataArrayString</name>
+          <externalName>getAsyncDataArrayString</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>2</argCount>
+          <args>
+            <arg>1</arg>
+            <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_GetAsyncDataArrayDouble</name>
+          <externalName>getAsyncDataArrayDouble</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>2</argCount>
+          <args>
+            <arg>1</arg>
+            <arg>1</arg>
+          </args>
+        </function>
       </functions>
       <constants/>
     </file>

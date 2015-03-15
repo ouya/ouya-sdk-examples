@@ -500,6 +500,75 @@ public class OuyaSDK extends RunnerSocial {
 		return 0;
 	}
 	
+	public String getAsyncDataArrayString(String strIndex, String field) {
+		if (sAsyncResults.size() > 0) {
+			String jsonData = sAsyncResults.get(0);
+			if (null == jsonData) {
+				return "";
+			}
+			try {
+				JSONObject json = new JSONObject(jsonData);
+				if (json.has("data")) {
+					JSONArray data = json.getJSONArray("data");
+					if (null == data) {
+						return "";
+					}
+
+					int index = Integer.parseInt(strIndex);
+					if (data.length() <= index) {
+						return "";
+					}
+					JSONObject item = data.getJSONObject(index);
+					if (null == item) {
+						return "";
+					}
+					if (item.has(field)) {
+						String result = item.getString(field);
+						if (null == result) {
+							return "";
+						} else {
+							return result;
+						}
+					}
+				}
+			} catch (JSONException e) {
+			}
+		}
+		return "";
+	}
+	
+	public double getAsyncDataArrayDouble(String strIndex, String field) {
+		if (sAsyncResults.size() > 0) {
+			String jsonData = sAsyncResults.get(0);
+			if (null == jsonData) {
+				return 0;
+			}
+			try {
+				JSONObject json = new JSONObject(jsonData);
+				if (json.has("data")) {
+					JSONArray data = json.getJSONArray("data");
+					if (null == data) {
+						return 0;
+					}
+
+					int index = Integer.parseInt(strIndex);
+					if (data.length() <= index) {
+						return 0;
+					}
+					JSONObject item = data.getJSONObject(index);
+					if (null == item) {
+						return 0;
+					}
+					if (item.has(field)) {
+						return item.getDouble(field);
+					}
+				}
+			} catch (JSONException e) {
+			}
+		}
+		return 0;
+	}
+	
 	public String isInitialized() {
 		return Boolean.toString(sInitialized);
 	}

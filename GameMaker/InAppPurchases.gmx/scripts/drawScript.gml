@@ -197,6 +197,11 @@ if (asyncResult != undefined &&
         else if (asyncMethod == "onSuccessRequestProducts") {
             var count = OuyaSDK_GetAsyncDataArrayCount();
             text_message = "Status: RequestProducts count="+string(count);
+            if (count > 0) {
+                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier")
+                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice")
+                text_message = "Status: RequestProducts count="+string(count)+" identifier"+identifier+" localPrice="+string(localPrice);
+            }
         }
         else if (asyncMethod == "onFailureRequestProducts") {
             var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
@@ -218,6 +223,11 @@ if (asyncResult != undefined &&
         else if (asyncMethod == "onSuccessRequestReceipts") {
             var count = OuyaSDK_GetAsyncDataArrayCount();
             text_message = "Status: RequestReceipts count="+string(count);
+            if (count > 0) {
+                var identifier = OuyaSDK_GetAsyncDataArrayString("0", "identifier")
+                var localPrice = OuyaSDK_GetAsyncDataArrayDouble("0", "localPrice")
+                text_message = "Status: RequestReceipts count="+string(count)+" identifier"+identifier+" localPrice="+string(localPrice);
+            }
         }
         else if (asyncMethod == "onFailureRequestReceipts") {
             var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
