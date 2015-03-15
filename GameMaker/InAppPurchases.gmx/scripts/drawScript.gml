@@ -1,0 +1,171 @@
+deadzone = 0.25;
+
+AXIS_LS_X = "0";
+AXIS_LS_Y = "1";
+AXIS_RS_X = "11";
+AXIS_RS_Y = "14";
+AXIS_L2 = "17";
+AXIS_R2 = "18";
+BUTTON_O = "96";
+BUTTON_U = "99";
+BUTTON_Y = "100";
+BUTTON_A = "97";
+BUTTON_L1 = "102";
+BUTTON_R1 = "103";
+BUTTON_L3 = "106";
+BUTTON_R3 = "107";
+BUTTON_DPAD_UP = "19";
+BUTTON_DPAD_DOWN = "20";
+BUTTON_DPAD_RIGHT = "22";
+BUTTON_DPAD_LEFT = "21";
+BUTTON_MENU = "82";
+
+draw_text(150, 100, "Hello from Game Maker!");
+
+draw_text(175, 140, text_message);
+
+if (button_index == 0)
+{
+    spriteIndex = 0;
+}
+else
+{
+    spriteIndex = 1;
+}
+x = 150;
+y = 200;
+scaleX = 1.75;
+scaleY = 0.5;
+draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
+draw_text(x, y, "Request Products");
+
+if (button_index == 1)
+{
+    spriteIndex = 0;
+}
+else
+{
+    spriteIndex = 1;
+}
+x = 500;
+scaleX = 1.75;
+draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
+draw_text(x, y, "Request Purchase");
+
+if (button_index == 2)
+{
+    spriteIndex = 0;
+}
+else
+{
+    spriteIndex = 1;
+}
+x = 800;
+scaleX = 1.75;
+draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
+draw_text(x, y, "Request Receipts");
+
+if (button_index == 3)
+{
+    spriteIndex = 0;
+}
+else
+{
+    spriteIndex = 1;
+}
+x = 1100;
+scaleX = 1.75;
+draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
+draw_text(x, y, "Request GamerInfo");
+
+if (button_index == 4)
+{
+    spriteIndex = 0;
+}
+else
+{
+    spriteIndex = 1;
+}
+x = 1400;
+scaleX = 1;
+draw_sprite_ext(spriteIndex, -1, x+25, y, scaleX, scaleY, 0, c_white, 1);
+draw_text(x, y, "Exit");
+
+if (button_index == 5)
+{
+    spriteIndex = 0;
+}
+else
+{
+    spriteIndex = 1;
+}
+x = 1650;
+scaleX = 1;
+draw_sprite_ext(spriteIndex, -1, x+25, y, scaleX, scaleY, 0, c_white, 1);
+draw_text(x, y, "Pause");
+
+varPlayer = "0";
+
+/*
+if (OuyaSDK_IsConnected(varPlayer))
+{
+    //show_debug_message("connected varPlayer: " + string(varPlayer));
+}
+*/
+
+if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_MENU))
+{
+    button_index = 5;
+    text_message = "Status: Pause detected";
+}
+
+if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_DPAD_RIGHT))
+{
+    if (button_index < 4)
+    {
+        button_index = button_index + 1;
+    }
+}
+
+if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_DPAD_LEFT))
+{
+    if (button_index > 0)
+    {
+        button_index = button_index - 1;
+    }
+}
+
+if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_O))
+{
+    if (button_index == 0)
+    {
+        text_message = "Status: Requesting products...";
+    }
+    
+    if (button_index == 1)
+    {
+        text_message = "Status: Requesting purchase...";
+    }    
+    
+    if (button_index == 2)
+    {
+        text_message = "Status: Requesting receipts...";
+    }    
+    
+    if (button_index == 3)
+    {
+        text_message = "Status: Requesting gamer info...";
+    }    
+
+    if (button_index == 4)
+    {
+        text_message = "Status: Exiting game...";
+        game_end();
+    }
+    
+    if (button_index == 5)
+    {
+        text_message = "Status: Pause detected...";
+    }
+}
+
