@@ -214,6 +214,44 @@
           <argCount>0</argCount>
           <args/>
         </function>
+        <function>
+          <name>OuyaSDK_GetAsyncResult</name>
+          <externalName>getAsyncResult</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_PopAsyncResult</name>
+          <externalName>popAsyncResult</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_GetAsyncMethod</name>
+          <externalName>getAsyncMethod</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>-1</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_GetAsyncDataString</name>
+          <externalName>getAsyncDataString</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
+        </function>
       </functions>
       <constants/>
     </file>

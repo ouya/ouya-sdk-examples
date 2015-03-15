@@ -176,3 +176,25 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
     }
 }
 
+asyncResult = OuyaSDK_GetAsyncResult();
+if (asyncResult != undefined &&
+    asyncResult != "") {
+    text_message = "Status: "+asyncResult;
+    asyncMethod = OuyaSDK_GetAsyncMethod();
+    if (asyncMethod != undefined &&
+        asyncMethod != "") {
+        text_message = "Status: Method="+asyncMethod+" json="+asyncResult;
+        if (asyncMethod == "onSuccessRequestGamerInfo") {
+            var uuid = OuyaSDK_GetAsyncDataString("uuid");
+            var username = OuyaSDK_GetAsyncDataString("username");            
+            text_message = "Status: GamerInfo uuid="+uuid+" username="+username;
+        }
+        else if (asyncMethod == "onFailureRequestGamerInfo") {
+            var errorCode = OuyaSDK_GetAsyncDataString("errorCode");
+            var errorMessage = OuyaSDK_GetAsyncDataString("errorMessage");            
+            text_message = "Status: GamerInfo errorCode="+errorCode+" errorMessage="+errorMessage;
+        }
+    }
+    OuyaSDK_PopAsyncResult();
+}
+

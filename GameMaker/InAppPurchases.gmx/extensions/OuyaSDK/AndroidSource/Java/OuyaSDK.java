@@ -56,6 +56,9 @@ public class OuyaSDK extends RunnerSocial {
 	// listener for getting receipts
 	private static OuyaResponseListener<Collection<Receipt>> sRequestReceiptsListener = null;
 	
+	// GameMakers async id
+	private static ArrayList<String> sAsyncResults = new ArrayList<String>();
+	
 	@Override
 	public void onResume() {
 		Log.i(TAG, "onResume called in MyExtensionClass extension");
@@ -176,11 +179,33 @@ public class OuyaSDK extends RunnerSocial {
 						@Override
 						public void onSuccess(GamerInfo info) {
 							Log.i(TAG, "sRequestGamerInfoListener: onSuccess uuid="+info.getUuid()+" username="+info.getUsername());
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onSuccessRequestGamerInfo");
+								JSONObject data = new JSONObject();
+								data.put("uuid", info.getUuid());
+								data.put("username", info.getUsername());
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
 							Log.e(TAG, "sRequestGamerInfoListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+							JSONObject json = new JSONObject();
+							try {
+								json.put("method", "onFailureRequestGamerInfo");
+								JSONObject data = new JSONObject();
+								data.put("errorCode", Integer.toString(errorCode));
+								data.put("errorMessage", errorMessage);
+								json.put("data", data);
+							} catch (JSONException e1) {
+							}
+							String jsonData = json.toString();
+							sAsyncResults.add(jsonData);
 						}
 					};
 					
@@ -239,6 +264,73 @@ public class OuyaSDK extends RunnerSocial {
         }
 		
 		return sTrue;
+	}
+	
+	public String getAsyncResult() {
+		if (sAsyncResults.size() > 0) {
+			return sAsyncResults.get(0);
+		} else {
+			return "";
+		}
+	}
+	
+	public String popAsyncResult() {
+		if (sAsyncResults.size() > 0) {
+			sAsyncResults.remove(0);
+		}
+		return "";
+	}
+	
+	public String getAsyncMethod() {
+		if (sAsyncResults.size() > 0) {
+			String jsonData = sAsyncResults.get(0);
+			Log.i(TAG, "getAsyncMethod jsonData="+jsonData);
+			if (null == jsonData) {
+				return "";
+			}
+			try {
+				JSONObject json = new JSONObject(jsonData);
+				if (json.has("method")) {
+					String result = json.getString("method");
+					if (null == result) {
+						return "";
+					} else {
+						return result;
+					}
+				}
+			} catch (JSONException e) {
+			}
+		}
+		return "";
+	}
+	
+	public String getAsyncDataString(String field) {
+		if (sAsyncResults.size() > 0) {
+			String jsonData = sAsyncResults.get(0);
+			if (null == jsonData) {
+				return "";
+			}
+			try {
+				JSONObject json = new JSONObject(jsonData);
+				if (json.has("data")) {
+					JSONObject data = json.getJSONObject("data");
+					if (null == data) {
+						return "";
+					} else {
+						if (data.has(field)) {
+							String result = data.getString(field);
+							if (null == result) {
+								return "";
+							} else {
+								return result;
+							}
+						}
+					}
+				}
+			} catch (JSONException e) {
+			}
+		}
+		return "";
 	}
 	
 	public String isInitialized() {
