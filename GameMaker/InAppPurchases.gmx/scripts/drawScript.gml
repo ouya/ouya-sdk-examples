@@ -104,9 +104,15 @@ scaleX = 1;
 draw_sprite_ext(spriteIndex, -1, x+25, y, scaleX, scaleY, 0, c_white, 1);
 draw_text_colour(x, y, "Pause", c_white, c_white, c_white, c_white, 1);
 
-if (!OuyaSDK_IsAnyConnected())
+controllers_connected = OuyaSDK_IsAnyConnected();
+if (controllers_active != controllers_connected)
 {
-    text_message = "Status: No controllers are connected!";
+    controllers_active = controllers_connected;
+    if (controllers_active) {
+        text_message = "Status: Controller detected!";
+    } else {
+        text_message = "Status: No controllers are connected!";
+    }
 }
 
 

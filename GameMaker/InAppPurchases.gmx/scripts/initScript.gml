@@ -8,3 +8,4 @@ ds_map_destroy(init_ouya_plugin_values);
 
 button_index = 0;
 text_message = "Status:";
+controllers_active = "false";

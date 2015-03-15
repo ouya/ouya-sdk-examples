@@ -131,11 +131,6 @@ public class OuyaSDK extends RunnerSocial {
 					}
 					
 					if (sEnableLogging) {
-						Log.i(TAG, "************");
-						Log.i(TAG, "************");
-						Log.i(TAG, "************");
-						Log.i(TAG, "************");
-						Log.i(TAG, "************");
 						Log.i(TAG, "Signing key loaded!");
 					}
 					
@@ -146,7 +141,7 @@ public class OuyaSDK extends RunnerSocial {
 					try {
 						JSONObject jObject = new JSONObject(jsonData);
 						Iterator<?> keys = jObject.keys();
-						while( keys.hasNext() ) {
+						while ( keys.hasNext() ) {
 							String name = (String)keys.next();
 							if (null == name) {
 								continue;
@@ -162,6 +157,9 @@ public class OuyaSDK extends RunnerSocial {
 								}
 								developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
 							} else {
+								if (sEnableLogging) {
+									Log.i(TAG, "************* name="+name+" value="+value);
+								}
 								developerInfo.putString(name, value);
 							}
 						}
@@ -186,6 +184,17 @@ public class OuyaSDK extends RunnerSocial {
 						}
 					};
 					
+					sRequestProductsListener = new CancelIgnoringOuyaResponseListener<List<Product>>() {
+						@Override
+						public void onSuccess(final List<Product> products) {
+							Log.i(TAG, "sRequestProductsListener: onSuccess");
+						}
+
+						@Override
+						public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+							Log.i(TAG, "sRequestProductsListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+						}
+					};
 
 					sRequestPurchaseListener = new OuyaResponseListener<PurchaseResult>() {
 

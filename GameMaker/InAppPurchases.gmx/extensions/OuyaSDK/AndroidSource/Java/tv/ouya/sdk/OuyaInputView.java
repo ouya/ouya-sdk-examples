@@ -36,7 +36,7 @@ public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
 	
-	private static final boolean mEnableLogging = true;
+	private static final boolean sEnableLogging = false;
 	
 	private static OuyaInputView mInstance = null;
 	
@@ -86,7 +86,7 @@ public class OuyaInputView extends View {
     }
 
     private void init() {
-    	if (mEnableLogging) {
+    	if (sEnableLogging) {
     		Log.i(TAG, "Construct OuyaInputView");
     	}
     	mInstance = this;
@@ -116,7 +116,7 @@ public class OuyaInputView extends View {
 			// give our custom view focus
 			View oldFocus = activity.getCurrentFocus();
 			if (null != oldFocus) {
-				if (mEnableLogging) {
+				if (sEnableLogging) {
 					Log.i(TAG, "Disable the current focus");
 				}
 				oldFocus.setFocusable(false);
@@ -144,7 +144,7 @@ public class OuyaInputView extends View {
 	
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		if (mEnableLogging) {
+		if (sEnableLogging) {
 			OuyaController ouyaController = OuyaController.getControllerByDeviceId(keyEvent.getDeviceId());
 			if (null == ouyaController) {
 				Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
@@ -165,7 +165,7 @@ public class OuyaInputView extends View {
 		
 	@Override
 	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-    	if (mEnableLogging) {
+    	if (sEnableLogging) {
 			DebugInput.debugMotionEvent(motionEvent);
 		}
     	
@@ -182,7 +182,7 @@ public class OuyaInputView extends View {
 	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-    	if (mEnableLogging) {
+    	if (sEnableLogging) {
     		Log.i(TAG, "remappedDispatchGenericMotionEvent");
     		DebugInput.debugOuyaMotionEvent(motionEvent);
     	}
@@ -210,7 +210,7 @@ public class OuyaInputView extends View {
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		if (mEnableLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "onKeyUp keyCode=" + keyCode);
 		}
 		
@@ -225,7 +225,7 @@ public class OuyaInputView extends View {
 			return super.onKeyUp(keyCode, keyEvent);
 		}
 		stateButton.put(keyCode, false);
-    	if (mEnableLogging) {
+    	if (sEnableLogging) {
     		Log.i(TAG, "onKeyUp stateButton playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButton.get(keyCode));
 		}
 		
@@ -234,7 +234,7 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "onKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is null");
 		} else {
 			stateButtonUp.put(keyCode, true);
-			if (mEnableLogging) {
+			if (sEnableLogging) {
 				Log.i(TAG, "onKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButtonUp.get(keyCode));
 			}
 		}
@@ -244,7 +244,7 @@ public class OuyaInputView extends View {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		if (mEnableLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "onKeyDown keyCode=" + keyCode);
 		}
 		
@@ -259,7 +259,7 @@ public class OuyaInputView extends View {
 			return super.onKeyDown(keyCode, keyEvent);
 		}
 		stateButton.put(keyCode, true);
-    	if (mEnableLogging) {
+    	if (sEnableLogging) {
     		Log.i(TAG, "onKeyDown stateButton playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButton.get(keyCode));
 		}
 		
@@ -268,7 +268,7 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "onKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is null");
 		} else {
 			stateButtonDown.put(keyCode, true);
-			if (mEnableLogging) {
+			if (sEnableLogging) {
 				Log.i(TAG, "onKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButtonDown.get(keyCode));
 			}
 		}
@@ -294,10 +294,13 @@ public class OuyaInputView extends View {
 	
 	public static boolean getButton(int playerNum, int button) {
 		/*
-		if (mEnableLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "getButton playerNum="+playerNum+" button=" + button);
 		}
 		*/
+		if (sStateButton.size() <= playerNum) {
+			return false;
+		}
 		SparseBooleanArray stateButton = sStateButton.get(playerNum);
 		if (null == stateButton) {
 			Log.e(TAG, "getButton stateButton is null");
@@ -305,7 +308,7 @@ public class OuyaInputView extends View {
 		}		
 		boolean result = stateButton.get(button);
 		/*
-		if (mEnableLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "getButton result=" + result);
 		}
 		*/
@@ -313,6 +316,9 @@ public class OuyaInputView extends View {
 	}
 	
 	public static boolean getButtonDown(int playerNum, int button) {
+		if (sLastStateButtonDown.size() <= playerNum) {
+			return false;
+		}
 		SparseBooleanArray stateButtonDown = sLastStateButtonDown.get(playerNum);
 		if (null == stateButtonDown) {
 			Log.e(TAG, "getButtonDown stateButtonDown is null");
@@ -322,6 +328,9 @@ public class OuyaInputView extends View {
 	}
 	
 	public static boolean getButtonUp(int playerNum, int button) {
+		if (sLastStateButtonUp.size() <= playerNum) {
+			return false;
+		}
 		SparseBooleanArray stateButtonUp = sLastStateButtonUp.get(playerNum);
 		if (null == stateButtonUp) {
 			Log.e(TAG, "getButtonUp stateButtonUp is null");
