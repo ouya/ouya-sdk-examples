@@ -104,22 +104,19 @@ scaleX = 1;
 draw_sprite_ext(spriteIndex, -1, x+25, y, scaleX, scaleY, 0, c_white, 1);
 draw_text_colour(x, y, "Pause", c_white, c_white, c_white, c_white, 1);
 
-varPlayer = "0";
-
-/*
-if (OuyaSDK_IsConnected(varPlayer))
+if (!OuyaSDK_IsAnyConnected())
 {
-    //show_debug_message("connected varPlayer: " + string(varPlayer));
+    text_message = "Status: No controllers are connected!";
 }
-*/
 
-if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_MENU))
+
+if (OuyaSDK_GetAnyButtonUp(BUTTON_MENU))
 {
     button_index = 5;
     text_message = "Status: Pause detected";
 }
 
-if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_DPAD_RIGHT))
+if (OuyaSDK_GetAnyButtonUp(BUTTON_DPAD_RIGHT))
 {
     if (button_index < 4)
     {
@@ -127,7 +124,7 @@ if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_DPAD_RIGHT))
     }
 }
 
-if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_DPAD_LEFT))
+if (OuyaSDK_GetAnyButtonUp(BUTTON_DPAD_LEFT))
 {
     if (button_index > 0)
     {
@@ -135,7 +132,7 @@ if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_DPAD_LEFT))
     }
 }
 
-if (OuyaSDK_GetButtonUp(varPlayer, BUTTON_O))
+if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
 {
     if (button_index == 0)
     {

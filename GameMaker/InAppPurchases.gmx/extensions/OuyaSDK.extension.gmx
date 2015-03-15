@@ -121,6 +121,48 @@
           <argCount>0</argCount>
           <args/>
         </function>
+        <function>
+          <name>OuyaSDK_GetAnyButton</name>
+          <externalName>getAnyButton</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_GetAnyButtonDown</name>
+          <externalName>getAnyButtonDown</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_GetAnyButtonUp</name>
+          <externalName>getAnyButtonUp</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_IsAnyConnected</name>
+          <externalName>isAnyConnected</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
       </functions>
       <constants/>
     </file>
