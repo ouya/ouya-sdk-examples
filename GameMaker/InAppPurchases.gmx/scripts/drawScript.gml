@@ -149,7 +149,7 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
     if (button_index == 1)
     {
         text_message = "Status: Requesting purchase...";
-        OuyaSDK_RequestProducts("sharp_axe");
+        OuyaSDK_RequestPurchase("sharp_axe");
     }    
     
     if (button_index == 2)
