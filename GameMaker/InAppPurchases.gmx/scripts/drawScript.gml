@@ -158,7 +158,7 @@ if (OuyaSDK_GetAnyButtonUp(BUTTON_O))
         }
         else
         {
-            text_message = "Status: Be sure to add an item to your init purchasables array...";
+            text_message = "Status: Request products to select a purchase...";
         }
     }    
     
