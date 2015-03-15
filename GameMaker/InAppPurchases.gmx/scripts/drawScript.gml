@@ -20,9 +20,9 @@ BUTTON_DPAD_RIGHT = "22";
 BUTTON_DPAD_LEFT = "21";
 BUTTON_MENU = "82";
 
-draw_text(150, 100, "Hello from Game Maker!");
+draw_text_colour(150, 100, "Hello from Game Maker!", c_white, c_white, c_white, c_white, 1);
 
-draw_text(175, 140, text_message);
+draw_text_colour(175, 140, text_message, c_white, c_white, c_white, c_white, 1);
 
 if (button_index == 0)
 {
@@ -37,7 +37,7 @@ y = 200;
 scaleX = 1.75;
 scaleY = 0.5;
 draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
-draw_text(x, y, "Request Products");
+draw_text_colour(x, y, "Request Products", c_white, c_white, c_white, c_white, 1);
 
 if (button_index == 1)
 {
@@ -50,7 +50,7 @@ else
 x = 500;
 scaleX = 1.75;
 draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
-draw_text(x, y, "Request Purchase");
+draw_text_colour(x, y, "Request Purchase", c_white, c_white, c_white, c_white, 1);
 
 if (button_index == 2)
 {
@@ -63,7 +63,7 @@ else
 x = 800;
 scaleX = 1.75;
 draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
-draw_text(x, y, "Request Receipts");
+draw_text_colour(x, y, "Request Receipts", c_white, c_white, c_white, c_white, 1);
 
 if (button_index == 3)
 {
@@ -76,7 +76,7 @@ else
 x = 1100;
 scaleX = 1.75;
 draw_sprite_ext(spriteIndex, -1, x+75, y, scaleX, scaleY, 0, c_white, 1);
-draw_text(x, y, "Request GamerInfo");
+draw_text_colour(x, y, "Request GamerInfo", c_white, c_white, c_white, c_white, 1);
 
 if (button_index == 4)
 {
@@ -89,7 +89,7 @@ else
 x = 1400;
 scaleX = 1;
 draw_sprite_ext(spriteIndex, -1, x+25, y, scaleX, scaleY, 0, c_white, 1);
-draw_text(x, y, "Exit");
+draw_text_colour(x, y, "Exit", c_white, c_white, c_white, c_white, 1);
 
 if (button_index == 5)
 {
@@ -102,7 +102,7 @@ else
 x = 1650;
 scaleX = 1;
 draw_sprite_ext(spriteIndex, -1, x+25, y, scaleX, scaleY, 0, c_white, 1);
-draw_text(x, y, "Pause");
+draw_text_colour(x, y, "Pause", c_white, c_white, c_white, c_white, 1);
 
 varPlayer = "0";
 
