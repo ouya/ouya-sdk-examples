@@ -31,7 +31,7 @@ import ${YYAndroidPackageName}.RunnerActivity;
 public class OuyaSDK extends RunnerSocial {
 	private static final String TAG = OuyaSDK.class.getSimpleName();
 	
-	private static final boolean sEnableLogging = true;
+	private static final boolean sEnableLogging = false;
 	
 	private static final String sFalse = "false";
 	private static final String sTrue = "true";
