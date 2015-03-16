@@ -92,6 +92,7 @@ public class OuyaShowProducts : MonoBehaviour
     private object m_btnRequestGamerInfo = new object();
     private object m_btnRequestProducts = new object();
     private object m_btnRequestReceipts = new object();
+    private object m_btnExit = new object();
 
     void Awake()
     {
@@ -438,6 +439,24 @@ public class OuyaShowProducts : MonoBehaviour
 
                 GUILayout.EndHorizontal();
             }
+
+            GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            if (m_focusManager.SelectedButton == m_btnExit)
+            {
+                GUI.backgroundColor = Color.red;
+            }
+            if (GUILayout.Button("Exit", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btnExit &&
+                GetButtonUp(OuyaController.BUTTON_O)))
+            {
+                m_status = "Exiting...";
+                Application.Quit();
+            }
+            GUI.backgroundColor = oldColor;
+            GUILayout.EndHorizontal();
         }
         catch (System.Exception)
         {
@@ -473,7 +492,12 @@ public class OuyaShowProducts : MonoBehaviour
         };
         m_focusManager.Mappings[m_btnRequestReceipts] = new FocusManager.ButtonMapping()
         {
-            Up = m_btnRequestProducts
+            Up = m_btnRequestProducts,
+            Down = m_btnExit
+        };
+        m_focusManager.Mappings[m_btnExit] = new FocusManager.ButtonMapping()
+        {
+            Up = m_btnRequestReceipts
         };
 
         // set default selection
