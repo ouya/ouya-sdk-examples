@@ -16,6 +16,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jcOuyaUnityPlugin = IntPtr.Zero;
         private static IntPtr _jmConstructor = IntPtr.Zero;
         private static IntPtr _jmInitOuyaPlugin = IntPtr.Zero;
+        private static IntPtr _jmIsInitialized = IntPtr.Zero;
         private static IntPtr _jmGetGameData = IntPtr.Zero;
         private static IntPtr _jmPutGameData = IntPtr.Zero;
         private static IntPtr _jmRequestGamerInfo = IntPtr.Zero;
@@ -114,6 +115,22 @@ namespace tv.ouya.sdk
                     string strMethod = "initOuyaPlugin";
                     _jmInitOuyaPlugin = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)V");
                     if (_jmInitOuyaPlugin != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "isInitialized";
+                    _jmIsInitialized = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Z");
+                    if (_jmIsInitialized != IntPtr.Zero)
                     {
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
@@ -550,6 +567,23 @@ namespace tv.ouya.sdk
             IntPtr arg1 = AndroidJNI.NewStringUTF(jsonData);
             AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmInitOuyaPlugin, new jvalue[] { new jvalue() { l = arg1 } });
             AndroidJNI.DeleteLocalRef(arg1);
+        }
+
+        public static bool isInitialized()
+        {
+            JNIFind();
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return false;
+            }
+            if (_jmIsInitialized == IntPtr.Zero)
+            {
+                Debug.LogError("_jmIsInitialized is not initialized");
+                return false;
+            }
+            return AndroidJNI.CallStaticBooleanMethod(_jcOuyaUnityPlugin, _jmIsInitialized, new jvalue[] { });
         }
 
         public static string getGameData(string key)

@@ -33,7 +33,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "2.0.1.4";
+    public const string VERSION = "1.2.1494.1";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
@@ -447,11 +447,6 @@ public static class OuyaSDK
     }
 
     /// <summary>
-    /// Inidicates IAP has been setup and is ready for processing
-    /// </summary>
-    private static bool m_iapInitComplete = false;
-
-    /// <summary>
     /// Initialized by OuyaGameObject
     /// </summary>
     public static void initOuyaPlugin(string jsonData)
@@ -463,19 +458,18 @@ public static class OuyaSDK
 
     public static bool isIAPInitComplete()
     {
-        return m_iapInitComplete;
-    }
-
-    public static void setIAPInitComplete()
-    {
-        m_iapInitComplete = true;
+#if UNITY_ANDROID && !UNITY_EDITOR
+        return OuyaUnityPlugin.isInitialized();
+#else
+        return false;
+#endif
     }
 
     #region Mirror Java API
 
     public static void requestGamerInfo()
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -486,7 +480,7 @@ public static class OuyaSDK
 
     public static void putGameData(string key, string val)
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -497,7 +491,7 @@ public static class OuyaSDK
 
     public static string getGameData(string key)
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return string.Empty;
         }
@@ -510,7 +504,7 @@ public static class OuyaSDK
 
     public static void requestProducts(List<Purchasable> purchasables)
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -529,7 +523,7 @@ public static class OuyaSDK
 
     public static void requestPurchase(Purchasable purchasable)
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -540,7 +534,7 @@ public static class OuyaSDK
 
     public static void requestReceipts()
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -551,7 +545,7 @@ public static class OuyaSDK
 
     public static bool isRunningOnOUYASupportedHardware()
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return false;
         }
@@ -569,7 +563,7 @@ public static class OuyaSDK
     /// <param name="percentage"></param>
     public static void setSafeArea(float percentage)
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -583,7 +577,7 @@ public static class OuyaSDK
     /// </summary>
     public static void clearFocus()
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return;
         }
@@ -597,7 +591,7 @@ public static class OuyaSDK
     /// </summary>
     public static string getStringResource(string key)
     {
-        if (!m_iapInitComplete)
+        if (!isIAPInitComplete())
         {
             return string.Empty;
         }

@@ -155,8 +155,6 @@ public class OuyaGameObject : MonoBehaviour
     public void OnSuccessInitializePlugin(string ignore)
     {
         Debug.Log("OUYA Plugin Initialized.");
-        //success
-        OuyaSDK.setIAPInitComplete();
     }
 
     public void OnFailureInitializePlugin(string errorMessage)
