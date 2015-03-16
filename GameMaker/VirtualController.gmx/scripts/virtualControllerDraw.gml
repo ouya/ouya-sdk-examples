@@ -151,4 +151,3 @@ else
 {
     draw_sprite(14, -1, x + axisScaler * (varX * varCos - varY * varSin), y + axisScaler * (varX * varSin + varY * varCos));
 }
-

@@ -55,7 +55,7 @@
     <instance objName="Controller2" x="1214" y="383" name="inst_E5A7224E" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="Controller3" x="705" y="733" name="inst_B7C1297E" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
     <instance objName="Controller4" x="1216" y="739" name="inst_11728EC4" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="ClearInputFrame" x="160" y="416" name="inst_C75D2D59" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="InputUpdater" x="160" y="416" name="inst_C75D2D59" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
   </instances>
   <tiles/>
   <PhysicsWorld>0</PhysicsWorld>
