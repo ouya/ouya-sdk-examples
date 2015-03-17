@@ -351,4 +351,6 @@ MonoBehaviour:
   Purchasables:
   - long_sword
   - sharp_axe
+  - cool_level
+  - awesome_sauce
   - __DECLINED__THIS_PURCHASE
