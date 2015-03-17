@@ -37,8 +37,6 @@ namespace InAppPurchases
 
 		private const string SIGNING_KEY = "key.der";
 
-		//private bool _keepRunning = true;
-
 		private static Activity1 sInstance = null;
 
         public static OuyaFacade _ouyaFacade = null;
@@ -117,27 +115,7 @@ namespace InAppPurchases
 
 			_ouyaFacade = OuyaFacade.Instance;
 			_ouyaFacade.Init(this, developerInfo);
-
-			ThreadStart ts = new ThreadStart (UpdateWorker);
-			Thread thread = new Thread (ts);
-			thread.Start ();
         }
-
-		protected override void OnDestroy()
-		{
-			base.OnDestroy();
-			//_keepRunning = false;
-		}
-
-		void UpdateWorker()
-		{
-			/*
-			while (_keepRunning) {
-				OuyaInput.ClearButtonStates();
-				Thread.Sleep (10);
-			}
-			*/
-		}
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
@@ -270,6 +248,13 @@ namespace InAppPurchases
 				_ouyaFacade.RequestReceipts(sInstance, sRequestReceiptsListener);
 			};
 			sInstance.RunOnUiThread (action);
+		}
+
+		public static void Quit()
+		{
+			if (null != sInstance) {
+				sInstance.Finish ();
+			}
 		}
     }
 }

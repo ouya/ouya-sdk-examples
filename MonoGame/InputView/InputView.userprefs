@@ -1,6 +1,17 @@
-﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+﻿<Properties StartupItem="InputView.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.015d4b33c2401c06" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Activity1.cs">
+    <Files>
+      <File FileName="Activity1.cs" Line="57" Column="57" />
+      <File FileName="Game1.cs" Line="1" Column="1" />
+      <File FileName="VirtualControllerSprite.cs" Line="1" Column="1" />
+      <File FileName="OuyaInput.cs" Line="1" Column="1" />
+      <File FileName="OuyaController.cs" Line="1" Column="1" />
+      <File FileName="MonoGameOuyaPlugin\Transforms\EnumFields.xml" Line="23" Column="23" />
+      <File FileName="MonoGameOuyaPlugin\Transforms\EnumMethods.xml" Line="24" Column="24" />
+      <File FileName="MonoGameOuyaPlugin\Transforms\Metadata.xml" Line="67" Column="67" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

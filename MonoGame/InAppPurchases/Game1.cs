@@ -44,10 +44,11 @@ namespace InAppPurchases
         List<ButtonSprite> m_buttons = new List<ButtonSprite>();
         FocusManager m_focusManager = new FocusManager();
         private static string m_debugText = string.Empty;
-        private ButtonSprite BtnGetProducts = null;
-        private ButtonSprite BtnPurchase = null;
-        private ButtonSprite BtnGetReceipts = null;
-        private ButtonSprite BtnGetUUID = null;
+        private ButtonSprite BtnRequestProducts = null;
+        private ButtonSprite BtnRequestPurchase = null;
+        private ButtonSprite BtnRequestReceipts = null;
+        private ButtonSprite BtnRequestGamerInfo = null;
+		private ButtonSprite BtnExit = null;
         private ButtonSprite BtnPause = null;
 		private static List<Product> s_products = new List<Product> ();
 		private static List<Receipt> s_receipts = new List<Receipt> ();
@@ -81,89 +82,99 @@ namespace InAppPurchases
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+		{
+			// Create a new SpriteBatch, which can be used to draw textures.
+			spriteBatch = new SpriteBatch (GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            font = Content.Load<SpriteFont>("spriteFont1");
+			// TODO: use this.Content to load your game content here
+			font = Content.Load<SpriteFont> ("spriteFont1");
 
-            BtnGetProducts = new ButtonSprite();
-            BtnGetProducts.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnGetProducts.Position = new Vector2(150, 200);
-            BtnGetProducts.TextureScale = new Vector2(2.25f, 0.5f);
-            BtnGetProducts.Text = "Request Product List";
-            BtnGetProducts.TextOffset = new Vector2(40, 20);
-            m_buttons.Add(BtnGetProducts);
+			BtnRequestProducts = new ButtonSprite ();
+			BtnRequestProducts.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestProducts.Position = new Vector2 (150, 200);
+			BtnRequestProducts.TextureScale = new Vector2 (2.25f, 0.5f);
+			BtnRequestProducts.Text = "Request Product List";
+			BtnRequestProducts.TextOffset = new Vector2 (40, 20);
+			m_buttons.Add (BtnRequestProducts);
 
-            BtnPurchase = new ButtonSprite();
-            BtnPurchase.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnPurchase.Position = new Vector2(500, 200);
-            BtnPurchase.TextureScale = new Vector2(2f, 0.5f);
-            BtnPurchase.Text = "Request Purchase";
-            BtnPurchase.TextOffset = new Vector2(40, 20);
-            m_buttons.Add(BtnPurchase);
+			BtnRequestPurchase = new ButtonSprite ();
+			BtnRequestPurchase.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestPurchase.Position = new Vector2 (500, 200);
+			BtnRequestPurchase.TextureScale = new Vector2 (2f, 0.5f);
+			BtnRequestPurchase.Text = "Request Purchase";
+			BtnRequestPurchase.TextOffset = new Vector2 (40, 20);
+			m_buttons.Add (BtnRequestPurchase);
 
-            BtnGetReceipts = new ButtonSprite();
-            BtnGetReceipts.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnGetReceipts.Position = new Vector2(800, 200);
-            BtnGetReceipts.TextureScale = new Vector2(2f, 0.5f);
-            BtnGetReceipts.Text = "Request Receipts";
-            BtnGetReceipts.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(BtnGetReceipts);
+			BtnRequestReceipts = new ButtonSprite ();
+			BtnRequestReceipts.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestReceipts.Position = new Vector2 (800, 200);
+			BtnRequestReceipts.TextureScale = new Vector2 (2f, 0.5f);
+			BtnRequestReceipts.Text = "Request Receipts";
+			BtnRequestReceipts.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnRequestReceipts);
 
-            BtnGetUUID = new ButtonSprite();
-            BtnGetUUID.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnGetUUID.Position = new Vector2(1100, 200);
-            BtnGetUUID.TextureScale = new Vector2(2f, 0.5f);
-            BtnGetUUID.Text = "Request GamerInfo";
-            BtnGetUUID.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(BtnGetUUID);
+			BtnRequestGamerInfo = new ButtonSprite ();
+			BtnRequestGamerInfo.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestGamerInfo.Position = new Vector2 (1100, 200);
+			BtnRequestGamerInfo.TextureScale = new Vector2 (2f, 0.5f);
+			BtnRequestGamerInfo.Text = "Request GamerInfo";
+			BtnRequestGamerInfo.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnRequestGamerInfo);
 
-            BtnPause = new ButtonSprite();
-            BtnPause.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnPause.Position = new Vector2(1650, 200);
-            BtnPause.TextureScale = new Vector2(1f, 0.5f);
-            BtnPause.Text = "Pause";
-            BtnPause.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(BtnPause);
+			BtnExit = new ButtonSprite ();
+			BtnExit.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnExit.Position = new Vector2 (1400, 200);
+			BtnExit.TextureScale = new Vector2 (1f, 0.5f);
+			BtnExit.Text = "Exit";
+			BtnExit.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnExit);
 
-            m_focusManager.SelectedButton = BtnGetProducts;
-            m_focusManager.Mappings[BtnGetProducts] = new FocusManager.ButtonMapping()
-                                                          {
-                                                              Right = BtnPurchase
-                                                          };
-            m_focusManager.Mappings[BtnPurchase] = new FocusManager.ButtonMapping()
-                                                       {
-                                                           Left = BtnGetProducts,
-                                                           Right = BtnGetReceipts
-                                                       };
-            m_focusManager.Mappings[BtnGetReceipts] = new FocusManager.ButtonMapping()
-            {
-                Left = BtnPurchase,
-                Right = BtnGetUUID,
-            };
+			BtnPause = new ButtonSprite ();
+			BtnPause.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnPause.Position = new Vector2 (1650, 200);
+			BtnPause.TextureScale = new Vector2 (1f, 0.5f);
+			BtnPause.Text = "Pause";
+			BtnPause.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnPause);
 
-            m_focusManager.Mappings[BtnGetUUID] = new FocusManager.ButtonMapping()
-            {
-                Left = BtnGetReceipts,
-            };
+			m_focusManager.SelectedButton = BtnRequestProducts;
+			m_focusManager.Mappings [BtnRequestProducts] = new FocusManager.ButtonMapping () {
+				Right = BtnRequestPurchase
+			};
+			m_focusManager.Mappings [BtnRequestPurchase] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestProducts,
+				Right = BtnRequestReceipts
+			};
+			m_focusManager.Mappings [BtnRequestReceipts] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestPurchase,
+				Right = BtnRequestGamerInfo,
+			};
 
-            m_focusManager.Mappings[BtnPause] = new FocusManager.ButtonMapping()
-            {
-                Left = BtnGetUUID,
-            };
-        }
+			m_focusManager.Mappings [BtnRequestGamerInfo] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestReceipts,
+				Right = BtnExit,
+			};
+
+			m_focusManager.Mappings [BtnExit] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestGamerInfo,
+			};
+
+			m_focusManager.Mappings [BtnPause] = new FocusManager.ButtonMapping () {
+				Left = BtnExit,
+			};
+		}
 
 		public class CustomRequestGamerInfoListener : RequestGamerInfoListener
 		{
@@ -299,12 +310,12 @@ namespace InAppPurchases
 			}
 
 			if (OuyaInput.GetButtonUp (OuyaController.BUTTON_O)) {
-				if (m_focusManager.SelectedButton == BtnGetProducts) {
+				if (m_focusManager.SelectedButton == BtnRequestProducts) {
 					s_productIndex = 0;
 					s_products.Clear ();
 					m_debugText = "Requesting products...";
 					Activity1.RequestProducts ();
-				} else if (m_focusManager.SelectedButton == BtnPurchase) {
+				} else if (m_focusManager.SelectedButton == BtnRequestPurchase) {
 					if (s_productIndex < s_products.Count) {
 						Purchasable purchasable = new Purchasable (s_products [s_productIndex].Identifier);
 						m_debugText = "Requesting purchase...";
@@ -312,20 +323,23 @@ namespace InAppPurchases
 					} else {
 						m_debugText = "Be sure to request products to select a purchase...";
 					}
-				} else if (m_focusManager.SelectedButton == BtnGetReceipts) {
+				} else if (m_focusManager.SelectedButton == BtnRequestReceipts) {
 					m_debugText = "Requesting receipts...";
 					Activity1.RequestReceipts ();
-				} else if (m_focusManager.SelectedButton == BtnGetUUID) {
+				} else if (m_focusManager.SelectedButton == BtnRequestGamerInfo) {
 					m_debugText = "Requesting GamerInfo...";
 					Activity1.RequestGamerInfo ();
+				} else if (m_focusManager.SelectedButton == BtnExit) {
+					m_debugText = "Exiting...";
+					Activity1.Quit ();
 				} else if (m_focusManager.SelectedButton == BtnPause) {
 					m_debugText = "Pause button detected...";
 					m_focusManager.SelectedButton = BtnPause;
 				}
 			}
 
-			if (m_focusManager.SelectedButton == BtnGetProducts ||
-			    m_focusManager.SelectedButton == BtnPurchase) {
+			if (m_focusManager.SelectedButton == BtnRequestProducts ||
+				m_focusManager.SelectedButton == BtnRequestPurchase) {
 				if (OuyaInput.GetButtonUp (OuyaController.BUTTON_DPAD_UP)) {
 					if (s_productIndex > 0) {
 						--s_productIndex;
@@ -365,8 +379,8 @@ namespace InAppPurchases
 
             #region Products
 
-			if (m_focusManager.SelectedButton == BtnGetProducts ||
-				m_focusManager.SelectedButton == BtnPurchase) {
+			if (m_focusManager.SelectedButton == BtnRequestProducts ||
+				m_focusManager.SelectedButton == BtnRequestPurchase) {
 				Vector2 position = new Vector2(140, 300);
 				for (int index = 0; index < s_products.Count; ++index)
 				{
@@ -386,7 +400,7 @@ namespace InAppPurchases
 
             #region Receipts
 
-			if (m_focusManager.SelectedButton == BtnGetReceipts) {
+			if (m_focusManager.SelectedButton == BtnRequestReceipts) {
 	            Vector2 position = new Vector2(1120, 300);
 	            for (int index = 0; index < s_receipts.Count; ++index)
 	            {
