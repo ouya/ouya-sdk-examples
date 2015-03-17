@@ -64,7 +64,6 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OuyaController.cs" />
     <Compile Include="VirtualControllerSprite.cs" />
   </ItemGroup>
   <ItemGroup>

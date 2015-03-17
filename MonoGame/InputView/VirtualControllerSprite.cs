@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using TV.Ouya.Console.Api;
 using TV.Ouya.Sdk;
 
 namespace InputView

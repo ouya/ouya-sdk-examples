@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using StringBuilder = System.Text.StringBuilder;
+using TV.Ouya.Console.Api;
 using TV.Ouya.Sdk;
 
 namespace InputView
