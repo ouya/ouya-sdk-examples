@@ -1,13 +1,13 @@
 ﻿<enum-method-mappings>
   <!--
-  This example changes the Java method:
-    android.support.v4.app.Fragment.SavedState.writeToParcel (int flags)
-  to be:
-    android.support.v4.app.Fragment.SavedState.writeToParcel (Android.OS.ParcelableWriteFlags flags)
-  when bound in C#.
-  
-  <mapping jni-class="android/support/v4/app/Fragment.SavedState">
-    <method jni-name="writeToParcel" parameter="flags" clr-enum-type="Android.OS.ParcelableWriteFlags" />
-  </mapping>
+    OUYA Development Kit C# bindings - Copyright (C) Konaju Games
+    This file is subject to the terms and conditions defined in
+    file 'LICENSE.txt' which is part of this source code package.
   -->
-</enum-method-mappings>
+  <!-- If the parameter names have been remapped in Metadata.xml, use the new parameter names here -->
+  <mapping jni-class="tv/ouya/console/api/OuyaController">
+    <method jni-name="buttonChangedThisFrame" parameter="button" clr-enum-type="Tv.Ouya.Console.Api.Buttons" />
+    <method jni-name="getAxisValue" parameter="axis" clr-enum-type="Tv.Ouya.Console.Api.AxisType" />
+    <method jni-name="getButton" parameter="button" clr-enum-type="Tv.Ouya.Console.Api.Buttons" />
+  </mapping>
+</enum-method-mappings>    

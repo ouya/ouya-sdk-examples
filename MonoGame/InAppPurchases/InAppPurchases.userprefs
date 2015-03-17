@@ -1,0 +1,17 @@
+﻿<Properties StartupItem="InAppPurchases.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.610510541395" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\OuyaSdk\OuyaController.cs">
+    <Files>
+      <File FileName="Activity1.cs" Line="29" Column="29" />
+      <File FileName="Game1.cs" Line="15" Column="15" />
+      <File FileName="..\OuyaSdk\OuyaController.cs" Line="14" Column="14" />
+      <File FileName="..\OuyaSdk\Transforms\Metadata.xml" Line="80" Column="80" />
+      <File FileName="..\OuyaSdk\Transforms\EnumFields.xml" Line="27" Column="27" />
+      <File FileName="..\OuyaSdk\Transforms\EnumMethods.xml" Line="28" Column="28" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

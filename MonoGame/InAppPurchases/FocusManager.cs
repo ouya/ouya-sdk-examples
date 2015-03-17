@@ -2,6 +2,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Microsoft.Xna.Framework;
@@ -10,179 +11,56 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Input;
+using TV.Ouya.Console.Api;
+using TV.Ouya.Sdk;
 
 namespace InAppPurchases
 {
     internal class FocusManager
     {
+		private const String TAG = "FocusManager";
+
         public ButtonSprite SelectedButton = null;
-
-        private DateTime m_timerSelection = DateTime.MinValue;
-
-        public int SelectedProductIndex = 0;
-        public int SelectedReceiptIndex = 0;
-
-        private const int DELAY_MS = 150;
 
         private void SetSelection(ButtonSprite selection)
         {
-            if (null != selection &&
-                m_timerSelection < DateTime.Now)
-            {
-                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
-                SelectedButton = selection;
-            }
-        }
-
-        private void InvokeClick()
-        {
-            if (null != OnClick &&
-                m_timerSelection < DateTime.Now)
-            {
-                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
-                OnClick.Invoke(SelectedButton, new ClickEventArgs() {Button = SelectedButton});
-            }
+			SelectedButton = selection;
         }
 
         public class ButtonMapping
         {
-            public ButtonSprite Up = null;
             public ButtonSprite Left = null;
             public ButtonSprite Right = null;
-            public ButtonSprite Down = null;
         }
 
         public Dictionary<ButtonSprite, ButtonMapping> Mappings = new Dictionary<ButtonSprite, ButtonMapping>();
-
-        private GamePadState GetState(PlayerIndex index)
-        {
-            return GamePad.GetState(index);
-        }
-        
-        private bool GetDpadDown(PlayerIndex index)
-        {
-            return (GetState(index).DPad.Down == ButtonState.Pressed);
-        }
-        private bool GetDpadLeft(PlayerIndex index)
-        {
-            return (GetState(index).DPad.Left == ButtonState.Pressed);
-        }
-        private bool GetDpadRight(PlayerIndex index)
-        {
-            return (GetState(index).DPad.Right == ButtonState.Pressed);
-        }
-        private bool GetDpadUp(PlayerIndex index)
-        {
-            return (GetState(index).DPad.Up == ButtonState.Pressed);
-        }
-        private bool GetButtonO(PlayerIndex index)
-        {
-            return (GetState(index).Buttons.A == ButtonState.Pressed);
-        }
-        private bool PausePressed(PlayerIndex index)
-        {
-            return (GetState(index).Buttons.Start == ButtonState.Pressed);
-        }
-
-        public class ClickEventArgs : EventArgs
-        {
-            public ButtonSprite Button = null;
-        }
-
-        public EventHandler<ClickEventArgs> OnClick = null;
 
         public void UpdateFocus()
         {
             if (null == SelectedButton)
             {
+				Log.Error (TAG, "SelectedButton is null!");
                 return;
             }
 
             if (Mappings.ContainsKey(SelectedButton))
             {
-                for (int index = 0; index < 4; ++index)
+                #region DPADS
+
+				if (OuyaInput.GetButtonDown(OuyaController.BUTTON_DPAD_LEFT))
                 {
-                    #region DPADS
-
-                    if (GetDpadDown((PlayerIndex) index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Down);
-                    }
-                    else if (GetDpadLeft((PlayerIndex)index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Left);
-                    }
-                    else if (GetDpadRight((PlayerIndex)index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Right);
-                    }
-                    else if (GetDpadUp((PlayerIndex)index))
-                    {
-                        SetSelection(Mappings[SelectedButton].Up);
-                    }
-                    else if (GetButtonO((PlayerIndex)index))
-                    {
-                        InvokeClick();
-                    }
-
-                    #endregion
+					if (null != Mappings[SelectedButton].Left) {
+                    	SetSelection(Mappings[SelectedButton].Left);
+					}
                 }
-            }
-        }
-
-        public void UpdateProductFocus(int count)
-        {
-            if (m_timerSelection < DateTime.Now)
-            {
-                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
-
-                for (int index = 0; index < 4; ++index)
+				else if (OuyaInput.GetButtonDown(OuyaController.BUTTON_DPAD_RIGHT))
                 {
-                    #region DPADS
-                    if (GetDpadDown((PlayerIndex) index))
-                    {
-                        SelectedProductIndex = Math.Min(count - 1, SelectedProductIndex + 1);
-                    }
-                    else if (GetDpadUp((PlayerIndex) index))
-                    {
-                        SelectedProductIndex = Math.Max(0, SelectedProductIndex - 1);
-                    }
-                    #endregion
+					if (null != Mappings[SelectedButton].Right) {
+                    	SetSelection(Mappings[SelectedButton].Right);
+					}
                 }
-            }
-        }
 
-        public void UpdateReceiptFocus(int count)
-        {
-            if (m_timerSelection < DateTime.Now)
-            {
-                m_timerSelection = DateTime.Now + TimeSpan.FromMilliseconds(DELAY_MS);
-
-                for (int index = 0; index < 4; ++index)
-                {
-                    #region DPADS
-                    if (GetDpadDown((PlayerIndex)index))
-                    {
-                        SelectedReceiptIndex = Math.Min(count - 1, SelectedReceiptIndex + 1);
-                    }
-                    else if (GetDpadUp((PlayerIndex)index))
-                    {
-                        SelectedReceiptIndex = Math.Max(0, SelectedReceiptIndex - 1);
-                    }
-                    #endregion
-                }
-            }
-        }
-
-        public void UpdatePauseFocus(ButtonSprite pauseButton)
-        {
-            for (int index = 0; index < 4; ++index)
-            {
-                if (PausePressed((PlayerIndex)index))
-                {
-                    SetSelection(pauseButton);
-                }
+                #endregion
             }
         }
     }

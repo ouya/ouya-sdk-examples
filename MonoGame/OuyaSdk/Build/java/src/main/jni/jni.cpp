@@ -7,7 +7,9 @@
 
 #define trace(fmt, ...) __android_log_print(ANDROID_LOG_DEBUG, "JNI", "trace: %s (%i) " fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
 
-#define LOG_TAG "MonoGameOuyaPluginNative.cpp"
+#define LOG_TAG "jni.cpp"
+
+#define LOG_VERBOSE false
 
 #define MAX_CONTROLLERS 4
 
@@ -20,45 +22,49 @@ static std::vector< std::map<int, bool> > g_buttonDown;
 static std::vector< std::map<int, bool> > g_buttonUp;
 
 void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
-	jint deviceId,
+	jint playerNum,
 	jint axis,
 	jfloat val)
 {
-	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d axis=%d val=%f", deviceId, axis, val);
-	if (deviceId < 0 ||
-		deviceId >= MAX_CONTROLLERS)
+#if LOG_VERBOSE
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "playerNum=%d axis=%d val=%f", playerNum, axis, val);
+#endif
+	if (playerNum < 0 ||
+		playerNum >= MAX_CONTROLLERS)
 	{
-		return;
+		playerNum = 0;
 	}
-	g_axis[deviceId][axis] = val;
+	g_axis[playerNum][axis] = val;
 }
 
 void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
-	jint deviceId,
+	jint playerNum,
 	jint keyCode,
 	jint action)
 {
-	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
-	if (deviceId < 0 ||
-		deviceId >= MAX_CONTROLLERS)
+#if LOG_VERBOSE
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "playerNum=%d KeyCode=%d Action=%d", playerNum, keyCode, action);
+#endif
+	if (playerNum < 0 ||
+		playerNum >= MAX_CONTROLLERS)
 	{
-		return;
+		playerNum = 0;
 	}
 
 	bool buttonDown = action == 0;
 
-	if (g_button[deviceId][keyCode] != buttonDown)
+	if (g_button[playerNum][keyCode] != buttonDown)
 	{
-		g_button[deviceId][keyCode] = buttonDown;
+		g_button[playerNum][keyCode] = buttonDown;
 		if (buttonDown)
 		{
-			g_buttonDown[deviceId][keyCode] = true;
+			g_buttonDown[playerNum][keyCode] = true;
 		}
 		else
 		{
-			g_buttonUp[deviceId][keyCode] = true;
+			g_buttonUp[playerNum][keyCode] = true;
 		}
-	}	
+	}
 }
 
 static JNINativeMethod method_table[] = {
@@ -88,29 +94,17 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 	JNIEnv* env;
 	if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
 	{
-		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI Version Mismatch not 1_6");
 		return JNI_ERR;
 	}
 
-	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Searching for OuyaInputView");
 	jclass clazz = env->FindClass("tv/ouya/sdk/OuyaInputView");
 	if (clazz)
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found OuyaInputView");
-
-		jmethodID jmConstructor = env->GetMethodID(clazz, "<init>", "(Landroid/app/Activity;Landroid/content/Context;)V");
-		if (jmConstructor)
-		{
-			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found OuyaInputView constructor");
-		}
-		else
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find OuyaInputView constructor");
-			return JNI_ERR;
-		}
-
 		jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
 		ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
+		//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Native Plugin Initialized");
+		jfieldID fieldNativeInitialized = env->GetStaticFieldID(clazz, "sNativeInitialized", "Z");	
+		env->SetStaticBooleanField(clazz, fieldNativeInitialized, true);
 		env->DeleteLocalRef(clazz);
 	}
 	else
@@ -118,23 +112,27 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Failed to find OuyaInputView");
 		return JNI_ERR;
 	}
-
+	
 	return JNI_VERSION_1_6;
 }
 
 extern "C"
 {
 	// get axis value
-	float getAxis(int deviceId, int axis)
+	float getAxis(int playerNum, int axis)
 	{
-		if (deviceId < 0 ||
-			deviceId >= MAX_CONTROLLERS)
+		if (g_axis.size() == 0) {
+			return 0;
+		}
+		
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
 		{
-			return 0.0f;
+			playerNum = 0;
 		}
 
-		std::map<int, float>::const_iterator search = g_axis[deviceId].find(axis);
-		if (search != g_axis[deviceId].end())
+		std::map<int, float>::const_iterator search = g_axis[playerNum].find(axis);
+		if (search != g_axis[playerNum].end())
 		{
 			return search->second;
 		}
@@ -142,16 +140,28 @@ extern "C"
 	}
 
 	// check if a button is pressed
-	bool isPressed(int deviceId, int keyCode)
+	bool isPressed(int playerNum, int keyCode)
 	{
-		if (deviceId < 0 ||
-			deviceId >= MAX_CONTROLLERS)
-		{
+		if (g_button.size() == 0) {
 			return false;
 		}
+		
+		if (g_buttonDown.size() == 0) {
+			return false;
+		}
+		
+		if (g_buttonUp.size() == 0) {
+			return false;
+		}
+		
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			playerNum = 0;
+		}
 
-		std::map<int, bool>::const_iterator search = g_button[deviceId].find(keyCode);
-		if (search != g_button[deviceId].end())
+		std::map<int, bool>::const_iterator search = g_button[playerNum].find(keyCode);
+		if (search != g_button[playerNum].end())
 		{
 			return search->second;
 		}
@@ -159,16 +169,20 @@ extern "C"
 	}
 
 	// check if a button was down
-	bool isPressedDown(int deviceId, int keyCode)
+	bool isPressedDown(int playerNum, int keyCode)
 	{
-		if (deviceId < 0 ||
-			deviceId >= MAX_CONTROLLERS)
-		{
+		if (g_buttonDown.size() == 0) {
 			return false;
 		}
+		
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			playerNum = 0;
+		}
 
-		std::map<int, bool>::const_iterator search = g_buttonDown[deviceId].find(keyCode);
-		if (search != g_buttonDown[deviceId].end())
+		std::map<int, bool>::const_iterator search = g_buttonDown[playerNum].find(keyCode);
+		if (search != g_buttonDown[playerNum].end())
 		{
 			return search->second;
 		}
@@ -176,16 +190,20 @@ extern "C"
 	}
 
 	// check if a button was up
-	bool isPressedUp(int deviceId, int keyCode)
+	bool isPressedUp(int playerNum, int keyCode)
 	{
-		if (deviceId < 0 ||
-			deviceId >= MAX_CONTROLLERS)
-		{
+		if (g_buttonUp.size() == 0) {
 			return false;
 		}
+		
+		if (playerNum < 0 ||
+			playerNum >= MAX_CONTROLLERS)
+		{
+			playerNum = 0;
+		}
 
-		std::map<int, bool>::const_iterator search = g_buttonUp[deviceId].find(keyCode);
-		if (search != g_buttonUp[deviceId].end())
+		std::map<int, bool>::const_iterator search = g_buttonUp[playerNum].find(keyCode);
+		if (search != g_buttonUp[playerNum].end())
 		{
 			return search->second;
 		}
@@ -195,10 +213,48 @@ extern "C"
 	// clear the button state for detecting up and down
 	void clearButtonStates()
 	{
-		for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
+		if (g_buttonDown.size() == 0) {
+			return;
+		}
+		
+		if (g_buttonUp.size() == 0) {
+			return;
+		}
+		
+		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum)
 		{
-			g_buttonDown[deviceId].clear();
-			g_buttonUp[deviceId].clear();
+			g_buttonDown[playerNum].clear();
+			g_buttonUp[playerNum].clear();
+		}
+	}
+
+	// clear the axis values
+	void clearAxes()
+	{
+		if (g_axis.size() == 0) {
+			return;
+		}
+		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum) {
+			g_axis[playerNum].clear();
+		}
+	}
+
+	// clear the button values
+	void clearButtons()
+	{
+		if (g_button.size() == 0) {
+			return;
+		}
+		if (g_buttonDown.size() == 0) {
+			return;
+		}
+		if (g_buttonUp.size() == 0) {
+			return;
+		}
+		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum) {
+			g_button[playerNum].clear();
+			g_buttonDown[playerNum].clear();
+			g_buttonUp[playerNum].clear();
 		}
 	}
 }
