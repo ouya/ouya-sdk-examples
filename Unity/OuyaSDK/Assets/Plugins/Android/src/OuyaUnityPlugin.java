@@ -122,6 +122,15 @@ public class OuyaUnityPlugin
 		}
 	}
 
+	public static boolean isInitialized() {
+		UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+		if (null == unityOuyaFacade) {
+			return false;
+		} else {
+			return unityOuyaFacade.isInitialized();
+		}
+	}
+
 	public static void putGameData(String key, String val)
 	{
 		//Log.i(TAG, "putGameData: key=" + key + " val=" + val);
