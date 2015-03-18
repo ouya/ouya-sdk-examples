@@ -503,17 +503,12 @@ public class OuyaShowProducts : MonoBehaviour
         // set default selection
         m_focusManager.SelectedButton = m_btnRequestGamerInfo;
 
-#if XIAOMI
-        m_isRunningOnOUYAHardware = true;
-        yield break;
-#else
         while (!OuyaSDK.isIAPInitComplete())
         {
             yield return null;
         }
 
         m_isRunningOnOUYAHardware = OuyaSDK.isRunningOnOUYASupportedHardware();
-#endif
     }
 
     private void Update()
