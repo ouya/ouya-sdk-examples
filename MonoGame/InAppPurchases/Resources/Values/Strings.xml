@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="FontName">spriteFont1</string>
     <string name="ApplicationName">InAppPurchases</string>
 	<string name="RequestProductList">Request Product List</string>
 	<string name="RequestPurchase">Request Purchase</string>

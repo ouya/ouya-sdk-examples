@@ -293,11 +293,11 @@ namespace InAppPurchases
 			} catch (Exception) {
 				if (sDebugStrings.ContainsKey(text) &&
 					null != text) {
-					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> " + text);
+					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> " + text);
 				} else if (sDebugStrings.ContainsKey(text)) {
-					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> null");
+					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> null");
 				} else {
-					Log.Error (TAG, "Failed to measure string == text: null");
+					Log.Error (TAG, "Failed to draw string == text: null");
 				}
 			}
 		}
@@ -309,11 +309,11 @@ namespace InAppPurchases
 			} catch (Exception) {
 				if (sDebugStrings.ContainsKey(text) &&
 					null != text) {
-					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> " + text);
+					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> " + text);
 				} else if (sDebugStrings.ContainsKey(text)) {
-					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> null");
+					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> null");
 				} else {
-					Log.Error (TAG, "Failed to measure string == text: null");
+					Log.Error (TAG, "Failed to draw string == text: null");
 				}
 			}
 		}

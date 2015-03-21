@@ -66,26 +66,29 @@ namespace InAppPurchases
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f030000
-			public const int ApplicationName = 2130903040;
-			
-			// aapt resource value: 0x7f030005
-			public const int Exit = 2130903045;
+			// aapt resource value: 0x7f030001
+			public const int ApplicationName = 2130903041;
 			
 			// aapt resource value: 0x7f030006
-			public const int Pause = 2130903046;
+			public const int Exit = 2130903046;
 			
-			// aapt resource value: 0x7f030004
-			public const int RequestGamerInfo = 2130903044;
+			// aapt resource value: 0x7f030000
+			public const int FontName = 2130903040;
 			
-			// aapt resource value: 0x7f030001
-			public const int RequestProductList = 2130903041;
+			// aapt resource value: 0x7f030007
+			public const int Pause = 2130903047;
+			
+			// aapt resource value: 0x7f030005
+			public const int RequestGamerInfo = 2130903045;
 			
 			// aapt resource value: 0x7f030002
-			public const int RequestPurchase = 2130903042;
+			public const int RequestProductList = 2130903042;
 			
 			// aapt resource value: 0x7f030003
-			public const int RequestReceipts = 2130903043;
+			public const int RequestPurchase = 2130903043;
+			
+			// aapt resource value: 0x7f030004
+			public const int RequestReceipts = 2130903044;
 			
 			static String()
 			{

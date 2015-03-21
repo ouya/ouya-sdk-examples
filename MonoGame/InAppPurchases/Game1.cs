@@ -87,7 +87,7 @@ namespace InAppPurchases
 			spriteBatch = new SpriteBatch (GraphicsDevice);
 
 			// TODO: use this.Content to load your game content here
-			font = Content.Load<SpriteFont> ("spriteFont1");
+			font = Content.Load<SpriteFont> (Activity1.GetLocalizedString ("FontName"));
 
 			BtnRequestProducts = new ButtonSprite ();
 			BtnRequestProducts.Initialize (font,

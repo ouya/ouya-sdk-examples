@@ -69,6 +69,7 @@
     <None Include="Assets\AboutAssets.txt" />
     <AndroidAsset Include="Assets\key.der" />
     <AndroidAsset Include="Assets\MiGameCenterSDKService.apk" />
+    <AndroidAsset Include="Assets\Content\FZLanTingHei-B-GBK.xnb" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Values\Strings.xml" />

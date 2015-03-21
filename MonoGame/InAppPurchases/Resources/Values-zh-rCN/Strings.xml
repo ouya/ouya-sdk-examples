@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="FontName">FZLanTingHei-B-GBK</string>
     <string name="ApplicationName">在应用购买</string>
 	<string name="RequestProductList">索取产品目录</string>
 	<string name="RequestPurchase">申请购买</string>
