@@ -70,7 +70,7 @@ namespace InAppPurchases
         public void Draw(SpriteBatch spriteBatch)
         {
             Draw(spriteBatch, ButtonTexture);
-            spriteBatch.DrawString(Font, Text, Position + TextOffset, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			Activity1.DrawString(spriteBatch, Font, Text, Position + TextOffset, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
 
 

@@ -8,6 +8,9 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -254,6 +257,64 @@ namespace InAppPurchases
 		{
 			if (null != sInstance) {
 				sInstance.Finish ();
+			}
+		}
+
+		private String GetStringResource(String name) {
+			Resources resources = Resources;
+			if (null == resources) {
+				return String.Empty;
+			}
+			int id = resources.GetIdentifier (name, "string", PackageName);
+			if (id <= 0) {
+				return "";
+			}
+			return resources.GetString(id);
+		}
+
+		private static Dictionary<string,string> sDebugStrings = new Dictionary<string, string> ();
+
+		public static String GetLocalizedString(String name)
+		{
+			if (null == sInstance) {
+				Log.Error(TAG, string.Format("Activity has not initialized to get resource {0}", name));
+				return "";
+			} else {
+				String result = sInstance.GetStringResource (name);
+				//Log.Info(TAG, string.Format("{0} ==> {1}", name, result));
+				sDebugStrings [result] = name;
+				return result;
+			}
+		}
+
+		public static void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 position, Color color) {
+			try {
+				spriteBatch.DrawString(font, text, position, color);
+			} catch (Exception) {
+				if (sDebugStrings.ContainsKey(text) &&
+					null != text) {
+					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> " + text);
+				} else if (sDebugStrings.ContainsKey(text)) {
+					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> null");
+				} else {
+					Log.Error (TAG, "Failed to measure string == text: null");
+				}
+			}
+		}
+
+		public static void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 position, Color color, float rotation,
+			Vector2 origin, float scale, SpriteEffects spriteEffects, float depth) {
+			try {
+				spriteBatch.DrawString(font, text, position, color, rotation, origin, scale, spriteEffects, depth);
+			} catch (Exception) {
+				if (sDebugStrings.ContainsKey(text) &&
+					null != text) {
+					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> " + text);
+				} else if (sDebugStrings.ContainsKey(text)) {
+					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> null");
+				} else {
+					Log.Error (TAG, "Failed to measure string == text: null");
+				}
 			}
 		}
     }

@@ -95,7 +95,7 @@ namespace InAppPurchases
 				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestProducts.Position = new Vector2 (150, 200);
 			BtnRequestProducts.TextureScale = new Vector2 (2.25f, 0.5f);
-			BtnRequestProducts.Text = "Request Product List";
+			BtnRequestProducts.Text = Activity1.GetLocalizedString("RequestProductList");
 			BtnRequestProducts.TextOffset = new Vector2 (40, 20);
 			m_buttons.Add (BtnRequestProducts);
 
@@ -105,7 +105,7 @@ namespace InAppPurchases
 				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestPurchase.Position = new Vector2 (500, 200);
 			BtnRequestPurchase.TextureScale = new Vector2 (2f, 0.5f);
-			BtnRequestPurchase.Text = "Request Purchase";
+			BtnRequestPurchase.Text = Activity1.GetLocalizedString("RequestPurchase");
 			BtnRequestPurchase.TextOffset = new Vector2 (40, 20);
 			m_buttons.Add (BtnRequestPurchase);
 
@@ -115,7 +115,7 @@ namespace InAppPurchases
 				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestReceipts.Position = new Vector2 (800, 200);
 			BtnRequestReceipts.TextureScale = new Vector2 (2f, 0.5f);
-			BtnRequestReceipts.Text = "Request Receipts";
+			BtnRequestReceipts.Text = Activity1.GetLocalizedString("RequestReceipts");
 			BtnRequestReceipts.TextOffset = new Vector2 (30, 20);
 			m_buttons.Add (BtnRequestReceipts);
 
@@ -125,7 +125,7 @@ namespace InAppPurchases
 				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestGamerInfo.Position = new Vector2 (1100, 200);
 			BtnRequestGamerInfo.TextureScale = new Vector2 (2f, 0.5f);
-			BtnRequestGamerInfo.Text = "Request GamerInfo";
+			BtnRequestGamerInfo.Text = Activity1.GetLocalizedString("RequestGamerInfo");
 			BtnRequestGamerInfo.TextOffset = new Vector2 (30, 20);
 			m_buttons.Add (BtnRequestGamerInfo);
 
@@ -135,7 +135,7 @@ namespace InAppPurchases
 				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnExit.Position = new Vector2 (1400, 200);
 			BtnExit.TextureScale = new Vector2 (1f, 0.5f);
-			BtnExit.Text = "Exit";
+			BtnExit.Text = Activity1.GetLocalizedString("Exit");
 			BtnExit.TextOffset = new Vector2 (30, 20);
 			m_buttons.Add (BtnExit);
 
@@ -145,7 +145,7 @@ namespace InAppPurchases
 				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnPause.Position = new Vector2 (1650, 200);
 			BtnPause.TextureScale = new Vector2 (1f, 0.5f);
-			BtnPause.Text = "Pause";
+			BtnPause.Text = Activity1.GetLocalizedString("Pause");
 			BtnPause.TextOffset = new Vector2 (30, 20);
 			m_buttons.Add (BtnPause);
 
@@ -209,7 +209,7 @@ namespace InAppPurchases
 					foreach (Product product in products) {
 						s_products.Add (product);
 					}
-					m_debugText = string.Format ("Request Products: OnSuccess Count="+s_products.Count);
+					m_debugText = string.Format ("Request Products: OnSuccess Count="+products.Count);
 					Log.Info (TAG, "CustomRequestProductsListener: OnSuccess");
 				}
 			}
@@ -231,7 +231,7 @@ namespace InAppPurchases
 					m_debugText = string.Format ("PurchaseResult is null!");
 				} else {
 					m_debugText = string.Format ("Request Purchase: OnSuccess");
-					Log.Info (TAG, "OnSuccess");
+					Log.Info (TAG, "OnSuccess identiifer"+purchaseResult.ProductIdentifier);
 				}
 			}
 
@@ -367,11 +367,11 @@ namespace InAppPurchases
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, string.Format("Hello from MonoGame! {0} | {1}",
+			Activity1.DrawString(spriteBatch, font, string.Format("Hello from MonoGame! {0} | {1}",
 				Activity1._ouyaFacade.IsRunningOnOUYAHardware ? "(Running on OUYA)" : "Not Running on OUYA",
                 m_debugText), new Vector2(100, 100), Color.White);
 
-            spriteBatch.DrawString(font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
+			Activity1.DrawString(spriteBatch, font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
             foreach (ButtonSprite button in m_buttons)
             {
                 button.Draw(spriteBatch);
@@ -385,7 +385,7 @@ namespace InAppPurchases
 				for (int index = 0; index < s_products.Count; ++index)
 				{
 					Product product = s_products[index];
-					spriteBatch.DrawString(font,
+					Activity1.DrawString(spriteBatch, font,
 						string.Format("{0} Product: {1} LocalPrice={2}",
 							index == s_productIndex ? "*" : string.Empty,
 							product.Identifier,
@@ -405,7 +405,7 @@ namespace InAppPurchases
 	            for (int index = 0; index < s_receipts.Count; ++index)
 	            {
 					Receipt receipt = s_receipts[index];
-					spriteBatch.DrawString(font, string.Format("Receipt: {0} LocalPrice={1}", receipt.Identifier, receipt.LocalPrice), position, Color.White);
+					Activity1.DrawString(spriteBatch, font, string.Format("Receipt: {0} LocalPrice={1}", receipt.Identifier, receipt.LocalPrice), position, Color.White);
 	                position += new Vector2(0, 20);
 	            }
 			}

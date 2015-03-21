@@ -68,9 +68,11 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidAsset Include="Assets\key.der" />
+    <AndroidAsset Include="Assets\MiGameCenterSDKService.apk" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Values\Strings.xml" />
+    <AndroidResource Include="Resources\Values-zh-rCN\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Icon.png" />
@@ -78,6 +80,8 @@
   <ItemGroup>
     <Folder Include="Resources\Layout\" />
     <Folder Include="Resources\Raw\" />
+    <Folder Include="Jars\" />
+    <Folder Include="Resources\Values-zh-rCN\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Splash.png" />
@@ -104,5 +108,8 @@
       <Project>{3C5C877C-83E9-4BC1-984C-940052D091E7}</Project>
       <Name>OuyaSdk</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidJavaLibrary Include="Jars\SDK_MIBOX_2.0.1.jar" />
   </ItemGroup>
 </Project>

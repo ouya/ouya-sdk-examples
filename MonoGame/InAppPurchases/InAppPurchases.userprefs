@@ -1,14 +1,26 @@
 ﻿<Properties StartupItem="InAppPurchases.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.610510541395" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\OuyaSdk\OuyaController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Activity1.cs">
     <Files>
-      <File FileName="Activity1.cs" Line="29" Column="29" />
-      <File FileName="Game1.cs" Line="15" Column="15" />
-      <File FileName="..\OuyaSdk\OuyaController.cs" Line="14" Column="14" />
-      <File FileName="..\OuyaSdk\Transforms\Metadata.xml" Line="80" Column="80" />
-      <File FileName="..\OuyaSdk\Transforms\EnumFields.xml" Line="27" Column="27" />
-      <File FileName="..\OuyaSdk\Transforms\EnumMethods.xml" Line="28" Column="28" />
+      <File FileName="Activity1.cs" Line="4" Column="4" />
+      <File FileName="Game1.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="InAppPurchases" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Content" expanded="True" />
+            </Node>
+            <Node name="Resources" expanded="True" />
+            <Node name="Activity1.cs" selected="True" />
+          </Node>
+          <Node name="OuyaSdk" expanded="True">
+            <Node name="Properties" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
