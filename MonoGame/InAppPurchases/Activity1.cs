@@ -71,7 +71,7 @@ namespace InAppPurchases
 				// do nothing
 			}
 
-			View content = Game1.Activity.FindViewById (Android.Resource.Id.Content);
+			View content = FindViewById (Android.Resource.Id.Content);
 			if (null != content) {
 				content.KeepScreenOn = true;
 			}
@@ -287,17 +287,31 @@ namespace InAppPurchases
 			}
 		}
 
+		public static Vector2 MeasureString(SpriteFont font, string text) {
+			try {
+				return font.MeasureString(text);
+			} catch (Exception) {
+				if (null == text) {
+					Log.Error (TAG, "Failed to measure string == text: null");
+				} else if (sDebugStrings.ContainsKey(text)) {
+					Log.Error (TAG, "Failed to measure string key=" + sDebugStrings[text] + " ==> " + text);
+				} else {
+					Log.Error (TAG, "Failed to measure string text=" + text);
+				}
+				return Vector2.Zero;
+			}
+		}
+
 		public static void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 position, Color color) {
 			try {
 				spriteBatch.DrawString(font, text, position, color);
 			} catch (Exception) {
-				if (sDebugStrings.ContainsKey(text) &&
-					null != text) {
-					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> " + text);
-				} else if (sDebugStrings.ContainsKey(text)) {
-					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> null");
-				} else {
+				if (null == text) {
 					Log.Error (TAG, "Failed to draw string == text: null");
+				} else if (sDebugStrings.ContainsKey(text)) {
+					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> " + text);
+				} else {
+					Log.Error (TAG, "Failed to draw string text=" + text);
 				}
 			}
 		}
@@ -307,13 +321,12 @@ namespace InAppPurchases
 			try {
 				spriteBatch.DrawString(font, text, position, color, rotation, origin, scale, spriteEffects, depth);
 			} catch (Exception) {
-				if (sDebugStrings.ContainsKey(text) &&
-					null != text) {
-					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> " + text);
-				} else if (sDebugStrings.ContainsKey(text)) {
-					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> null");
-				} else {
+				if (null == text) {
 					Log.Error (TAG, "Failed to draw string == text: null");
+				} else if (sDebugStrings.ContainsKey(text)) {
+					Log.Error (TAG, "Failed to draw string key=" + sDebugStrings[text] + " ==> " + text);
+				} else {
+					Log.Error (TAG, "Failed to draw string text=" + text);
 				}
 			}
 		}
