@@ -39,7 +39,7 @@ end
 globals.centerX = display.contentCenterX;
 
 local txtHello;
-if nil ~= ouyaSDK and nil ~= ouyaSDK.initOuyaPlugin then
+if nil ~= ouyaSDK and nil ~= ouyaSDK.ouyaGetStringResource then
 	txtHello = ouyaSDK.ouyaGetStringResource("Hello");
 else
 	txtHello = "Hello from Corona SDK";
