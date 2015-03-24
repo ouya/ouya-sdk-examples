@@ -1,4 +1,4 @@
-using System.IO;
+using Color = Microsoft.Xna.Framework.Color;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Java.IO;
@@ -8,8 +8,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using Color = Microsoft.Xna.Framework.Color;
+using System.IO;
 using StringBuilder = System.Text.StringBuilder;
+using TV.Ouya.Console.Api;
+using TV.Ouya.Sdk;
 
 namespace InputView
 {
@@ -136,7 +138,7 @@ namespace InputView
 			graphics.GraphicsDevice.Clear (Color.CornflowerBlue);
 
 			spriteBatch.Begin ();
-			spriteBatch.DrawString (font, "Hello from MonoGame: "+DateTime.Now.ToString(), new Vector2 (Window.Width / 2 - 100, Window.Height / 2), Color.White);
+			spriteBatch.DrawString (font, "Hello from MonoGame: "+DateTime.Now.ToString(), new Vector2 (Window.Width / 2 - 200, Window.Height / 2 - 40), Color.White);
 			Vector2 position = new Vector2 (400, 100);
 			int index = 0;
 			for (; index < m_controllerButtons.Count && index < 7; ++index) { 
@@ -159,6 +161,8 @@ namespace InputView
 				}
 			}
 			spriteBatch.End ();
+
+			OuyaInput.ClearButtonStates();
 
 			base.Draw (gameTime);
 		}

@@ -32,13 +32,15 @@
   <paths name="paths"/>
   <scripts name="scripts">
     <script>scripts\virtualControllerDraw.gml</script>
+    <script>scripts\initScript.gml</script>
+    <script>scripts\updateInputScript.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\Controller1</object>
     <object>objects\Controller2</object>
     <object>objects\Controller3</object>
     <object>objects\Controller4</object>
-    <object>objects\ClearInputFrame</object>
+    <object>objects\InputUpdater</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room1</room>

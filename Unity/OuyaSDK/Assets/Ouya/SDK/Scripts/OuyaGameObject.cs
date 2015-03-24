@@ -155,8 +155,6 @@ public class OuyaGameObject : MonoBehaviour
     public void OnSuccessInitializePlugin(string ignore)
     {
         Debug.Log("OUYA Plugin Initialized.");
-        //success
-        OuyaSDK.setIAPInitComplete();
     }
 
     public void OnFailureInitializePlugin(string errorMessage)
@@ -632,6 +630,9 @@ public class OuyaGameObject : MonoBehaviour
     void Awake()
     {
         m_instance = this;
+#if UNITY_ANDROID && !UNITY_EDITOR
+        Debug.Log(string.Format("OuyaPluginVersion: {0}", OuyaSDK.VERSION));
+#endif
     }
     void Start()
     {

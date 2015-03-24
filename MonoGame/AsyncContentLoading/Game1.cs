@@ -17,7 +17,7 @@ namespace AsyncContentLoading
         SpriteFont font;
 
         private const int _numberOfTextures = 1000;
-        private const int _numberOfWorkers = 8;
+        private const int _numberOfWorkers = 2;
 
         private static Game1 _instance = null;
         private Dictionary<int, Texture2D> _textures = new Dictionary<int, Texture2D>();
@@ -39,7 +39,7 @@ namespace AsyncContentLoading
             {
                 try
                 {
-                    Texture2D texture = _instance.Content.Load<Texture2D>(index.ToString());
+					Texture2D texture = _instance.Content.Load<Texture2D>(string.Format("images/{0}", index));
                     _instance._textures[index] = texture;
                 }
                 catch (System.Exception)

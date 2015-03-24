@@ -1,12 +1,24 @@
-using System;
-using System.Collections;
-using System.Threading.Tasks;
+using Android.App;
+using Android.Content;
+using Android.Content.Res;
+using Android.Content.PM;
 using Android.OS;
+using Android.Runtime;
+using Android.Util;
+using Android.Views;
+using Android.Widget;
+using Java.IO;
+using System;
+using System.IO;
+using TV.Ouya.Console.Api;
+using TV.Ouya.Sdk;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Collections;
 using System.Collections.Generic;
-using Ouya.Console.Api;
+using System.Threading.Tasks;
+
 
 namespace InAppPurchases
 {
@@ -15,21 +27,32 @@ namespace InAppPurchases
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+		private const string TAG = "Game1";
+
+		public static readonly string[] PURCHASABLES =
+		{
+			"long_sword",
+			"sharp_axe",
+			"cool_level",
+			"awesome_sauce",
+			"__DECLINED__THIS_PURCHASE",
+		};
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
         List<ButtonSprite> m_buttons = new List<ButtonSprite>();
         FocusManager m_focusManager = new FocusManager();
         private static string m_debugText = string.Empty;
-        private ButtonSprite BtnGetProducts = null;
-        private ButtonSprite BtnPurchase = null;
-        private ButtonSprite BtnGetReceipts = null;
-        private ButtonSprite BtnGetUUID = null;
+        private ButtonSprite BtnRequestProducts = null;
+        private ButtonSprite BtnRequestPurchase = null;
+        private ButtonSprite BtnRequestReceipts = null;
+        private ButtonSprite BtnRequestGamerInfo = null;
+		private ButtonSprite BtnExit = null;
         private ButtonSprite BtnPause = null;
-        private Task<IList<Product>> TaskRequestProducts = null;
-        private Task<bool> TaskRequestPurchase = null;
-        private Task<string> TaskRequestGamer = null;
-        private Task<IList<Receipt>> TaskRequestReceipts = null;
+		private static List<Product> s_products = new List<Product> ();
+		private static List<Receipt> s_receipts = new List<Receipt> ();
+		private static int s_productIndex = 0;
 
         public Game1()
         {
@@ -38,8 +61,8 @@ namespace InAppPurchases
             Content.RootDirectory = "Content";
 
             graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
         }
 
@@ -51,77 +74,7 @@ namespace InAppPurchases
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            m_focusManager.OnClick += OnClick;
-
-            GamePad.EventOnKeyUp += EventOnKeyUp;
-
             base.Initialize();
-        }
-
-        private void EventOnKeyUp(object sender, GamePad.KeyEventArgs keyEventArgs)
-        {
-            //m_debugText = string.Format("Detected Key: {0}", keyEventArgs.KeyCode);
-            if (keyEventArgs.KeyCode == 82)
-            {
-                m_focusManager.SelectedButton = BtnPause;
-                OnClick(null, new FocusManager.ClickEventArgs() {Button = BtnPause});
-            }
-        }
-
-        private void OnClick(object sender, FocusManager.ClickEventArgs clickEventArgs)
-        {
-            if (null == clickEventArgs ||
-                null == clickEventArgs.Button)
-            {
-                return;
-            }
-
-            m_debugText = clickEventArgs.Button.Text;
-
-            if (clickEventArgs.Button == BtnGetProducts)
-            {
-                m_debugText = "Fetching product list...";
-                IList<Purchasable> purchasables = new List<Purchasable>()
-                                                      {
-                                                          new Purchasable("long_sword"),
-                                                          new Purchasable("sharp_axe"),
-                                                          new Purchasable("cool_level"),
-                                                          new Purchasable("awesome_sauce"),
-                                                          new Purchasable("__DECLINED__THIS_PURCHASE"),
-                                                      };
-
-                m_focusManager.SelectedProductIndex = 0;
-                TaskRequestProducts = Activity1.PurchaseFacade.RequestProductListAsync(purchasables);
-            }
-
-            else if (clickEventArgs.Button == BtnPurchase)
-            {
-                if (null != TaskRequestProducts &&
-                    m_focusManager.SelectedProductIndex < TaskRequestProducts.Result.Count)
-                {
-                    Product product = TaskRequestProducts.Result[m_focusManager.SelectedProductIndex];
-                    TaskRequestPurchase = Activity1.PurchaseFacade.RequestPurchaseAsync(product);
-                }
-            }
-
-            else if (clickEventArgs.Button == BtnGetReceipts)
-            {
-                m_focusManager.SelectedReceiptIndex = 0;
-                TaskRequestReceipts = Activity1.PurchaseFacade.RequestReceiptsAsync();
-            }
-
-            else if (clickEventArgs.Button == BtnGetUUID)
-            {
-                m_debugText = "Requesting Gamer UUID...";
-                TaskRequestGamer = Activity1.PurchaseFacade.RequestGamerUuidAsync();
-            }
-
-            else if (clickEventArgs.Button == BtnPause)
-            {
-                m_debugText = "Pause button detected.";
-                m_focusManager.SelectedButton = BtnPause;
-            }
         }
 
         /// <summary>
@@ -129,89 +82,198 @@ namespace InAppPurchases
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+		{
+			// Create a new SpriteBatch, which can be used to draw textures.
+			spriteBatch = new SpriteBatch (GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            font = Content.Load<SpriteFont>("spriteFont1");
+			// TODO: use this.Content to load your game content here
+			font = Content.Load<SpriteFont> (Activity1.GetLocalizedString ("FontName"));
 
-            BtnGetProducts = new ButtonSprite();
-            BtnGetProducts.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnGetProducts.Position = new Vector2(150, 200);
-            BtnGetProducts.TextureScale = new Vector2(2f, 0.5f);
-            BtnGetProducts.Text = "Get Product List";
-            BtnGetProducts.TextOffset = new Vector2(40, 20);
-            m_buttons.Add(BtnGetProducts);
+			BtnRequestProducts = new ButtonSprite ();
+			BtnRequestProducts.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestProducts.Position = new Vector2 (150, 200);
+			BtnRequestProducts.TextureScale = new Vector2 (2.25f, 0.5f);
+			BtnRequestProducts.Text = Activity1.GetLocalizedString("RequestProductList");
+			BtnRequestProducts.TextOffset = new Vector2 (40, 20);
+			m_buttons.Add (BtnRequestProducts);
 
-            BtnPurchase = new ButtonSprite();
-            BtnPurchase.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnPurchase.Position = new Vector2(600, 200);
-            BtnPurchase.TextureScale = new Vector2(2f, 0.5f);
-            BtnPurchase.Text = "Request Purchase";
-            BtnPurchase.TextOffset = new Vector2(40, 20);
-            m_buttons.Add(BtnPurchase);
+			BtnRequestPurchase = new ButtonSprite ();
+			BtnRequestPurchase.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestPurchase.Position = new Vector2 (500, 200);
+			BtnRequestPurchase.TextureScale = new Vector2 (2f, 0.5f);
+			BtnRequestPurchase.Text = Activity1.GetLocalizedString("RequestPurchase");
+			BtnRequestPurchase.TextOffset = new Vector2 (40, 20);
+			m_buttons.Add (BtnRequestPurchase);
 
-            BtnGetReceipts = new ButtonSprite();
-            BtnGetReceipts.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnGetReceipts.Position = new Vector2(1100, 200);
-            BtnGetReceipts.TextureScale = new Vector2(1.5f, 0.5f);
-            BtnGetReceipts.Text = "Get Receipts";
-            BtnGetReceipts.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(BtnGetReceipts);
+			BtnRequestReceipts = new ButtonSprite ();
+			BtnRequestReceipts.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestReceipts.Position = new Vector2 (800, 200);
+			BtnRequestReceipts.TextureScale = new Vector2 (2f, 0.5f);
+			BtnRequestReceipts.Text = Activity1.GetLocalizedString("RequestReceipts");
+			BtnRequestReceipts.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnRequestReceipts);
 
-            BtnGetUUID = new ButtonSprite();
-            BtnGetUUID.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnGetUUID.Position = new Vector2(1400, 200);
-            BtnGetUUID.TextureScale = new Vector2(1.25f, 0.5f);
-            BtnGetUUID.Text = "Get UUID";
-            BtnGetUUID.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(BtnGetUUID);
+			BtnRequestGamerInfo = new ButtonSprite ();
+			BtnRequestGamerInfo.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnRequestGamerInfo.Position = new Vector2 (1100, 200);
+			BtnRequestGamerInfo.TextureScale = new Vector2 (2f, 0.5f);
+			BtnRequestGamerInfo.Text = Activity1.GetLocalizedString("RequestGamerInfo");
+			BtnRequestGamerInfo.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnRequestGamerInfo);
 
-            BtnPause = new ButtonSprite();
-            BtnPause.Initialize(font,
-                Content.Load<Texture2D>("Graphics\\ButtonActive"),
-                Content.Load<Texture2D>("Graphics\\ButtonInactive"));
-            BtnPause.Position = new Vector2(1650, 200);
-            BtnPause.TextureScale = new Vector2(1f, 0.5f);
-            BtnPause.Text = "Pause";
-            BtnPause.TextOffset = new Vector2(30, 20);
-            m_buttons.Add(BtnPause);
+			BtnExit = new ButtonSprite ();
+			BtnExit.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnExit.Position = new Vector2 (1400, 200);
+			BtnExit.TextureScale = new Vector2 (1f, 0.5f);
+			BtnExit.Text = Activity1.GetLocalizedString("Exit");
+			BtnExit.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnExit);
 
-            m_focusManager.SelectedButton = BtnGetProducts;
-            m_focusManager.Mappings[BtnGetProducts] = new FocusManager.ButtonMapping()
-                                                          {
-                                                              Right = BtnPurchase
-                                                          };
-            m_focusManager.Mappings[BtnPurchase] = new FocusManager.ButtonMapping()
-                                                       {
-                                                           Left = BtnGetProducts,
-                                                           Right = BtnGetReceipts
-                                                       };
-            m_focusManager.Mappings[BtnGetReceipts] = new FocusManager.ButtonMapping()
-            {
-                Left = BtnPurchase,
-                Right = BtnGetUUID,
-            };
+			BtnPause = new ButtonSprite ();
+			BtnPause.Initialize (font,
+				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
+				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
+			BtnPause.Position = new Vector2 (1650, 200);
+			BtnPause.TextureScale = new Vector2 (1f, 0.5f);
+			BtnPause.Text = Activity1.GetLocalizedString("Pause");
+			BtnPause.TextOffset = new Vector2 (30, 20);
+			m_buttons.Add (BtnPause);
 
-            m_focusManager.Mappings[BtnGetUUID] = new FocusManager.ButtonMapping()
-            {
-                Left = BtnGetReceipts,
-            };
+			m_focusManager.SelectedButton = BtnRequestProducts;
+			m_focusManager.Mappings [BtnRequestProducts] = new FocusManager.ButtonMapping () {
+				Right = BtnRequestPurchase
+			};
+			m_focusManager.Mappings [BtnRequestPurchase] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestProducts,
+				Right = BtnRequestReceipts
+			};
+			m_focusManager.Mappings [BtnRequestReceipts] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestPurchase,
+				Right = BtnRequestGamerInfo,
+			};
 
-            m_focusManager.Mappings[BtnPause] = new FocusManager.ButtonMapping()
-            {
-                Left = BtnGetUUID,
-            };
-        }
+			m_focusManager.Mappings [BtnRequestGamerInfo] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestReceipts,
+				Right = BtnExit,
+			};
+
+			m_focusManager.Mappings [BtnExit] = new FocusManager.ButtonMapping () {
+				Left = BtnRequestGamerInfo,
+			};
+
+			m_focusManager.Mappings [BtnPause] = new FocusManager.ButtonMapping () {
+				Left = BtnExit,
+			};
+		}
+
+		public class CustomRequestGamerInfoListener : RequestGamerInfoListener
+		{
+			private const string TAG = "CustomRequestGamerInfoListener";
+
+			public override void OnSuccess(Java.Lang.Object jObject) {
+				GamerInfo gamerInfo = jObject.JavaCast<GamerInfo>();
+				if (null == gamerInfo) {
+					m_debugText = string.Format ("GamerInfo is null!");
+				} else {
+					m_debugText = string.Format ("Request Gamer UUID={0} Username={1}", gamerInfo.Uuid, gamerInfo.Username);
+					Log.Info (TAG, "OnSuccess uuid=" + gamerInfo.Uuid + " username=" + gamerInfo.Username);
+				}
+			}
+
+			public override void OnFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				m_debugText = string.Format ("Failed to request GamerInfo errorCode=" + errorCode + " errorMessage=" + errorMessage);
+				Log.Error (TAG, "OnFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+			}
+		}
+
+		public class CustomRequestProductsListener : RequestProductsListener
+		{
+			private const string TAG = "CustomRequestProductsListener";
+
+			public override void OnSuccess(Java.Lang.Object jObject) {
+				s_products.Clear ();
+				JavaList<Product> products = jObject.JavaCast<JavaList<Product>> ();
+				if (null == products) {
+					m_debugText = string.Format ("Products are null!");
+				} else {
+					foreach (Product product in products) {
+						s_products.Add (product);
+					}
+					m_debugText = string.Format ("Request Products: OnSuccess Count="+products.Count);
+					Log.Info (TAG, "CustomRequestProductsListener: OnSuccess");
+				}
+			}
+
+			public override void OnFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				s_products.Clear ();
+				m_debugText = string.Format ("Failed to request Products errorCode=" + errorCode + " errorMessage=" + errorMessage);
+				Log.Error (TAG, "CustomRequestProductsListener: OnFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+			}
+		}
+
+		public class CustomRequestPurchaseListener : RequestPurchaseListener
+		{
+			private const string TAG = "CustomRequestPurchaseListener";
+
+			public override void OnSuccess(Java.Lang.Object jObject) {
+				PurchaseResult purchaseResult = jObject.JavaCast<PurchaseResult>();
+				if (null == purchaseResult) {
+					m_debugText = string.Format ("PurchaseResult is null!");
+				} else {
+					m_debugText = string.Format ("Request Purchase: OnSuccess");
+					Log.Info (TAG, "OnSuccess identiifer"+purchaseResult.ProductIdentifier);
+				}
+			}
+
+			public override void OnFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				m_debugText = string.Format ("Failed to request Purchase errorCode=" + errorCode + " errorMessage=" + errorMessage);
+				Log.Error (TAG, "OnFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+			}
+
+			public override void OnCancel() {
+				m_debugText = "Purchase was cancelled";
+				Log.Error (TAG, "Purchase was cancelled");
+			}
+		}
+
+		public class CustomRequestReceiptsListener : RequestReceiptsListener
+		{
+			private const string TAG = "CustomRequestReceiptsListener";
+
+			public override void OnSuccess(Java.Lang.Object jObject) {
+				s_receipts.Clear ();
+				JavaCollection<Receipt> receipts = jObject.JavaCast<JavaCollection<Receipt>> ();
+				if (null == receipts) {
+					m_debugText = string.Format ("Receipts are null!");
+				} else {
+					foreach (Receipt receipt in receipts) {
+						s_receipts.Add (receipt);
+					}
+					m_debugText = string.Format ("Request Receipts: OnSuccess Count="+s_receipts.Count);
+					Log.Info (TAG, "OnSuccess");
+				}
+			}
+
+			public override void OnFailure(int errorCode, String errorMessage, Bundle optionalData) {
+				m_debugText = string.Format ("Failed to request Receipts errorCode=" + errorCode + " errorMessage=" + errorMessage);
+				Log.Error (TAG, "OnFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+			}
+
+			public override void OnCancel() {
+				m_debugText = "Receipt request was cancelled";
+				Log.Error (TAG, "Receipt request was cancelled");
+			}
+		}
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -220,57 +282,11 @@ namespace InAppPurchases
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+			//Log.Info(TAG, string.Format("BUTTON_O is {0}", OuyaInput.GetButton(OuyaController.BUTTON_O)));
+
+			if (OuyaInput.GetButtonUp(0, OuyaController.BUTTON_A))
             {
                 Exit();
-            }
-
-            // touch exception property to avoid killing app
-            if (null != TaskRequestProducts)
-            {
-                AggregateException exception = TaskRequestProducts.Exception;
-                if (null != exception)
-                {
-                    m_debugText = string.Format("Request Products has exception. {0}", exception);
-                    TaskRequestProducts.Dispose();
-                    TaskRequestProducts = null;
-                }
-            }
-
-            // touch exception property to avoid killing app
-            if (null != TaskRequestPurchase)
-            {
-                AggregateException exception = TaskRequestPurchase.Exception;
-                if (null != exception)
-                {
-                    m_debugText = string.Format("Request Purchase has exception. {0}", exception);
-                    TaskRequestPurchase.Dispose();
-                    TaskRequestPurchase = null;
-                }
-            }
-
-            // touch exception property to avoid killing app
-            if (null != TaskRequestReceipts)
-            {
-                AggregateException exception = TaskRequestReceipts.Exception;
-                if (null != exception)
-                {
-                    m_debugText = string.Format("Request Receipts has exception. {0}", exception);
-                    TaskRequestReceipts.Dispose();
-                    TaskRequestReceipts = null;
-                }
-            }
-
-            // touch exception property to avoid killing app
-            if (null != TaskRequestGamer)
-            {
-                AggregateException exception = TaskRequestGamer.Exception;
-                if (null != exception)
-                {
-                    m_debugText = string.Format("Request Gamer UUID has exception. {0}", exception);
-                    TaskRequestGamer.Dispose();
-                    TaskRequestGamer = null;
-                }
             }
 
             // TODO: Add your update logic here
@@ -288,116 +304,57 @@ namespace InAppPurchases
                 }
             }
 
-            if (m_focusManager.SelectedButton == BtnGetReceipts)
-            {
-                if (null != TaskRequestReceipts)
-                {
-                    if (TaskRequestReceipts.IsCanceled)
-                    {
-                        m_debugText = "Request Receipts has cancelled.";
-                    }
-                    else if (TaskRequestReceipts.IsCompleted)
-                    {
-                        m_debugText = "Request Receipts has completed.";
-                    }
-                }
+			if (OuyaInput.GetButtonUp (OuyaController.BUTTON_MENU)) {
+				m_debugText = "Pause button detected.";
+				m_focusManager.SelectedButton = BtnPause;
+			}
 
-                if (null != TaskRequestReceipts &&
-                    null == TaskRequestReceipts.Exception &&
-                    !TaskRequestReceipts.IsCanceled &&
-                    TaskRequestReceipts.IsCompleted)
-                {
-                    if (null == TaskRequestReceipts.Result)
-                    {
-                        m_debugText = "TaskRequestReceipts.Result == null";
-                    }
-                    else
-                    {
-                        m_debugText = string.Format("Found {0} receipts", TaskRequestReceipts.Result.Count);
-                        m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
-                    }
-                }
-            }
-            else if (m_focusManager.SelectedButton == BtnGetUUID)
-            {
-                if (null != TaskRequestGamer)
-                {
-                    if (TaskRequestGamer.IsCanceled)
-                    {
-                        m_debugText = "Request Gamer UUID has cancelled.";
-                    }
-                    else if (TaskRequestGamer.IsCompleted)
-                    {
-                        m_debugText = string.Format("Request Gamer UUID: {0}", TaskRequestGamer.Result);
-                    }
-                }
+			if (OuyaInput.GetButtonUp (OuyaController.BUTTON_O)) {
+				if (m_focusManager.SelectedButton == BtnRequestProducts) {
+					s_productIndex = 0;
+					s_products.Clear ();
+					m_debugText = "Requesting products...";
+					Activity1.RequestProducts ();
+				} else if (m_focusManager.SelectedButton == BtnRequestPurchase) {
+					if (s_productIndex < s_products.Count) {
+						Purchasable purchasable = new Purchasable (s_products [s_productIndex].Identifier);
+						m_debugText = "Requesting purchase...";
+						Activity1.RequestPurchase (purchasable);
+					} else {
+						m_debugText = "Be sure to request products to select a purchase...";
+					}
+				} else if (m_focusManager.SelectedButton == BtnRequestReceipts) {
+					m_debugText = "Requesting receipts...";
+					Activity1.RequestReceipts ();
+				} else if (m_focusManager.SelectedButton == BtnRequestGamerInfo) {
+					m_debugText = "Requesting GamerInfo...";
+					Activity1.RequestGamerInfo ();
+				} else if (m_focusManager.SelectedButton == BtnExit) {
+					m_debugText = "Exiting...";
+					Activity1.Quit ();
+				} else if (m_focusManager.SelectedButton == BtnPause) {
+					m_debugText = "Pause button detected...";
+					m_focusManager.SelectedButton = BtnPause;
+				}
+			}
 
-                if (null != TaskRequestReceipts &&
-                    null == TaskRequestReceipts.Exception &&
-                    !TaskRequestReceipts.IsCanceled &&
-                    TaskRequestReceipts.IsCompleted &&
-                    null != TaskRequestReceipts.Result)
-                {
-                    m_focusManager.UpdateReceiptFocus(TaskRequestReceipts.Result.Count);
-                }
-            }
-            else
-            {
-                if (m_focusManager.SelectedButton == BtnPurchase)
-                {
-                    if (null != TaskRequestPurchase)
-                    {
-                        if (TaskRequestPurchase.IsCanceled)
-                        {
-                            m_debugText = "Request Purchase has cancelled.";
-                        }
-                        else if (TaskRequestPurchase.IsCompleted)
-                        {
-                            if (TaskRequestPurchase.Result)
-                            {
-                                m_debugText = "Request Purchase has completed succesfully.";
-                            }
-                            else
-                            {
-                                m_debugText = "Request Purchase has completed with failure.";
-                            }
-                        }
-                    }
-                }
-                else if (m_focusManager.SelectedButton == BtnGetProducts)
-                {
-                    if (null != TaskRequestProducts)
-                    {
-                        if (TaskRequestProducts.IsCanceled)
-                        {
-                            m_debugText = "Request Products has cancelled.";
-                        }
-                        else if (TaskRequestProducts.IsCompleted)
-                        {
-                            if (TaskRequestProducts.Result.Count > 0)
-                            {
-                                m_debugText = "Request Products has completed with results.";
-                            }
-                            else
-                            {
-                                m_debugText = "Request Products has completed without results.";
-                            }
-                        }
-                    }
-                }
-
-                if (null != TaskRequestProducts &&
-                    null == TaskRequestProducts.Exception &&
-                    !TaskRequestProducts.IsCanceled &&
-                    TaskRequestProducts.IsCompleted)
-                {
-                    m_focusManager.UpdateProductFocus(TaskRequestProducts.Result.Count);
-                }
-            }
-
-            m_focusManager.UpdatePauseFocus(BtnPause);
+			if (m_focusManager.SelectedButton == BtnRequestProducts ||
+				m_focusManager.SelectedButton == BtnRequestPurchase) {
+				if (OuyaInput.GetButtonUp (OuyaController.BUTTON_DPAD_UP)) {
+					if (s_productIndex > 0) {
+						--s_productIndex;
+					}
+				}
+				if (OuyaInput.GetButtonUp (OuyaController.BUTTON_DPAD_DOWN)) {
+					if ((s_productIndex+1) < s_products.Count) {
+						++s_productIndex;
+					}
+				}
+			}
 
             base.Update(gameTime);
+
+			OuyaInput.ClearButtonStates();
         }
 
         /// <summary>
@@ -409,10 +366,12 @@ namespace InAppPurchases
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, string.Format("Hello from MonoGame! {0} | {1}",
-                Activity1.PurchaseFacade.IsRunningOnOUYAHardware ? "(Running on OUYA)" : "Not Running on OUYA",
+
+			Activity1.DrawString(spriteBatch, font, string.Format("Hello from MonoGame! {0} | {1}",
+				Activity1._ouyaFacade.IsRunningOnOUYAHardware ? "(Running on OUYA)" : "Not Running on OUYA",
                 m_debugText), new Vector2(100, 100), Color.White);
-            spriteBatch.DrawString(font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
+
+			Activity1.DrawString(spriteBatch, font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
             foreach (ButtonSprite button in m_buttons)
             {
                 button.Draw(spriteBatch);
@@ -420,38 +379,36 @@ namespace InAppPurchases
 
             #region Products
 
-            if (null != TaskRequestProducts &&
-                null == TaskRequestProducts.Exception &&
-                !TaskRequestProducts.IsCanceled &&
-                TaskRequestProducts.IsCompleted)
-            {
-                Vector2 position = new Vector2(140, 300);
-                for (int index = 0; index < TaskRequestProducts.Result.Count; ++index)
-                {
-                    Product product = TaskRequestProducts.Result[index];
-                    spriteBatch.DrawString(font, string.Format("Product: {0}", product.Identifier), position, index == m_focusManager.SelectedProductIndex ? Color.Orange : Color.White);
-                    position += new Vector2(0, 20);
-                }
-            }
+			if (m_focusManager.SelectedButton == BtnRequestProducts ||
+				m_focusManager.SelectedButton == BtnRequestPurchase) {
+				Vector2 position = new Vector2(140, 300);
+				for (int index = 0; index < s_products.Count; ++index)
+				{
+					Product product = s_products[index];
+					Activity1.DrawString(spriteBatch, font,
+						string.Format("{0} Product: {1} LocalPrice={2}",
+							index == s_productIndex ? "*" : string.Empty,
+							product.Identifier,
+							product.LocalPrice),
+						position,
+						index == s_productIndex ? Color.White : Color.Orange);
+					position += new Vector2(0, 20);
+				}
+			}
 
             #endregion
 
             #region Receipts
 
-            if (null != TaskRequestReceipts &&
-                null == TaskRequestReceipts.Exception &&
-                !TaskRequestReceipts.IsCanceled &&
-                TaskRequestReceipts.IsCompleted &&
-                null != TaskRequestReceipts.Result)
-            {
-                Vector2 position = new Vector2(1120, 300);
-                for (int index = 0; index < TaskRequestReceipts.Result.Count; ++index)
-                {
-                    Receipt receipt = TaskRequestReceipts.Result[index];
-                    spriteBatch.DrawString(font, string.Format("Receipt: {0}", receipt.Identifier), position, index == m_focusManager.SelectedReceiptIndex ? Color.Orange : Color.White);
-                    position += new Vector2(0, 20);
-                }
-            }
+			if (m_focusManager.SelectedButton == BtnRequestReceipts) {
+	            Vector2 position = new Vector2(1120, 300);
+	            for (int index = 0; index < s_receipts.Count; ++index)
+	            {
+					Receipt receipt = s_receipts[index];
+					Activity1.DrawString(spriteBatch, font, string.Format("Receipt: {0} LocalPrice={1}", receipt.Identifier, receipt.LocalPrice), position, Color.White);
+	                position += new Vector2(0, 20);
+	            }
+			}
 
             #endregion
 

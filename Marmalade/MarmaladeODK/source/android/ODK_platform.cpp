@@ -62,6 +62,8 @@ static std::vector< std::map<int, float> > g_axis;
 static std::vector< std::map<int, bool> > g_button;
 static std::vector< std::map<int, bool> > g_buttonDown;
 static std::vector< std::map<int, bool> > g_buttonUp;
+static std::vector< std::map<int, bool> > g_lastButtonDown;
+static std::vector< std::map<int, bool> > g_lastButtonUp;
 
 void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 	jint deviceId,
@@ -128,6 +130,8 @@ s3eResult ODKInit_platform()
 		g_button.push_back(std::map<int, bool>());
 		g_buttonDown.push_back(std::map<int, bool>());
 		g_buttonUp.push_back(std::map<int, bool>());
+		g_lastButtonDown.push_back(std::map<int, bool>());
+		g_lastButtonUp.push_back(std::map<int, bool>());
 	}
 
 	jclass clazz = env->FindClass("tv/ouya/sdk/marmalade/ODK");
@@ -233,8 +237,8 @@ bool OuyaPlugin_isPressedDown(int deviceId, int keyCode)
 		deviceId = 0;
 	}
 
-	std::map<int, bool>::const_iterator search = g_buttonDown[deviceId].find(keyCode);
-	if (search != g_buttonDown[deviceId].end())
+	std::map<int, bool>::const_iterator search = g_lastButtonDown[deviceId].find(keyCode);
+	if (search != g_lastButtonDown[deviceId].end())
 	{
 		return search->second;
 	}
@@ -250,8 +254,8 @@ bool OuyaPlugin_isPressedUp(int deviceId, int keyCode)
 		deviceId = 0;
 	}
 
-	std::map<int, bool>::const_iterator search = g_buttonUp[deviceId].find(keyCode);
-	if (search != g_buttonUp[deviceId].end())
+	std::map<int, bool>::const_iterator search = g_lastButtonUp[deviceId].find(keyCode);
+	if (search != g_lastButtonUp[deviceId].end())
 	{
 		return search->second;
 	}
@@ -263,6 +267,18 @@ void OuyaPlugin_clearButtonStates()
 {
 	for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
 	{
+		g_lastButtonDown[deviceId].clear();
+		g_lastButtonUp[deviceId].clear();
+		for (std::map<int, bool>::iterator it = g_buttonDown[deviceId].begin(); it != g_buttonDown[deviceId].end(); ++it)
+		{
+			int keyCode = it->first;
+			g_lastButtonDown[deviceId][keyCode] = g_buttonDown[deviceId][keyCode];
+		}
+		for (std::map<int, bool>::iterator it = g_buttonUp[deviceId].begin(); it != g_buttonUp[deviceId].end(); ++it)
+		{
+			int keyCode = it->first;
+			g_lastButtonUp[deviceId][keyCode] = g_buttonUp[deviceId][keyCode];
+		}
 		g_buttonDown[deviceId].clear();
 		g_buttonUp[deviceId].clear();
 	}

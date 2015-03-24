@@ -34,11 +34,20 @@ task copyJar(dependsOn: ':java:build', type: Copy) {
 	rename {'MonoGameOuyaPlugin.jar'}
 }
 
-task copyLibs(dependsOn: ':java:build', type: Copy) {
-	from(new File(project(':java').buildDir, 'ndk/release/lib')) {
-		include '**/*.so'
-	}
-	into '../../libs'
+task copyNativeArmeabiV7a(dependsOn: ':java:build', type: Copy) {
+	from new File(project(':java').buildDir, 'ndk/release/lib/armeabi-v7a/lib-ouya-ndk.so')
+	into '../../Libs/armeabi-v7a'
+	rename {'lib-ouya-ndk.so'}
 }
 
-task copyFiles(dependsOn: ['copyJar', 'copyLibs'])
+task copyNativeArmeabi(dependsOn: ':java:build', type: Copy) {
+	from new File(project(':java').buildDir, 'ndk/release/lib/armeabi/lib-ouya-ndk.so')
+	into '../../Libs/armeabi'
+	rename {'lib-ouya-ndk.so'}
+}
+
+task copyNativeArmeabiX86(dependsOn: ':java:build', type: Copy) {
+	from new File(project(':java').buildDir, 'ndk/release/lib/x86/lib-ouya-ndk.so')
+	into '../../Libs/x86'
+	rename {'lib-ouya-ndk.so'}
+}

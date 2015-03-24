@@ -1,14 +1,32 @@
 ﻿<enum-field-mappings>
   <!--
-  This example converts the constants Fragment_id, Fragment_name,
-  and Fragment_tag from android.support.v4.app.FragmentActivity.FragmentTag
-  to an enum called Android.Support.V4.App.FragmentTagType with values
-  Id, Name, and Tag.
-  
-  <mapping jni-class="android/support/v4/app/FragmentActivity$FragmentTag" clr-enum-type="Android.Support.V4.App.FragmentTagType">
-    <field jni-name="Fragment_name" clr-name="Name" value="0" />
-    <field jni-name="Fragment_id" clr-name="Id" value="1" />
-    <field jni-name="Fragment_tag" clr-name="Tag" value="2" />
-  </mapping>
+    OUYA Development Kit C# bindings - Copyright (C) Konaju Games
+    This file is subject to the terms and conditions defined in
+    file 'LICENSE.txt' which is part of this source code package.
   -->
-</enum-field-mappings>
+  <mapping jni-class="tv/ouya/console/api/OuyaController" clr-enum-type="Tv.Ouya.Console.Api.AxisType">
+    <field jni-name="AXIS_LS_X" clr-name="LeftX" value="0" />
+    <field jni-name="AXIS_LS_Y" clr-name="LeftY" value="1" />
+    <field jni-name="AXIS_RS_X" clr-name="RightX" value="11" />
+    <field jni-name="AXIS_RS_Y" clr-name="RightY" value="14" />
+    <field jni-name="AXIS_L2" clr-name="LeftTrigger" value="17" />
+    <field jni-name="AXIS_R2" clr-name="RightTrigger" value="18" />
+  </mapping>
+  <mapping jni-class="tv/ouya/console/api/OuyaController" clr-enum-type="Tv.Ouya.Console.Api.Buttons">
+    <field jni-name="BUTTON_A" clr-name="A" value="97" />
+    <field jni-name="BUTTON_DPAD_DOWN" clr-name="Down" value="20" />
+    <field jni-name="BUTTON_DPAD_LEFT" clr-name="Left" value="21" />
+    <field jni-name="BUTTON_DPAD_RIGHT" clr-name="Right" value="22" />
+    <field jni-name="BUTTON_DPAD_UP" clr-name="Up" value="19" />
+    <field jni-name="BUTTON_L1" clr-name="LeftBumper" value="102" />
+    <field jni-name="BUTTON_L2" clr-name="LeftTrigger" value="104" />
+    <field jni-name="BUTTON_L3" clr-name="LeftStick" value="106" />
+    <field jni-name="BUTTON_MENU" clr-name="Menu" value="82" />
+    <field jni-name="BUTTON_O" clr-name="O" value="96" />
+    <field jni-name="BUTTON_R1" clr-name="RightBumper" value="103" />
+    <field jni-name="BUTTON_R2" clr-name="RightTrigger" value="105" />
+    <field jni-name="BUTTON_R3" clr-name="RightStick" value="107" />
+    <field jni-name="BUTTON_U" clr-name="U" value="99" />
+    <field jni-name="BUTTON_Y" clr-name="Y" value="100" />
+  </mapping>
+</enum-field-mappings>    

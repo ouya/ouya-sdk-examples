@@ -82,6 +82,12 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		View content = (View)findViewById(android.R.id.content);
+        if (null != content) {
+            // Disable screensaver
+            content.setKeepScreenOn(true);
+        }
+		
 		// get the buttons
 		btnCrossFade1 = (Button)findViewById(R.id.btnCrossFade1);
 		btnCrossFade2 = (Button)findViewById(R.id.btnCrossFade2);

@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{578A5ADC-9B00-4984-BC4A-DA58D1938524}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -20,8 +18,8 @@
     <MandroidI18n />
     <TargetFrameworkVersion>v4.1</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <AndroidUseLatestPlatformSdk />
-    <JavaMaximumHeapSize />
+    <JavaMaximumHeapSize>
+    </JavaMaximumHeapSize>
     <JavaOptions />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,7 +30,6 @@
     <DefineConstants>DEBUG;TRACE;ANDROID</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -43,7 +40,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -53,8 +49,11 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
+    <Reference Include="Lidgren.Network">
+      <HintPath>..\OuyaSdk\MonoGame\Lidgren.Network.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
-      <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\Android\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\OuyaSdk\MonoGame\MonoGame.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OuyaSdk\OuyaSdk.csproj">
-      <Project>{3c5c877c-83e9-4bc1-984c-940052d091e7}</Project>
+      <Project>{3C5C877C-83E9-4BC1-984C-940052D091E7}</Project>
       <Name>OuyaSdk</Name>
     </ProjectReference>
   </ItemGroup>

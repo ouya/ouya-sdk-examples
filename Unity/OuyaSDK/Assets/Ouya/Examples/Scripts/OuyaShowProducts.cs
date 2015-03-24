@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-using System;
+#define XIAOMI
+
+using System.Collections;
 using System.Collections.Generic;
 #if UNITY_ANDROID && !UNITY_EDITOR
 using tv.ouya.console.api;
@@ -78,6 +80,11 @@ public class OuyaShowProducts : MonoBehaviour
     private string m_gameData = string.Empty;
 
     /// <summary>
+    /// Check for is running on OUYA Hardware
+    /// </summary>
+    private bool m_isRunningOnOUYAHardware = false;
+
+    /// <summary>
     /// Buttons
     /// </summary>
     private object m_btnPutGameData = new object();
@@ -85,6 +92,7 @@ public class OuyaShowProducts : MonoBehaviour
     private object m_btnRequestGamerInfo = new object();
     private object m_btnRequestProducts = new object();
     private object m_btnRequestReceipts = new object();
+    private object m_btnExit = new object();
 
     void Awake()
     {
@@ -247,6 +255,11 @@ public class OuyaShowProducts : MonoBehaviour
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            GUILayout.Label(string.Format("IsRunningOnOUYAHardware: {0}", m_isRunningOnOUYAHardware));
+            GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(400);
@@ -426,6 +439,24 @@ public class OuyaShowProducts : MonoBehaviour
 
                 GUILayout.EndHorizontal();
             }
+
+            GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            if (m_focusManager.SelectedButton == m_btnExit)
+            {
+                GUI.backgroundColor = Color.red;
+            }
+            if (GUILayout.Button("Exit", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btnExit &&
+                GetButtonUp(OuyaController.BUTTON_O)))
+            {
+                m_status = "Exiting...";
+                Application.Quit();
+            }
+            GUI.backgroundColor = oldColor;
+            GUILayout.EndHorizontal();
         }
         catch (System.Exception)
         {
@@ -436,7 +467,7 @@ public class OuyaShowProducts : MonoBehaviour
 
     #region Focus Handling
 
-    void Start()
+    public IEnumerator Start()
     {
         m_focusManager.Mappings[m_btnRequestGamerInfo] = new FocusManager.ButtonMapping()
         {
@@ -461,11 +492,23 @@ public class OuyaShowProducts : MonoBehaviour
         };
         m_focusManager.Mappings[m_btnRequestReceipts] = new FocusManager.ButtonMapping()
         {
-            Up = m_btnRequestProducts
+            Up = m_btnRequestProducts,
+            Down = m_btnExit
+        };
+        m_focusManager.Mappings[m_btnExit] = new FocusManager.ButtonMapping()
+        {
+            Up = m_btnRequestReceipts
         };
 
         // set default selection
         m_focusManager.SelectedButton = m_btnRequestGamerInfo;
+
+        while (!OuyaSDK.isIAPInitComplete())
+        {
+            yield return null;
+        }
+
+        m_isRunningOnOUYAHardware = OuyaSDK.isRunningOnOUYASupportedHardware();
     }
 
     private void Update()

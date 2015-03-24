@@ -188,7 +188,7 @@ public class MainActivity extends OuyaUnityActivity
 				return;
 			}
 		} else {
-			Log.e(TAG, "MarmaladeOuyaFacade is null");
+			Log.e(TAG, "UnityOuyaFacade is null");
 		}
 	}
 

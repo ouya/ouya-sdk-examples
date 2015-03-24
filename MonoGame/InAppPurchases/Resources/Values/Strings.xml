@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Hello">Hello World, Click Me!</string>
+	<string name="FontName">spriteFont1</string>
     <string name="ApplicationName">InAppPurchases</string>
+	<string name="RequestProductList">Request Product List</string>
+	<string name="RequestPurchase">Request Purchase</string>
+	<string name="RequestReceipts">Request Receipts</string>
+	<string name="RequestGamerInfo">Request GamerInfo</string>
+	<string name="Exit">Exit</string>
+	<string name="Pause">Pause</string>
 </resources>

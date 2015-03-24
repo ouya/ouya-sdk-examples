@@ -4,7 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using TV.Ouya.Sdk;
 
 namespace InputView
 {
@@ -21,7 +21,6 @@ namespace InputView
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
         public const String CategoryGame = "tv.ouya.intent.category.GAME";
-		private bool _keepRunning = true;
 		private Game1 _game = null;
 
         protected override void OnCreate(Bundle bundle)
@@ -38,29 +37,6 @@ namespace InputView
             }
 
 			_game.Run();
-
-			ThreadStart ts = new ThreadStart (UpdateWorker);
-			Thread thread = new Thread (ts);
-			thread.Start ();
         }
-
-		protected override void OnDestroy()
-		{
-			base.OnDestroy();
-			_keepRunning = false;
-		}
-
-		void UpdateWorker()
-		{
-			while (_keepRunning) {
-				foreach (VirtualControllerSprite controller in _game.Controllers) {
-					controller.UpdateInput ();
-				}
-
-				OuyaInput.clearButtonStates();
-				Thread.Sleep (10);
-			}
-		}
     }
 }
-

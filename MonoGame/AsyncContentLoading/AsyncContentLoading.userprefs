@@ -1,0 +1,27 @@
+﻿<Properties StartupItem="AsyncContentLoading.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.610510541395" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Game1.cs">
+    <Files>
+      <File FileName="Game1.cs" Line="29" Column="29" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="AsyncContentLoading" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Content" expanded="True">
+                <Node name="images" expanded="True">
+                  <Node name="0.png" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using TV.Ouya.Console.Api;
+using TV.Ouya.Sdk;
 
 namespace InputView
 {
@@ -106,124 +108,6 @@ namespace InputView
 		private Dictionary<int, bool> m_buttonDownStates = new Dictionary<int, bool>();
 		private Dictionary<int, bool> m_buttonUpStates = new Dictionary<int, bool>();
 
-		public void UpdateInput()
-		{
-			#region Track Axis States
-
-			lock (m_axisStates)
-			{
-				m_axisStates[OuyaController.AXIS_LS_X] = OuyaInput.getAxis(Index, OuyaController.AXIS_LS_X);
-				m_axisStates[OuyaController.AXIS_LS_Y] = OuyaInput.getAxis(Index, OuyaController.AXIS_LS_Y);
-				m_axisStates[OuyaController.AXIS_RS_X] = OuyaInput.getAxis(Index, OuyaController.AXIS_RS_X);
-				m_axisStates[OuyaController.AXIS_RS_Y] = OuyaInput.getAxis(Index, OuyaController.AXIS_RS_Y);
-				m_axisStates[OuyaController.AXIS_L2] = OuyaInput.getAxis(Index, OuyaController.AXIS_L2);
-				m_axisStates[OuyaController.AXIS_R2] = OuyaInput.getAxis(Index, OuyaController.AXIS_R2);
-			}
-
-			#endregion
-
-			#region Track Button Up / Down States
-
-			lock (m_buttonStates)
-			{
-				m_buttonStates[OuyaController.BUTTON_O] = OuyaInput.isPressed(Index, OuyaController.BUTTON_O);
-				m_buttonStates[OuyaController.BUTTON_U] = OuyaInput.isPressed(Index, OuyaController.BUTTON_U);
-				m_buttonStates[OuyaController.BUTTON_Y] = OuyaInput.isPressed(Index, OuyaController.BUTTON_Y);
-				m_buttonStates[OuyaController.BUTTON_A] = OuyaInput.isPressed(Index, OuyaController.BUTTON_A);
-				m_buttonStates[OuyaController.BUTTON_L1] = OuyaInput.isPressed(Index, OuyaController.BUTTON_L1);
-				m_buttonStates[OuyaController.BUTTON_R1] = OuyaInput.isPressed(Index, OuyaController.BUTTON_R1);
-				m_buttonStates[OuyaController.BUTTON_L3] = OuyaInput.isPressed(Index, OuyaController.BUTTON_L3);
-				m_buttonStates[OuyaController.BUTTON_R3] = OuyaInput.isPressed(Index, OuyaController.BUTTON_R3);
-				m_buttonStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_UP);
-				m_buttonStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_DOWN);
-				m_buttonStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_RIGHT);
-				m_buttonStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressed(Index, OuyaController.BUTTON_DPAD_LEFT);
-				m_buttonStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressed(Index, OuyaController.BUTTON_MENU);
-			}
-
-			lock (m_buttonDownStates)
-			{
-				m_buttonDownStates[OuyaController.BUTTON_O] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_O);
-				m_buttonDownStates[OuyaController.BUTTON_U] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_U);
-				m_buttonDownStates[OuyaController.BUTTON_Y] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_Y);
-				m_buttonDownStates[OuyaController.BUTTON_A] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_A);
-				m_buttonDownStates[OuyaController.BUTTON_L1] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_L1);
-				m_buttonDownStates[OuyaController.BUTTON_R1] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_R1);
-				m_buttonDownStates[OuyaController.BUTTON_L3] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_L3);
-				m_buttonDownStates[OuyaController.BUTTON_R3] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_R3);
-				m_buttonDownStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_UP);
-				m_buttonDownStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_DOWN);
-				m_buttonDownStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_RIGHT);
-				m_buttonDownStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_DPAD_LEFT);
-				m_buttonDownStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressedDown(Index, OuyaController.BUTTON_MENU);
-			}
-
-			lock (m_buttonUpStates)
-			{
-				m_buttonUpStates[OuyaController.BUTTON_O] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_O);
-				m_buttonUpStates[OuyaController.BUTTON_U] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_U);
-				m_buttonUpStates[OuyaController.BUTTON_Y] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_Y);
-				m_buttonUpStates[OuyaController.BUTTON_A] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_A);
-				m_buttonUpStates[OuyaController.BUTTON_L1] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_L1);
-				m_buttonUpStates[OuyaController.BUTTON_R1] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_R1);
-				m_buttonUpStates[OuyaController.BUTTON_L3] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_L3);
-				m_buttonUpStates[OuyaController.BUTTON_R3] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_R3);
-				m_buttonUpStates[OuyaController.BUTTON_DPAD_UP] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_UP);
-				m_buttonUpStates[OuyaController.BUTTON_DPAD_DOWN] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_DOWN);
-				m_buttonUpStates[OuyaController.BUTTON_DPAD_RIGHT] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_RIGHT);
-				m_buttonUpStates[OuyaController.BUTTON_DPAD_LEFT] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_DPAD_LEFT);
-				m_buttonUpStates[OuyaController.BUTTON_MENU] = OuyaInput.isPressedUp(Index, OuyaController.BUTTON_MENU);
-			}
-
-			#endregion
-
-			//debugOuyaController(deviceId);
-		}
-
-		private float GetAxis(int axis)
-		{
-			lock (m_axisStates) {
-				if (m_axisStates.ContainsKey (axis)) {
-					return m_axisStates [axis];
-				} else {
-					return 0f;
-				}
-			}
-		}
-
-		private bool GetButton(int button)
-		{
-			lock (m_buttonStates) {
-				if (m_buttonStates.ContainsKey (button)) {
-					return m_buttonStates [button];
-				} else {
-					return false;
-				}
-			}
-		}
-
-		private bool GetButtonDown(int button)
-		{
-			lock (m_buttonDownStates) {
-				if (m_buttonDownStates.ContainsKey (button)) {
-					return m_buttonDownStates [button];
-				} else {
-					return false;
-				}
-			}
-		}
-
-		private bool GetButtonUp(int button)
-		{
-			lock (m_buttonUpStates) {
-				if (m_buttonUpStates.ContainsKey (button)) {
-					return m_buttonUpStates [button];
-				} else {
-					return false;
-				}
-			}
-		}
-
         /// <summary>
         /// Draw the sprite
         /// </summary>
@@ -234,7 +118,7 @@ namespace InputView
 
             #region MENU
 
-			if (GetButtonDown(OuyaController.BUTTON_MENU))
+			if (OuyaInput.GetButtonDown(Index, OuyaController.BUTTON_MENU))
             {
                 m_timerMenuDetected = DateTime.Now + TimeSpan.FromSeconds(1);
                 Draw(spriteBatch, ButtonMenu);
@@ -248,22 +132,22 @@ namespace InputView
 
             #region DPADS
 
-			if (GetButton(OuyaController.BUTTON_DPAD_DOWN))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_DOWN))
             {
                 Draw(spriteBatch, DpadDown);
             }
 
-			if (GetButton(OuyaController.BUTTON_DPAD_LEFT))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_LEFT))
             {
                 Draw(spriteBatch, DpadLeft);
             }
 
-			if (GetButton(OuyaController.BUTTON_DPAD_RIGHT))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_RIGHT))
             {
                 Draw(spriteBatch, DpadRight);
             }
 
-			if (GetButton(OuyaController.BUTTON_DPAD_UP))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_DPAD_UP))
             {
                 Draw(spriteBatch, DpadUp);
             }
@@ -272,32 +156,32 @@ namespace InputView
 
             #region Buttons
 
-			if (GetButton(OuyaController.BUTTON_A))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_A))
             {
                 Draw(spriteBatch, ButtonA);
             }
 
-			if (GetButton(OuyaController.BUTTON_O))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_O))
             {
                 Draw(spriteBatch, ButtonO);
             }
 
-			if (GetButton(OuyaController.BUTTON_U))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_U))
             {
                 Draw(spriteBatch, ButtonU);
             }
 
-			if (GetButton(OuyaController.BUTTON_Y))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_Y))
             {
                 Draw(spriteBatch, ButtonY);
             }
 
-			if (GetButton(OuyaController.BUTTON_L1))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_L1))
             {
                 Draw(spriteBatch, LeftBumper);
             }
 
-			if (GetButton(OuyaController.BUTTON_R1))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_R1))
             {
                 Draw(spriteBatch, RightBumper);
             }
@@ -306,12 +190,12 @@ namespace InputView
 
             #region Triggers
 
-			if (GetAxis(OuyaController.AXIS_L2) > DeadZone)
+			if (OuyaInput.GetAxis(Index, OuyaController.AXIS_L2) > DeadZone)
             {
                 Draw(spriteBatch, LeftTrigger);
             }
 
-			if (GetAxis(OuyaController.AXIS_R2) > DeadZone)
+			if (OuyaInput.GetAxis(Index, OuyaController.AXIS_R2) > DeadZone)
             {
                 Draw(spriteBatch, RightTrigger);
             }
@@ -326,9 +210,11 @@ namespace InputView
             float cos = (float)Math.Cos(radians);
             float sin = (float)Math.Sin(radians);
 
-			Vector2 input = new Vector2(GetAxis(OuyaController.AXIS_LS_X), GetAxis(OuyaController.AXIS_LS_Y));
+			Vector2 input = new Vector2(
+				OuyaInput.GetAxis(Index, OuyaController.AXIS_LS_X),
+				OuyaInput.GetAxis(Index, OuyaController.AXIS_LS_Y));
 
-			if (GetButton(OuyaController.BUTTON_L3))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_L3))
             {
                 Draw(spriteBatch, LeftStickActive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }
@@ -338,9 +224,11 @@ namespace InputView
             }
 
             //rotate by same degrees
-			input = new Vector2(GetAxis(OuyaController.AXIS_RS_X), GetAxis(OuyaController.AXIS_RS_Y));
+			input = new Vector2(
+				OuyaInput.GetAxis(Index, OuyaController.AXIS_RS_X),
+				OuyaInput.GetAxis(Index, OuyaController.AXIS_RS_Y));
 
-			if (GetButton(OuyaController.BUTTON_R3))
+			if (OuyaInput.GetButton(Index, OuyaController.BUTTON_R3))
             {
                 Draw(spriteBatch, RightStickActive, Position + AXIS_SCALER * new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos));
             }

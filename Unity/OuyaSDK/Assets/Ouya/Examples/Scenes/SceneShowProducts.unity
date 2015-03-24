@@ -87,7 +87,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: OuyaPluginInitValues.Array.size
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: m_LocalPosition.x
@@ -148,11 +148,27 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: OuyaPluginInitValues.Array.data[1].Key
-      value: tv.ouya.product_id_list
+      value: com.xiaomi.app_id
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
       propertyPath: OuyaPluginInitValues.Array.data[1].Value
-      value: long_sword,sharp_axe
+      value: 2882303761517315334
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.data[2].Key
+      value: com.xiaomi.app_key
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.data[2].Value
+      value: 5971731587334
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.data[3].Key
+      value: tv.ouya.product_id_list
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
+      propertyPath: OuyaPluginInitValues.Array.data[3].Value
+      value: long_sword,sharp_axe,cool_level,awesome_sauce
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ad92c5da04e1b904ead8291e00d4c927, type: 2}
@@ -202,8 +218,12 @@ MonoBehaviour:
   OuyaPluginInitValues:
   - Key: tv.ouya.developer_id
     Value: 310a8f51-4d6e-4ae5-bda0-b93878e5f5d0
+  - Key: com.xiaomi.app_id
+    Value: 2882303761517315334
+  - Key: com.xiaomi.app_key
+    Value: 5971731587334
   - Key: tv.ouya.product_id_list
-    Value: long_sword,sharp_axe
+    Value: long_sword,sharp_axe,cool_level,awesome_sauce
   m_useInputThreading: 0
 --- !u!1 &1233174275
 GameObject:
@@ -331,4 +351,5 @@ MonoBehaviour:
   Purchasables:
   - long_sword
   - sharp_axe
-  - __DECLINED__THIS_PURCHASE
+  - cool_level
+  - awesome_sauce

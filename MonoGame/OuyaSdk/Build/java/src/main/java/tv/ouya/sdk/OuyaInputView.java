@@ -16,165 +16,192 @@
 
 package tv.ouya.sdk;
 
+import tv.ouya.console.api.DebugInput;
+import tv.ouya.console.api.OuyaController;
+import tv.ouya.console.api.OuyaInputMapper;
 import android.app.Activity;
 import android.content.Context;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import tv.ouya.console.api.*;
 
 public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
-
-	private Activity mActivity = null;
-
+	
+	private static boolean sLoggingEnabled = false;
+	
+	public static boolean sNativeInitialized = false;
+	
 	static {
-    	Log.i(TAG, "Loading lib-ouya-ndk...");
-		try {
-			System.loadLibrary("-ouya-ndk");
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		Log.i(TAG, "Loading lib-ouya-ndk...");
+		System.loadLibrary("-ouya-ndk");
+	}
+
+    public OuyaInputView(Context context, AttributeSet attrs) {
+    	super(context, attrs);
+		if (sLoggingEnabled) {
+			Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs)");
 		}
+        init();
     }
 
-	public OuyaInputView(Activity activity, Context context) {
-		super(context);
-		Log.i(TAG, "OuyaInputView");
-		mActivity = activity;
-		if (null != mActivity) {
-			OuyaInputMapper.init(mActivity);
+    public OuyaInputView(Context context, AttributeSet attrs, int defStyle) {
+    	super(context, attrs, defStyle);
+		if (sLoggingEnabled) {
+			Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs, int defStyle)");
+		}
+        init();
+    }
 
+    public OuyaInputView(Context context) {
+        super(context);
+		if (sLoggingEnabled) {
+			Log.d(TAG, "OuyaInputView(Context context)");
+		}
+        init();
+    }
+
+    private void init() {
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+				
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
-			content.addView(this);
-			Log.i(TAG, "Added OuyaInputView to content");
+			if (null != content) {
+				content.addView(this);
+				if (sLoggingEnabled) {
+					Log.d(TAG, "Added view");
+				}
+			} else {
+				Log.e(TAG, "Content view is missing");
+			}
+
+			OuyaInputMapper.init(activity);
+
+			activity.takeKeyEvents(true);
 
 			setFocusable(true);
 			requestFocus();
-			Log.i(TAG, "Give the OuyaInputView focus");
 		} else {
 			Log.e(TAG, "Activity is null");
 		}
 	}
 
 	public void shutdown() {
-		if (null != mActivity) {
-			OuyaInputMapper.shutdown(mActivity);
-		} else {
-			Log.e(TAG, "Activity is null");
-		}
-	}
-
-	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
-    public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
-
-	/**
-	 * Dispatch KeyEvents to the OuyaInputMapper. The remapped input will
-	 * return to the activity with onGenericMotionEvent, onKeyDown, and onKeyUp
-	 * events.
-	 *
-	 * Be sure to use the remapped input from the above events instead of
-	 * the KeyEvent passed to this method that has not been remapped yet.
-	 *
-	 * @param keyEvent passed passed to the OuyaInputMapper
-	 */
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		//Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
-		if (null == mActivity) {
-			return false;
-		}
-        if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
-		    return OuyaInputMapper.dispatchKeyEvent(mActivity, keyEvent);
-        } else {
-            return super.dispatchKeyEvent(keyEvent);
-        }
-	}
-
-	/**
-	 * Dispatch MotionEvents to the OuyaInputMapper. The remapped input will
-	 * return to the activity with onGenericMotionEvent, onKeyDown, and onKeyUp
-	 * events.
-	 *
-	 * Be sure to use the remapped input from the above events instead of
-	 * the MotionEvent passed to this method that has not been remapped yet.
-	 *
-	 * @param motionEvent passed passed to the OuyaInputMapper
-	 */
-	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		//Log.i(TAG, "dispatchGenericMotionEvent");
-		if (null == mActivity) {
-			return false;
-		}
-        if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
-		    return OuyaInputMapper.dispatchGenericMotionEvent(mActivity, motionEvent);
-        } else {
-            return super.dispatchGenericMotionEvent(motionEvent);
-        }
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+    		OuyaInputMapper.shutdown(activity);
+    	} else {
+    		Log.e(TAG, "Activity was not found.");
+    	}
     }
 
 	@Override
-	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		//Log.i(TAG, "onGenericMotionEvent");
-		//DebugInput.debugMotionEvent(motionEvent);
-
-		if (null == mActivity) {
-			return false;
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		if (sLoggingEnabled) {
+			Log.i(TAG, "dispatchGenericMotionEvent");
+			DebugInput.debugMotionEvent(motionEvent);
 		}
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
-	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
-	    	return true;
+    	Activity activity = ((Activity)getContext());
+		if (null != activity) {
+		    if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
+		    	return OuyaInputMapper.dispatchGenericMotionEvent(activity, motionEvent);
+		    }
+	    } else {
+	    	Log.e(TAG, "Activity was not found.");
 	    }
+    	return super.dispatchGenericMotionEvent(motionEvent);
+    }
 
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+	@Override
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+	    	if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
+	    		return OuyaInputMapper.dispatchKeyEvent(activity, keyEvent);
+	    	}
+	    } else {
+	    	Log.e(TAG, "Activity was not found.");
+	    }
+	    return super.dispatchKeyEvent(keyEvent);
+    }
+	
+	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
+	public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
+
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+		if (sLoggingEnabled) {
+			Log.i(TAG, "onGenericMotionEvent");
+			DebugInput.debugMotionEvent(motionEvent);
+			DebugInput.debugOuyaMotionEvent(motionEvent);
+		}
+		
+		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
+		if (playerNum < 0) {
+			Log.e(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
+			playerNum = 0;
+		}
+		
+		if (sNativeInitialized) {
+			//Log.i(TAG, "dispatchGenericMotionEventNative");
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		} else {
+			Log.e(TAG, "Waiting for native to initialize");
+		}
 		return true;
 	}
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
-
-		if (null == mActivity) {
-			return false;
+		if (sLoggingEnabled) {
+			Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 		}
-
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
-	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	return true;
-	    }
-
+		if (playerNum < 0) {
+			Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
+			playerNum = 0;
+		}
 		int action = keyEvent.getAction();
-		dispatchKeyEventNative(playerNum, keyCode, action);
+		if (sNativeInitialized) {
+			if (sLoggingEnabled) {
+				Log.i(TAG, "dispatchKeyEventNative");
+			}
+			dispatchKeyEventNative(playerNum, keyCode, action);
+		} else {
+			Log.w(TAG, "Waiting for native to initialize");
+		}
 		return true;
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
-
-		if (null == mActivity) {
-			return false;
+		if (sLoggingEnabled) {
+			Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 		}
-
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
-	    if (playerNum < 0) {
-	    	Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	return true;
-	    }
-
+		if (playerNum < 0) {
+			Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
+			playerNum = 0;
+		}
 		int action = keyEvent.getAction();
-		dispatchKeyEventNative(playerNum, keyCode, action);
+		if (sNativeInitialized) {
+			if (sLoggingEnabled) {
+				Log.i(TAG, "dispatchKeyEventNative");
+			}
+			dispatchKeyEventNative(playerNum, keyCode, action);
+		} else {
+			Log.w(TAG, "Waiting for native to initialize");
+		}
 		return true;
 	}
 }

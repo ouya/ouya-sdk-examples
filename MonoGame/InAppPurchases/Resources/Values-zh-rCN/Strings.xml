@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="FontName">FZLanTingHei-B-GBK</string>
+    <string name="ApplicationName">在应用购买</string>
+	<string name="RequestProductList">索取产品目录</string>
+	<string name="RequestPurchase">申请购买</string>
+	<string name="RequestReceipts">索取收据</string>
+	<string name="RequestGamerInfo">要求玩家信息</string>
+	<string name="Exit">出口</string>
+	<string name="Pause">暂停</string>
+</resources>

@@ -30,12 +30,13 @@ namespace org_json_JSONObject
 #if ENABLE_VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Searching for %s", strClass);
 #endif
-			_jcJsonObject = env->FindClass(strClass);
-			if (_jcJsonObject)
+			jclass localRef = (jclass)env->FindClass(strClass);
+			if (localRef)
 			{
 #if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Found %s", strClass);
 #endif
+				_jcJsonObject = localRef;
 			}
 			else
 			{

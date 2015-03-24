@@ -14,13 +14,11 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
-    <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
     <TargetFrameworkVersion>v4.1</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <JavaMaximumHeapSize>
     </JavaMaximumHeapSize>
-    <JavaOptions />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +29,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,17 +39,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidStoreUncompressedFileExtensions>
+    </AndroidStoreUncompressedFileExtensions>
+    <JavaOptions>
+    </JavaOptions>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
+    <Reference Include="Mono.Android" />
+    <Reference Include="Lidgren.Network">
+      <HintPath>..\OuyaSdk\MonoGame\Lidgren.Network.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
-      <HintPath>Libs\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\OuyaSdk\MonoGame\MonoGame.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -58,9 +64,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OuyaController.cs" />
     <Compile Include="VirtualControllerSprite.cs" />
-    <Compile Include="OuyaInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Content\spriteFont1.xnb" />
@@ -104,12 +108,6 @@
   <ItemGroup>
     <Content Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="MonoGameOuyaPlugin\MonoGameOuyaPlugin.csproj">
-      <Project>{02686415-6BD8-45E7-8E38-45B103CAAF7B}</Project>
-      <Name>MonoGameOuyaPlugin</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
      Other similar extension points exist, see Microsoft.Common.targets.
@@ -118,4 +116,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\OuyaSdk\OuyaSdk.csproj">
+      <Project>{3C5C877C-83E9-4BC1-984C-940052D091E7}</Project>
+      <Name>OuyaSdk</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
