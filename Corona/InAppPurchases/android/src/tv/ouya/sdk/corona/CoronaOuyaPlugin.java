@@ -18,6 +18,7 @@ package tv.ouya.sdk.corona;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -130,7 +131,7 @@ public class CoronaOuyaPlugin
 		}
 	}
 
-	public static String requestPurchaseAsync(String identifier)
+	public static void requestPurchaseAsync(String identifier)
 	{
 		try
 		{
@@ -149,7 +150,6 @@ public class CoronaOuyaPlugin
 		{
 			Log.i(TAG, "requestPurchaseAsync exception: " + ex.toString());
 		}
-		return "";
 	}
 
 	public static void getReceiptsAsync()
@@ -169,5 +169,21 @@ public class CoronaOuyaPlugin
 		{
 			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
+	}
+
+	public static String getStringResource(String name) {
+		final Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			return "";
+		}
+		Resources resources = activity.getResources();
+		if (null == resources) {
+			return "";
+		}
+		int id = resources.getIdentifier(name, "string", activity.getPackageName());
+		if (id <= 0) {
+			return "";
+		}
+		return resources.getString(id);
 	}
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Corona IAP</string>
+    <string name="language">English</string>
+    <string name="Hello">***Hello from Corona SDK</string>
+
+</resources>

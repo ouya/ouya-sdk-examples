@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">电晕 IAP</string>
+    <string name="language">在应用购买</string>
+    <string name="Hello">你好，从电晕软件开发工具包</string>
+
+</resources>
