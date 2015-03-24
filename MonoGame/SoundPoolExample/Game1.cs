@@ -4,7 +4,8 @@ using Android.Content.Res;
 using Android.Media;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using TV.Ouya.Console.Api;
+using TV.Ouya.Sdk;
 
 namespace SoundPoolExample
 {
@@ -34,8 +35,8 @@ namespace SoundPoolExample
             Content.RootDirectory = "Content";
 
             _graphics.IsFullScreen = true;
-            _graphics.PreferredBackBufferWidth = 1280;
-            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
             _graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
 
             _focusManager.OnClick += OnClick;
@@ -131,6 +132,31 @@ namespace SoundPoolExample
                     button.ButtonTexture = button.ButtonInactive;
                 }
             }
+
+			if (OuyaInput.GetButton(OuyaController.BUTTON_DPAD_DOWN))
+			{
+				GetFocusManager().FocusDown();
+			}
+			if (OuyaInput.GetButton(OuyaController.BUTTON_DPAD_LEFT))
+			{
+				GetFocusManager().FocusLeft();
+			}
+			if (OuyaInput.GetButton(OuyaController.BUTTON_DPAD_RIGHT))
+			{
+				GetFocusManager().FocusRight();
+			}
+			if (OuyaInput.GetButton(OuyaController.BUTTON_DPAD_UP))
+			{
+				GetFocusManager().FocusUp();
+			}
+			if (OuyaInput.GetButton(OuyaController.BUTTON_O))
+			{
+				GetFocusManager().InvokeClick();
+			}
+			if (OuyaInput.GetButton(OuyaController.BUTTON_A))
+			{
+				Exit();
+			}
 
             base.Update(gameTime);
         }
