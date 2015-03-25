@@ -60,6 +60,7 @@ public class CoronaOuyaApplication extends android.app.Application {
 				new AsyncLuaOuyaRequestProducts(),
 				new AsyncLuaOuyaRequestPurchase(),
 				new AsyncLuaOuyaRequestReceipts(),
+				new LuaOuyaGetStringResource(),
 			};
 			luaState.register("ouyaSDK", luaFunctions);
 			luaState.pop(1);

@@ -38,7 +38,14 @@ end
 
 globals.centerX = display.contentCenterX;
 
-globals.txtHello = display.newText("Hello from Corona SDK", globals.centerX - 500, 200, "Helvetica", 24);
+local txtHello;
+if nil ~= ouyaSDK and nil ~= ouyaSDK.ouyaGetStringResource then
+	txtHello = ouyaSDK.ouyaGetStringResource("Hello");
+else
+	txtHello = "Hello from Corona SDK";
+end
+globals.txtHello = display.newText(txtHello, globals.centerX - 500, 200, "Helvetica", 24);
+
 globals.txtStatus = display.newText("", globals.centerX, 200, "Helvetica", 24);
 globals.txtGamerUsername = display.newText("Gamer Username: (unknown)", globals.centerX - 300, 240, "Helvetica", 24);
 globals.txtGamerUUID = display.newText("Gamer UUID: (unknown)", globals.centerX - 300, 270, "Helvetica", 24);

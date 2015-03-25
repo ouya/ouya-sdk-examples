@@ -7,6 +7,102 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "Corona/main.lua",
+			"settings":
+			{
+				"buffer_size": 3051,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Corona/ui.lua",
+			"settings":
+			{
+				"buffer_size": 3415,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Corona/inputs.lua",
+			"settings":
+			{
+				"buffer_size": 4680,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Corona/globals.lua",
+			"settings":
+			{
+				"buffer_size": 1278,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/sdk/corona/CoronaOuyaPlugin.java",
+			"settings":
+			{
+				"buffer_size": 4856,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/sdk/corona/CoronaOuyaActivity.java",
+			"settings":
+			{
+				"buffer_size": 5733,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/sdk/corona/CallbacksInitOuyaPlugin.java",
+			"settings":
+			{
+				"buffer_size": 5917,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/sdk/corona/LuaOuyaGetStringResource.java",
+			"settings":
+			{
+				"buffer_size": 2121,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/sdk/corona/CallbacksRequestGamerInfo.java",
+			"settings":
+			{
+				"buffer_size": 7660,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/src/tv/ouya/sdk/corona/CoronaOuyaApplication.java",
+			"settings":
+			{
+				"buffer_size": 4646,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/res/values/strings.xml",
+			"settings":
+			{
+				"buffer_size": 218,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "android/res/values-zh-rCN/strings.xml",
+			"settings":
+			{
+				"buffer_size": 201,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -32,6 +128,8 @@
 	},
 	"file_history":
 	[
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchases/android/src/tv/ouya/sdk/corona/CallbacksInitOuyaPlugin.java",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchases/android/AndroidManifest.xml",
 		"/Users/tgraupmann/tagenigma/ouya/private/ouya-sdk-examples/Corona/InAppPurchases/Corona/callbacksInitOuyaPlugin.lua",
 		"/Users/tgraupmann/tagenigma/ouya/private/ouya-sdk-examples/Corona/InAppPurchases/Corona/callbacksRequestGamerInfo.lua",
 		"/Users/tgraupmann/tagenigma/ouya/private/ouya-sdk-examples/Corona/InAppPurchases/Corona/ui.lua",
@@ -80,6 +178,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"hello",
+			"Hello",
 			"displayProduct",
 			"requestProd",
 			"requestProducts",
@@ -120,8 +220,329 @@
 	"groups":
 	[
 		{
+			"selected": 7,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Corona/main.lua",
+					"settings":
+					{
+						"buffer_size": 3051,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1549,
+								1549
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 106.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Corona/ui.lua",
+					"settings":
+					{
+						"buffer_size": 3415,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3255,
+								3258
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 546.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Corona/inputs.lua",
+					"settings":
+					{
+						"buffer_size": 4680,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								61,
+								63
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Corona/globals.lua",
+					"settings":
+					{
+						"buffer_size": 1278,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "android/src/tv/ouya/sdk/corona/CoronaOuyaPlugin.java",
+					"settings":
+					{
+						"buffer_size": 4856,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4475,
+								4492
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1936.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "android/src/tv/ouya/sdk/corona/CoronaOuyaActivity.java",
+					"settings":
+					{
+						"buffer_size": 5733,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2012,
+								2012
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "android/src/tv/ouya/sdk/corona/CallbacksInitOuyaPlugin.java",
+					"settings":
+					{
+						"buffer_size": 5917,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1066.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "android/src/tv/ouya/sdk/corona/LuaOuyaGetStringResource.java",
+					"settings":
+					{
+						"buffer_size": 2121,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1773,
+								1773
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 301.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "android/src/tv/ouya/sdk/corona/CallbacksRequestGamerInfo.java",
+					"settings":
+					{
+						"buffer_size": 7660,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4158,
+								4215
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1052.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "android/src/tv/ouya/sdk/corona/CoronaOuyaApplication.java",
+					"settings":
+					{
+						"buffer_size": 4646,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2710,
+								2734
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 265.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "android/res/values/strings.xml",
+					"settings":
+					{
+						"buffer_size": 218,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								149,
+								203
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "android/res/values-zh-rCN/strings.xml",
+					"settings":
+					{
+						"buffer_size": 201,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								177,
+								177
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

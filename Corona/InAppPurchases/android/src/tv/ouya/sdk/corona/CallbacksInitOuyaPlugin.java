@@ -21,7 +21,7 @@ import android.util.Log;
 
 public class CallbacksInitOuyaPlugin {
 	
-	private static final String TAG = CallbacksRequestGamerInfo.class.getSimpleName();
+	private static final String TAG = CallbacksInitOuyaPlugin.class.getSimpleName();
 
 	private String mJSONData = "";
 	public String getJSONData() {
