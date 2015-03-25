@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import tv.ouya.console.api.*;
 
-public class MainActivity extends Activity {
+public class ExitActivity extends Activity {
 	
-	private static final String TAG = MainActivity.class.getSimpleName();
+	private static final String TAG = ExitActivity.class.getSimpleName();
 	
 	Button m_btnExit = null;
 	
@@ -26,13 +24,13 @@ public class MainActivity extends Activity {
 		}
 		return resources.getString(id);
 	}
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		FrameLayout content = (FrameLayout)findViewById(android.R.id.content);
+		View content = (View)findViewById(android.R.id.content);
 		if (null != content) {
 			Log.d(TAG, "disable screensaver");
 			content.setKeepScreenOn(true);
@@ -50,10 +48,28 @@ public class MainActivity extends Activity {
 		Log.d(TAG, "Localized string: app_name="+getStringResource("app_name"));
 		Log.d(TAG, "Localized string: exit="+getStringResource("exit"));
 		
-		if (OuyaFacade.isRunningOnOUYASupportedHardware(this)) {
-			Log.d(TAG, getStringResource("is_running_on_ouya_supported_hardware"));
+		Log.i(TAG, "onCreate");
+	}
+
+	@Override
+	protected void onPause() {
+		if (isFinishing()) {
+			Log.i(TAG, "onPause: Game is finishing...");
 		} else {
-			Log.d(TAG, getStringResource("not_running_on_ouya_supported_hardware"));
+			Log.i(TAG, "onPause");
 		}
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		Log.i(TAG, "onResume");
+		super.onResume();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.i(TAG, "onDestroy");
 	}
 }
