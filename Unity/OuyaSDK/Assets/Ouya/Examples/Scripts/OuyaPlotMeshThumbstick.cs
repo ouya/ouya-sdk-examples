@@ -16,9 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-#if UNITY_ANDROID && !UNITY_EDITOR
-using tv.ouya.console.api;
-#endif
 using tv.ouya.console.api;
 using UnityEngine;
 using Object=UnityEngine.Object;
@@ -38,8 +35,6 @@ public class OuyaPlotMeshThumbstick : MonoBehaviour
     private float[] m_pixelVs = null;
 
     public Color32 BackgroundColor = Color.clear;
-
-    private static bool m_toggleGraph = true;
 
     private static Color m_plotBackground = new Color(0f, 0f, 0f, 0.5f);
 

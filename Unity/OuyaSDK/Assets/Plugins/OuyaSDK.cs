@@ -33,18 +33,16 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string VERSION = "1.2.1494.2";
+    public const string VERSION = "1.2.1494.3";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
-    private static OuyaUnityPlugin m_ouyaUnityPlugin = null;
-
     static OuyaSDK()
     {
         // attach our thread to the java vm; obviously the main thread is already attached but this is good practice..
         AndroidJNI.AttachCurrentThread();
 
-        m_ouyaUnityPlugin = new OuyaUnityPlugin(UnityPlayer.currentActivity);
+        new OuyaUnityPlugin(UnityPlayer.currentActivity);
     }
 
     public class NdkWrapper

@@ -212,21 +212,35 @@ public class MainActivity extends OuyaUnityActivity
     @Override
     public void onResume()
 	{
+		Log.i(TAG, "onResume");
 		super.onResume();
 
 		UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
-		if (null != IOuyaActivity.GetUnityPlayer()) {
-			IOuyaActivity.GetUnityPlayer().resume();
-		}
+
+		/*
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if (null != IOuyaActivity.GetUnityPlayer()) {
+					IOuyaActivity.GetUnityPlayer().resume();
+				}
+				UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
+			}
+		}, 250);
+		*/
     }
 
     @Override
     public void onPause()
 	{
+		Log.i(TAG, "onPause");
 		super.onPause();
 
 		if (!isFinishing()) {
 			UnityPlayer.UnitySendMessage("OuyaGameObject", "onPause", "");
+
+			/*
 			final Handler handler = new Handler();
 			handler.postDelayed(new Runnable() {
 				@Override
@@ -236,6 +250,7 @@ public class MainActivity extends OuyaUnityActivity
 					}
 				}
 			}, 250);
+			*/
 		}
     }
 
