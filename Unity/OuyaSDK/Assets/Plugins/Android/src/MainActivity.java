@@ -215,9 +215,6 @@ public class MainActivity extends OuyaUnityActivity
 		Log.i(TAG, "onResume");
 		super.onResume();
 
-		UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
-
-		/*
 		final Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
 			@Override
@@ -228,7 +225,6 @@ public class MainActivity extends OuyaUnityActivity
 				UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
 			}
 		}, 250);
-		*/
     }
 
     @Override
@@ -240,7 +236,6 @@ public class MainActivity extends OuyaUnityActivity
 		if (!isFinishing()) {
 			UnityPlayer.UnitySendMessage("OuyaGameObject", "onPause", "");
 
-			/*
 			final Handler handler = new Handler();
 			handler.postDelayed(new Runnable() {
 				@Override
@@ -250,7 +245,6 @@ public class MainActivity extends OuyaUnityActivity
 					}
 				}
 			}, 250);
-			*/
 		}
     }
 
