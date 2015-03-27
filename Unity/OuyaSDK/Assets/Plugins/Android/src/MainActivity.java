@@ -96,24 +96,7 @@ public class MainActivity extends Activity
 			Log.d(TAG, "disable screensaver");
 		}
         mInputView.setKeepScreenOn(true);
-
-		keepFocus();
 	}
-
-	private void keepFocus() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-				if (null != mInputView) {
-					mInputView.requestFocus();
-				}
-				if (!isFinishing()) {
-					keepFocus();
-				}
-            }
-        }, 1000);
-    }
 
 	// Quit Unity
 	@Override protected void onDestroy ()
@@ -201,6 +184,61 @@ public class MainActivity extends Activity
 		if (null != mInputView) {
 			mInputView.requestFocus();
 		}
+	}
+
+	@Override
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+    	if (sEnableLogging) {
+			Log.i(TAG, "dispatchGenericMotionEvent");
+		}
+    	if (null != mInputView) {
+			mInputView.dispatchGenericMotionEvent(motionEvent);
+		}
+		return true;
+    }
+	
+	@Override
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+    	if (sEnableLogging) {
+			Log.i(TAG, "dispatchKeyEvent");
+		}
+    	if (null != mInputView) {
+			mInputView.dispatchKeyEvent(keyEvent);
+		}
+		return true;
+    }
+
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+    	if (sEnableLogging) {
+			Log.i(TAG, "onGenericMotionEvent");
+		}
+    	if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+    	if (sEnableLogging) {
+			Log.i(TAG, "onKeyUp");
+		}
+    	if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+    	if (sEnableLogging) {
+			Log.i(TAG, "onKeyDown");
+		}
+    	if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+		return true;
 	}
 
     @Override
