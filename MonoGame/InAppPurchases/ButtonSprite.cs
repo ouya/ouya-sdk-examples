@@ -30,25 +30,15 @@ namespace InAppPurchases
         /// </summary>
         public Vector2 TextOffset = Vector2.Zero;
 
-        public SpriteFont Font = null;
-        public Texture2D ButtonTexture = null;
-        public Texture2D ButtonActive = null;
-        public Texture2D ButtonInactive = null;
-        public string Text = string.Empty;
+		/// <summary>
+		/// True if the button is active
+		/// </summary>
+        public bool m_isActive = false;
 
-        /// <summary>
-        /// Set the texture references
-        /// </summary>
-        public void Initialize(
-            SpriteFont font,
-            Texture2D buttonActive,
-            Texture2D buttonInactive)
-        {
-            Font = font;
-            ButtonActive = buttonActive;
-            ButtonInactive = buttonInactive;
-            ButtonTexture = ButtonInactive;
-        }
+		/// <summary>
+		/// Text to show on the button
+		/// </summary>
+        public string Text = string.Empty;
 
         private void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
@@ -67,12 +57,14 @@ namespace InAppPurchases
         /// Draw the sprite
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public void Draw(SpriteBatch spriteBatch)
+		public void Draw(SpriteBatch spriteBatch, SpriteFont font, Texture2D buttonActive, Texture2D buttonInactive)
         {
-            Draw(spriteBatch, ButtonTexture);
-			Activity1.DrawString(spriteBatch, Font, Text, Position + TextOffset, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			if (m_isActive) {
+				Draw (spriteBatch, buttonActive);
+			} else {
+				Draw (spriteBatch, buttonInactive);
+			}
+			Activity1.DrawString(spriteBatch, font, Text, Position + TextOffset, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
-
-
     }
 }

@@ -2,8 +2,11 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.610510541395" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Activity1.cs">
     <Files>
-      <File FileName="Activity1.cs" Line="4" Column="4" />
-      <File FileName="Game1.cs" Line="1" Column="1" />
+      <File FileName="Activity1.cs" Line="1" Column="1" />
+      <File FileName="Game1.cs" Line="23" Column="23" />
+      <File FileName="Resources\Values\Strings.xml" Line="2" Column="2" />
+      <File FileName="Resources\Values-zh-rCN\Strings.xml" Line="2" Column="2" />
+      <File FileName="c:\ouya-sdk-examples\MonoGame\InAppPurchases\ButtonSprite.cs" Line="10" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -12,7 +15,11 @@
             <Node name="Assets" expanded="True">
               <Node name="Content" expanded="True" />
             </Node>
-            <Node name="Resources" expanded="True" />
+            <Node name="Jars" expanded="True" />
+            <Node name="Resources" expanded="True">
+              <Node name="Values" expanded="True" />
+              <Node name="Values-zh-rCN" expanded="True" />
+            </Node>
             <Node name="Activity1.cs" selected="True" />
           </Node>
           <Node name="OuyaSdk" expanded="True">

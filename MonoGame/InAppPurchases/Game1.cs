@@ -38,9 +38,9 @@ namespace InAppPurchases
 			"__DECLINED__THIS_PURCHASE",
 		};
 
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        SpriteFont font;
+        GraphicsDeviceManager m_graphics;
+		SpriteBatch m_spriteBatch;
+		SpriteFont m_font;
         List<ButtonSprite> m_buttons = new List<ButtonSprite>();
         FocusManager m_focusManager = new FocusManager();
         private static string m_debugText = string.Empty;
@@ -54,17 +54,24 @@ namespace InAppPurchases
 		private static List<Receipt> s_receipts = new List<Receipt> ();
 		private static int s_productIndex = 0;
 
+		private Texture2D m_inactiveButton = null;
+		private Texture2D m_activeButton = null;
+
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+			m_graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
 
-            graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
+			m_graphics.IsFullScreen = true;
+			m_graphics.PreferredBackBufferWidth = 1920;
+			m_graphics.PreferredBackBufferHeight = 1080;
+			m_graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft;
         }
+
+		void DeviceResetEvent(object sender, EventArgs args) {
+			Log.Info (TAG, "Device Reset Event Occurred.");
+		}
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -75,24 +82,10 @@ namespace InAppPurchases
         protected override void Initialize()
         {
             base.Initialize();
-        }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
-		{
-			// Create a new SpriteBatch, which can be used to draw textures.
-			spriteBatch = new SpriteBatch (GraphicsDevice);
-
-			// TODO: use this.Content to load your game content here
-			font = Content.Load<SpriteFont> (Activity1.GetLocalizedString ("FontName"));
+			m_graphics.GraphicsDevice.DeviceReset += DeviceResetEvent;
 
 			BtnRequestProducts = new ButtonSprite ();
-			BtnRequestProducts.Initialize (font,
-				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
-				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestProducts.Position = new Vector2 (150, 200);
 			BtnRequestProducts.TextureScale = new Vector2 (2.25f, 0.5f);
 			BtnRequestProducts.Text = Activity1.GetLocalizedString("RequestProductList");
@@ -100,9 +93,6 @@ namespace InAppPurchases
 			m_buttons.Add (BtnRequestProducts);
 
 			BtnRequestPurchase = new ButtonSprite ();
-			BtnRequestPurchase.Initialize (font,
-				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
-				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestPurchase.Position = new Vector2 (500, 200);
 			BtnRequestPurchase.TextureScale = new Vector2 (2f, 0.5f);
 			BtnRequestPurchase.Text = Activity1.GetLocalizedString("RequestPurchase");
@@ -110,9 +100,6 @@ namespace InAppPurchases
 			m_buttons.Add (BtnRequestPurchase);
 
 			BtnRequestReceipts = new ButtonSprite ();
-			BtnRequestReceipts.Initialize (font,
-				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
-				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestReceipts.Position = new Vector2 (800, 200);
 			BtnRequestReceipts.TextureScale = new Vector2 (2f, 0.5f);
 			BtnRequestReceipts.Text = Activity1.GetLocalizedString("RequestReceipts");
@@ -120,9 +107,6 @@ namespace InAppPurchases
 			m_buttons.Add (BtnRequestReceipts);
 
 			BtnRequestGamerInfo = new ButtonSprite ();
-			BtnRequestGamerInfo.Initialize (font,
-				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
-				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnRequestGamerInfo.Position = new Vector2 (1100, 200);
 			BtnRequestGamerInfo.TextureScale = new Vector2 (2f, 0.5f);
 			BtnRequestGamerInfo.Text = Activity1.GetLocalizedString("RequestGamerInfo");
@@ -130,9 +114,6 @@ namespace InAppPurchases
 			m_buttons.Add (BtnRequestGamerInfo);
 
 			BtnExit = new ButtonSprite ();
-			BtnExit.Initialize (font,
-				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
-				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnExit.Position = new Vector2 (1400, 200);
 			BtnExit.TextureScale = new Vector2 (1f, 0.5f);
 			BtnExit.Text = Activity1.GetLocalizedString("Exit");
@@ -140,9 +121,6 @@ namespace InAppPurchases
 			m_buttons.Add (BtnExit);
 
 			BtnPause = new ButtonSprite ();
-			BtnPause.Initialize (font,
-				Content.Load<Texture2D> ("Graphics\\ButtonActive"),
-				Content.Load<Texture2D> ("Graphics\\ButtonInactive"));
 			BtnPause.Position = new Vector2 (1650, 200);
 			BtnPause.TextureScale = new Vector2 (1f, 0.5f);
 			BtnPause.Text = Activity1.GetLocalizedString("Pause");
@@ -174,6 +152,92 @@ namespace InAppPurchases
 			m_focusManager.Mappings [BtnPause] = new FocusManager.ButtonMapping () {
 				Left = BtnExit,
 			};
+        }
+
+		// Called from Activity onResume
+		public void InitializeContent() {
+			LoadContent ();
+		}
+
+		// Called from Activity onResume
+		public void UninitializeContent() {
+			UnloadContent ();
+		}
+
+		protected override void UnloadContent ()
+		{
+			if (null != m_activeButton) {
+				m_activeButton.Dispose ();
+				m_activeButton = null;
+			}
+
+			if (null != m_inactiveButton) {
+				m_inactiveButton.Dispose ();
+				m_inactiveButton = null;
+			}
+
+			/*
+			if (null != m_spriteBatch) {
+				m_spriteBatch.Dispose ();
+				m_spriteBatch = null;
+			}
+
+			if (null != m_font) {
+				m_font = null;
+			}
+			*/
+
+			//Content.Unload ();
+
+			//spriteBatch.Dispose ();
+
+			base.UnloadContent ();
+		}
+
+		Texture2D GetAssetTexture(String texture) {
+
+			try {
+				AssetManager assetManager = Activity.ApplicationContext.Assets;
+				AssetFileDescriptor afd = assetManager.OpenFd(texture);
+				int size = 0;
+				if (null != afd) {
+					size = (int)afd.Length;
+					afd.Close();
+					Texture2D result = null;
+					using (Stream inputStream = assetManager.Open(texture, Access.Buffer))
+					{
+						result = Texture2D.FromStream (GraphicsDevice, inputStream);
+						inputStream.Close();
+					}
+					return result;
+				}
+			} catch (Exception e) {
+				Log.Error (TAG, string.Format("Failed to read application key exception={0}", e));
+			}
+
+			return null;
+		}
+
+        /// <summary>
+        /// LoadContent will be called once per game and is the place to load
+        /// all of your content.
+        /// </summary>
+        protected override void LoadContent()
+		{
+			if (null == GraphicsDevice) {
+				return;
+			}
+			// Create a new SpriteBatch, which can be used to draw textures.
+			m_spriteBatch = new SpriteBatch (GraphicsDevice);
+
+			// TODO: use this.Content to load your game content here
+			m_font = Content.Load<SpriteFont> (Activity1.GetLocalizedString ("FontName"));
+
+			//m_inactiveButton = Content.Load<Texture2D> ("ButtonInactive.png");
+			//m_activeButton = Content.Load<Texture2D> ("ButtonActive.png");
+
+			m_inactiveButton = GetAssetTexture ("ButtonInactive.png");
+			m_activeButton = GetAssetTexture ("ButtonActive.png");
 		}
 
 		public class CustomRequestGamerInfoListener : RequestGamerInfoListener
@@ -294,14 +358,8 @@ namespace InAppPurchases
 
             foreach (ButtonSprite button in m_buttons)
             {
-                if (button == m_focusManager.SelectedButton)
-                {
-                    button.ButtonTexture = button.ButtonActive;
-                }
-                else
-                {
-                    button.ButtonTexture = button.ButtonInactive;
-                }
+				// button is active if the selected button is true
+				button.m_isActive = (button == m_focusManager.SelectedButton);
             }
 
 			if (OuyaInput.GetButtonUp (OuyaController.BUTTON_MENU)) {
@@ -363,18 +421,18 @@ namespace InAppPurchases
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+			m_graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+			m_spriteBatch.Begin();
 
-			Activity1.DrawString(spriteBatch, font, string.Format("Hello from MonoGame! {0} | {1}",
+			Activity1.DrawString(m_spriteBatch, m_font, string.Format("Hello from MonoGame! {0} | {1}",
 				Activity1._ouyaFacade.IsRunningOnOUYAHardware ? "(Running on OUYA)" : "Not Running on OUYA",
                 m_debugText), new Vector2(100, 100), Color.White);
 
-			Activity1.DrawString(spriteBatch, font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
+			Activity1.DrawString(m_spriteBatch, m_font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
             foreach (ButtonSprite button in m_buttons)
             {
-                button.Draw(spriteBatch);
+				button.Draw(m_spriteBatch, m_font, m_activeButton, m_inactiveButton);
             }
 
             #region Products
@@ -385,7 +443,7 @@ namespace InAppPurchases
 				for (int index = 0; index < s_products.Count; ++index)
 				{
 					Product product = s_products[index];
-					Activity1.DrawString(spriteBatch, font,
+					Activity1.DrawString(m_spriteBatch, m_font,
 						string.Format("{0} Product: {1} LocalPrice={2}",
 							index == s_productIndex ? "*" : string.Empty,
 							product.Identifier,
@@ -405,14 +463,14 @@ namespace InAppPurchases
 	            for (int index = 0; index < s_receipts.Count; ++index)
 	            {
 					Receipt receipt = s_receipts[index];
-					Activity1.DrawString(spriteBatch, font, string.Format("Receipt: {0} LocalPrice={1}", receipt.Identifier, receipt.LocalPrice), position, Color.White);
+					Activity1.DrawString(m_spriteBatch, m_font, string.Format("Receipt: {0} LocalPrice={1}", receipt.Identifier, receipt.LocalPrice), position, Color.White);
 	                position += new Vector2(0, 20);
 	            }
 			}
 
             #endregion
 
-            spriteBatch.End();
+			m_spriteBatch.End();
 
             base.Draw(gameTime);
         }

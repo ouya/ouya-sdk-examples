@@ -70,6 +70,8 @@
     <AndroidAsset Include="Assets\key.der" />
     <AndroidAsset Include="Assets\MiGameCenterSDKService.apk" />
     <AndroidAsset Include="Assets\Content\FZLanTingHei-B-GBK.xnb" />
+    <AndroidAsset Include="Assets\ButtonActive.png" />
+    <AndroidAsset Include="Assets\ButtonInactive.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Values\Strings.xml" />

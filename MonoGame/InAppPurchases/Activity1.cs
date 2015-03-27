@@ -56,6 +56,8 @@ namespace InAppPurchases
 		// listener for getting receipts
 		private static RequestReceiptsListener sRequestReceiptsListener = null;
 
+		private Game1 mGame = null;
+
         protected override void OnCreate(Bundle bundle)
         {
 			sInstance = this;
@@ -63,8 +65,8 @@ namespace InAppPurchases
             base.OnCreate(bundle);
 
             Game1.Activity = this;
-            var g = new Game1();
-            SetContentView(g.Window);
+			mGame = new Game1();
+			SetContentView(mGame.Window);
 
 			using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this))
 			{
@@ -75,7 +77,7 @@ namespace InAppPurchases
 			if (null != content) {
 				content.KeepScreenOn = true;
 			}
-            g.Run();
+			mGame.Run();
 
 			Bundle developerInfo = new Bundle();
 
@@ -329,6 +331,18 @@ namespace InAppPurchases
 					Log.Error (TAG, "Failed to draw string text=" + text);
 				}
 			}
+		}
+
+		protected override void OnPause ()
+		{
+			base.OnPause ();
+			mGame.UninitializeContent ();
+		}
+
+		protected override void OnResume ()
+		{
+			base.OnResume ();
+			mGame.InitializeContent ();
 		}
     }
 }
