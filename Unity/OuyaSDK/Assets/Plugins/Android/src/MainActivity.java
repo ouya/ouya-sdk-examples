@@ -16,44 +16,43 @@
 
 package tv.ouya.sdk;
 
-import tv.ouya.console.api.OuyaController;
-import tv.ouya.sdk.*;
-
-import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.NativeActivity;
 import android.content.*;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.InputDevice;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
 
 import com.unity3d.player.UnityPlayer;
-
-import tv.ouya.console.api.*;
 
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends OuyaUnityActivity
+import tv.ouya.console.api.*;
+import tv.ouya.sdk.*;
+
+public class MainActivity extends Activity
 {
-	private static final String TAG = MainActivity.class.getSimpleName();
+	private static final String TAG = "MainActivity";
 
-	protected void onCreate(Bundle savedInstanceState)
+	private static final boolean sEnableLogging = false;
+
+	protected UnityPlayer mUnityPlayer;		// don't change the name of this variable; referenced from native code
+
+	OuyaInputView mInputView = null;
+
+	// Setup activity layout
+	@Override protected void onCreate (Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
-
 		//make activity accessible to Unity
 		IOuyaActivity.SetActivity(this);
 
@@ -76,109 +75,139 @@ public class MainActivity extends OuyaUnityActivity
 			e.printStackTrace();
 		}
 
-		// Create the View
-		RelativeLayout mainLayout = new RelativeLayout(this);
-		LayoutParams lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		mainLayout.setLayoutParams(lp);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		super.onCreate(savedInstanceState);
 
-		// disable the screensaver
-		mainLayout.setKeepScreenOn(true);
+		getWindow().takeSurface(null);
+		setTheme(android.R.style.Theme_NoTitleBar_Fullscreen);
+		getWindow().setFormat(PixelFormat.RGB_565);
 
-		LinearLayout linearLayout = new LinearLayout(this);
-		lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		linearLayout.setOrientation(LinearLayout.VERTICAL);
-		mainLayout.addView(linearLayout, 0, lp);
-		
-		FrameLayout unityLayout = new FrameLayout(this);
-		lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		linearLayout.addView(unityLayout, 0, lp);
-		
-		// Create the UnityPlayer
-        IOuyaActivity.SetUnityPlayer(new UnityPlayer(this));
-        int glesMode = IOuyaActivity.GetUnityPlayer().getSettings().getInt("gles_mode", 1);
-        boolean trueColor8888 = false;
-        IOuyaActivity.GetUnityPlayer().init(glesMode, trueColor8888);
-        setContentView(mainLayout);
+		mUnityPlayer = new UnityPlayer(this);
+		if (mUnityPlayer.getSettings ().getBoolean ("hide_status_bar", true))
+			getWindow ().setFlags (WindowManager.LayoutParams.FLAG_FULLSCREEN,
+			                       WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Add the Unity view
-        lp = new LayoutParams (LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        unityLayout.addView(IOuyaActivity.GetUnityPlayer().getView(), 0, lp);
+		setContentView(mUnityPlayer);
+		//mUnityPlayer.requestFocus();
 
-		// Set the focus
-		mainLayout.setFocusableInTouchMode(true);
+        mInputView = new OuyaInputView(this);
+        
+		if (sEnableLogging) {
+			Log.d(TAG, "disable screensaver");
+		}
+        mInputView.setKeepScreenOn(true);
+
+		keepFocus();
 	}
 
-    /**
-     * Broadcast listener to handle re-requesting the receipts when a user has re-authenticated
-     */
+	private void keepFocus() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+				if (null != mInputView) {
+					mInputView.requestFocus();
+				}
+				if (!isFinishing()) {
+					keepFocus();
+				}
+            }
+        }, 1000);
+    }
 
-    private BroadcastReceiver mAuthChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-			UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
-			if (null != unityOuyaFacade)
-			{
-				unityOuyaFacade.requestReceipts();
-			}
-        }
-    };
+	// Quit Unity
+	@Override protected void onDestroy ()
+	{
+		mUnityPlayer.quit();
+		super.onDestroy();
+		mInputView.shutdown();
+	}
 
-    /**
+	/**
      * Broadcast listener to handle menu appearing
      */
 
     private BroadcastReceiver mMenuAppearingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-			Log.i(TAG, "BroadcastReceiver intent=" + intent.getAction());
+			if (sEnableLogging) {
+				Log.i(TAG, "BroadcastReceiver intent=" + intent.getAction());
+			}
 			if(intent.getAction().equals(OuyaIntent.ACTION_MENUAPPEARING)) {
-				//pause music, free up resources, etc.
-
-				//invoke a unity callback
-				Log.i(TAG, "BroadcastReceiver tell Unity we see the menu appearing");
+				if (sEnableLogging) {
+					Log.i(TAG, "OuyaGameObject->onMenuAppearing");
+				}
 				UnityPlayer.UnitySendMessage("OuyaGameObject", "onMenuAppearing", "");
-				Log.i(TAG, "BroadcastReceiver notified Unity onMenuAppearing");
 			}
         }
     };
 
-    /**
-     * Request an up to date list of receipts and start listening for any account changes
-     * whilst the application is running.
-     */
     @Override
     public void onStart() {
         super.onStart();
-
-        // Request an up to date list of receipts for the user.
-        //requestReceipts();
-
-        // Register to receive notifications about account changes. This will re-query
-        // the receipt list in order to ensure it is always up to date for whomever
-        // is logged in.
-        IntentFilter accountsChangedFilter = new IntentFilter();
-        accountsChangedFilter.addAction(AccountManager.LOGIN_ACCOUNTS_CHANGED_ACTION);
-        registerReceiver(mAuthChangeReceiver, accountsChangedFilter);
 
 		IntentFilter menuAppearingFilter = new IntentFilter();
 		menuAppearingFilter.addAction(OuyaIntent.ACTION_MENUAPPEARING);
 		registerReceiver(mMenuAppearingReceiver, menuAppearingFilter);
     }
 
-    /**
-     * Unregister the account change listener when the application is stopped.
-     */
     @Override
     public void onStop() {
-		unregisterReceiver(mAuthChangeReceiver);
 		unregisterReceiver(mMenuAppearingReceiver);
         super.onStop();
-		finish();
     }
+
+	// Pause Unity
+	@Override protected void onPause()
+	{
+		super.onPause();
+		if (sEnableLogging) {
+			Log.d(TAG, "OuyaGameObject->onPause");
+		}
+		UnityPlayer.UnitySendMessage("OuyaGameObject", "onPause", "");
+		mUnityPlayer.pause();
+		if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+	}
+
+	// Resume Unity
+	@Override protected void onResume()
+	{
+		super.onResume();
+		mUnityPlayer.resume();
+		if (sEnableLogging) {
+			Log.d(TAG, "OuyaGameObject->onResume");
+		}
+		UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
+		if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+	}
+
+	// This ensures the layout will be correct.
+	@Override public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
+		mUnityPlayer.configurationChanged(newConfig);
+	}
+
+	// Notify Unity of the focus change.
+	@Override public void onWindowFocusChanged(boolean hasFocus)
+	{
+		super.onWindowFocusChanged(hasFocus);
+		mUnityPlayer.windowFocusChanged(hasFocus);
+		UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
+		if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+	}
 
     @Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		Log.i(TAG, "onActivityResult");
+		if (sEnableLogging) {
+			Log.i(TAG, "onActivityResult");
+		}
 		super.onActivityResult(requestCode, resultCode, data);
 		UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
 		if (null != unityOuyaFacade)
@@ -190,82 +219,5 @@ public class MainActivity extends OuyaUnityActivity
 		} else {
 			Log.e(TAG, "UnityOuyaFacade is null");
 		}
-	}
-
-	@Override
-    protected void onDestroy()
-	{
-		UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
-		if (null != unityOuyaFacade)
-		{
-			unityOuyaFacade.onDestroy();
-		}
-
-		if (null != IOuyaActivity.GetUnityPlayer())
-		{
-			IOuyaActivity.GetUnityPlayer().quit();
-		}
-
-        super.onDestroy();
-    }
-
-    @Override
-    public void onResume()
-	{
-		Log.i(TAG, "onResume");
-		super.onResume();
-
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				if (null != IOuyaActivity.GetUnityPlayer()) {
-					IOuyaActivity.GetUnityPlayer().resume();
-				}
-				UnityPlayer.UnitySendMessage("OuyaGameObject", "onResume", "");
-			}
-		}, 250);
-    }
-
-    @Override
-    public void onPause()
-	{
-		Log.i(TAG, "onPause");
-		super.onPause();
-
-		if (!isFinishing()) {
-			UnityPlayer.UnitySendMessage("OuyaGameObject", "onPause", "");
-
-			final Handler handler = new Handler();
-			handler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					if (null != IOuyaActivity.GetUnityPlayer()) {
-						IOuyaActivity.GetUnityPlayer().pause();
-					}
-				}
-			}, 250);
-		}
-    }
-
-	public void onConfigurationChanged(Configuration newConfig)
-	{
-		super.onConfigurationChanged(newConfig);
-		if (null == IOuyaActivity.GetUnityPlayer())
-		{
-			Log.i(TAG, "IOuyaActivity.GetUnityPlayer() is null");
-			return;
-		}
-		IOuyaActivity.GetUnityPlayer().configurationChanged(newConfig);
-	}
-	public void onWindowFocusChanged(boolean hasFocus)
-	{
-		super.onWindowFocusChanged(hasFocus);
-		if (null == IOuyaActivity.GetUnityPlayer())
-		{
-			Log.i(TAG, "IOuyaActivity.GetUnityPlayer() is null");
-			return;
-		}
-		IOuyaActivity.GetUnityPlayer().windowFocusChanged(hasFocus);
 	}
 }

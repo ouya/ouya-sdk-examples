@@ -39,6 +39,11 @@ class OuyaInputTest : MonoBehaviour
         OuyaController.BUTTON_MENU,
     };
 
+    private void Start()
+    {
+        DontDestroyOnLoad(transform.gameObject);
+    }
+
     float GetAxis(int controller, int axis, Dictionary<int, Dictionary<int, float>> dict)
     {
         if (null == dict)

@@ -64,14 +64,14 @@ public class OuyaUnityPlugin
 						if (null == IOuyaActivity.GetActivity())
 						{
 							Log.e(TAG, "initOuyaPlugin: activity is null");
-							IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "Activity is missing");
+							UnityPlayer.UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "Activity is missing");
 							return;
 						}
 
 						if (null == IOuyaActivity.GetApplicationKey())
 						{
 							Log.e(TAG, "initOuyaPlugin: application key is null");
-							IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "Application key is missing");
+							UnityPlayer.UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "Application key is missing");
 							return;
 						}
 
@@ -109,12 +109,12 @@ public class OuyaUnityPlugin
 						IOuyaActivity.SetUnityOuyaFacade(unityOuyaFacade);
 			
 						Log.i(TAG, "initOuyaPlugin: OuyaGameObject send OnSuccessInitializePlugin");
-						IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");			
+						UnityPlayer.UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");			
 					}
 					catch (Exception e)
 					{
 						e.printStackTrace();
-						IOuyaActivity.GetUnityPlayer().UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "InitializePlugin exception");
+						UnityPlayer.UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "InitializePlugin exception");
 					}
 				}
 			};

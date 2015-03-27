@@ -7,7 +7,9 @@
 
 #define trace(fmt, ...) __android_log_print(ANDROID_LOG_DEBUG, "JNI", "trace: %s (%i) " fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
 
-#define LOG_TAG "jni.cpp"
+#define LOG_TAG "lib-ouya-ndk.cpp"
+
+#define VERBOSE_LOGGING false
 
 #define MAX_CONTROLLERS 4
 
@@ -18,17 +20,21 @@ static std::vector< std::map<int, float> > g_axis;
 static std::vector< std::map<int, bool> > g_button;
 static std::vector< std::map<int, bool> > g_buttonDown;
 static std::vector< std::map<int, bool> > g_buttonUp;
+static std::vector< std::map<int, bool> > g_lastButtonDown;
+static std::vector< std::map<int, bool> > g_lastButtonUp;
 
 void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 	jint deviceId,
 	jint axis,
 	jfloat val)
 {
-	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d axis=%d val=%f", deviceId, axis, val);
+#if VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d axis=%d val=%f", deviceId, axis, val);
+#endif
 	if (deviceId < 0 ||
 		deviceId >= MAX_CONTROLLERS)
 	{
-		return;
+		deviceId = 0;
 	}
 	g_axis[deviceId][axis] = val;
 }
@@ -38,11 +44,13 @@ void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
 	jint keyCode,
 	jint action)
 {
-	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
+#if VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
+#endif
 	if (deviceId < 0 ||
 		deviceId >= MAX_CONTROLLERS)
 	{
-		return;
+		deviceId = 0;
 	}
 
 	bool buttonDown = action == 0;
@@ -75,7 +83,9 @@ static int method_table_size2 = sizeof(method_table2) / sizeof(method_table2[0])
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
+#if VERBOSE_LOGGING
 	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "JNI_OnLoad");
+#endif
 
 	for (int index = 0; index < MAX_CONTROLLERS; ++index)
 	{
@@ -83,6 +93,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		g_button.push_back(std::map<int, bool>());
 		g_buttonDown.push_back(std::map<int, bool>());
 		g_buttonUp.push_back(std::map<int, bool>());
+		g_lastButtonDown.push_back(std::map<int, bool>());
+		g_lastButtonUp.push_back(std::map<int, bool>());
 	}
 
 	JNIEnv* env;
@@ -91,16 +103,30 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		return JNI_ERR;
 	}
 
-	jclass clazz = env->FindClass("tv/ouya/sdk/OuyaUnityActivity");
+	jclass clazz = env->FindClass("tv/ouya/sdk/OuyaInputView");
 	if (clazz)
 	{
 		jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
 		ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
-		env->DeleteLocalRef(clazz);
+		jfieldID fieldNativeInitialized = env->GetStaticFieldID(clazz, "sNativeInitialized", "Z");
+		if (fieldNativeInitialized)
+		{
+			env->SetStaticBooleanField(clazz, fieldNativeInitialized, true);
+			env->DeleteLocalRef(clazz);
+#if VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Native plugin has loaded.");
+#endif
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find sNativeInitialized field");
+			env->DeleteLocalRef(clazz);
+			return JNI_ERR;
+		}
 	}
 	else
 	{
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Failed to find OuyaUnityActivity");
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find OuyaInputView class");
 		return JNI_ERR;
 	}
 
@@ -179,8 +205,8 @@ extern "C"
 			return false;
 		}
 
-		std::map<int, bool>::const_iterator search = g_buttonDown[deviceId].find(keyCode);
-		if (search != g_buttonDown[deviceId].end())
+		std::map<int, bool>::const_iterator search = g_lastButtonDown[deviceId].find(keyCode);
+		if (search != g_lastButtonDown[deviceId].end())
 		{
 			return search->second;
 		}
@@ -196,8 +222,8 @@ extern "C"
 			return false;
 		}
 
-		std::map<int, bool>::const_iterator search = g_buttonUp[deviceId].find(keyCode);
-		if (search != g_buttonUp[deviceId].end())
+		std::map<int, bool>::const_iterator search = g_lastButtonUp[deviceId].find(keyCode);
+		if (search != g_lastButtonUp[deviceId].end())
 		{
 			return search->second;
 		}
@@ -207,8 +233,26 @@ extern "C"
 	// clear the button state for detecting up and down
 	void clearButtonStates()
 	{
+		if (g_buttonDown.size() == 0) {
+			return;
+		}
+		if (g_buttonUp.size() == 0) {
+			return;
+		}
 		for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId)
 		{
+			g_lastButtonDown[deviceId].clear();
+			g_lastButtonUp[deviceId].clear();
+			for (std::map<int, bool>::iterator it = g_buttonDown[deviceId].begin(); it != g_buttonDown[deviceId].end(); ++it)
+			{
+				int keyCode = it->first;
+				g_lastButtonDown[deviceId][keyCode] = g_buttonDown[deviceId][keyCode];
+			}
+			for (std::map<int, bool>::iterator it = g_buttonUp[deviceId].begin(); it != g_buttonUp[deviceId].end(); ++it)
+			{
+				int keyCode = it->first;
+				g_lastButtonUp[deviceId][keyCode] = g_buttonUp[deviceId][keyCode];
+			}
 			g_buttonDown[deviceId].clear();
 			g_buttonUp[deviceId].clear();
 		}
@@ -217,6 +261,9 @@ extern "C"
 	// clear the axis values
 	void clearAxes()
 	{
+		if (g_axis.size() == 0) {
+			return;
+		}
 		for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId) {
 			g_axis[deviceId].clear();
 		}
@@ -225,6 +272,15 @@ extern "C"
 	// clear the button values
 	void clearButtons()
 	{
+		if (g_button.size() == 0) {
+			return;
+		}
+		if (g_buttonDown.size() == 0) {
+			return;
+		}
+		if (g_buttonUp.size() == 0) {
+			return;
+		}
 		for (int deviceId = 0; deviceId < MAX_CONTROLLERS; ++deviceId) {
 			g_button[deviceId].clear();
 			g_buttonDown[deviceId].clear();

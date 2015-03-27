@@ -71,6 +71,7 @@ public class OuyaMenuAdmin : MonoBehaviour
                 "Assets/Plugins/Android/src/IOuyaActivity.java",
                 "Assets/Plugins/Android/src/MainActivity.java",
                 "Assets/Plugins/Android/src/OuyaUnityActivity.java",
+                "Assets/Plugins/Android/src/OuyaInputView.java",
                 "Assets/Plugins/Android/src/OuyaUnityPlugin.java",
                 "Assets/Plugins/Android/src/UnityOuyaFacade.java",
             };

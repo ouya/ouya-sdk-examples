@@ -37,17 +37,6 @@ public class IOuyaActivity
 		m_activity = activity;
 	}
 
-	// save reference to the unity player
-	protected static UnityPlayer m_unityPlayer = null;
-	public static UnityPlayer GetUnityPlayer()
-	{
-		return m_unityPlayer;
-	}
-	public static void SetUnityPlayer(UnityPlayer unityPlayer)
-	{
-		m_unityPlayer = unityPlayer;
-	}
-
 	// save reference to the bundle
 	protected static Bundle m_savedInstanceState = null;
 	public static Bundle GetSavedInstanceState()
