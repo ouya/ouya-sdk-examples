@@ -42,7 +42,7 @@ end
 inputs.onKeyUp = function (playerNum, button)
 
 	if playerNum < 0 or playerNum > OuyaController.MAX_CONTROLLERS then
-		return false;
+		playerNum = 0;
 	end
 	    
     if (button == OuyaController.BUTTON_MENU) then
@@ -104,6 +104,10 @@ inputs.onKeyUp = function (playerNum, button)
     		globals.txtStatus.text = "Requesting receipts...";
     		print "Accessing plugin_ouya...";
     		plugin_ouya.asyncLuaOuyaRequestReceipts(callbacksRequestReceipts.onSuccess, callbacksRequestReceipts.onFailure, callbacksRequestReceipts.onCancel);	
+    	elseif globals.focusButton == globals.btnExit then
+    		globals.txtStatus.text = "Exiting...";
+    		print "Exiting...";
+    		native.requestExit();
     	end
     end
        	
