@@ -52,7 +52,8 @@ globals.btnProducts = helpers.createButton(globals.centerX - 400, 400, 1.5, 0.5,
 globals.btnPurchase = helpers.createButton(globals.centerX - 175, 400, 1.75, 0.5, "Request Purchase", 0, 0, 24);
 globals.btnReceipts = helpers.createButton(globals.centerX + 50, 400, 1.5, 0.5, "Get Receipts", 0, 0, 24);
 globals.btnGamerInfo = helpers.createButton(globals.centerX + 275, 400, 1.75, 0.5, "Request Gamer Info", 0, 0, 24);
-globals.btnPause = helpers.createButton(globals.centerX + 450, 400, 0.75, 0.5, "Pause", 0, 0, 24);
+globals.btnExit = helpers.createButton(globals.centerX + 450, 400, 0.75, 0.5, "Exit", 0, 0, 24);
+globals.btnPause = helpers.createButton(globals.centerX + 600, 400, 0.75, 0.5, "Pause", 0, 0, 24);
 
 globals.btnProducts.btnRight = globals.btnPurchase;
 globals.btnPurchase.btnLeft = globals.btnProducts;
@@ -60,6 +61,8 @@ globals.btnPurchase.btnRight = globals.btnReceipts;
 globals.btnReceipts.btnLeft = globals.btnPurchase;
 globals.btnReceipts.btnRight = globals.btnGamerInfo;
 globals.btnGamerInfo.btnLeft = globals.btnReceipts;
-globals.btnPause.btnLeft = globals.btnGamerInfo;
+globals.btnGamerInfo.btnRight = globals.btnExit;
+globals.btnExit.btnLeft = globals.btnGamerInfo;
+globals.btnPause.btnLeft = globals.btnExit;
 
 ui.setButtonFocus (globals.btnProducts);
