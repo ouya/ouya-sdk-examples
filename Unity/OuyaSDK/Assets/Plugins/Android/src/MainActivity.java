@@ -25,6 +25,7 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -200,7 +201,33 @@ public class MainActivity extends Activity
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
     	if (sEnableLogging) {
-			Log.i(TAG, "dispatchKeyEvent");
+			Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
+		}
+		InputDevice device = keyEvent.getDevice();
+		if (null != device) {
+			String name = device.getName();
+			if (null != name &&
+				name.equals("aml_keypad")) {
+				switch (keyEvent.getKeyCode()) {
+				case 24:
+					if (sEnableLogging) {
+						Log.i(TAG, "Volume Up detected.");
+					}
+					return false;
+				case 25:
+					if (sEnableLogging) {
+						Log.i(TAG, "Volume Down detected.");
+					}
+					return false;
+				case 66:
+					if (sEnableLogging) {
+						Log.i(TAG, "Remote button detected.");
+					}
+					if (null != mInputView) {
+						return mInputView.onKeyDown(OuyaController.BUTTON_O, keyEvent);
+					}
+				}
+			}
 		}
     	if (null != mInputView) {
 			mInputView.dispatchKeyEvent(keyEvent);
