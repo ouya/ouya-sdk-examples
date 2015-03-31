@@ -197,6 +197,9 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
     					if (null != fm) {
     						//Log.i(TAG, "Add OuyaInputView to frame layout");
     						fm.addView(mInputView);
+
+    						//Log.i(TAG, "Disable screensaver");
+    						mInputView.setKeepScreenOn(true);
     						
     						//Log.i(TAG, "Request focus for OuyaInputView");
     						mInputView.requestFocus();

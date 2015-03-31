@@ -3,6 +3,7 @@ package tv.ouya.sdk.corona;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +40,30 @@ public class CoronaOuyaInputView extends View {
 	 */
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		InputDevice device = keyEvent.getDevice();
+		if (null != device) {
+			String name = device.getName();
+			if (null != name &&
+				name.equals("aml_keypad")) {
+				switch (keyEvent.getKeyCode()) {
+				case 24:
+					//VOLUME UP
+					return false;
+				case 25:
+					//VOLUME DOWN
+					return false;
+				case 66:
+					//REMOTE BUTTON
+					if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+						onKeyDown(OuyaController.BUTTON_O, keyEvent);
+					}
+					else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+						onKeyUp(OuyaController.BUTTON_O, keyEvent);
+					}
+					return false;
+				}
+			}
+		}		
 		if (keyEvent instanceof CoronaKeyEvent) {
 			//eat the extra event
 			return true;
