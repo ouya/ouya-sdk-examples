@@ -18,6 +18,7 @@ package tv.ouya.sdk.corona;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -37,8 +38,7 @@ public class CoronaOuyaPlugin
 	public static void initOuyaPlugin(String jsonData)
 		throws Exception
 	{
-		try		
-		{
+		try {
 			if (null == IOuyaActivity.GetActivity())
 			{
 				throw new Exception("Activity is not set");
@@ -84,20 +84,18 @@ public class CoronaOuyaPlugin
 
 			Log.i(TAG, "Corona Plugin Initialized.");
 		}
-		catch (Exception e) 
-		{
-			Log.i(TAG, "initOuyaPlugin exception: " + e.toString());
+		catch (Exception e) {
+			Log.e(TAG, "initOuyaPlugin exception: " + e.toString());
 			throw e;
 		}
 	}
 
 	public static void requestGamerInfo()
 	{
-		try
-		{
+		try {
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.requestGamerInfo: CoronaOuyaFacade is null");
+				Log.e(TAG, "CoronaOuyaPlugin.requestGamerInfo: CoronaOuyaFacade is null");
 			}
 			else
 			{
@@ -105,38 +103,34 @@ public class CoronaOuyaPlugin
 				IOuyaActivity.GetCoronaOuyaFacade().requestGamerInfo();
 			}
 		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "CoronaOuyaPlugin: requestGamerInfo exception: " + ex.toString());
+		catch (Exception ex) {
+			Log.e(TAG, "CoronaOuyaPlugin: requestGamerInfo exception: " + ex.toString());
 		}
 	}
 
 	public static void getProductsAsync(ArrayList<Purchasable> products)
 	{
-		try
-		{
+		try {
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.getProductsAsync: CoronaOuyaFacade is null");
+				Log.e(TAG, "CoronaOuyaPlugin.getProductsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
 				IOuyaActivity.GetCoronaOuyaFacade().requestProducts(products);
 			}
 		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
+		catch (Exception ex) {
+			Log.e(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
 		}
 	}
 
 	public static String requestPurchaseAsync(String identifier)
 	{
-		try
-		{
+		try {
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.requestPurchaseAsync: CoronaOuyaFacade is null");
+				Log.e(TAG, "CoronaOuyaPlugin.requestPurchaseAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
@@ -145,29 +139,56 @@ public class CoronaOuyaPlugin
 				IOuyaActivity.GetCoronaOuyaFacade().requestPurchase(product);
 			}
 		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "requestPurchaseAsync exception: " + ex.toString());
+		catch (Exception ex) {
+			Log.e(TAG, "requestPurchaseAsync exception: " + ex.toString());
 		}
 		return "";
 	}
 
 	public static void getReceiptsAsync()
 	{
-		try
-		{
+		try {
 			if (null == IOuyaActivity.GetCoronaOuyaFacade())
 			{
-				Log.i(TAG, "CoronaOuyaPlugin.getReceiptsAsync: CoronaOuyaFacade is null");
+				Log.e(TAG, "CoronaOuyaPlugin.getReceiptsAsync: CoronaOuyaFacade is null");
 			}
 			else
 			{
 				IOuyaActivity.GetCoronaOuyaFacade().requestReceipts();
 			}
 		}
-		catch (Exception ex) 
-		{
-			Log.i(TAG, "CoronaOuyaPlugin: getProductsAsync exception: " + ex.toString());
+		catch (Exception ex) {
+			Log.e(TAG, "CoronaOuyaPlugin: getReceiptsAsync exception: " + ex.toString());
 		}
+	}
+
+	public static String getStringResource(String name) {
+		final Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			return "";
+		}
+		Resources resources = activity.getResources();
+		if (null == resources) {
+			return "";
+		}
+		int id = resources.getIdentifier(name, "string", activity.getPackageName());
+		if (id <= 0) {
+			return "";
+		}
+		return resources.getString(id);
+	}
+
+	public static String getDeviceHardwareName() {
+		try {
+			if (null == IOuyaActivity.GetCoronaOuyaFacade()) {
+				Log.e(TAG, "CoronaOuyaPlugin.getDeviceHardwareName: CoronaOuyaFacade is null");
+			} else {
+				return IOuyaActivity.GetCoronaOuyaFacade().getDeviceHardwareName();
+			}
+		}
+		catch (Exception ex) {
+			Log.e(TAG, "CoronaOuyaPlugin: getDeviceHardwareName exception: " + ex.toString());
+		}
+		return "";	
 	}
 }

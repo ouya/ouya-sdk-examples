@@ -63,6 +63,8 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 			new AsyncLuaOuyaRequestProducts(),
 			new AsyncLuaOuyaRequestPurchase(),
 			new AsyncLuaOuyaRequestReceipts(),
+			new LuaOuyaGetDeviceHardwareName(),
+			new LuaOuyaGetStringResource(),
 		};
 		luaState.register("ouyaSDK", luaFunctions);
 		luaState.pop(1);
