@@ -224,8 +224,13 @@ public class MainActivity extends Activity
 						Log.i(TAG, "Remote button detected.");
 					}
 					if (null != mInputView) {
-						return mInputView.onKeyDown(OuyaController.BUTTON_O, keyEvent);
+						if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+							mInputView.onKeyDown(OuyaController.BUTTON_O, keyEvent);
+						} else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+							mInputView.onKeyUp(OuyaController.BUTTON_O, keyEvent);
+						}
 					}
+					return false;
 				}
 			}
 		}
