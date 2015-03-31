@@ -47,6 +47,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tv.ouya.console.api.*;
+import tv.ouya.console.api.OuyaFacade.DeviceHardware;
 
 public class CoronaOuyaFacade
 {
@@ -389,5 +390,26 @@ public class CoronaOuyaFacade
 		} else {
 			Log.e(LOG_TAG, "m_requestPurchaseListener is null");
 		}
+    }
+
+    public String getDeviceHardwareName() {
+        
+        if (null == ouyaFacade) {
+			Log.e(LOG_TAG, "OuyaFacade is null!");
+			return "";
+		}
+
+		if (!ouyaFacade.isInitialized()) {
+			Log.e(LOG_TAG, "OuyaFacade is not initialized!");
+			return "";	
+		}
+
+		DeviceHardware deviceHardware = ouyaFacade.getDeviceHardware();
+		if (null == deviceHardware) {
+			Log.e(LOG_TAG, "DeviceHardware is null!");
+			return "";
+		}
+
+		return deviceHardware.deviceName().toString();
     }
 }
