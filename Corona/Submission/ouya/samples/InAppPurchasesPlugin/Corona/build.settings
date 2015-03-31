@@ -13,13 +13,13 @@ settings =
 		},
 	},
 
-   android =
-   {
-      mainIntentFilter =
-      {
-         categories = { "tv.ouya.intent.category.GAME" },
-      }
-   },
+	android =
+	{
+		mainIntentFilter =
+		{
+			categories = { "tv.ouya.intent.category.GAME" },
+		}
+	},
 
 	iphone =
 	{

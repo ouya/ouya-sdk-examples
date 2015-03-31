@@ -48,6 +48,7 @@ globals.txtGamerUsername = display.newText("Gamer Username: (unknown)", globals.
 globals.txtGamerUUID = display.newText("Gamer UUID: (unknown)", globals.centerX - 300, 270, "Helvetica", 24);
 globals.txtInstructions = display.newText("Use DPAD to switch between buttons | Press O to click the button", globals.centerX - 300, 325, "Helvetica", 24);
 
+globals.btnDevice = helpers.createButton(globals.centerX - 605, 400, 1.5, 0.5, "Get Device", 0, 0, 24);
 globals.btnProducts = helpers.createButton(globals.centerX - 400, 400, 1.5, 0.5, "Get Products", 0, 0, 24);
 globals.btnPurchase = helpers.createButton(globals.centerX - 175, 400, 1.75, 0.5, "Request Purchase", 0, 0, 24);
 globals.btnReceipts = helpers.createButton(globals.centerX + 50, 400, 1.5, 0.5, "Get Receipts", 0, 0, 24);
@@ -55,6 +56,8 @@ globals.btnGamerInfo = helpers.createButton(globals.centerX + 275, 400, 1.75, 0.
 globals.btnExit = helpers.createButton(globals.centerX + 450, 400, 0.75, 0.5, "Exit", 0, 0, 24);
 globals.btnPause = helpers.createButton(globals.centerX + 600, 400, 0.75, 0.5, "Pause", 0, 0, 24);
 
+globals.btnDevice.btnRight = globals.btnProducts;
+globals.btnProducts.btnLeft = globals.btnDevice;
 globals.btnProducts.btnRight = globals.btnPurchase;
 globals.btnPurchase.btnLeft = globals.btnProducts;
 globals.btnPurchase.btnRight = globals.btnReceipts;
@@ -65,4 +68,4 @@ globals.btnGamerInfo.btnRight = globals.btnExit;
 globals.btnExit.btnLeft = globals.btnGamerInfo;
 globals.btnPause.btnLeft = globals.btnExit;
 
-ui.setButtonFocus (globals.btnProducts);
+ui.setButtonFocus (globals.btnDevice);

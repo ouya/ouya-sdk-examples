@@ -108,6 +108,13 @@ inputs.onKeyUp = function (playerNum, button)
     		globals.txtStatus.text = "Exiting...";
     		print "Exiting...";
     		native.requestExit();
+    	elseif globals.focusButton == globals.btnDevice then
+    		print "Getting device...";
+			if nil ~= plugin_ouya and nil ~= plugin_ouya.ouyaGetDeviceHardwareName then
+				globals.txtStatus.text = "Device=" .. plugin_ouya.ouyaGetDeviceHardwareName();
+			else
+				globals.txtStatus.text = "Device=UNKNOWN";
+			end
     	end
     end
        	

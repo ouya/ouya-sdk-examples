@@ -114,5 +114,15 @@ plugin_ouya.asyncLuaOuyaInitInput = function(onGenericMotionEvent, onKeyDown, on
 	ouyaSDK.asyncLuaOuyaInitInput(onGenericMotionEvent, onKeyDown, onKeyUp)
 end
 
+plugin_ouya.ouyaGetDeviceHardwareName = function()
+	if ouyaSDK == nil then
+		print "ouyaSDK named java functions are not initialized";
+		return "";
+	end
+	
+	print ("plugin_ouya.ouyaGetDeviceHardwareName");
+	return ouyaSDK.ouyaGetDeviceHardwareName()
+end
+
 -- Return the Ouya library from the require() 
 return plugin_ouya
