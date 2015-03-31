@@ -270,6 +270,14 @@ public class MarmaladeOuyaFacade
 		}
 	}
 
+	public boolean isInitialized() {
+		if (null == ouyaFacade) {
+			return false;
+		} else {
+			return ouyaFacade.isInitialized();
+		}
+	}
+
     /**
      * Get the list of products the user can purchase from the server.
      */

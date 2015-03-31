@@ -64,7 +64,19 @@ public class MarmaladeOuyaPlugin
 				JSONObject jsonObject = jsonArray.getJSONObject(index);
 				String name = jsonObject.getString("key");
 				String value = jsonObject.getString("value");
-				developerInfo.putString(name, value);
+				if (null == name ||
+					null == value) {
+					continue;
+				}
+				if (name.equals("tv.ouya.product_id_list")) {
+					String[] productIds = value.split(",");
+					if (null == productIds) {
+						continue;
+					}
+					developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
+				} else {
+					developerInfo.putString(name, value);
+				}
 			}
 
 			MarmaladeOuyaFacade marmaladeOuyaFacade =
@@ -81,6 +93,15 @@ public class MarmaladeOuyaPlugin
 		{
 			Log.i(TAG, "InitializePlugin: exception: " + e.toString());
 			throw e;
+		}
+	}
+
+	public static boolean isInitialized() {
+		MarmaladeOuyaFacade marmaladeOuyaFacade = IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade();
+		if (null == marmaladeOuyaFacade) {
+			return false;
+		} else {
+			return marmaladeOuyaFacade.isInitialized();
 		}
 	}
 	
