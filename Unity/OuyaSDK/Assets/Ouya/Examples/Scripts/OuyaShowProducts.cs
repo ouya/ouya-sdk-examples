@@ -92,6 +92,8 @@ public class OuyaShowProducts : MonoBehaviour
     private object m_btnRequestGamerInfo = new object();
     private object m_btnRequestProducts = new object();
     private object m_btnRequestReceipts = new object();
+    private object m_btn720 = new object();
+    private object m_btn1080 = new object();
     private object m_btnExit = new object();
 
     void Awake()
@@ -254,6 +256,60 @@ public class OuyaShowProducts : MonoBehaviour
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
             GUILayout.Label(string.Empty);
+            GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            if (m_focusManager.SelectedButton == m_btnExit)
+            {
+                GUI.backgroundColor = Color.red;
+            }
+            if (GUILayout.Button("Exit", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btnExit &&
+                GetButtonUp(OuyaController.BUTTON_O)))
+            {
+                m_status = "Exiting...";
+                Application.Quit();
+            }
+            GUI.backgroundColor = oldColor;
+            GUILayout.EndHorizontal();
+
+            GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            if (m_focusManager.SelectedButton == m_btn720)
+            {
+                GUI.backgroundColor = Color.red;
+            }
+            if (GUILayout.Button("720p", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btn720 &&
+                GetButtonUp(OuyaController.BUTTON_O)))
+            {
+                m_status = "Setting 1280x720...";
+                Screen.SetResolution(1280, 720, true);
+            }
+            GUI.backgroundColor = oldColor;
+            GUILayout.EndHorizontal();
+
+            GUILayout.Label(string.Empty);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(400);
+            if (m_focusManager.SelectedButton == m_btn1080)
+            {
+                GUI.backgroundColor = Color.red;
+            }
+            if (GUILayout.Button("1080p", GUILayout.Height(40)) ||
+                (m_focusManager.SelectedButton == m_btn1080 &&
+                GetButtonUp(OuyaController.BUTTON_O)))
+            {
+                m_status = "Setting 1920x1080...";
+                Screen.SetResolution(1920, 1080, true);
+            }
+            GUI.backgroundColor = oldColor;
+            GUILayout.EndHorizontal();
+
             GUILayout.Label(string.Empty);
 
             GUILayout.BeginHorizontal();
@@ -439,24 +495,6 @@ public class OuyaShowProducts : MonoBehaviour
 
                 GUILayout.EndHorizontal();
             }
-
-            GUILayout.Label(string.Empty);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(400);
-            if (m_focusManager.SelectedButton == m_btnExit)
-            {
-                GUI.backgroundColor = Color.red;
-            }
-            if (GUILayout.Button("Exit", GUILayout.Height(40)) ||
-                (m_focusManager.SelectedButton == m_btnExit &&
-                GetButtonUp(OuyaController.BUTTON_O)))
-            {
-                m_status = "Exiting...";
-                Application.Quit();
-            }
-            GUI.backgroundColor = oldColor;
-            GUILayout.EndHorizontal();
         }
         catch (System.Exception)
         {
@@ -469,8 +507,23 @@ public class OuyaShowProducts : MonoBehaviour
 
     public IEnumerator Start()
     {
+        m_focusManager.Mappings[m_btnExit] = new FocusManager.ButtonMapping()
+        {
+            Down = m_btn720
+        };
+        m_focusManager.Mappings[m_btn720] = new FocusManager.ButtonMapping()
+        {
+            Up = m_btnExit,
+            Down = m_btn1080
+        };
+        m_focusManager.Mappings[m_btn1080] = new FocusManager.ButtonMapping()
+        {
+            Up = m_btn720,
+            Down = m_btnRequestGamerInfo
+        };
         m_focusManager.Mappings[m_btnRequestGamerInfo] = new FocusManager.ButtonMapping()
         {
+            Up = m_btn1080,
             Down = m_btnPutGameData
         };
         m_focusManager.Mappings[m_btnPutGameData] = new FocusManager.ButtonMapping()
@@ -493,11 +546,6 @@ public class OuyaShowProducts : MonoBehaviour
         m_focusManager.Mappings[m_btnRequestReceipts] = new FocusManager.ButtonMapping()
         {
             Up = m_btnRequestProducts,
-            Down = m_btnExit
-        };
-        m_focusManager.Mappings[m_btnExit] = new FocusManager.ButtonMapping()
-        {
-            Up = m_btnRequestReceipts
         };
 
         // set default selection
