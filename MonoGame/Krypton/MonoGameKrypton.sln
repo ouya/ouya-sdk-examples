@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameKrypton", "MonoGameKrypton.csproj", "{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameKrypton", "MonoGameKrypton\MonoGameKrypton.csproj", "{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameKryptonTestbed", "..\MonoGameKryptonTestbed\MonoGameKryptonTestbed.csproj", "{3EE6D78C-B895-452E-B047-873FD6CE23D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameKryptonTestbed", "MonoGameKryptonTestbed\MonoGameKryptonTestbed.csproj", "{3EE6D78C-B895-452E-B047-873FD6CE23D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
