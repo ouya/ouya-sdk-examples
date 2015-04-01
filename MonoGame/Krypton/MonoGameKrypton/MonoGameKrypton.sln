@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameKrypton", "MonoGameKrypton.csproj", "{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameKryptonTestbed", "..\MonoGameKryptonTestbed\MonoGameKryptonTestbed.csproj", "{3EE6D78C-B895-452E-B047-873FD6CE23D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3EE6D78C-B895-452E-B047-873FD6CE23D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EE6D78C-B895-452E-B047-873FD6CE23D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EE6D78C-B895-452E-B047-873FD6CE23D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EE6D78C-B895-452E-B047-873FD6CE23D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A2F9721-A3E9-4125-A7EC-3B141FF48D0A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
