@@ -45,6 +45,8 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
+	private static final String VERSION = "OuyaUnityPlugin 1.2.1494.8";
+
 	private static final boolean sEnableLogging = false;
 
 	protected UnityPlayer mUnityPlayer;		// don't change the name of this variable; referenced from native code
@@ -54,6 +56,8 @@ public class MainActivity extends Activity
 	// Setup activity layout
 	@Override protected void onCreate (Bundle savedInstanceState)
 	{
+		Log.i(TAG, VERSION);
+
 		//make activity accessible to Unity
 		IOuyaActivity.SetActivity(this);
 
