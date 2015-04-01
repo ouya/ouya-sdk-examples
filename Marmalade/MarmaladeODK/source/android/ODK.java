@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import com.ideaworks3d.marmalade.LoaderAPI;
 import com.ideaworks3d.marmalade.LoaderActivity;
 import java.io.IOException;
@@ -66,6 +67,19 @@ public class ODK extends LoaderActivity
 
 		OuyaInputMapper.init(this);
     }
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		View content = (View)findViewById(android.R.id.content);
+		if (null != content) {
+			Log.d(TAG, "Disable screensaver" );
+			content.setKeepScreenOn(true);
+		} else {
+			Log.e(TAG, "Content view is missing");
+		}
+	}
 
     @Override
 		protected void onDestroy() {
