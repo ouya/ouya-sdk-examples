@@ -191,7 +191,7 @@ namespace KryptonTestbed
 
 			// Draw the shadow hulls as-is (no shadow stretching) in pure white on top of the shadows
 			// You can omit this line if you want to see what the light-map looks like :)
-			this.DebugDraw();
+			//this.DebugDraw();
 
 			base.Draw(gameTime);
 		}
