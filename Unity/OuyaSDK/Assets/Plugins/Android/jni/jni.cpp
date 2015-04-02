@@ -7,6 +7,8 @@
 
 #define trace(fmt, ...) __android_log_print(ANDROID_LOG_DEBUG, "JNI", "trace: %s (%i) " fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
 
+#define PLUGIN_VERSION "1.2.1494.8"
+
 #define LOG_TAG "lib-ouya-ndk.cpp"
 
 #define VERBOSE_LOGGING false
@@ -116,6 +118,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 #if VERBOSE_LOGGING
 			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Native plugin has loaded.");
 #endif
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "lib-ouya-ndk: VERSION=%s", PLUGIN_VERSION);
 		}
 		else
 		{

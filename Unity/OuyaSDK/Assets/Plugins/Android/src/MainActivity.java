@@ -45,7 +45,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String VERSION = "OuyaUnityPlugin 1.2.1494.8";
+	private static final String PLUGIN_VERSION = "1.2.1494.8";
 
 	private static final boolean sEnableLogging = false;
 
@@ -56,7 +56,7 @@ public class MainActivity extends Activity
 	// Setup activity layout
 	@Override protected void onCreate (Bundle savedInstanceState)
 	{
-		Log.i(TAG, VERSION);
+		Log.i(TAG, "OuyaUnityPlugin: VERSION="+PLUGIN_VERSION);
 
 		//make activity accessible to Unity
 		IOuyaActivity.SetActivity(this);

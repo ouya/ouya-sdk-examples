@@ -1185,7 +1185,7 @@ public class OuyaPanel : EditorWindow
 
         m_scroll = GUILayout.BeginScrollView(m_scroll, GUILayout.MaxWidth(position.width));
 
-        GUILayout.Label(string.Format("{0} UID: {1}", OuyaSDK.VERSION, UID));
+        GUILayout.Label(string.Format("{0} UID: {1}", OuyaSDK.PLUGIN_VERSION, UID));
 
         m_selectedToolSet = GUILayout.Toolbar(m_selectedToolSet, m_toolSets, GUILayout.MaxWidth(position.width));
 

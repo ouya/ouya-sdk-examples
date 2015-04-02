@@ -631,7 +631,7 @@ public class OuyaGameObject : MonoBehaviour
     {
         m_instance = this;
 #if UNITY_ANDROID && !UNITY_EDITOR
-        Debug.Log(string.Format("OuyaPluginVersion: {0}", OuyaSDK.VERSION));
+        Debug.Log(string.Format("OuyaPluginVersion: VERSION={0}", OuyaSDK.PLUGIN_VERSION));
 #endif
     }
     void Start()
