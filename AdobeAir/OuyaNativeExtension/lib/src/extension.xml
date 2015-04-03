@@ -1,0 +1,13 @@
+<extension xmlns="http://ns.adobe.com/air/extension.2.5">
+	<id>tv.ouya.sdk.ouyanativecontext</id>
+	<versionNumber>1</versionNumber>
+	<platforms>
+		<platform name="Android-ARM">
+		<applicationDeployment>
+		<nativeLibrary>AirOuyaPlugin.jar</nativeLibrary>
+		<initializer>tv.ouya.sdk.OuyaNativeExtension</initializer>
+		<finalizer>tv.ouya.sdk.OuyaNativeExtension</finalizer>
+		</applicationDeployment>
+		</platform>
+	</platforms>
+</extension>
