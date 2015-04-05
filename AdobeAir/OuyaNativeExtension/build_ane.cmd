@@ -27,8 +27,21 @@ CD %TEMP%\ane\
 unzip *.swc
 MOVE library.swf Android-ARM
 cd ..\..\
-COPY jar\AirOuyaPlugin.jar %TEMP%\ane\Android-ARM
-COPY jar\ouya-sdk.jar %TEMP%\ane\Android-ARM
+
+REM COPY jar\AirOuyaPlugin.jar %TEMP%\ane\Android-ARM
+REM COPY jar\ouya-sdk.jar %TEMP%\ane\Android-ARM
+
+echo Combine JARs
+cd jar
+rm -r -f tmp
+mkdir tmp
+cd tmp
+CALL jar -xvf ../AirOuyaPlugin.jar
+CALL jar -xvf ../ouya-sdk.jar
+del Combined.jar
+CALL jar -cvf Combined.jar .
+COPY /Y Combined.jar ..\..\%TEMP%\ane\Android-ARM\AirOuyaPlugin.jar
+cd ..\..
 
 DIR %TEMP%\ane\extension.xml
 DIR %TEMP%\ane\*.swc
