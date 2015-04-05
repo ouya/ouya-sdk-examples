@@ -17,8 +17,32 @@ package
 			context.call("ouyaInit");
 		}
 		
-		public function OuyaToggleInput(toggle:Boolean):void {
-			context.call("ouyaToggleInput", toggle);
+		public function GetAxis(playerNum:int, axis:int):Number {
+			return context.call("ouyaGetAxis", playerNum, axis) as Number;
+		}
+		
+		public function GetAnyButton(button:int):Boolean {
+			return context.call("ouyaGetAnyButton", button);
+		}
+		
+		public function GetAnyButtonDown(button:int):Boolean {
+			return context.call("ouyaGetAnyButtonDown", button);
+		}
+		
+		public function GetAnyButtonUp(button:int):Boolean {
+			return context.call("ouyaGetAnyButtonUp", button);
+		}
+		
+		public function GetButton(playerNum:int, button:int):Boolean {
+			return context.call("ouyaGetButton", button);
+		}
+
+		public function GetButtonDown(playerNum:int, button:int):Boolean {
+			return context.call("ouyaGetButtonDown", button);
+		}
+		
+		public function GetButtonUp(playerNum:int, button:int):Boolean {
+			return context.call("ouyaGetButtonUp", button);
 		}
 	}
 }
