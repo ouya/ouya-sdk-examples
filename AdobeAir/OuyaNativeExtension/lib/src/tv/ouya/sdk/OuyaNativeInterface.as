@@ -1,4 +1,4 @@
-package
+package tv.ouya.sdk
 {
 	import flash.external.ExtensionContext;
 	
