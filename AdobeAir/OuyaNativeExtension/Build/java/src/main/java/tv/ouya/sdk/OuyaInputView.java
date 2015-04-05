@@ -33,16 +33,7 @@ public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
 	
-	private static boolean sLoggingEnabled = false;
-	
-	public static boolean sNativeInitialized = false;
-	
-	/*
-	static {
-		Log.i(TAG, "Loading lib-ouya-ndk...");
-		System.loadLibrary("-ouya-ndk");
-	}
-	*/
+	private static boolean sLoggingEnabled = true;
 
     public OuyaInputView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -102,8 +93,6 @@ public class OuyaInputView extends View {
     	}
     }
 	
-	/*
-
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
 		if (sLoggingEnabled) {
@@ -134,16 +123,15 @@ public class OuyaInputView extends View {
 	    return super.dispatchKeyEvent(keyEvent);
     }
 	
-	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
-	public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
-
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+		/*
 		if (sLoggingEnabled) {
 			Log.i(TAG, "onGenericMotionEvent");
 			DebugInput.debugMotionEvent(motionEvent);
 			DebugInput.debugOuyaMotionEvent(motionEvent);
 		}
+		*/
 		
 		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
 		if (playerNum < 0) {
@@ -151,93 +139,60 @@ public class OuyaInputView extends View {
 			playerNum = 0;
 		}
 		
-		if (sNativeInitialized) {
-			//Log.i(TAG, "dispatchGenericMotionEventNative");
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
-		} else {
-			Log.e(TAG, "Waiting for native to initialize");
-		}
+		//Log.i(TAG, "dispatchGenericMotionEventNative");
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
+		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+
 		return true;
 	}
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+		/*
 		if (sLoggingEnabled) {
 			Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 		}
+		*/
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
 		if (playerNum < 0) {
 			Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
 			playerNum = 0;
 		}
 		int action = keyEvent.getAction();
-		if (sNativeInitialized) {
-			if (sLoggingEnabled) {
-				Log.i(TAG, "dispatchKeyEventNative");
-			}
-			dispatchKeyEventNative(playerNum, keyCode, action);
-		} else {
-			Log.w(TAG, "Waiting for native to initialize");
-		}
+		dispatchKeyEventNative(playerNum, keyCode, action);
 		return true;
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+		/*
 		if (sLoggingEnabled) {
 			Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 		}
+		*/
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
 		if (playerNum < 0) {
 			Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
 			playerNum = 0;
 		}
 		int action = keyEvent.getAction();
-		if (sNativeInitialized) {
-			if (sLoggingEnabled) {
-				Log.i(TAG, "dispatchKeyEventNative");
-			}
-			dispatchKeyEventNative(playerNum, keyCode, action);
-		} else {
-			Log.w(TAG, "Waiting for native to initialize");
-		}
+		dispatchKeyEventNative(playerNum, keyCode, action);
 		return true;
 	}
 	
-	*/
-	
-	@Override
-    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "dispatchGenericMotionEvent");
-		return false;
+	public void dispatchGenericMotionEventNative(int deviceId, int axis, float value) {
+		if (sLoggingEnabled) {
+			Log.i(TAG, "dispatchGenericMotionEventNative deviceId="+deviceId+" axis="+axis+" value="+value);
+		}
 	}
 	
-	@Override
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "dispatchKeyEvent");
-		return false;
-	}
-	
-	@Override
-	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "onGenericMotionEvent");
-		return false;
-	}
-	
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyUp");
-		return false;
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyDown");
-		return false;
+	public void dispatchKeyEventNative(int deviceId, int keyCode, int action) {
+		if (sLoggingEnabled) {
+			Log.i(TAG, "dispatchKeyEventNative keyCode=" + DebugInput.debugGetButtonName(keyCode) + " action="+action);
+		}
 	}
 }

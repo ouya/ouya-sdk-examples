@@ -22,13 +22,16 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.*;
-import tv.ouya.sdk.OuyaInputView;
+import tv.ouya.console.api.*;
+import tv.ouya.sdk.*;
 
 public class MainActivity extends Activity {
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
-    OuyaInputView mInputView = null;
+	private static final boolean sEnableLogging = false;
+
+    private OuyaInputView mInputView = null;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,10 +41,10 @@ public class MainActivity extends Activity {
         //Log.i(TAG, "********** Layout id===="+id);
         //setContentView(id);
         
-        //mInputView = new OuyaInputView(this);
+        mInputView = new OuyaInputView(this);
         
-        //Log.d(TAG, "disable screensaver");
-        //mInputView.setKeepScreenOn(true);
+        Log.d(TAG, "Disable screensaver");
+        mInputView.setKeepScreenOn(true);
     }
     
 	@Override
@@ -59,33 +62,90 @@ public class MainActivity extends Activity {
 		super.onStart();
 	}
 	
+
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "dispatchGenericMotionEvent");
-		return false;
-	}
+    	if (sEnableLogging) {
+			Log.i(TAG, "dispatchGenericMotionEvent");
+		}
+    	if (null != mInputView) {
+			mInputView.dispatchGenericMotionEvent(motionEvent);
+		}
+		return true;
+    }
 	
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Log.i(TAG, "dispatchKeyEvent");
-		return false;
-	}
-	
+    	if (sEnableLogging) {
+			Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
+		}
+		InputDevice device = keyEvent.getDevice();
+		if (null != device) {
+			String name = device.getName();
+			if (null != name &&
+				name.equals("aml_keypad")) {
+				switch (keyEvent.getKeyCode()) {
+				case 24:
+					if (sEnableLogging) {
+						Log.i(TAG, "Volume Up detected.");
+					}
+					return false;
+				case 25:
+					if (sEnableLogging) {
+						Log.i(TAG, "Volume Down detected.");
+					}
+					return false;
+				case 66:
+					if (sEnableLogging) {
+						Log.i(TAG, "Remote button detected.");
+					}
+					if (null != mInputView) {
+						if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+							mInputView.onKeyDown(OuyaController.BUTTON_O, keyEvent);
+						} else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+							mInputView.onKeyUp(OuyaController.BUTTON_O, keyEvent);
+						}
+					}
+					return false;
+				}
+			}
+		}
+    	if (null != mInputView) {
+			mInputView.dispatchKeyEvent(keyEvent);
+		}
+		return true;
+    }
+
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "onGenericMotionEvent");
-		return false;
+    	if (sEnableLogging) {
+			Log.i(TAG, "onGenericMotionEvent");
+		}
+    	if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+		return true;
 	}
-	
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyUp");
-		return false;
+    	if (sEnableLogging) {
+			Log.i(TAG, "onKeyUp");
+		}
+    	if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+		return true;
 	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		Log.i(TAG, "onKeyDown");
-		return false;
+    	if (sEnableLogging) {
+			Log.i(TAG, "onKeyDown");
+		}
+    	if (null != mInputView) {
+			mInputView.requestFocus();
+		}
+		return true;
 	}
 }
