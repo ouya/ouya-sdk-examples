@@ -17,6 +17,14 @@ package
 			context.call("ouyaInit");
 		}
 		
+		public function IsAnyConnected():Boolean {
+			return context.call("ouyaIsAnyConnected");
+		}
+		
+		public function IsConnected(playerNum:int):Boolean {
+			return context.call("ouyaIsConnected", playerNum);
+		}
+		
 		public function GetAxis(playerNum:int, axis:int):Number {
 			return context.call("ouyaGetAxis", playerNum, axis) as Number;
 		}
@@ -43,6 +51,10 @@ package
 		
 		public function GetButtonUp(playerNum:int, button:int):Boolean {
 			return context.call("ouyaGetButtonUp", button);
+		}
+		
+		public function ClearButtonStatesPressedReleased():Boolean {
+			return context.call("ouyaClearButtonStatesPressedReleased");
 		}
 	}
 }
