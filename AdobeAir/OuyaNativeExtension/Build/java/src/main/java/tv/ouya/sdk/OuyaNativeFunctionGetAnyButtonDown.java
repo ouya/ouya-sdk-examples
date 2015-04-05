@@ -22,27 +22,30 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import tv.ouya.console.api.OuyaController;
 
-public class OuyaNativeFunctionIsConnected implements FREFunction {
+public class OuyaNativeFunctionGetAnyButtonDown implements FREFunction {
 	
-	private static final String TAG = OuyaNativeFunctionIsConnected.class.getSimpleName();
+	private static final String TAG = OuyaNativeFunctionGetAnyButtonDown.class.getSimpleName();
 	
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) {
 		
 		try {
-			int playerNum;
+			int button;
 			if (args.length > 0) {
-				playerNum = args[0].getAsInt();
+				button = args[0].getAsInt();
 			} else {
-				Log.e(TAG, "Missing playerNum:int argument");
+				Log.e(TAG, "Missing button:int argument");
 				return FREObject.newObject(false);
 			}
 			
-			if (OuyaController.getControllerByPlayer(playerNum) == null) {
-				return FREObject.newObject(false);
-			} else {
-				return FREObject.newObject(true);
-			}
+			for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum) {			
+				boolean result = OuyaInputView.getButtonDown(playerNum, button);
+				if (result) {
+					return FREObject.newObject(true);
+				}
+			}			
+
+			return FREObject.newObject(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e(TAG, "Unexpected exception");
