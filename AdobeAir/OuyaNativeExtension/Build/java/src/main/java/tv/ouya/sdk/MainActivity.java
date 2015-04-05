@@ -37,9 +37,6 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "**** onCreate");
         super.onCreate(savedInstanceState);
-        //int id = getResources().getIdentifier("main", "layout", getPackageName());
-        //Log.i(TAG, "********** Layout id===="+id);
-        //setContentView(id);
         
         mInputView = new OuyaInputView(this);
         

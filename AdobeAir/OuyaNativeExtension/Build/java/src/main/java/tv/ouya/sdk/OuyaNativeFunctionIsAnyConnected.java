@@ -16,30 +16,30 @@
 
 package tv.ouya.sdk;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
-import tv.ouya.sdk.MainActivity;
-import tv.ouya.sdk.OuyaInputView;
+import tv.ouya.console.api.OuyaController;
 
-public class OuyaNativeFunctionInit implements FREFunction {
+public class OuyaNativeFunctionIsAnyConnected implements FREFunction {
 	
-	private static final String TAG = OuyaNativeFunctionInit.class.getSimpleName();
+	private static final String TAG = OuyaNativeFunctionIsAnyConnected.class.getSimpleName();
 	
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) {
 		
-		final Activity activity = context.getActivity();
-		if (null == activity) {
-			Log.e(TAG, "Activity is null!");
-			return null;
+		try {
+			for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum) {			
+				if (OuyaController.getControllerByPlayer(playerNum) != null) {
+					return FREObject.newObject(true);
+				}
+			}
+			return FREObject.newObject(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(TAG, "Unexpected exception");
 		}
-		
-		Intent intent = new Intent(activity, MainActivity.class);
-		activity.startActivity(intent);
 		
 		return null;
 	}
