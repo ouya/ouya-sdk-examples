@@ -21,20 +21,32 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 
-public class OuyaNativeFunctionToggleInput implements FREFunction {
+public class OuyaNativeFunctionGetAxis implements FREFunction {
 	
-	private static final String TAG = OuyaNativeFunctionToggleInput.class.getSimpleName();
+	private static final String TAG = OuyaNativeFunctionGetAxis.class.getSimpleName();
 	
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) {
 		
 		try {
+			int playerNum;
 			if (args.length > 0) {
-				boolean toggle = args[0].getAsBool();
-				Log.i(TAG, "OuyaNativeFunctionToggleInput toggle="+toggle);
+				playerNum = args[0].getAsInt();
 			} else {
-				Log.e(TAG, "OuyaNativeFunctionToggleInput is missing boolean argument 0");
+				Log.e(TAG, "OuyaNativeFunctionToggleInput is missing playerNum:int argument");
+				return FREObject.newObject((double)0);
 			}
+			
+			int axis;
+			if (args.length > 1) {
+				axis = args[1].getAsInt();
+			} else {
+				Log.e(TAG, "OuyaNativeFunctionToggleInput is missing axis:int argument");
+				return FREObject.newObject((double)0);
+			}
+			
+			float result = OuyaInputView.getAxis(playerNum, axis);
+			return FREObject.newObject((double)result);
 		} catch (Exception e) {
 			Log.e(TAG, "OuyaNativeFunctionToggleInput argument was not a boolean");
 		}

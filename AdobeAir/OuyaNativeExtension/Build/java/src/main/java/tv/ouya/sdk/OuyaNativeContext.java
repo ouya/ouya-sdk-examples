@@ -34,7 +34,7 @@ public class OuyaNativeContext extends FREContext {
 		Map<String, FREFunction> map = new HashMap<String, FREFunction>();
 		
 		map.put("ouyaInit", new OuyaNativeFunctionInit());
-		map.put("ouyaToggleInput", new OuyaNativeFunctionToggleInput());
+		map.put("ouyaGetAxis", new OuyaNativeFunctionGetAxis());
 		
 		return map;
 	}
