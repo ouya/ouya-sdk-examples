@@ -34,7 +34,16 @@ public class OuyaNativeContext extends FREContext {
 		Map<String, FREFunction> map = new HashMap<String, FREFunction>();
 		
 		map.put("ouyaInit", new OuyaNativeFunctionInit());
+		map.put("ouyaIsAnyConnected", new OuyaNativeFunctionIsAnyConnected());
+		map.put("ouyaIsConnected", new OuyaNativeFunctionIsConnected());
 		map.put("ouyaGetAxis", new OuyaNativeFunctionGetAxis());
+		map.put("ouyaGetAnyButton", new OuyaNativeFunctionGetAnyButton());
+		map.put("ouyaGetAnyButtonDown", new OuyaNativeFunctionGetAnyButtonDown());
+		map.put("ouyaGetAnyButtonUp", new OuyaNativeFunctionGetAnyButtonUp());
+		map.put("ouyaGetButton", new OuyaNativeFunctionGetButton());
+		map.put("ouyaGetButtonDown", new OuyaNativeFunctionGetButtonDown());
+		map.put("ouyaGetButtonUp", new OuyaNativeFunctionGetButtonUp());
+		map.put("ouyaClearButtonStatesPressedReleased", new OuyaNativeFunctionClearButtonStatesPressedReleased());
 		
 		return map;
 	}
