@@ -13,6 +13,10 @@ package
 			}
 		}
 		
+		public function OuyaInit():void {
+			context.call("ouyaInit");
+		}
+		
 		public function OuyaToggleInput(toggle:Boolean):void {
 			context.call("ouyaToggleInput", toggle);
 		}

@@ -37,10 +37,12 @@ public class OuyaInputView extends View {
 	
 	public static boolean sNativeInitialized = false;
 	
+	/*
 	static {
 		Log.i(TAG, "Loading lib-ouya-ndk...");
 		System.loadLibrary("-ouya-ndk");
 	}
+	*/
 
     public OuyaInputView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -99,6 +101,8 @@ public class OuyaInputView extends View {
     		Log.e(TAG, "Activity was not found.");
     	}
     }
+	
+	/*
 
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
@@ -203,5 +207,37 @@ public class OuyaInputView extends View {
 			Log.w(TAG, "Waiting for native to initialize");
 		}
 		return true;
+	}
+	
+	*/
+	
+	@Override
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		Log.i(TAG, "dispatchGenericMotionEvent");
+		return false;
+	}
+	
+	@Override
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		Log.i(TAG, "dispatchKeyEvent");
+		return false;
+	}
+	
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+		Log.i(TAG, "onGenericMotionEvent");
+		return false;
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
+		Log.i(TAG, "onKeyUp");
+		return false;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+		Log.i(TAG, "onKeyDown");
+		return false;
 	}
 }

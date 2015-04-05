@@ -28,6 +28,7 @@ unzip *.swc
 MOVE library.swf Android-ARM
 cd ..\..\
 COPY jar\AirOuyaPlugin.jar %TEMP%\ane\Android-ARM
+COPY jar\ouya-sdk.jar %TEMP%\ane\Android-ARM
 
 DIR %TEMP%\ane\extension.xml
 DIR %TEMP%\ane\*.swc
