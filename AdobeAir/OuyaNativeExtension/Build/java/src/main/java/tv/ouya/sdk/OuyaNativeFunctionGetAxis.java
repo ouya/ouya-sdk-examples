@@ -33,7 +33,7 @@ public class OuyaNativeFunctionGetAxis implements FREFunction {
 			if (args.length > 0) {
 				playerNum = args[0].getAsInt();
 			} else {
-				Log.e(TAG, "OuyaNativeFunctionToggleInput is missing playerNum:int argument");
+				Log.e(TAG, "Missing playerNum:int argument");
 				return FREObject.newObject((double)0);
 			}
 			
@@ -41,14 +41,15 @@ public class OuyaNativeFunctionGetAxis implements FREFunction {
 			if (args.length > 1) {
 				axis = args[1].getAsInt();
 			} else {
-				Log.e(TAG, "OuyaNativeFunctionToggleInput is missing axis:int argument");
+				Log.e(TAG, "Missing axis:int argument");
 				return FREObject.newObject((double)0);
 			}
 			
 			float result = OuyaInputView.getAxis(playerNum, axis);
 			return FREObject.newObject((double)result);
 		} catch (Exception e) {
-			Log.e(TAG, "OuyaNativeFunctionToggleInput argument was not a boolean");
+			e.printStackTrace();
+			Log.e(TAG, "Unexpected exception");
 		}
 		
 		return null;
