@@ -17,15 +17,19 @@
 package tv.ouya.sdk;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.*;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import tv.ouya.console.api.*;
 import tv.ouya.sdk.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnClickListener {
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
@@ -42,6 +46,18 @@ public class MainActivity extends Activity {
         
         Log.d(TAG, "Disable screensaver");
         mInputView.setKeepScreenOn(true);
+		
+        FrameLayout content = (FrameLayout)findViewById(android.R.id.content);
+		if (null != content) {
+			Button button = new Button(this);
+	        button.setOnClickListener(this);
+	        button.setVisibility(View.VISIBLE);
+	        button.setText("");
+	        button.setBackgroundColor(Color.TRANSPARENT);
+			content.addView(button);
+		} else {
+			Log.e(TAG, "Content view is missing");
+		}
     }
     
 	@Override
@@ -52,7 +68,7 @@ public class MainActivity extends Activity {
 			mInputView.shutdown();
 		}
     }
-
+	
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
@@ -144,5 +160,26 @@ public class MainActivity extends Activity {
 			mInputView.requestFocus();
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent motionEvent) {
+		if (sEnableLogging) {
+			Log.i(TAG, "dispatchTouchEvent source="+motionEvent.getSource()+" x="+motionEvent.getX()+" y="+motionEvent.getY());
+		}
+		int source = motionEvent.getSource();
+		if (source == 8194) {
+			OuyaInputView.setTrackpadX(motionEvent.getX());
+			OuyaInputView.setTrackpadY(motionEvent.getY());
+		}
+		return super.dispatchTouchEvent(motionEvent);
+	}
+	
+	@Override
+	public void onClick(View view) {
+		if (sEnableLogging) {
+			Log.i(TAG, "Click happened");
+		}
+		OuyaInputView.setTrackpadDown();
 	}
 }

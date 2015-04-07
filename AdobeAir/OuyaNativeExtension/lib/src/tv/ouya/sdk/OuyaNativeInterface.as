@@ -56,5 +56,17 @@ package tv.ouya.sdk
 		public function ClearButtonStatesPressedReleased():Boolean {
 			return context.call("ouyaClearButtonStatesPressedReleased");
 		}
+		
+		public function getTrackpadX():Number {
+			return context.call("ouyaGetTrackpadX") as Number;
+		}
+		
+		public function getTrackpadY():Number {
+			return context.call("ouyaGetTrackpadY") as Number;
+		}
+		
+		public function getTrackpadDown():Boolean {
+			return context.call("ouyaGetTrackpadDown");
+		}
 	}
 }

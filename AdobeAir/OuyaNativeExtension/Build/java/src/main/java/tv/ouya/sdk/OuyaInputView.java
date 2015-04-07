@@ -47,6 +47,11 @@ public class OuyaInputView extends View {
 	private static List<SparseBooleanArray> sStateButtonUp = new ArrayList<SparseBooleanArray>();
 	private static List<SparseBooleanArray> sLastStateButtonDown = new ArrayList<SparseBooleanArray>();
 	private static List<SparseBooleanArray> sLastStateButtonUp = new ArrayList<SparseBooleanArray>();
+	
+	private static float mTrackpadX = 0f;
+	private static float mTrackpadY = 0f;
+	private static boolean mTrackpadDown = false;
+	private static boolean mLastTrackpadDown = false;
 
     public OuyaInputView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -318,6 +323,10 @@ public class OuyaInputView extends View {
 	}
 	
 	public static void clearButtonStatesPressedReleased() {
+		
+		mLastTrackpadDown = mTrackpadDown;
+		mTrackpadDown = false;
+		
 		for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum) {
 			SparseBooleanArray stateButtonDown = sStateButtonDown.get(playerNum);
 			if (null == stateButtonDown) {
@@ -343,5 +352,29 @@ public class OuyaInputView extends View {
 				stateButtonUp.clear();
 			}
 		}
+	}
+	
+	public static boolean getTrackpadDown() {
+		return mLastTrackpadDown;
+	}
+	
+	public static void setTrackpadDown() {
+		mTrackpadDown = true;
+	}
+	
+	public static float getTrackpadX() {
+		return mTrackpadX;
+	}
+	
+	public static void setTrackpadX(float val) {
+		mTrackpadX = val;
+	}
+	
+	public static float getTrackpadY() {
+		return mTrackpadY;
+	}
+	
+	public static void setTrackpadY(float val) {
+		mTrackpadY = val;
 	}
 }

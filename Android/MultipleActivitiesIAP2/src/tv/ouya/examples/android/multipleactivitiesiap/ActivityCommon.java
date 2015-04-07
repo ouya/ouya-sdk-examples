@@ -43,7 +43,7 @@ public class ActivityCommon extends Activity
 	// listener for fetching gamer info
 	private static CancelIgnoringOuyaResponseListener<GamerInfo> sRequestGamerInfoListener = null;
 
-		// listener for getting products
+	// listener for getting products
 	private static CancelIgnoringOuyaResponseListener<List<Product>> sRequestProductsListener = null;
 	
 	// listener for requesting purchase

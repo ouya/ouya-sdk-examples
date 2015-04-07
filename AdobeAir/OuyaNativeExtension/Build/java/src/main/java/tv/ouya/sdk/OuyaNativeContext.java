@@ -44,6 +44,9 @@ public class OuyaNativeContext extends FREContext {
 		map.put("ouyaGetButtonDown", new OuyaNativeFunctionGetButtonDown());
 		map.put("ouyaGetButtonUp", new OuyaNativeFunctionGetButtonUp());
 		map.put("ouyaClearButtonStatesPressedReleased", new OuyaNativeFunctionClearButtonStatesPressedReleased());
+		map.put("ouyaGetTrackpadX", new OuyaNativeFunctionGetTrackpadX());
+		map.put("ouyaGetTrackpadY", new OuyaNativeFunctionGetTrackpadY());
+		map.put("ouyaGetTrackpadDown", new OuyaNativeFunctionGetTrackpadDown());
 		
 		return map;
 	}
