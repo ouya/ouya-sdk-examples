@@ -37,7 +37,7 @@ public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
 	
-	private static boolean sLoggingEnabled = true;
+	private static boolean sLoggingEnabled = false;
 	
 	private static OuyaInputView sInstance = null;
 	
