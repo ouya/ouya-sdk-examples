@@ -48,6 +48,9 @@ public class OuyaNativeContext extends FREContext {
 		map.put("ouyaGetTrackpadY", new OuyaNativeFunctionGetTrackpadY());
 		map.put("ouyaGetTrackpadDown", new OuyaNativeFunctionGetTrackpadDown());
 		
+		map.put("ouyaLogInfo", new OuyaNativeFunctionLogInfo());
+		map.put("ouyaLogError", new OuyaNativeFunctionLogError());
+		
 		return map;
 	}
 }

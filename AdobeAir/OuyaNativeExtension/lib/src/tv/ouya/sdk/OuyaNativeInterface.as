@@ -57,16 +57,24 @@ package tv.ouya.sdk
 			return context.call("ouyaClearButtonStatesPressedReleased");
 		}
 		
-		public function getTrackpadX():Number {
+		public function GetTrackpadX():Number {
 			return context.call("ouyaGetTrackpadX") as Number;
 		}
 		
-		public function getTrackpadY():Number {
+		public function GetTrackpadY():Number {
 			return context.call("ouyaGetTrackpadY") as Number;
 		}
 		
-		public function getTrackpadDown():Boolean {
+		public function GetTrackpadDown():Boolean {
 			return context.call("ouyaGetTrackpadDown");
+		}
+		
+		public function LogInfo(message:String):void {
+			context.call("ouyaLogInfo", message);
+		}
+		
+		public function LogError(message:String):void {
+			context.call("ouyaLogError", message);
 		}
 	}
 }
