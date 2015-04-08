@@ -76,5 +76,9 @@ package tv.ouya.sdk
 		public function LogError(message:String):void {
 			context.call("ouyaLogError", message);
 		}
+		
+		public function ToggleInputLogging(toggle:Boolean):void {
+			context.call("ouyaToggleInputLogging", toggle);
+		}
 	}
 }

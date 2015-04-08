@@ -51,6 +51,8 @@ public class OuyaNativeContext extends FREContext {
 		map.put("ouyaLogInfo", new OuyaNativeFunctionLogInfo());
 		map.put("ouyaLogError", new OuyaNativeFunctionLogError());
 		
+		map.put("ouyaToggleInputLogging", new OuyaNativeFunctionToggleInputLogging());
+		
 		return map;
 	}
 }
