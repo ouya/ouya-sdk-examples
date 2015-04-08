@@ -170,6 +170,10 @@ public class OuyaInputView extends View {
 			playerNum = 0;
 		}
 		
+		if (sStateAxis.size() <= playerNum) {
+			return false;
+		}
+		
 		//Log.i(TAG, "dispatchGenericMotionEventNative");
 		SparseArray<Float> stateAxises = sStateAxis.get(playerNum);
 		if (null == stateAxises) {
@@ -199,7 +203,15 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
 			playerNum = 0;
 		}
-
+		
+		if (sStateButton.size() <= playerNum) {
+			return false;
+		}
+		
+		if (sStateButtonUp.size() <= playerNum) {
+			return false;
+		}
+		
 		SparseBooleanArray stateButton = sStateButton.get(playerNum);
 		if (null == stateButton) {
 			Log.e(TAG, "onKeyUp stateButton playerNum="+playerNum+" keyCode="+keyCode+" is null");
@@ -235,6 +247,14 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
 			playerNum = 0;
 		}
+		
+		if (sStateButton.size() <= playerNum) {
+			return false;
+		}
+		
+		if (sStateButtonDown.size() <= playerNum) {
+			return false;
+		}
 
 		SparseBooleanArray stateButton = sStateButton.get(playerNum);
 		if (null == stateButton) {
@@ -260,6 +280,10 @@ public class OuyaInputView extends View {
 	}
 	
 	public static float getAxis(int playerNum, int axis) {
+		
+		if (sStateAxis.size() <= playerNum) {
+			return 0f;
+		}
 		
 		SparseArray<Float> stateAxises = sStateAxis.get(playerNum);
 		if (null == stateAxises) {
@@ -326,6 +350,22 @@ public class OuyaInputView extends View {
 		
 		mLastTrackpadDown = mTrackpadDown;
 		mTrackpadDown = false;
+		
+		if (sStateButtonDown.size() < OuyaController.MAX_CONTROLLERS) {
+			return;
+		}
+		
+		if (sStateButtonUp.size() < OuyaController.MAX_CONTROLLERS) {
+			return;
+		}
+		
+		if (sLastStateButtonDown.size() < OuyaController.MAX_CONTROLLERS) {
+			return;
+		}
+		
+		if (sLastStateButtonUp.size() < OuyaController.MAX_CONTROLLERS) {
+			return;
+		}
 		
 		for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum) {
 			SparseBooleanArray stateButtonDown = sStateButtonDown.get(playerNum);
