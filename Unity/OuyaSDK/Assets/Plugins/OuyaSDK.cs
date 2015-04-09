@@ -33,7 +33,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string PLUGIN_VERSION = "1.2.1494.8";
+    public const string PLUGIN_VERSION = "1.2.1494.9";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     
