@@ -37,7 +37,7 @@ public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
 	
-	private static boolean sLoggingEnabled = false;
+	private static boolean sEnableInputLogging = false;
 	
 	private static OuyaInputView sInstance = null;
 	
@@ -55,7 +55,7 @@ public class OuyaInputView extends View {
 
     public OuyaInputView(Context context, AttributeSet attrs) {
     	super(context, attrs);
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs)");
 		}
         init();
@@ -63,7 +63,7 @@ public class OuyaInputView extends View {
 
     public OuyaInputView(Context context, AttributeSet attrs, int defStyle) {
     	super(context, attrs, defStyle);
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs, int defStyle)");
 		}
         init();
@@ -71,7 +71,7 @@ public class OuyaInputView extends View {
 
     public OuyaInputView(Context context) {
         super(context);
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.d(TAG, "OuyaInputView(Context context)");
 		}
         init();
@@ -84,7 +84,7 @@ public class OuyaInputView extends View {
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
 			if (null != content) {
 				content.addView(this);
-				if (sLoggingEnabled) {
+				if (sEnableInputLogging) {
 					Log.d(TAG, "Added view");
 				}
 			} else {
@@ -124,9 +124,13 @@ public class OuyaInputView extends View {
     	}
     }
 	
+	public static void toggleInputLogging(boolean enabled) {
+		sEnableInputLogging = enabled;
+	}
+	
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.i(TAG, "dispatchGenericMotionEvent");
 			DebugInput.debugMotionEvent(motionEvent);
 		}
@@ -157,7 +161,7 @@ public class OuyaInputView extends View {
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		/*
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.i(TAG, "onGenericMotionEvent");
 			DebugInput.debugMotionEvent(motionEvent);
 			DebugInput.debugOuyaMotionEvent(motionEvent);
@@ -194,7 +198,7 @@ public class OuyaInputView extends View {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
 		/*
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 		}
 		*/
@@ -218,7 +222,7 @@ public class OuyaInputView extends View {
 			return super.onKeyUp(keyCode, keyEvent);
 		}
 		stateButton.put(keyCode, false);
-    	if (sLoggingEnabled) {
+    	if (sEnableInputLogging) {
     		Log.i(TAG, "onKeyUp stateButton playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButton.get(keyCode));
 		}
 		
@@ -227,7 +231,7 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "onKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is null");
 		} else {
 			stateButtonUp.put(keyCode, true);
-			if (sLoggingEnabled) {
+			if (sEnableInputLogging) {
 				Log.i(TAG, "onKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButtonUp.get(keyCode));
 			}
 		}
@@ -238,7 +242,7 @@ public class OuyaInputView extends View {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
 		/*
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyEvent.getKeyCode()));
 		}
 		*/
@@ -262,7 +266,7 @@ public class OuyaInputView extends View {
 			return super.onKeyDown(keyCode, keyEvent);
 		}
 		stateButton.put(keyCode, true);
-    	if (sLoggingEnabled) {
+    	if (sEnableInputLogging) {
     		Log.i(TAG, "onKeyDown stateButton playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButton.get(keyCode));
 		}
 		
@@ -271,7 +275,7 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "onKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is null");
 		} else {
 			stateButtonDown.put(keyCode, true);
-			if (sLoggingEnabled) {
+			if (sEnableInputLogging) {
 				Log.i(TAG, "onKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButtonDown.get(keyCode));
 			}
 		}
@@ -301,7 +305,7 @@ public class OuyaInputView extends View {
 	
 	public static boolean getButton(int playerNum, int button) {
 		/*
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.i(TAG, "getButton playerNum="+playerNum+" button=" + button);
 		}
 		*/
@@ -315,7 +319,7 @@ public class OuyaInputView extends View {
 		}		
 		boolean result = stateButton.get(button);
 		/*
-		if (sLoggingEnabled) {
+		if (sEnableInputLogging) {
 			Log.i(TAG, "getButton result=" + result);
 		}
 		*/

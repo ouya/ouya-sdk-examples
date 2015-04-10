@@ -45,7 +45,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "1.2.1494.8";
+	private static final String PLUGIN_VERSION = "1.2.1494.10";
 
 	private static final boolean sEnableLogging = false;
 
@@ -217,12 +217,12 @@ public class MainActivity extends Activity
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Up detected.");
 					}
-					return false;
+					return true; //eat the event
 				case 25:
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Down detected.");
 					}
-					return false;
+					return true; //eat the event
 				case 66:
 					if (sEnableLogging) {
 						Log.i(TAG, "Remote button detected.");
@@ -235,6 +235,18 @@ public class MainActivity extends Activity
 						}
 					}
 					return false;
+				case 4:
+					if (sEnableLogging) {
+						Log.i(TAG, "Remote back button detected.");
+					}
+					if (null != mInputView) {
+						if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+							mInputView.onKeyDown(OuyaController.BUTTON_A, keyEvent);
+						} else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+							mInputView.onKeyUp(OuyaController.BUTTON_A, keyEvent);
+						}
+					}
+					return true;
 				}
 			}
 		}
