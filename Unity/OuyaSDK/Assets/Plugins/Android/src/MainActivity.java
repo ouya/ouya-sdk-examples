@@ -45,7 +45,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "1.2.1494.9";
+	private static final String PLUGIN_VERSION = "1.2.1494.10";
 
 	private static final boolean sEnableLogging = false;
 
@@ -217,12 +217,12 @@ public class MainActivity extends Activity
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Up detected.");
 					}
-					return false;
+					return true; //eat the event
 				case 25:
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Down detected.");
 					}
-					return false;
+					return true; //eat the event
 				case 66:
 					if (sEnableLogging) {
 						Log.i(TAG, "Remote button detected.");
