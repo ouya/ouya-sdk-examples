@@ -48,10 +48,10 @@ public class CoronaOuyaInputView extends View {
 				switch (keyEvent.getKeyCode()) {
 				case 24:
 					//VOLUME UP
-					return false;
+					return true;
 				case 25:
 					//VOLUME DOWN
-					return false;
+					return true;
 				case 66:
 					//REMOTE BUTTON
 					if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
@@ -59,6 +59,15 @@ public class CoronaOuyaInputView extends View {
 					}
 					else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
 						onKeyUp(OuyaController.BUTTON_O, keyEvent);
+					}
+					return false;
+				case 4:
+					//REMOTE BACK BUTTON
+					if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+						onKeyDown(OuyaController.BUTTON_A, keyEvent);
+					}
+					else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+						onKeyUp(OuyaController.BUTTON_A, keyEvent);
 					}
 					return false;
 				}
