@@ -283,8 +283,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1526388176}
-  - 114: {fileID: 1526388177}
   - 82: {fileID: 1526388178}
+  - 114: {fileID: 1526388177}
   m_Layer: 0
   m_Name: OuyaShowSounds
   m_TagString: Untagged
@@ -312,7 +312,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1526388175}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58bd980f96d23b64dbe57690f549dc6f, type: 3}
+  m_Script: {fileID: 11500000, guid: 8303a7fa6b83fe34db90d0290c7be38c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_soundMP3: {fileID: 8300000, guid: 99da400971002454994c928f7fdfb844, type: 3}

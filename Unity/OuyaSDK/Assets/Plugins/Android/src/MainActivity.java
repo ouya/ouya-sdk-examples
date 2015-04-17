@@ -22,6 +22,7 @@ import android.content.*;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -45,7 +46,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "1.2.1494.10";
+	private static final String PLUGIN_VERSION = "1.2.1494.11";
 
 	private static final boolean sEnableLogging = false;
 
@@ -201,6 +202,24 @@ public class MainActivity extends Activity
 		}
 		return true;
     }
+
+	private void raiseVolume() {
+		AudioManager audioMgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+		int stream = AudioManager.STREAM_SYSTEM;
+		int maxVolume = audioMgr.getStreamMaxVolume(stream);
+		int volume = audioMgr.getStreamVolume(stream);
+		volume = Math.min(volume + 1, maxVolume);
+		audioMgr.setStreamVolume(stream, volume, 0);
+	}
+
+	private void lowerVolume() {
+		AudioManager audioMgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+		int stream = AudioManager.STREAM_SYSTEM;
+		int maxVolume = audioMgr.getStreamMaxVolume(stream);
+		int volume = audioMgr.getStreamVolume(stream);
+		volume = Math.max(volume - 1, 0);
+		audioMgr.setStreamVolume(stream, volume, 0);
+	}
 	
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
@@ -217,12 +236,16 @@ public class MainActivity extends Activity
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Up detected.");
 					}
-					return true; //eat the event
+					raiseVolume();
+					return true; //the volume was handled
+					//return false; //show the xiaomi volume overlay
 				case 25:
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Down detected.");
 					}
-					return true; //eat the event
+					lowerVolume();
+					return true; //the volume was handled
+					//return false; //show the xiaomi volume overlay
 				case 66:
 					if (sEnableLogging) {
 						Log.i(TAG, "Remote button detected.");
