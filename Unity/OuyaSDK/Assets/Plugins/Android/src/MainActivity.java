@@ -46,7 +46,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "1.2.1494.11";
+	private static final String PLUGIN_VERSION = "1.2.1494.12";
 
 	private static final boolean sEnableLogging = false;
 

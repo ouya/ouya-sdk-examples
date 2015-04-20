@@ -40,7 +40,6 @@ namespace tv.ouya.sdk
         private static IntPtr _jmGetBitmapArray = IntPtr.Zero;
         private static IntPtr _jmGetOuyaModScreenshotArray = IntPtr.Zero;
         private static IntPtr _jmGetStringArray = IntPtr.Zero;
-        private static IntPtr _jmGetStringResource = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         /// <summary>
@@ -510,22 +509,6 @@ namespace tv.ouya.sdk
                         return;
                     }
                 }
-
-                {
-                    string strMethod = "getStringResource";
-                    _jmGetStringResource = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
-                    if (_jmGetStringResource != IntPtr.Zero)
-                    {
-#if VERBOSE_LOGGING
-                        Debug.Log(string.Format("Found {0} method", strMethod));
-#endif
-                    }
-                    else
-                    {
-                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
-                        return;
-                    }
-                }
             }
             catch (System.Exception ex)
             {
@@ -716,7 +699,7 @@ namespace tv.ouya.sdk
                 Debug.LogError("_jmRequestPurchase is not initialized");
                 return;
             }
-            
+
             // Make one request at a time
             if (m_pendingRequestPurchase)
             {
@@ -794,7 +777,7 @@ namespace tv.ouya.sdk
                 Debug.LogError("_jmSetSafeArea is not initialized");
                 return;
             }
-            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmSetSafeArea, new jvalue[1] {new jvalue() {f = percentage}});
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmSetSafeArea, new jvalue[1] { new jvalue() { f = percentage } });
         }
 
         public static void clearFocus()
@@ -1260,30 +1243,42 @@ namespace tv.ouya.sdk
 #if VERBOSE_LOGGING
             Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
 #endif
-            JNIFind();
 
             if (_jcOuyaUnityPlugin == IntPtr.Zero)
             {
                 Debug.LogError("_jcOuyaUnityPlugin is not initialized");
                 return null;
             }
-            if (_jmGetStringResource == IntPtr.Zero)
+
+            string strMethod = "getStringResource";
+            IntPtr method = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/lang/String;)Ljava/lang/String;");
+            if (method != IntPtr.Zero)
             {
-                Debug.LogError("_jmGetStringResource is not initialized");
-                return null;
+#if VERBOSE_LOGGING
+                Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+            }
+            else
+            {
+                Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                return string.Empty;
             }
 
             IntPtr arg1 = AndroidJNI.NewStringUTF(key);
-            IntPtr localRef = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetStringResource, new jvalue[] { new jvalue() { l = arg1 } });
+            string result = AndroidJNI.CallStaticStringMethod(_jcOuyaUnityPlugin, method, new jvalue[] { new jvalue() { l = arg1 } });
             AndroidJNI.DeleteLocalRef(arg1);
-            if (localRef == IntPtr.Zero)
-            {
-                Debug.LogError("_jmGetStringResource returned null");
-                return null;
-            }
 
-            string result = AndroidJNI.GetStringUTFChars(localRef);
-            AndroidJNI.DeleteLocalRef(localRef);
+#if VERBOSE_LOGGING
+            if (null == result)
+            {
+                Debug.Log("getStringResource returned: null");
+            }
+            else
+            {
+                Debug.Log(string.Format("getStringResource returned: {0}", result));
+            }
+#endif
+
             return result;
         }
 

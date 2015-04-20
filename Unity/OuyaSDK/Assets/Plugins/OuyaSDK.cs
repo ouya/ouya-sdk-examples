@@ -33,10 +33,15 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string PLUGIN_VERSION = "1.2.1494.11";
+    public const string PLUGIN_VERSION = "1.2.1494.12";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-    
+
+    /// <summary>
+    /// Dictionary for quick localization string lookup
+    /// </summary>
+    private static Dictionary<string, string> m_stringResources = new Dictionary<string, string>();
+
     static OuyaSDK()
     {
         // attach our thread to the java vm; obviously the main thread is already attached but this is good practice..
@@ -154,7 +159,7 @@ public static class OuyaSDK
         public static void UpdateInputFrame()
         {
             lock (m_lockObject)
-            { 
+            {
                 for (int deviceId = 0; deviceId < OuyaController.MAX_CONTROLLERS; ++deviceId)
                 {
                     #region Track Axis States
@@ -567,7 +572,7 @@ public static class OuyaSDK
         }
 #if UNITY_ANDROID && !UNITY_EDITOR
         OuyaUnityPlugin.setSafeArea(percentage);
-#endif        
+#endif
     }
 
     /// <summary>
@@ -594,7 +599,13 @@ public static class OuyaSDK
             return string.Empty;
         }
 #if UNITY_ANDROID && !UNITY_EDITOR
-        return OuyaUnityPlugin.getStringResource(key);
+        if (m_stringResources.ContainsKey(key))
+        {
+            return m_stringResources[key];
+        }
+        string val = OuyaUnityPlugin.getStringResource(key);
+        m_stringResources.Add(key, val);
+        return val;
 #else
         return string.Empty;
 #endif
