@@ -46,7 +46,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "1.2.1494.12";
+	private static final String PLUGIN_VERSION = "1.2.1494.13";
 
 	private static final boolean sEnableLogging = false;
 
@@ -236,16 +236,16 @@ public class MainActivity extends Activity
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Up detected.");
 					}
-					raiseVolume();
-					return true; //the volume was handled
-					//return false; //show the xiaomi volume overlay
+					//raiseVolume();
+					//return true; //the volume was handled
+					return false; //show the xiaomi volume overlay
 				case 25:
 					if (sEnableLogging) {
 						Log.i(TAG, "Volume Down detected.");
 					}
-					lowerVolume();
-					return true; //the volume was handled
-					//return false; //show the xiaomi volume overlay
+					//lowerVolume();
+					//return true; //the volume was handled
+					return false; //show the xiaomi volume overlay
 				case 66:
 					if (sEnableLogging) {
 						Log.i(TAG, "Remote button detected.");
