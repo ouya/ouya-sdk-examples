@@ -26,8 +26,10 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
+#include "OuyaController.h"
 #include "OuyaInputView.h"
 
+using namespace tv_ouya_console_api_OuyaController;
 using namespace tv_ouya_sdk_OuyaInputView;
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
@@ -35,6 +37,8 @@ using namespace tv_ouya_sdk_OuyaInputView;
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "native-activity", __VA_ARGS__))
 
 #define ENABLE_VERBOSE_LOGGING false
+
+bool g_ouyaLoadedJNI = false;
 
 /**
  * Our saved state data.
@@ -55,7 +59,6 @@ struct engine {
     const ASensor* accelerometerSensor;
     ASensorEventQueue* sensorEventQueue;
 
-    int animating;
     EGLDisplay display;
     EGLSurface surface;
     EGLContext context;
@@ -63,9 +66,6 @@ struct engine {
     int32_t height;
     struct saved_state state;
 };
-
-OuyaInputView* g_ouyaInputView = 0;
-JavaVM* g_jvm = 0;
 
 extern "C"
 {
@@ -75,24 +75,24 @@ extern "C"
 #if ENABLE_VERBOSE_LOGGING
 		LOGI("************JNI_OnLoad*************");
 #endif
-		g_jvm = jvm;
 
 #if ENABLE_VERBOSE_LOGGING
 		LOGI("Get the JNI Environment");
 #endif
 		JNIEnv* env;
-		g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
+		jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
 		// setup sending native input to Java
 
 #if ENABLE_VERBOSE_LOGGING
 		LOGI("Initialize the OuyaInputView classes");
 #endif
-		if (OuyaInputView::InitJNI(g_jvm) == JNI_ERR)
+		if (OuyaInputView::InitJNI(env) == JNI_ERR)
 		{
 			return JNI_ERR;
 		}
 
+		g_ouyaLoadedJNI = true;
 		return JNI_VERSION_1_6;
 	}
 }
@@ -102,68 +102,43 @@ extern "C"
 	// get axis value
 	float getAxis(int playerNum, int axis)
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->getAxis(playerNum, axis);
-		}
-		return 0.0f;
+		return OuyaInputView::getAxis(playerNum, axis);
 	}
 
 	// check if a button is pressed
 	bool isPressed(int playerNum, int keyCode)
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->isPressed(playerNum, keyCode);
-		}
-		return false;
+		return OuyaInputView::isPressed(playerNum, keyCode);
 	}
 
 	// check if a button was down
 	bool isPressedDown(int playerNum, int keyCode)
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->isPressedDown(playerNum, keyCode);
-		}
-		return false;
+		return OuyaInputView::isPressedDown(playerNum, keyCode);
 	}
 
 	// check if a button was up
 	bool isPressedUp(int playerNum, int keyCode)
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->isPressedUp(playerNum, keyCode);
-		}
-		return false;
+		return OuyaInputView::isPressedUp(playerNum, keyCode);
 	}
 
 	// clear the button state for detecting up and down
 	void clearButtonStates()
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->clearButtonStates();
-		}
+		return OuyaInputView::clearButtonStates();
 	}
 
 	// clear the axis values
 	void clearAxes()
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->clearAxes();
-		}
+		return OuyaInputView::clearAxes();
 	}
 
 	// clear the button values
 	void clearButtons()
 	{
-		if (g_ouyaInputView)
-		{
-			return g_ouyaInputView->clearButtons();
-		}
+		return OuyaInputView::clearButtons();
 	}
 }
 
@@ -266,7 +241,6 @@ static void engine_term_display(struct engine* engine) {
         }
         eglTerminate(engine->display);
     }
-    engine->animating = 0;
     engine->display = EGL_NO_DISPLAY;
     engine->context = EGL_NO_CONTEXT;
     engine->surface = EGL_NO_SURFACE;
@@ -280,48 +254,32 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 	LOGI("Native input event");
 #endif
 
-	if (!g_ouyaInputView &&
-		g_jvm)
+	if (!g_ouyaLoadedJNI)
 	{
-#if ENABLE_VERBOSE_LOGGING
-		LOGI("Get the JNI Environment");
-#endif
-		JNIEnv* env;
-		g_jvm->GetEnv((void**) &env, JNI_VERSION_1_6);
-
-#if ENABLE_VERBOSE_LOGGING
-		LOGI("Attach current thread");
-#endif
-		g_jvm->AttachCurrentThread(&env, 0);
-
-#if ENABLE_VERBOSE_LOGGING
-		LOGI("Getting the OuyaInputView instance");
-#endif
-		g_ouyaInputView = OuyaInputView::getInstance();
-		if (g_ouyaInputView)
-		{
-#if ENABLE_VERBOSE_LOGGING
-			LOGI("OuyaInputView is valid");
-#endif
-		}
-		else
-		{
-#if ENABLE_VERBOSE_LOGGING
-			LOGE("OuyaInputView is null");
-#endif
-		}
+		return 0;
 	}
 
-	if (g_ouyaInputView)
+	JavaVM* jvm = app->activity->vm;
+	JNIEnv* env = app->activity->env;
+
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = "NativeThread";
+	args.group = NULL;
+
+	jint result = jvm->AttachCurrentThread(&env, &args);
+	if (result == JNI_ERR)
 	{
-		if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
-		{
-			return g_ouyaInputView->dispatchKeyEvent(event);
-		}
-		else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
-		{
-			return g_ouyaInputView->dispatchGenericMotionEvent(event);
-		}
+		return 0;
+	}
+
+	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY)
+	{
+		return OuyaInputView::dispatchKeyEvent(env, event);
+	}
+	else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
+	{
+		return OuyaInputView::dispatchGenericMotionEvent(env, event);
 	}
 
     return 0;
@@ -367,8 +325,6 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
                 ASensorEventQueue_disableSensor(engine->sensorEventQueue,
                         engine->accelerometerSensor);
             }
-            // Also stop animating.
-            engine->animating = 0;
             engine_draw_frame(engine);
             break;
     }
@@ -412,10 +368,7 @@ void android_main(struct android_app* state) {
         int events;
         struct android_poll_source* source;
 
-        // If not animating, we will block forever waiting for events.
-        // If animating, we loop until all events are read, then continue
-        // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+        while ((ident=ALooper_pollAll(0, NULL, &events,
                 (void**)&source)) >= 0) {
 
             // Process this event.
@@ -443,17 +396,32 @@ void android_main(struct android_app* state) {
             }
         }
 
-        if (engine.animating) {
-            // Done with events; draw next animation frame.
-            engine.state.angle += .01f;
-            if (engine.state.angle > 1) {
-                engine.state.angle = 0;
-            }
+        if (g_ouyaLoadedJNI)
+        {
+			for (int playerNum = 0; playerNum < OuyaController::MAX_CONTROLLERS; ++playerNum)
+			{
+				if (isPressedDown(playerNum, OuyaController::BUTTON_MENU))
+				{
+					LOGI("Native Detected: BUTTON_MENU DOWN");
+				}
 
-            // Drawing is throttled to the screen update rate, so there
-            // is no need to do timing here.
-            engine_draw_frame(&engine);
+				if (isPressedUp(playerNum, OuyaController::BUTTON_MENU))
+				{
+					LOGI("Native Detected: BUTTON_MENU UP");
+				}
+			}
+			clearButtonStates();
         }
+
+		// Done with events; draw next animation frame.
+		engine.state.angle += .01f;
+		if (engine.state.angle > 1) {
+			engine.state.angle = 0;
+		}
+
+		// Drawing is throttled to the screen update rate, so there
+		// is no need to do timing here.
+		engine_draw_frame(&engine);
     }
 }
 //END_INCLUDE(all)

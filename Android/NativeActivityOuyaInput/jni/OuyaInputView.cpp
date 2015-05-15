@@ -6,17 +6,16 @@
 
 #define LOG_TAG "tv_ouya_sdk_OuyaInputView"
 
-#define ENABLE_VERBOSE_LOGGING true
+#ifdef ENABLE_VERBOSE_LOGGING
+#undef ENABLE_VERBOSE_LOGGING
+#endif
+#define ENABLE_VERBOSE_LOGGING false
 
 #define MAX_CONTROLLERS 4
 
 namespace tv_ouya_sdk_OuyaInputView
 {
-	JavaVM* OuyaInputView::_jvm = 0;
 	jclass OuyaInputView::_jcOuyaInputView = 0;
-	jmethodID OuyaInputView::_jmGetInstance = 0;
-	jmethodID OuyaInputView::_jmJavaDispatchKeyEvent = 0;
-	jmethodID OuyaInputView::_jmJavaDispatchMotionEvent = 0;
 
 	JNINativeMethod OuyaInputView::_nativeMethodTable[] = {
 		{ "dispatchGenericMotionEventNative", "(IIF)V", (void *)OuyaInputView::dispatchGenericMotionEventNative }
@@ -34,28 +33,24 @@ namespace tv_ouya_sdk_OuyaInputView
 	std::vector< std::map<int, bool> > OuyaInputView::_button;
 	std::vector< std::map<int, bool> > OuyaInputView::_buttonDown;
 	std::vector< std::map<int, bool> > OuyaInputView::_buttonUp;
+	std::vector< std::map<int, bool> > OuyaInputView::_lastButtonDown;
+	std::vector< std::map<int, bool> > OuyaInputView::_lastButtonUp;
 
-	int OuyaInputView::InitJNI(JavaVM* jvm)
+	int OuyaInputView::InitJNI(JNIEnv* env)
 	{
-		_jvm = jvm;
-
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return JNI_ERR;
-		}
-
 		{
 			const char* strClass = "tv/ouya/sdk/OuyaInputView";
 			#if ENABLE_VERBOSE_LOGGING
 				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strClass);
 			#endif
-			_jcOuyaInputView = env->FindClass(strClass);
-			if (_jcOuyaInputView)
+			jclass localRef = env->FindClass(strClass);
+			if (localRef)
 			{
-				#if ENABLE_VERBOSE_LOGGING
-					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
-				#endif
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
+#endif
+				_jcOuyaInputView = (jclass)env->NewGlobalRef((jobject)localRef);
+				env->DeleteLocalRef((jobject)localRef);
 			}
 			else
 			{
@@ -63,8 +58,6 @@ namespace tv_ouya_sdk_OuyaInputView
 				return JNI_ERR;
 			}
 		}
-
-		JNIFind();
 
 		// setup native receiving remapped input
 
@@ -92,124 +85,28 @@ namespace tv_ouya_sdk_OuyaInputView
 			_button.push_back(std::map<int, bool>());
 			_buttonDown.push_back(std::map<int, bool>());
 			_buttonUp.push_back(std::map<int, bool>());
+			_lastButtonDown.push_back(std::map<int, bool>());
+			_lastButtonUp.push_back(std::map<int, bool>());
+		}
+
+		jfieldID fieldNativeInitialized = env->GetStaticFieldID(_jcOuyaInputView, "sNativeInitialized", "Z");
+		if (fieldNativeInitialized)
+		{
+			env->SetStaticBooleanField(_jcOuyaInputView, fieldNativeInitialized, true);
+#if VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Native plugin has loaded.");
+#endif
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find sNativeInitialized field");
+			return JNI_ERR;
 		}
 
 		return JNI_OK;
 	}
 
-	void OuyaInputView::JNIFind()
-	{
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return;
-		}
-
-		if (!env)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return;
-		}
-
-		if (!_jcOuyaInputView)
-		{
-			return;
-		}
-
-		{
-			const char* strMethod = "getInstance";
-			#if ENABLE_VERBOSE_LOGGING
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
-			#endif
-			_jmGetInstance = env->GetStaticMethodID(_jcOuyaInputView, strMethod, "()Ltv/ouya/sdk/OuyaInputView;");
-			if (_jmGetInstance)
-			{
-				#if ENABLE_VERBOSE_LOGGING
-					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
-				#endif
-			}
-			else
-			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
-			}
-		}
-
-		{
-			const char* strMethod = "javaDispatchKeyEvent";
-			#if ENABLE_VERBOSE_LOGGING
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
-			#endif
-			_jmJavaDispatchKeyEvent = env->GetMethodID(_jcOuyaInputView, strMethod, "(JJIIIIIIII)Z");
-			if (_jmJavaDispatchKeyEvent)
-			{
-				#if ENABLE_VERBOSE_LOGGING
-					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
-				#endif
-			}
-			else
-			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
-			}
-		}
-
-		{
-			const char* strMethod = "javaDispatchGenericMotionEvent";
-			#if ENABLE_VERBOSE_LOGGING
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
-			#endif
-			_jmJavaDispatchMotionEvent = env->GetMethodID(_jcOuyaInputView, strMethod, "(JJIIIIFFIIII[I[I[F[F[F[F[F[F[F[F[FI[I[F)Z");
-			if (_jmJavaDispatchMotionEvent)
-			{
-				#if ENABLE_VERBOSE_LOGGING
-					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
-				#endif
-			}
-			else
-			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
-			}
-		}
-	}
-
-	OuyaInputView* OuyaInputView::getInstance()
-	{
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return 0;
-		}
-
-		if (!env)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
-			return 0;
-		}
-
-		if (!_jcOuyaInputView)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcOuyaInputView is not valid!");
-			return 0;
-		}
-
-		if (!_jmGetInstance)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetInstance is not valid!");
-			return 0;
-		}
-
-		jobject retVal = env->CallStaticObjectMethod(_jcOuyaInputView, _jmGetInstance);
-		if (!retVal)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmGetInstance returned null!");
-			return 0;
-		}
-
-		OuyaInputView* result = new OuyaInputView();
-		result->_instance = retVal;
-		return result;
-	}
-
-	bool OuyaInputView::dispatchKeyEvent(AInputEvent* keyEvent)
+	bool OuyaInputView::dispatchKeyEvent(JNIEnv* env, AInputEvent* keyEvent)
 	{
 		int64_t downTime = AKeyEvent_getDownTime(keyEvent);
 		int64_t eventTime = AKeyEvent_getEventTime(keyEvent);
@@ -223,16 +120,16 @@ namespace tv_ouya_sdk_OuyaInputView
 		int32_t source = AInputEvent_getSource(keyEvent);
 
 #if ENABLE_VERBOSE_LOGGING
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "downTime=%lld eventTime=%lld action=%d code=%d repeat=%d metaState=%d deviceId=%d scancode=%d flags=%d source=%d",
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchKeyEvent: downTime=%lld eventTime=%lld action=%d code=%d repeat=%d metaState=%d deviceId=%d scancode=%d flags=%d source=%d",
 			downTime, eventTime, action, code,
 			repeat, metaState, deviceId, scancode, flags, source);
 #endif
 
-		return javaDispatchKeyEvent(downTime, eventTime, action, code,
+		return javaDispatchKeyEvent(env, downTime, eventTime, action, code,
 			repeat, metaState, deviceId, scancode, flags, source);
 	}
 
-	bool OuyaInputView::dispatchGenericMotionEvent(AInputEvent* motionEvent)
+	bool OuyaInputView::dispatchGenericMotionEvent(JNIEnv* env, AInputEvent* motionEvent)
 	{
 		int64_t downTime = AMotionEvent_getDownTime(motionEvent);
 		int64_t eventTime = AMotionEvent_getEventTime(motionEvent);
@@ -265,7 +162,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		if (pointerCount > 0)
 		{
 #if ENABLE_VERBOSE_LOGGING
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "pointerCount=%d deviceId=%d source=%d",
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchGenericMotionEvent: pointerCount=%d deviceId=%d source=%d",
 				pointerCount, deviceId, source);
 #endif
 
@@ -274,7 +171,7 @@ namespace tv_ouya_sdk_OuyaInputView
 			int32_t toolType = AMotionEvent_getToolType(motionEvent, 0);
 
 #if ENABLE_VERBOSE_LOGGING
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "PointerProperties pointerId=%lld toolType-%d",
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchGenericMotionEvent: PointerProperties pointerId=%lld toolType-%d",
 				pointerId, toolType);
 #endif
 
@@ -293,7 +190,7 @@ namespace tv_ouya_sdk_OuyaInputView
 			float y = AMotionEvent_getY(motionEvent, pointerId);
 
 #if ENABLE_VERBOSE_LOGGING
-			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "PointerCoords orientation=%f pressure=%f size=%f toolMajor=%f toolMinor=%f touchMajor=%f touchMinor=%f x=%f y=%f",
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchGenericMotionEvent: PointerCoords orientation=%f pressure=%f size=%f toolMajor=%f toolMinor=%f touchMajor=%f touchMinor=%f x=%f y=%f",
 				orientation, pressure, size,
 				toolMajor, toolMinor, touchMajor, touchMinor,
 				x, y);
@@ -315,7 +212,7 @@ namespace tv_ouya_sdk_OuyaInputView
 				if (val != 0.0f)
 				{
 #if ENABLE_VERBOSE_LOGGING
-					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "axis=%d val=%f", axis, val);
+					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchGenericMotionEvent: axis=%d val=%f", axis, val);
 #endif
 					listAxisIndices.push_back(axis);
 					listAxisValues.push_back(val);
@@ -334,7 +231,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		listAxisIndices.clear();
 		listAxisValues.clear();
 
-		bool handled = javaDispatchGenericMotionEvent(
+		bool handled = javaDispatchGenericMotionEvent(env,
 			downTime,
 			eventTime,
 			action,
@@ -378,39 +275,57 @@ namespace tv_ouya_sdk_OuyaInputView
 		return handled;
 	}
 
-	bool OuyaInputView::javaDispatchKeyEvent(long long downTime, long long eventTime, int action, int code,
+	bool OuyaInputView::javaDispatchKeyEvent(JNIEnv* env, long long downTime, long long eventTime, int action, int code,
 		int repeat, int metaState, int deviceId, int scancode, int flags, int source)
 	{
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return false;
-		}
-
 		if (!env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
 			return false;
 		}
-
-		if (!_instance)
+		else
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not valid!");
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "javaDispatchKeyEvent: env is valid");
+#endif
+		}
+
+		const char* strMethod = "javaDispatchKeyEvent";
+		#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
+		#endif
+		jmethodID method = env->GetStaticMethodID(_jcOuyaInputView, strMethod, "(JJIIIIIIII)Z");
+		if (method)
+		{
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+#endif
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
 			return false;
 		}
 
-		if (!_jmJavaDispatchKeyEvent)
-		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmJavaDispatchKeyEvent is not valid!");
-			return false;
-		}
-
-		return env->CallBooleanMethod(_instance, _jmJavaDispatchKeyEvent,
+		bool result = env->CallStaticBooleanMethod(_jcOuyaInputView, method,
 			downTime, eventTime, action, code,
 			repeat, metaState, deviceId, scancode, flags, source);
+
+#if ENABLE_VERBOSE_LOGGING
+		if (result)
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "invoked _jmJavaDispatchKeyEvent result=true");
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "invoked _jmJavaDispatchKeyEvent result=false");
+		}
+#endif
+
+		return result;
 	}
 
-	bool OuyaInputView::javaDispatchGenericMotionEvent(
+	bool OuyaInputView::javaDispatchGenericMotionEvent(JNIEnv* env,
 		long long downTime,
 		long long eventTime,
 		int action,
@@ -438,28 +353,32 @@ namespace tv_ouya_sdk_OuyaInputView
 		int* axisIndexes,
 		float* axisValues)
 	{
-		JNIEnv* env;
-		if (_jvm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to get JNI environment!");
-			return false;
-		}
-
 		if (!env)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "JNI must be initialized with a valid environment!");
 			return false;
 		}
 
-		if (!_instance)
+		if (!_jcOuyaInputView)
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_instance is not valid!");
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jcOuyaInputView is not valid!");
 			return false;
 		}
 
-		if (!_jmJavaDispatchMotionEvent)
+		const char* strMethod = "javaDispatchGenericMotionEvent";
+#if ENABLE_VERBOSE_LOGGING
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for method %s", strMethod);
+#endif
+		jmethodID method = env->GetStaticMethodID(_jcOuyaInputView, strMethod, "(JJIIIIFFIIII[I[I[F[F[F[F[F[F[F[F[FI[I[F)Z");
+		if (method)
 		{
-			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "_jmJavaDispatchMotionEvent is not valid!");
-			return false;
+			#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strMethod);
+			#endif
+		}
+		else
+		{
+			__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strMethod);
 		}
 
 		jintArray argPointerPropertiesId = env->NewIntArray(pointerCount);
@@ -490,7 +409,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		env->SetIntArrayRegion(argAxisIndexes, 0, axisCount, axisIndexes);
 		env->SetFloatArrayRegion(argAxisValues, 0, axisCount, axisValues);
 
-		bool handled = env->CallBooleanMethod(_instance, _jmJavaDispatchMotionEvent,
+		bool handled = env->CallStaticBooleanMethod(_jcOuyaInputView, method,
 				downTime,
 				eventTime,
 				action,
@@ -535,18 +454,13 @@ namespace tv_ouya_sdk_OuyaInputView
 		return handled;
 	}
 
-	jobject OuyaInputView::GetInstance()
-	{
-		return _instance;
-	}
-
 	void OuyaInputView::dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 		jint playerNum,
 		jint axis,
 		jfloat val)
 	{
 #if ENABLE_VERBOSE_LOGGING
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Native remapped playerNum=%d axis=%d val=%f", playerNum, axis, val);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchGenericMotionEventNative: Native remapped playerNum=%d axis=%d val=%f", playerNum, axis, val);
 #endif
 		if (playerNum < 0 ||
 			playerNum >= MAX_CONTROLLERS)
@@ -562,7 +476,7 @@ namespace tv_ouya_sdk_OuyaInputView
 		jint action)
 	{
 #if ENABLE_VERBOSE_LOGGING
-		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Native remapped playerNum=%d KeyCode=%d Action=%d", playerNum, keyCode, action);
+		__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "dispatchKeyEventNative: Native remapped playerNum=%d KeyCode=%d Action=%d", playerNum, keyCode, action);
 #endif
 		if (playerNum < 0 ||
 			playerNum >= MAX_CONTROLLERS)
@@ -629,8 +543,8 @@ namespace tv_ouya_sdk_OuyaInputView
 			playerNum = 0;
 		}
 
-		std::map<int, bool>::const_iterator search = _buttonDown[playerNum].find(keyCode);
-		if (search != _buttonDown[playerNum].end())
+		std::map<int, bool>::const_iterator search = _lastButtonDown[playerNum].find(keyCode);
+		if (search != _lastButtonDown[playerNum].end())
 		{
 			return search->second;
 		}
@@ -646,8 +560,8 @@ namespace tv_ouya_sdk_OuyaInputView
 			playerNum = 0;
 		}
 
-		std::map<int, bool>::const_iterator search = _buttonUp[playerNum].find(keyCode);
-		if (search != _buttonUp[playerNum].end())
+		std::map<int, bool>::const_iterator search = _lastButtonUp[playerNum].find(keyCode);
+		if (search != _lastButtonUp[playerNum].end())
 		{
 			return search->second;
 		}
@@ -659,6 +573,18 @@ namespace tv_ouya_sdk_OuyaInputView
 	{
 		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum)
 		{
+			_lastButtonDown[playerNum].clear();
+			_lastButtonUp[playerNum].clear();
+			for (std::map<int, bool>::iterator it = _buttonDown[playerNum].begin(); it != _buttonDown[playerNum].end(); ++it)
+			{
+				int keyCode = it->first;
+				_lastButtonDown[playerNum][keyCode] = _buttonDown[playerNum][keyCode];
+			}
+			for (std::map<int, bool>::iterator it = _buttonUp[playerNum].begin(); it != _buttonUp[playerNum].end(); ++it)
+			{
+				int keyCode = it->first;
+				_lastButtonUp[playerNum][keyCode] = _buttonUp[playerNum][keyCode];
+			}
 			_buttonDown[playerNum].clear();
 			_buttonUp[playerNum].clear();
 		}
@@ -679,6 +605,8 @@ namespace tv_ouya_sdk_OuyaInputView
 			_button[playerNum].clear();
 			_buttonDown[playerNum].clear();
 			_buttonUp[playerNum].clear();
+			_lastButtonDown[playerNum].clear();
+			_lastButtonUp[playerNum].clear();
 		}
 	}
 

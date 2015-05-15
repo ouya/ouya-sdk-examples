@@ -12,23 +12,20 @@ namespace tv_ouya_sdk_OuyaInputView
 	class OuyaInputView
 	{
 	public:
-		static int InitJNI(JavaVM* jvm);
-		static void JNIFind();
-
-		static OuyaInputView* getInstance();
+		static int InitJNI(JNIEnv* env);
 
 		// extract the original key event in native code
-		bool dispatchKeyEvent(AInputEvent* keyEvent);
+		static bool dispatchKeyEvent(JNIEnv* env, AInputEvent* keyEvent);
 
 		// extract the original motion event in native code
-		bool dispatchGenericMotionEvent(AInputEvent* motionEvent);
+		static bool dispatchGenericMotionEvent(JNIEnv* env, AInputEvent* motionEvent);
 
 		// send key event to Java
-		bool javaDispatchKeyEvent(long long downTime, long long eventTime, int action, int code,
+		static bool javaDispatchKeyEvent(JNIEnv* env, long long downTime, long long eventTime, int action, int code,
 			int repeat, int metaState, int deviceId, int scancode, int flags, int source);
 
 		// send motion event to Java
-		bool javaDispatchGenericMotionEvent(
+		static bool javaDispatchGenericMotionEvent(JNIEnv* env,
 				long long downTime,
 				long long eventTime,
 				int action,
@@ -56,8 +53,6 @@ namespace tv_ouya_sdk_OuyaInputView
 				int* axisIndexes,
 				float* axisValues);
 
-		jobject GetInstance();
-
 		// receive motion event from Java
 		static void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 			jint playerNum,
@@ -71,33 +66,28 @@ namespace tv_ouya_sdk_OuyaInputView
 			jint action);
 
 		// get axis value
-		float getAxis(int playerNum, int axis);
+		static float getAxis(int playerNum, int axis);
 
 		// check if a button is pressed
-		bool isPressed(int playerNum, int keyCode);
+		static bool isPressed(int playerNum, int keyCode);
 
 		// check if a button was down
-		bool isPressedDown(int playerNum, int keyCode);
+		static bool isPressedDown(int playerNum, int keyCode);
 
 		// check if a button was up
-		bool isPressedUp(int playerNum, int keyCode);
+		static bool isPressedUp(int playerNum, int keyCode);
 
 		// clear the button state for detecting up and down
-		void clearButtonStates();
+		static void clearButtonStates();
 
 		// clear the axis values
-		void clearAxes();
+		static void clearAxes();
 
 		// clear the button values
-		void clearButtons();
+		static void clearButtons();
 
 	private:
-		static JavaVM* _jvm;
 		static jclass _jcOuyaInputView;
-		static jmethodID _jmGetInstance;
-		static jmethodID _jmJavaDispatchKeyEvent;
-		static jmethodID _jmJavaDispatchMotionEvent;
-		jobject _instance;
 
 		static JNINativeMethod _nativeMethodTable[];
 		static int _nativeMethodTableSize;
@@ -112,6 +102,8 @@ namespace tv_ouya_sdk_OuyaInputView
 		static std::vector< std::map<int, bool> > _button;
 		static std::vector< std::map<int, bool> > _buttonDown;
 		static std::vector< std::map<int, bool> > _buttonUp;
+		static std::vector< std::map<int, bool> > _lastButtonDown;
+		static std::vector< std::map<int, bool> > _lastButtonUp;
 	};
 }
 
