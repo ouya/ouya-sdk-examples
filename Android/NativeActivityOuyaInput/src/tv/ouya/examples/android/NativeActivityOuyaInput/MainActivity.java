@@ -55,12 +55,18 @@ public class MainActivity extends NativeActivity {
     	//Log.i(TAG, "dispatchGenericMotionEvent");
     	//DebugInput.debugMotionEvent(motionEvent);
     	//DebugInput.debugOuyaMotionEvent(motionEvent);
-		return OuyaInputView.remappedDispatchGenericMotionEvent(motionEvent);
+		if (null == mInputView) {
+			return false;
+		}
+		return mInputView.dispatchGenericMotionEvent(motionEvent);
     }
 	
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
 		//Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
-		return OuyaInputView.remappedDispatchKeyEvent(keyEvent);
+		if (null == mInputView) {
+			return false;
+		}
+		return mInputView.dispatchKeyEvent(keyEvent);
 	}
 }

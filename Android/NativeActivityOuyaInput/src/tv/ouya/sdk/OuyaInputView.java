@@ -41,22 +41,6 @@ public class OuyaInputView extends View {
 
 	public static boolean sNativeInitialized = false;
 	
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		if (sEnableLogging) {
-			Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
-		}
-		return false;
-	}
-
-	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		if (sEnableLogging) {
-			Log.i(TAG, "dispatchGenericMotionEvent");
-		}
-		return false;
-	}
-
     private static class ViewRemappedEventDispatcher implements OuyaInputMapper.RemappedEventDispatcher {
         public static OuyaInputView mView;
         public ViewRemappedEventDispatcher(OuyaInputView view) {
