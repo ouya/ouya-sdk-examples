@@ -44,7 +44,6 @@ bool g_ouyaLoadedJNI = false;
  * Our saved state data.
  */
 struct saved_state {
-    float angle;
     int32_t x;
     int32_t y;
 };
@@ -199,7 +198,6 @@ static int engine_init_display(struct engine* engine) {
     engine->surface = surface;
     engine->width = w;
     engine->height = h;
-    engine->state.angle = 0;
 
     // Initialize GL state.
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -220,8 +218,7 @@ static void engine_draw_frame(struct engine* engine) {
     }
 
     // Just fill the screen with a color.
-    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
-            ((float)engine->state.y)/engine->height, 1);
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     eglSwapBuffers(engine->display, engine->surface);
@@ -382,9 +379,11 @@ void android_main(struct android_app* state) {
                     ASensorEvent event;
                     while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
                             &event, 1) > 0) {
+                    	/*
                         LOGI("accelerometer: x=%f y=%f z=%f",
                                 event.acceleration.x, event.acceleration.y,
                                 event.acceleration.z);
+                        */
                     }
                 }
             }
@@ -412,12 +411,6 @@ void android_main(struct android_app* state) {
 			}
 			clearButtonStates();
         }
-
-		// Done with events; draw next animation frame.
-		engine.state.angle += .01f;
-		if (engine.state.angle > 1) {
-			engine.state.angle = 0;
-		}
 
 		// Drawing is throttled to the screen update rate, so there
 		// is no need to do timing here.
