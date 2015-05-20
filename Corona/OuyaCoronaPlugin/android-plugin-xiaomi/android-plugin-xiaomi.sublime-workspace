@@ -1,0 +1,524 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"wr",
+				"write"
+			],
+			[
+				"print",
+				"printStackTrace"
+			],
+			[
+				"_jmRequest",
+				"_jmRequestPurchase"
+			],
+			[
+				"New",
+				"newGlobalRef"
+			],
+			[
+				"delete",
+				"DeleteLocalRef"
+			],
+			[
+				"isPre",
+				"isPressedUp"
+			],
+			[
+				"isPres",
+				"isPressedDown"
+			],
+			[
+				"cl",
+				"class"
+			],
+			[
+				"Lote",
+				"LotechActivity"
+			],
+			[
+				"clearB",
+				"clearButtonStates"
+			],
+			[
+				"BUTTON_D",
+				"BUTTON_DPAD_DOWN"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/plugin/ouya/xiaomi/LuaLoader.java",
+			"settings":
+			{
+				"buffer_size": 7420,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/tv/ouya/sdk/corona/IOuyaActivity.java",
+			"settings":
+			{
+				"buffer_size": 3861,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/tv/ouya/sdk/corona/AsyncLuaInitOuyaPlugin.java",
+			"settings":
+			{
+				"buffer_size": 2402,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/tv/ouya/sdk/corona/CoronaOuyaPlugin.java",
+			"settings":
+			{
+				"buffer_size": 5461,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/src/com/ianmaclarty/LotechActivity.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/res/values-zh-rCN/strings.xml",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/title.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/ltandroid.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/ltlua.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/main.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/stage_select.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/stageset_select.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/character_select.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/src/tv/ouya/sdk/OuyaPlugin.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/src/tv/ouya/sdk/OuyaInputView.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/ltstate.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/OuyaPlugin.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/OuyaPlugin.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/lua/lttext.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/font_large_cn.txt",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/font_cn.txt",
+		"/Users/tgraupmann/tagenigma/ouya/ports/font-packer/src/main/java/tv/ouya/fontpacker/LuaUtils.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/play.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/ltopengl.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/AndroidManifest.xml",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/tutorial.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/font-packer/src/main/java/tv/ouya/fontpacker/FontController.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/font-packer/src/main/java/tv/ouya/fontpacker/Main.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/plugins-hosted-ouya-xiaomi/docs/ouya/index.markdown",
+		"/Users/tgraupmann/tagenigma/ouya/ports/plugins-hosted-ouya-xiaomi/samples/VirtualControllerPlugin/Corona/main.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/plugins-hosted-ouya-xiaomi/samples/InAppPurchasesPlugin/Corona/main.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/plugins-hosted-ouya-xiaomi/metadata.json",
+		"/Users/tgraupmann/tagenigma/ouya/ports/font-packer/src/main/java/tv/ouya/fontpacker/XnaUtils.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/font.txt",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/android/include/lua.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/deps/lua-5.3.0/src/lauxlib.c",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/deps/lua-5.3.0/src/lauxlib.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/deps/lua-5.3.0/src/luaconf.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/lttext.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/lttext.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/OuyaPlugin.txt",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/res/values/strings.xml",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/lt.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/ltjson.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/src/lua_scripts.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Unity/OuyaSDK/Assets/Plugins/Android/src/OuyaUnityPlugin.java",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Unity/OuyaSDK/Assets/Plugins/Android/src/MainActivity.java",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/globals.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Unity/OuyaSDK/Assets/Ouya/SDK/Scripts/OuyaGameObject.cs",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/OuyaInputView.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/Android.mk",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/OuyaInputView.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/assets/energy_boost.lua",
+		"/Users/tgraupmann/tagenigma/ouya/ports/To Moon!.apk",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/glfw/ltclient.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/com_muandheyo_lotech_LotechRenderer.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/OuyaController.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/jni/com_muandheyo_lotech_Client.h",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/GameMaker/InAppPurchases.gmx/extensions/OuyaSDK/AndroidSource/Java/tv/ouya/sdk/OuyaInputView.java",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/AdobeAir/OuyaNativeExtension/Build/java/src/main/java/tv/ouya/sdk/MainActivity.java",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/MonoGame/OuyaSdk/Build/java/src/main/java/tv/ouya/sdk/OuyaInputView.java",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Android/NativeActivityOuyaInput/jni/main.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Android/NativeActivityOuyaInput/jni/OuyaInputView.cpp",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Android/NativeActivityOuyaInput/jni/OuyaInputView.h",
+		"/Users/tgraupmann/tagenigma/ouya/ports/boson-x/clients/ouya/AndroidManifest.xml.in",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Android/NativeActivityOuyaInput/src/tv/ouya/examples/android/NativeActivityOuyaInput/MainActivity.java",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/OuyaCoronaPlugin/simulator-plugin/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/Submission/ouya/samples/VirtualControllerPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/Submission/ouya/samples/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/OuyaCoronaPlugin/samples/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualControllerPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchasesPlugin/Corona/plugin_ouya.lua",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/Corona/build.settings",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/local.properties",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/project.properties",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/build_easy.sh",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/proguard-project.txt",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/build.sh",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/install_easy.sh",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/AndroidManifest.xml",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/VirtualController/android/build.xml",
+		"/Users/tgraupmann/tagenigma/ouya/Public/ouya-sdk-examples/Corona/InAppPurchases/Corona/callbacksFetchGamerUUID.lua"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"update_selectors",
+			"prof",
+			"update_character",
+			"lt.state.pro",
+			"lt.state.prof",
+			"prof",
+			"stage_set",
+			"update_selected_Stage",
+			"lt.state.stage_set",
+			"ltSaveState",
+			"gamedata",
+			"save",
+			"gamedata",
+			"import",
+			"gamedata",
+			"save",
+			"gamedata",
+			"ltSaveState\nltSaveState",
+			"ltSaveState",
+			"lt.state.stage_set",
+			"first_stage",
+			"stage",
+			"lt.state.prof",
+			"lt.state",
+			"state",
+			"stage_set",
+			"gamedata",
+			"GameData",
+			"lt.state.stage_set",
+			"GameData",
+			"import",
+			"lt.state.stage_set",
+			"first_stage =",
+			"selected_stage =",
+			"GameData",
+			"OuyaSDK_PutGameData",
+			"selected_stage",
+			"state.",
+			"selected_character",
+			"tonumber",
+			"selected_character",
+			"back",
+			"import",
+			"import(",
+			"character_s",
+			"options",
+			"import",
+			"receipt",
+			"requestPurchase",
+			"Test",
+			"quit",
+			"quit(",
+			"quit",
+			"utf8",
+			"GetStringResource",
+			"getstring\ngetstring",
+			"getstring",
+			"pause",
+			"print",
+			"quit",
+			"restart",
+			"pause",
+			"dark",
+			"debug",
+			"check_for_errors",
+			"left_bumper",
+			"\"left",
+			"left bumper",
+			"longer",
+			"jump",
+			"left",
+			"abc",
+			"continue",
+			"to continue",
+			"again",
+			"stage_1_level",
+			"saveLua",
+			"bmfFileLoc",
+			"FileChooser",
+			"refr",
+			"fontPicker",
+			"font",
+			"textFileLoc",
+			"bmfFileLoc",
+			"write",
+			"console",
+			"print",
+			"debug",
+			"log",
+			"print",
+			"fontpacker",
+			"initial",
+			"save",
+			"fontname",
+			"fontSize.setValue",
+			"fontSize",
+			"saveconfig",
+			"size",
+			"textFileLoc",
+			"bmfFileLoc",
+			"FontController",
+			"saveLocat",
+			"bmfFileLoc",
+			"save",
+			"bmfFileLoc",
+			":",
+			"abcd",
+			"abc",
+			"glyph",
+			"14",
+			"dark",
+			"energy reading",
+			"experiment",
+			"SELECT",
+			"select",
+			": SELECT",
+			":SELECT",
+			":BACK",
+			"BACK",
+			"space",
+			"lua",
+			"space",
+			"SFX",
+			"tutorial",
+			"TUTORIAL",
+			"tutorial",
+			"出",
+			"to exit"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/plugin/ouya/xiaomi/LuaLoader.java",
+					"settings":
+					{
+						"buffer_size": 7420,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4277.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/tv/ouya/sdk/corona/IOuyaActivity.java",
+					"settings":
+					{
+						"buffer_size": 3861,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 460.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/tv/ouya/sdk/corona/AsyncLuaInitOuyaPlugin.java",
+					"settings":
+					{
+						"buffer_size": 2402,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1005.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/tv/ouya/sdk/corona/CoronaOuyaPlugin.java",
+					"settings":
+					{
+						"buffer_size": 5461,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2801,
+								2801
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1116.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}
