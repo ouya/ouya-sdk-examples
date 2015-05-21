@@ -13,13 +13,17 @@ import tv.ouya.sdk.corona.*;
 
 public class LuaLoader implements com.naef.jnlua.JavaFunction {
 	
-	private final String LOG_TAG = LuaLoader.class.getSimpleName();
+	private static final String LOG_TAG = LuaLoader.class.getSimpleName();
+
+	private static final String VERSION = "1501.1";
 		
 	com.naef.jnlua.NamedJavaFunction[] luaFunctions = null;
 	
 	private static LuaLoader.CoronaRuntimeEventHandler runtimeEventHandler = null;
 
 	public LuaLoader() {
+
+		Log.i(LOG_TAG, "CoronaOuyaPlugin version="+VERSION);
 	
 		if (null == runtimeEventHandler) {
 			// OUYA activity has not been initialized
