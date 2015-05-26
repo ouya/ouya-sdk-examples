@@ -193,6 +193,9 @@ public class OuyaShowProducts : MonoBehaviour
     public void RequestPurchaseOnSuccess(OuyaSDK.Product product)
     {
         m_status = string.Format("RequestPurchaseOnSuccess: {0}", product.identifier);
+
+        // cache the receipt for offline use
+        OuyaSDK.putGameData("FULL_GAME_UNLOCK", "1");
     }
 
     public void RequestPurchaseOnFailure(int errorCode, string errorMessage)
@@ -213,16 +216,41 @@ public class OuyaShowProducts : MonoBehaviour
         {
             m_receipts.Add(receipt);
         }
+
+        // if a receipt was found, cache the receipt
+        if (receipts.Count > 0)
+        {
+            // cache receipt for offline use
+            OuyaSDK.putGameData("FULL_GAME_UNLOCK", "1");
+        }
+        // if receipt was removed, delete the cached receipt
+        else
+        {
+            // delete cached receipt
+            OuyaSDK.putGameData("FULL_GAME_UNLOCK", "0");
+        }
     }
 
     public void RequestReceiptsOnFailure(int errorCode, string errorMessage)
     {
         m_status = string.Format("RequestReceiptsOnFailure: error={0} errorMessage={1}", errorCode, errorMessage);
+
+        // use cached receipt
+        if (OuyaSDK.getGameData("FULL_GAME_UNLOCK") == "1")
+        {
+            //unlock full game
+        }
     }
 
     public void RequestReceiptsOnCancel()
     {
         m_status = "RequestReceiptsOnCancel";
+
+        // use cached receipt
+        if (OuyaSDK.getGameData("FULL_GAME_UNLOCK") == "1")
+        {
+            //unlock full game
+        }
     }
 
     public bool GetButtonUp(int button)
@@ -551,10 +579,14 @@ public class OuyaShowProducts : MonoBehaviour
         // set default selection
         m_focusManager.SelectedButton = m_btnRequestGamerInfo;
 
+        // wait for IAP to initialize
         while (!OuyaSDK.isIAPInitComplete())
         {
             yield return null;
         }
+
+        // request receipts
+        OuyaSDK.requestReceipts();
 
         m_isRunningOnOUYAHardware = OuyaSDK.isRunningOnOUYASupportedHardware();
     }
