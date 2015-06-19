@@ -96,7 +96,11 @@ public class OuyaShowSounds : MonoBehaviour
             (m_focusManager.SelectedButton == m_btnPlayMP3 &&
             GetButtonUp(OuyaController.BUTTON_O)))
         {
+#if UNITY_5
+            GetComponent<AudioSource>().PlayOneShot(m_soundMP3, 100);
+#else
             audio.PlayOneShot(m_soundMP3, 100);
+#endif
         }
         GUILayout.EndHorizontal();
         GUI.backgroundColor = oldColor;
@@ -114,7 +118,11 @@ public class OuyaShowSounds : MonoBehaviour
             (m_focusManager.SelectedButton == m_btnPlayOGG &&
             GetButtonUp(OuyaController.BUTTON_O)))
         {
+#if UNITY_5
+            GetComponent<AudioSource>().PlayOneShot(m_soundOGG, 100);
+#else
             audio.PlayOneShot(m_soundOGG, 100);
+#endif
         }
         GUILayout.EndHorizontal();
         GUI.backgroundColor = oldColor;
@@ -132,7 +140,11 @@ public class OuyaShowSounds : MonoBehaviour
             (m_focusManager.SelectedButton == m_btnPlayWAV &&
             GetButtonUp(OuyaController.BUTTON_O)))
         {
+#if UNITY_5
+            GetComponent<AudioSource>().PlayOneShot(m_soundWAV, 100);
+#else
             audio.PlayOneShot(m_soundWAV, 100);
+#endif
         }
         GUILayout.EndHorizontal();
         GUI.backgroundColor = oldColor;

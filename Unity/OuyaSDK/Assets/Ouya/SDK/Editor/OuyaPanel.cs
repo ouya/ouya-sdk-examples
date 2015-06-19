@@ -1035,25 +1035,6 @@ public class OuyaPanel : EditorWindow
         return license;
     }
 
-    private void ShowIcons()
-    {
-        if (PlayerSettings.resolutionDialogBanner != null)
-        {
-            ShowImage("resolutionDialogBanner", PlayerSettings.resolutionDialogBanner);
-        }
-        if (PlayerSettings.xboxSplashScreen != null)
-        {
-            ShowImage("xboxSplashScreen", PlayerSettings.xboxSplashScreen);
-        }
-        // DEFAULT ICON IS UNKNOWN IMAGES
-        DisplayImagesFor("Unknown Images", BuildTargetGroup.Unknown);
-
-        DisplayImagesFor("Android Images", BuildTargetGroup.Android);
-        DisplayImagesFor("WebPlayer Images", BuildTargetGroup.WebPlayer);
-        DisplayImagesFor("iPhone Images", BuildTargetGroup.iPhone);
-        DisplayImagesFor("Standalone Images", BuildTargetGroup.Standalone);
-    }
-
     private void DisplayImagesFor(string title, BuildTargetGroup target)
     {
         var found = false;
