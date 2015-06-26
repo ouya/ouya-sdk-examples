@@ -22,25 +22,14 @@ public class OuyaSafeArea : MonoBehaviour
     }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-    bool GetButtonDown(int button)
-    {
-        for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index)
-        {
-            if (OuyaSDK.OuyaInput.GetButtonDown(index, button))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
     void Update ()
     {
         float percentage = _percentage;
-        if (GetButtonDown(OuyaController.BUTTON_DPAD_LEFT))
+        if (OuyaSDK.OuyaInput.GetButtonDown(OuyaController.BUTTON_DPAD_LEFT))
         {
             percentage = Mathf.Max(0f, _percentage - 0.1f);
         }
-        else if (GetButtonDown(OuyaController.BUTTON_DPAD_RIGHT))
+        else if (OuyaSDK.OuyaInput.GetButtonDown(OuyaController.BUTTON_DPAD_RIGHT))
         {
             percentage = Mathf.Min(1f, _percentage + 0.1f);
         }

@@ -94,7 +94,7 @@ public class OuyaShowSounds : MonoBehaviour
         }
         if (GUILayout.Button("Play MP3", GUILayout.Height(40)) ||
             (m_focusManager.SelectedButton == m_btnPlayMP3 &&
-            GetButtonUp(OuyaController.BUTTON_O)))
+            OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O)))
         {
 #if UNITY_5
             GetComponent<AudioSource>().PlayOneShot(m_soundMP3, 100);
@@ -116,7 +116,7 @@ public class OuyaShowSounds : MonoBehaviour
         }
         if (GUILayout.Button("Play OGG", GUILayout.Height(40)) ||
             (m_focusManager.SelectedButton == m_btnPlayOGG &&
-            GetButtonUp(OuyaController.BUTTON_O)))
+            OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O)))
         {
 #if UNITY_5
             GetComponent<AudioSource>().PlayOneShot(m_soundOGG, 100);
@@ -138,7 +138,7 @@ public class OuyaShowSounds : MonoBehaviour
         }
         if (GUILayout.Button("Play WAV", GUILayout.Height(40)) ||
             (m_focusManager.SelectedButton == m_btnPlayWAV &&
-            GetButtonUp(OuyaController.BUTTON_O)))
+            OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O)))
         {
 #if UNITY_5
             GetComponent<AudioSource>().PlayOneShot(m_soundWAV, 100);
@@ -152,34 +152,22 @@ public class OuyaShowSounds : MonoBehaviour
 
     private void Update()
     {
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
         {
             m_focusManager.FocusDown();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_LEFT))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_LEFT))
         {
             m_focusManager.FocusLeft();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_RIGHT))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_RIGHT))
         {
             m_focusManager.FocusRight();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_UP))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_UP))
         {
             m_focusManager.FocusUp();
         }
-    }
-
-    public bool GetButtonUp(int button)
-    {
-        for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index)
-        {
-            if (OuyaSDK.OuyaInput.GetButtonUp(index, button))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void Start()

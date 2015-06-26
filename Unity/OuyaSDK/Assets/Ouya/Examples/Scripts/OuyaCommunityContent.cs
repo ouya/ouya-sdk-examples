@@ -370,7 +370,7 @@ public class OuyaCommunityContent : MonoBehaviour
         if (GUILayout.Button("Search by rating", GUILayout.Height(40)) ||
             (m_focusManager.SelectedButton == m_btnSearchByRating))
         {
-            if (GetButtonUp(OuyaController.BUTTON_O))
+            if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
             {
                 m_buttonClicked = true;
             }
@@ -394,7 +394,7 @@ public class OuyaCommunityContent : MonoBehaviour
         if (GUILayout.Button("Search by created at", GUILayout.Height(40)) ||
             (m_focusManager.SelectedButton == m_btnSearchByCreatedAt))
         {
-            if (GetButtonUp(OuyaController.BUTTON_O))
+            if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
             {
                 m_buttonClicked = true;
             }
@@ -418,7 +418,7 @@ public class OuyaCommunityContent : MonoBehaviour
         if (GUILayout.Button("Search by updated at", GUILayout.Height(40)) ||
             (m_focusManager.SelectedButton == m_btnSearchByUpdatedAt))
         {
-            if (GetButtonUp(OuyaController.BUTTON_O))
+            if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
             {
                 m_buttonClicked = true;
             }
@@ -444,7 +444,7 @@ public class OuyaCommunityContent : MonoBehaviour
             (m_focusManager.SelectedButton == m_btnCreate)) &&
             GUI.enabled)
         {
-            if (GetButtonUp(OuyaController.BUTTON_O))
+            if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
             {
                 m_buttonClicked = true;
             }
@@ -480,7 +480,7 @@ public class OuyaCommunityContent : MonoBehaviour
             if (GUILayout.Button(ouyaMod.m_isPublished ? "Unpublish" : "Publish", GUILayout.Height(40)) ||
                 (m_focusManager.SelectedButton == ouyaMod.m_buttonPublish))
             {
-                if (GetButtonUp(OuyaController.BUTTON_O))
+                if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
                 {
                     m_buttonClicked = true;
                 }
@@ -508,7 +508,7 @@ public class OuyaCommunityContent : MonoBehaviour
                 (m_focusManager.SelectedButton == ouyaMod.m_buttonDelete)) &&
                 GUI.enabled)
             {
-                if (GetButtonUp(OuyaController.BUTTON_O))
+                if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
                 {
                     m_buttonClicked = true;
                 }
@@ -530,7 +530,7 @@ public class OuyaCommunityContent : MonoBehaviour
                 (m_focusManager.SelectedButton == ouyaMod.m_buttonDownload)) &&
                 GUI.enabled)
             {
-                if (GetButtonUp(OuyaController.BUTTON_O))
+                if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
                 {
                     m_buttonClicked = true;
                 }
@@ -552,7 +552,7 @@ public class OuyaCommunityContent : MonoBehaviour
                 (m_focusManager.SelectedButton == ouyaMod.m_buttonRate)) &&
                 GUI.enabled)
             {
-                if (GetButtonUp(OuyaController.BUTTON_O))
+                if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
                 {
                     m_buttonClicked = true;
                 }
@@ -574,7 +574,7 @@ public class OuyaCommunityContent : MonoBehaviour
                 (m_focusManager.SelectedButton == ouyaMod.m_buttonEdit)) &&
                 GUI.enabled)
             {
-                if (GetButtonUp(OuyaController.BUTTON_O))
+                if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
                 {
                     m_buttonClicked = true;
                 }
@@ -596,7 +596,7 @@ public class OuyaCommunityContent : MonoBehaviour
                 (m_focusManager.SelectedButton == ouyaMod.m_buttonFlag)) &&
                 GUI.enabled)
             {
-                if (GetButtonUp(OuyaController.BUTTON_O))
+                if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O))
                 {
                     m_buttonClicked = true;
                 }
@@ -692,18 +692,6 @@ public class OuyaCommunityContent : MonoBehaviour
 
         GUILayout.FlexibleSpace();
         GUILayout.EndVertical();
-    }
-
-    public bool GetButtonUp(int button)
-    {
-        for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index)
-        {
-            if (OuyaSDK.OuyaInput.GetButtonUp(index, button))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void Create()
@@ -1133,19 +1121,19 @@ public class OuyaCommunityContent : MonoBehaviour
 
     private void UpdateFocus()
     {
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
         {
             m_focusManager.FocusDown();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_LEFT))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_LEFT))
         {
             m_focusManager.FocusLeft();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_RIGHT))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_RIGHT))
         {
             m_focusManager.FocusRight();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_UP))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_UP))
         {
             m_focusManager.FocusUp();
         }

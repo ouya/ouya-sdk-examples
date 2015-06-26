@@ -53,7 +53,7 @@ public class OuyaSceneGame : MonoBehaviour
         }
         if (GUILayout.Button("Back to Main Scene", GUILayout.Height(60)) ||
             (m_focusManager.SelectedButton == m_btnMainMenu &&
-            GetButtonUp(OuyaController.BUTTON_O)))
+            OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O)))
         {
             Application.LoadLevel(NextScene);
         }
@@ -71,7 +71,7 @@ public class OuyaSceneGame : MonoBehaviour
         }
         if (GUILayout.Button("Reset to Splash Screen", GUILayout.Height(60)) ||
             (m_focusManager.SelectedButton == m_btnSplashScreen &&
-            GetButtonUp(OuyaController.BUTTON_O)))
+            OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O)))
         {
             Application.LoadLevel(SplashScene);
         }
@@ -81,18 +81,6 @@ public class OuyaSceneGame : MonoBehaviour
 
         GUILayout.FlexibleSpace();
         GUILayout.EndVertical();
-    }
-
-    public bool GetButtonUp(int button)
-    {
-        for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index)
-        {
-            if (OuyaSDK.OuyaInput.GetButtonUp(index, button))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     void Start()
@@ -112,11 +100,11 @@ public class OuyaSceneGame : MonoBehaviour
 
     private void Update()
     {
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_DOWN))
         {
             m_focusManager.FocusDown();
         }
-        if (GetButtonUp(OuyaController.BUTTON_DPAD_UP))
+        if (OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_DPAD_UP))
         {
             m_focusManager.FocusUp();
         }

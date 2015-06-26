@@ -33,7 +33,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string PLUGIN_VERSION = "1.2.1494.13";
+    public const string PLUGIN_VERSION = "1.2.1494.14";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -334,6 +334,18 @@ public static class OuyaSDK
             }
         }
 
+        public static bool GetButton(int button)
+        {
+            for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum)
+            {
+                if (GetButton(playerNum, button))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool GetButtonDown(int playerNum, int button)
         {
             if (playerNum >= 0 &&
@@ -348,6 +360,18 @@ public static class OuyaSDK
             }
         }
 
+        public static bool GetButtonDown(int button)
+        {
+            for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum)
+            {
+                if (GetButtonDown(playerNum, button))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool GetButtonUp(int playerNum, int button)
         {
             if (playerNum >= 0 &&
@@ -360,6 +384,18 @@ public static class OuyaSDK
             {
                 return false;
             }
+        }
+
+        public static bool GetButtonUp(int button)
+        {
+            for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum)
+            {
+                if (GetButtonUp(playerNum, button))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         #endregion
