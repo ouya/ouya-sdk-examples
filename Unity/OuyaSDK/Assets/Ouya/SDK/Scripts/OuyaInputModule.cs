@@ -172,7 +172,7 @@ namespace tv.ouya.sdk
 #if UNITY_ANDROID && !UNITY_EDITOR
             Vector2 move = Vector2.zero;
 			move.x = OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_LS_X);
-			move.y = OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_LS_Y);
+			move.y = -OuyaSDK.OuyaInput.GetAxis(0, OuyaController.AXIS_LS_Y);
 
 			if (OuyaSDK.OuyaInput.GetButtonDown(m_PlayerNum, OuyaController.BUTTON_DPAD_LEFT))
             {
