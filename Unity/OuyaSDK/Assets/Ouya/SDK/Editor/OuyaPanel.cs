@@ -1149,6 +1149,7 @@ public class OuyaPanel : EditorWindow
             "SceneShowSounds",
             "SceneShowSticks",
             "SceneShowUnityInput",
+			"SceneShowUGUI",
             "VirtualController",
         };
 
