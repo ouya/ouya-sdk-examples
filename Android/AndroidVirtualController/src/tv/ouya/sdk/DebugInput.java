@@ -1,4 +1,4 @@
-package tv.ouya.console.api;
+package tv.ouya.sdk;
 
 import tv.ouya.console.api.OuyaController;
 import android.util.Log;
@@ -72,8 +72,12 @@ public class DebugInput {
 			return OuyaController.BUTTON_A;
 		} else if (name.equals("BUTTON_L1")) {
 			return OuyaController.BUTTON_L1;
+		} else if (name.equals("BUTTON_L2")) {
+			return OuyaController.BUTTON_L2;
 		} else if (name.equals("BUTTON_R1")) {
 			return OuyaController.BUTTON_R1;
+		} else if (name.equals("BUTTON_R2")) {
+			return OuyaController.BUTTON_R2;
 		} else if (name.equals("BUTTON_L3")) {
 			return OuyaController.BUTTON_L3;
 		} else if (name.equals("BUTTON_R3")) {
@@ -101,6 +105,8 @@ public class DebugInput {
         names.append(OuyaController.BUTTON_A, "BUTTON_A");
         names.append(OuyaController.BUTTON_L1, "BUTTON_L1");
         names.append(OuyaController.BUTTON_R1, "BUTTON_R1");
+        names.append(OuyaController.BUTTON_L2, "BUTTON_L2");
+        names.append(OuyaController.BUTTON_R2, "BUTTON_R2");
         names.append(OuyaController.BUTTON_L3, "BUTTON_L3");
         names.append(OuyaController.BUTTON_R3, "BUTTON_R3");
         names.append(OuyaController.BUTTON_DPAD_UP, "BUTTON_DPAD_UP");

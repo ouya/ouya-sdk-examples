@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <LinearLayout
+   <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -17,6 +17,22 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="System:" />
+         
+		<TextView
+	        android:id="@+id/txtKeyCode"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="KeyCode:" />
+	    <TextView
+			android:id="@+id/txtKeyCode2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="KeyCode2:" />
+	    <TextView
+	        android:id="@+id/txtController"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Controller" />
          
         <LinearLayout
             android:layout_width="wrap_content"
@@ -227,22 +243,6 @@
 			        android:layout_height="wrap_content"
 			        android:src="@drawable/y"
 			        android:visibility="invisible"/>
-			    <TextView
-			        android:id="@+id/txtController"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="Controller" />
-
-			    <TextView
-			        android:id="@+id/txtKeyCode"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:layout_below="@+id/txtController"
-			        android:layout_marginLeft="22dp"
-			        android:layout_marginTop="22dp"
-			        android:text="KeyCode:" />
-
 		    </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
