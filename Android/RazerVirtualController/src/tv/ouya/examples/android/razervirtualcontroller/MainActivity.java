@@ -1,11 +1,10 @@
 package tv.ouya.examples.android.razervirtualcontroller;
 
-import java.lang.reflect.Method;
-
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -14,6 +13,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import tv.ouya.sdk.*;
 
 public class MainActivity extends Activity {
@@ -54,6 +55,20 @@ public class MainActivity extends Activity {
 	private Boolean mWaitToExit = true;
 	private float mHomeDetected = 0f;
 	private float mPowerDetected = 0f;
+
+	private static SparseArray<HashMap<Integer, Float>> sAxisValues = new SparseArray<HashMap<Integer, Float>>();
+	private static SparseArray<HashMap<Integer, Boolean>> sButtonValues = new SparseArray<HashMap<Integer, Boolean>>();
+	
+	static {
+		for (int index = 0; index < RazerController.MAX_CONTROLLERS; ++index) {
+			HashMap<Integer, Float> axisMap = new HashMap<Integer, Float>();
+			axisMap.put(MotionEvent.AXIS_HAT_X, 0f);
+			axisMap.put(MotionEvent.AXIS_HAT_Y, 0f);
+			sAxisValues.put(index, axisMap);
+			HashMap<Integer, Boolean> buttonMap = new HashMap<Integer, Boolean>();
+			sButtonValues.put(index, buttonMap);
+		}
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -159,27 +174,62 @@ public class MainActivity extends Activity {
 	    	txtKeyCode.setText("Click detected");
 	    	txtController.setText("");
 	    }
-	};	
-	
-	private float mDpadX = 0f;
-	private float mDpadY = 0f;
+	};
+
+	void updateDPad(int playerNum) {
+		if (null == sButtonValues.get(playerNum).get(RazerController.BUTTON_DPAD_LEFT) &&
+			null == sButtonValues.get(playerNum).get(RazerController.BUTTON_DPAD_RIGHT)) {
+			float dpadX = sAxisValues.get(playerNum).get(MotionEvent.AXIS_HAT_X);
+			if (dpadX > 0.25f) {
+		    	imgDpadRight.setVisibility(View.VISIBLE);
+		    } else {
+		    	imgDpadRight.setVisibility(View.INVISIBLE);
+		    }		    
+		    if (dpadX < -0.25f) {
+		    	imgDpadLeft.setVisibility(View.VISIBLE);
+		    } else {
+		    	imgDpadLeft.setVisibility(View.INVISIBLE);
+		    }
+		}
+		
+		if (null == sButtonValues.get(playerNum).get(RazerController.BUTTON_DPAD_DOWN) &&
+			null == sButtonValues.get(playerNum).get(RazerController.BUTTON_DPAD_UP)) {	    
+		    float dpadY = sAxisValues.get(playerNum).get(MotionEvent.AXIS_HAT_Y);	    
+		    if (dpadY > 0.25f) {
+		    	imgDpadDown.setVisibility(View.VISIBLE);
+		    } else {
+		    	imgDpadDown.setVisibility(View.INVISIBLE);
+		    }
+		    
+		    if (dpadY < -0.25f) {
+		    	imgDpadUp.setVisibility(View.VISIBLE);
+		    } else {
+		    	imgDpadUp.setVisibility(View.INVISIBLE);
+		    }
+		}
+	}
+
 	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		//Log.i(TAG, "onGenericMotionEvent");
 		DebugInput.debugMotionEvent(motionEvent);
 		//DebugInput.debugOuyaMotionEvent(motionEvent);
+
+		int playerNum = 0;
 		
-		mDpadX = motionEvent.getAxisValue(RazerController.AXIS_DPAD_X);
-		mDpadY = motionEvent.getAxisValue(RazerController.AXIS_DPAD_Y);
+		float dpadX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+		float dpadY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+		sAxisValues.get(playerNum).put(MotionEvent.AXIS_HAT_X, dpadX);
+		sAxisValues.get(playerNum).put(MotionEvent.AXIS_HAT_Y, dpadY);
+		updateDPad(playerNum);
+
 		float lsX = motionEvent.getAxisValue(RazerController.AXIS_LS_X);
 	    float lsY = motionEvent.getAxisValue(RazerController.AXIS_LS_Y);
 	    float rsX = motionEvent.getAxisValue(RazerController.AXIS_RS_X);
 	    float rsY = motionEvent.getAxisValue(RazerController.AXIS_RS_Y);
 	    float l2 = motionEvent.getAxisValue(RazerController.AXIS_L2);
 	    float r2 = motionEvent.getAxisValue(RazerController.AXIS_R2);
-	    
-	    updateDPad();
 	    
 	    //rotate input by N degrees to match image
         float degrees = 135;
@@ -216,32 +266,6 @@ public class MainActivity extends Activity {
 		return false;
 	}
 	
-	void updateDPad() {
-		if (mDpadX > 0.25f) {
-	    	imgDpadRight.setVisibility(View.VISIBLE);
-	    } else {
-	    	imgDpadRight.setVisibility(View.INVISIBLE);
-	    }
-	    
-	    if (mDpadX < -0.25f) {
-	    	imgDpadLeft.setVisibility(View.VISIBLE);
-	    } else {
-	    	imgDpadLeft.setVisibility(View.INVISIBLE);
-	    }
-	    
-	    if (mDpadY > 0.25f) {
-	    	imgDpadDown.setVisibility(View.VISIBLE);
-	    } else {
-	    	imgDpadDown.setVisibility(View.INVISIBLE);
-	    }
-	    
-	    if (mDpadY < -0.25f) {
-	    	imgDpadUp.setVisibility(View.VISIBLE);
-	    } else {
-	    	imgDpadUp.setVisibility(View.INVISIBLE);
-	    }
-	}
-
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
 		//Log.i(TAG, "onKeyDown keyCode="+keyEvent.getKeyCode());
@@ -271,33 +295,39 @@ public class MainActivity extends Activity {
 			txtKeyCode2.setText(text);
 		}
 		
+		int playerNum = 0;	    
+
 		switch (keyCode)
 		{
 		case RazerController.BUTTON_DPAD_DOWN:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_DOWN, true);
 				imgDpadDown.setVisibility(View.VISIBLE);
 			}
 			break;
 		case RazerController.BUTTON_DPAD_LEFT:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_LEFT, true);
 				imgDpadLeft.setVisibility(View.VISIBLE);
 			}
 			break;
 		case RazerController.BUTTON_DPAD_RIGHT:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_RIGHT, true);
 				imgDpadRight.setVisibility(View.VISIBLE);
 			}
 			break;
 		case RazerController.BUTTON_DPAD_UP:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_UP, true);
 				imgDpadUp.setVisibility(View.VISIBLE);
 			}
 			break;
@@ -367,29 +397,39 @@ public class MainActivity extends Activity {
 			return false;
 		}
 		
+		int playerNum = 0;
+
 		switch (keyCode)
 		{
 		case RazerController.BUTTON_DPAD_DOWN:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_DOWN, false);
 				imgDpadDown.setVisibility(View.INVISIBLE);
 			}
 			break;
 		case RazerController.BUTTON_DPAD_LEFT:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_LEFT, false);
 				imgDpadLeft.setVisibility(View.INVISIBLE);
 			}
 			break;
 		case RazerController.BUTTON_DPAD_RIGHT:
-			imgDpadRight.setVisibility(View.INVISIBLE);
+			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
+				updateDPad(playerNum);
+			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_RIGHT, false);
+				imgDpadRight.setVisibility(View.INVISIBLE);
+			}
 			break;
 		case RazerController.BUTTON_DPAD_UP:
 			if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
-				updateDPad();
+				updateDPad(playerNum);
 			} else {
+				sButtonValues.get(playerNum).put(RazerController.BUTTON_DPAD_UP, false);
 				imgDpadUp.setVisibility(View.INVISIBLE);
 			}
 			break;

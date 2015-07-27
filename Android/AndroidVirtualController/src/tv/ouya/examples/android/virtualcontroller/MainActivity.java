@@ -397,8 +397,6 @@ public class MainActivity extends OuyaActivity {
 					+ DebugInput.debugGetButtonName(keyCode));
 		}
 		
-		//Log.i(TAG, "KeyDown="+keyCode);
-		
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
 	    	playerNum = 0;
@@ -500,8 +498,6 @@ public class MainActivity extends OuyaActivity {
 	    if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
 	    	playerNum = 0;
 	    }
-		
-		//Log.i(TAG, "KeyUp="+keyCode);
 		
 		switch (keyCode)
 		{

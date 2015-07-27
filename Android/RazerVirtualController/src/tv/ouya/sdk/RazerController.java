@@ -34,4 +34,6 @@ public class RazerController {
 	public static final int BUTTON_NEXT = KeyEvent.KEYCODE_BUTTON_START;
 	public static final int BUTTON_PREVIOUS = KeyEvent.KEYCODE_BUTTON_SELECT;
 	public static final int BUTTON_POWER = KeyEvent.KEYCODE_BUTTON_MODE;
+	
+	public static final int MAX_CONTROLLERS = 4;
 }
