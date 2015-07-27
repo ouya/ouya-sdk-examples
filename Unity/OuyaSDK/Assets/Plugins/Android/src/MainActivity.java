@@ -46,7 +46,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "1.2.1494.13";
+	private static final String PLUGIN_VERSION = "1.2.1494.17";
 
 	private static final boolean sEnableLogging = false;
 
@@ -94,7 +94,6 @@ public class MainActivity extends Activity
 			                       WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(mUnityPlayer);
-		//mUnityPlayer.requestFocus();
 
         mInputView = new OuyaInputView(this);
         
@@ -102,6 +101,7 @@ public class MainActivity extends Activity
 			Log.d(TAG, "disable screensaver");
 		}
         mInputView.setKeepScreenOn(true);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	// Quit Unity
@@ -200,7 +200,7 @@ public class MainActivity extends Activity
     	if (null != mInputView) {
 			mInputView.dispatchGenericMotionEvent(motionEvent);
 		}
-		return true;
+		return false;
     }
 
 	private void raiseVolume() {
