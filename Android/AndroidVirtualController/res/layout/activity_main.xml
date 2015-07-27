@@ -70,6 +70,11 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerMenu"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
         </LinearLayout>
             
         <LinearLayout
@@ -99,6 +104,21 @@
 			        android:layout_height="wrap_content"
 			        android:src="@android:color/transparent" />
             <ImageView
+			        android:id="@+id/imgControllerLS"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerRS"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerDpad"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
 			        android:id="@+id/imgControllerDpadDown"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -119,7 +139,27 @@
 			        android:layout_height="wrap_content"
 			        android:src="@android:color/transparent" />
             <ImageView
-			        android:id="@+id/imgControllerMenu"
+			        android:id="@+id/imgControllerBack"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerHome"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerPrevious"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerPower"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:src="@android:color/transparent" />
+            <ImageView
+			        android:id="@+id/imgControllerNext"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:src="@android:color/transparent" />

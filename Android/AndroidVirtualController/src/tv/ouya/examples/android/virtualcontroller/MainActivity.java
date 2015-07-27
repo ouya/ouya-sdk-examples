@@ -35,12 +35,20 @@ public class MainActivity extends OuyaActivity {
 	private ImageView imgControllerR1 = null;
 	private ImageView imgControllerR2 = null;
 	private ImageView imgControllerR3 = null;
+	private ImageView imgControllerDpad = null;
 	private ImageView imgControllerDpadDown = null;
 	private ImageView imgControllerDpadLeft = null;
 	private ImageView imgControllerDpadRight = null;
 	private ImageView imgControllerDpadUp = null;
+	private ImageView imgControllerBack = null;
+	private ImageView imgControllerHome = null;
 	private ImageView imgControllerMenu = null;
-	private ImageView imgButtonMenu = null;
+	private ImageView imgControllerNext = null;
+	private ImageView imgControllerPower = null;
+	private ImageView imgControllerPrevious = null;
+	private ImageView imgControllerLS = null;
+	private ImageView imgControllerRS = null;
+	private ImageView imgButtonMenu = null;	
 	private ImageView imgButtonA = null;
 	private ImageView imgDpadDown = null;
 	private ImageView imgDpadLeft = null;
@@ -97,11 +105,19 @@ public class MainActivity extends OuyaActivity {
 		imgControllerR1 = (ImageView)findViewById(R.id.imgControllerR1);
 		imgControllerR2 = (ImageView)findViewById(R.id.imgControllerR2);
 		imgControllerR3 = (ImageView)findViewById(R.id.imgControllerR3);
+		imgControllerDpad = (ImageView)findViewById(R.id.imgControllerDpad);
 		imgControllerDpadDown = (ImageView)findViewById(R.id.imgControllerDpadDown);
 		imgControllerDpadLeft = (ImageView)findViewById(R.id.imgControllerDpadLeft);
 		imgControllerDpadRight = (ImageView)findViewById(R.id.imgControllerDpadRight);
 		imgControllerDpadUp = (ImageView)findViewById(R.id.imgControllerDpadUp);
+		imgControllerBack = (ImageView)findViewById(R.id.imgControllerBack);
+		imgControllerHome = (ImageView)findViewById(R.id.imgControllerHome);
 		imgControllerMenu = (ImageView)findViewById(R.id.imgControllerMenu);
+		imgControllerNext = (ImageView)findViewById(R.id.imgControllerNext);
+		imgControllerPrevious = (ImageView)findViewById(R.id.imgControllerPrevious);
+		imgControllerPower = (ImageView)findViewById(R.id.imgControllerPower);
+		imgControllerLS = (ImageView)findViewById(R.id.imgControllerLS);
+		imgControllerRS = (ImageView)findViewById(R.id.imgControllerRS);
 		imgButtonA = (ImageView)findViewById(R.id.imgButtonA);
 		imgDpadDown = (ImageView)findViewById(R.id.imgDpadDown);
 		imgDpadLeft = (ImageView)findViewById(R.id.imgDpadLeft);
@@ -173,11 +189,19 @@ public class MainActivity extends OuyaActivity {
 		setDrawable(imgControllerR1, OuyaController.BUTTON_R1);
 		setDrawable(imgControllerR2, OuyaController.BUTTON_R2);
 		setDrawable(imgControllerR3, OuyaController.BUTTON_R3);
+		setDrawable(imgControllerDpad, OuyaController.BUTTON_DPAD);
 		setDrawable(imgControllerDpadDown, OuyaController.BUTTON_DPAD_DOWN);
 		setDrawable(imgControllerDpadLeft, OuyaController.BUTTON_DPAD_LEFT);
 		setDrawable(imgControllerDpadRight, OuyaController.BUTTON_DPAD_RIGHT);
 		setDrawable(imgControllerDpadUp, OuyaController.BUTTON_DPAD_UP);
+		setDrawable(imgControllerBack, KeyEvent.KEYCODE_BACK);
+		setDrawable(imgControllerHome, OuyaController.BUTTON_HOME);
 		setDrawable(imgControllerMenu, OuyaController.BUTTON_MENU);
+		setDrawable(imgControllerNext, KeyEvent.KEYCODE_BUTTON_START);
+		setDrawable(imgControllerPower, KeyEvent.KEYCODE_BUTTON_MODE);
+		setDrawable(imgControllerPrevious, KeyEvent.KEYCODE_BUTTON_SELECT);
+		setDrawable(imgControllerLS, OuyaController.AXIS_LS_X);
+		setDrawable(imgControllerRS, OuyaController.AXIS_RS_X);
 	}
 	
 	@Override
@@ -196,9 +220,23 @@ public class MainActivity extends OuyaActivity {
 	
 	private void setDrawable(ImageView imageView, int keyCode) {
 		ButtonData data = OuyaController.getButtonData(keyCode);
-		if (null != data) {
-			imageView.setImageDrawable(data.buttonDrawable);
+		if (null == data) {
+			Log.e(TAG, "Button Data is null keycode="+keyCode+" name="+DebugInput.debugGetButtonName(keyCode));
+			return;
 		}
+
+		if (null == data.buttonDrawable) {
+			Log.e(TAG, "Button Drawable is null keycode="+keyCode+" name="+DebugInput.debugGetButtonName(keyCode));
+			return;
+		}
+
+		Log.i(TAG, "Button name="+data.buttonName);
+		if (null == imageView) {
+			Log.e(TAG, "Button ImageView is null keycode="+keyCode+" name="+DebugInput.debugGetButtonName(keyCode));
+			return;
+		}
+
+		imageView.setImageDrawable(data.buttonDrawable);
 	}
 
 	@Override
@@ -222,7 +260,7 @@ public class MainActivity extends OuyaActivity {
 				txtKeyCode.setText("Original MotionEvent device=" + device.getName());
 			}
 		}
-		DebugInput.debugMotionEvent(motionEvent);		
+		//DebugInput.debugMotionEvent(motionEvent);		
 		return super.dispatchGenericMotionEvent(motionEvent);
 	}
 	
@@ -257,6 +295,7 @@ public class MainActivity extends OuyaActivity {
 		//Log.i(TAG, "onGenericMotionEvent");
 		//DebugInput.debugOuyaMotionEvent(motionEvent);
 		
+		int playerNum = 0;
 		if (null != txtKeyCode2) {
 			InputDevice device = motionEvent.getDevice();
 			if (null != device) {
@@ -265,9 +304,13 @@ public class MainActivity extends OuyaActivity {
 				if (null == controller) {
 					txtKeyCode2.setText("Remapped MotionEvent device=unknown");
 				} else {
+					playerNum = controller.getPlayerNum();
 					txtKeyCode2.setText("Remapped MotionEvent device=" + controller.getDeviceName()+" playerNum="+controller.getPlayerNum());
 				}
 			}
+		}
+		if (playerNum < 0) {
+			playerNum = 0;
 		}
 		
 		mDpadX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
@@ -318,7 +361,11 @@ public class MainActivity extends OuyaActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyDown");
+		Log.i(TAG, "onKeyDown keyCode="+keyCode+" source="+keyEvent.getSource());
+		
+		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
+			return false;
+		}
 		
 		OuyaController controller = OuyaController.getControllerByDeviceId(keyEvent.getDeviceId());
 		if (null != controller) {
@@ -407,9 +454,9 @@ public class MainActivity extends OuyaActivity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyUp");
+		Log.i(TAG, "onKeyUp keyCode="+keyCode+" source="+keyEvent.getSource());
 		
-		if (keyEvent.getSource() != 1281) {
+		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
 			return false;
 		}
 		
