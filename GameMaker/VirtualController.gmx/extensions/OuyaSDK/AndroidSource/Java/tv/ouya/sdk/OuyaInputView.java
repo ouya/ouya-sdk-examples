@@ -186,9 +186,11 @@ public class OuyaInputView extends View {
 		
 	@Override
 	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		/*
     	if (sEnableLogging) {
 			DebugInput.debugMotionEvent(motionEvent);
 		}
+		*/
     	
     	Activity activity = ((Activity)getContext());		
 		if (null != activity) {
@@ -203,10 +205,12 @@ public class OuyaInputView extends View {
 	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+		/*
     	if (sEnableLogging) {
     		Log.i(TAG, "remappedDispatchGenericMotionEvent");
     		DebugInput.debugOuyaMotionEvent(motionEvent);
     	}
+		*/
     	
     	int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
     	if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
@@ -266,13 +270,16 @@ public class OuyaInputView extends View {
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		if (sEnableLogging) {
-			Log.i(TAG, "onKeyUp keyCode=" + keyCode);
-		}
 		
 		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
 			return false;
 		}
+		
+		/*
+		if (sEnableLogging) {
+			Log.i(TAG, "onKeyUp keyCode=" + keyCode + " ("+DebugInput.debugGetButtonName(keyCode)+") source="+keyEvent.getSource());
+		}
+		*/
 		
     	int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
     	if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
@@ -287,7 +294,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, true);
+					sButtonValues.get(playerNum).put(keyCode, false);
 				}
 				break;
 			case OuyaController.BUTTON_DPAD_LEFT:
@@ -297,7 +304,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, true);
+					sButtonValues.get(playerNum).put(keyCode, false);
 				}
 				break;
 			case OuyaController.BUTTON_DPAD_RIGHT:
@@ -307,7 +314,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, true);
+					sButtonValues.get(playerNum).put(keyCode, false);
 				}
 				break;
 			case OuyaController.BUTTON_DPAD_UP:
@@ -317,7 +324,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, true);
+					sButtonValues.get(playerNum).put(keyCode, false);
 				}
 				break;
 			case OuyaController.BUTTON_L2:
@@ -338,18 +345,24 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "processKeyUp stateButton playerNum="+playerNum+" keyCode="+keyCode+" is null");
 			return false;
 		}
-		stateButton.put(keyCode, false);
-    	if (sEnableLogging) {
-    		Log.i(TAG, "processKeyUp stateButton playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButton.get(keyCode));
-		}
-		
-		SparseBooleanArray stateButtonUp = sStateButtonUp.get(playerNum);
-		if (null == stateButtonUp) {
-			Log.e(TAG, "processKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is null");
-		} else {
-			stateButtonUp.put(keyCode, true);
+		if (stateButton.get(keyCode) != false) {
+			stateButton.put(keyCode, false);
+			/*
 			if (sEnableLogging) {
-				Log.i(TAG, "processKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButtonUp.get(keyCode));
+				Log.i(TAG, "processKeyUp stateButton playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButton.get(keyCode));
+			}
+			*/
+			
+			SparseBooleanArray stateButtonUp = sStateButtonUp.get(playerNum);
+			if (null == stateButtonUp) {
+				Log.e(TAG, "processKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" is null");
+			} else {
+				stateButtonUp.put(keyCode, true);
+				/*
+				if (sEnableLogging) {
+					Log.i(TAG, "processKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButtonUp.get(keyCode));
+				}
+				*/
 			}
 		}
 		
@@ -358,13 +371,16 @@ public class OuyaInputView extends View {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		if (sEnableLogging) {
-			Log.i(TAG, "onKeyDown keyCode=" + keyCode);
-		}
-		
+	
 		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
 			return false;
 		}
+		
+		/*
+		if (sEnableLogging) {
+			Log.i(TAG, "onKeyDown keyCode=" + keyCode + " ("+DebugInput.debugGetButtonName(keyCode)+") source="+keyEvent.getSource());
+		}
+		*/
 		
     	int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
     	if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
@@ -379,7 +395,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, false);
+					sButtonValues.get(playerNum).put(keyCode, true);
 				}
 				break;
 			case OuyaController.BUTTON_DPAD_LEFT:
@@ -389,7 +405,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, false);
+					sButtonValues.get(playerNum).put(keyCode, true);
 				}
 				break;
 			case OuyaController.BUTTON_DPAD_RIGHT:
@@ -399,7 +415,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, false);
+					sButtonValues.get(playerNum).put(keyCode, true);
 				}
 				break;
 			case OuyaController.BUTTON_DPAD_UP:
@@ -409,7 +425,7 @@ public class OuyaInputView extends View {
 					}
 					return true;
 				} else {
-					sButtonValues.get(playerNum).put(keyCode, false);
+					sButtonValues.get(playerNum).put(keyCode, true);
 				}
 				break;
 			case OuyaController.BUTTON_L2:
@@ -430,21 +446,27 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "processKeyDown stateButton playerNum="+playerNum+" keyCode="+keyCode+" is null");
 			return false;
 		}
-		stateButton.put(keyCode, true);
-    	if (sEnableLogging) {
-    		Log.i(TAG, "processKeyDown stateButton playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButton.get(keyCode));
-		}
-		
-		SparseBooleanArray stateButtonDown = sStateButtonDown.get(playerNum);
-		if (null == stateButtonDown) {
-			Log.e(TAG, "processKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is null");
-		} else {
-			stateButtonDown.put(keyCode, true);
+		if (stateButton.get(keyCode) != true) {
+			stateButton.put(keyCode, true);
+			/*
 			if (sEnableLogging) {
-				Log.i(TAG, "processKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is="+stateButtonDown.get(keyCode));
+				Log.i(TAG, "processKeyDown stateButton playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButton.get(keyCode));
+			}
+			*/
+			
+			SparseBooleanArray stateButtonDown = sStateButtonDown.get(playerNum);
+			if (null == stateButtonDown) {
+				Log.e(TAG, "processKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" is null");
+			} else {
+				stateButtonDown.put(keyCode, true);
+				/*
+				if (sEnableLogging) {
+					Log.i(TAG, "processKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButtonDown.get(keyCode));
+				}
+				*/
 			}
 		}
-		
+
 		return true;
 	}
 	
@@ -495,8 +517,13 @@ public class OuyaInputView extends View {
 		if (null == stateButtonDown) {
 			Log.e(TAG, "getButtonDown stateButtonDown is null");
 			return false;
-		}		
-		return stateButtonDown.get(button);
+		}
+		boolean result = stateButtonDown.get(button);
+		if (sEnableLogging &&
+			result) {
+			Log.i(TAG, "getButtonDown playerNum="+playerNum+" keyCode="+button+" ("+DebugInput.debugGetButtonName(button)+")");
+		}
+		return result;
 	}
 	
 	public static boolean getButtonUp(int playerNum, int button) {
@@ -508,7 +535,12 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "getButtonUp stateButtonUp is null");
 			return false;
 		}		
-		return stateButtonUp.get(button);
+		boolean result = stateButtonUp.get(button);
+		if (sEnableLogging &&
+			result) {
+			Log.i(TAG, "getButtonUp playerNum="+playerNum+" keyCode="+button+" ("+DebugInput.debugGetButtonName(button)+")");
+		}
+		return result;
 	}
 	
 	public static void clearButtonStatesPressedReleased() {

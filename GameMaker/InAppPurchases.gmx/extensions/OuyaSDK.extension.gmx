@@ -305,21 +305,5 @@
       <functions/>
       <constants/>
     </file>
-    <file>
-      <filename>MiGameCenterSDKService.apk</filename>
-      <origname>extensions\MiGameCenterSDKService.apk</origname>
-      <init></init>
-      <final></final>
-      <kind>4</kind>
-      <uncompress>0</uncompress>
-      <ConfigOptions>
-        <Config name="Default">
-          <CopyToMask>9223372036854775807</CopyToMask>
-        </Config>
-      </ConfigOptions>
-      <ProxyFiles/>
-      <functions/>
-      <constants/>
-    </file>
   </files>
 </extension>
