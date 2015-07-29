@@ -301,4 +301,3 @@ if (asyncResult != undefined &&
     }
     OuyaSDK_PopAsyncResult();
 }
-

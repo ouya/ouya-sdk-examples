@@ -17,6 +17,7 @@
   <androidsourcedir></androidsourcedir>
   <macsourcedir></macsourcedir>
   <maclinkerflags></maclinkerflags>
+  <maccompilerflags></maccompilerflags>
   <androidinject>    &lt;activity android:name="${YYAndroidPackageName}.RunnerActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:label="@string/app_name" android:launchMode="singleTask"  android:configChanges="orientation|keyboardHidden|screenSize"&gt;
       &lt;intent-filter&gt;
         &lt;action android:name="android.intent.action.MAIN"/&gt;

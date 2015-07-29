@@ -48,6 +48,7 @@
     <option_android_licensing_enable>0</option_android_licensing_enable>
     <option_android_licensing_key></option_android_licensing_key>
     <option_android_major_version>1</option_android_major_version>
+    <option_android_min_sdk_version>9</option_android_min_sdk_version>
     <option_android_minor_version>0</option_android_minor_version>
     <option_android_orient_landscape>True</option_android_orient_landscape>
     <option_android_orient_landscape_flipped>True</option_android_orient_landscape_flipped>
@@ -62,11 +63,13 @@
     <option_android_pocketchange_enable>0</option_android_pocketchange_enable>
     <option_android_pocketchange_id></option_android_pocketchange_id>
     <option_android_pocketchange_test_enable>0</option_android_pocketchange_test_enable>
+    <option_android_portrait_splash_png>Configs\Default\android\portrait_splash.png</option_android_portrait_splash_png>
     <option_android_push_enable>0</option_android_push_enable>
     <option_android_push_id></option_android_push_id>
     <option_android_scale>-1</option_android_scale>
     <option_android_set_device_id></option_android_set_device_id>
     <option_android_splash_png>Configs\Default\android\splash.png</option_android_splash_png>
+    <option_android_target_sdk_version>16</option_android_target_sdk_version>
     <option_android_texture_page>1024</option_android_texture_page>
     <option_android_use_test_ads>0</option_android_use_test_ads>
     <option_argumenterrors>True</option_argumenterrors>
@@ -142,6 +145,7 @@
     <option_ios_google_analytics_enable>0</option_ios_google_analytics_enable>
     <option_ios_google_play_id></option_ios_google_play_id>
     <option_ios_google_tracking_id></option_ios_google_tracking_id>
+    <option_ios_half_ipad1_textures>false</option_ios_half_ipad1_textures>
     <option_ios_icon_114>Configs\Default\ios\icons\icon114.png</option_ios_icon_114>
     <option_ios_icon_120>Configs\Default\ios\icons\icon120.png</option_ios_icon_120>
     <option_ios_icon_144>Configs\Default\ios\icons\icon144.png</option_ios_icon_144>
@@ -154,12 +158,19 @@
     <option_ios_inmobi_test_enable>0</option_ios_inmobi_test_enable>
     <option_ios_interpolate>-1</option_ios_interpolate>
     <option_ios_ipad_retina_splash_png>Configs\Default\ios\iPadRetinasplash.png</option_ios_ipad_retina_splash_png>
+    <option_ios_ipad_retina_splash_portrait_png>Configs\Default\ios\iPadRetinasplashPortrait.png</option_ios_ipad_retina_splash_portrait_png>
     <option_ios_ipad_splash_png>Configs\Default\ios\iPadsplash.png</option_ios_ipad_splash_png>
+    <option_ios_ipad_splash_portrait_png>Configs\Default\ios\iPadsplashPortrait.png</option_ios_ipad_splash_portrait_png>
     <option_ios_iphone5_splash_png>Configs\Default\ios\iPhone5splash.png</option_ios_iphone5_splash_png>
+    <option_ios_iphone5_splash_portrait_png>Configs\Default\ios\iPhone5splashPortrait.png</option_ios_iphone5_splash_portrait_png>
     <option_ios_iphone6_splash_png>Configs\Default\ios\iPhone6splash.png</option_ios_iphone6_splash_png>
+    <option_ios_iphone6_splash_portrait_png>Configs\Default\ios\iPhone6splashPortrait.png</option_ios_iphone6_splash_portrait_png>
     <option_ios_iphone6plus_splash_png>Configs\Default\ios\iPhone6Plussplash.png</option_ios_iphone6plus_splash_png>
+    <option_ios_iphone6plus_splash_portrait_png>Configs\Default\ios\iPhone6PlussplashPortrait.png</option_ios_iphone6plus_splash_portrait_png>
     <option_ios_iphone_retina_splash_png>Configs\Default\ios\IphoneRetinasplash.png</option_ios_iphone_retina_splash_png>
+    <option_ios_iphone_retina_splash_portrait_png>Configs\Default\ios\IphoneRetinasplashPortrait.png</option_ios_iphone_retina_splash_portrait_png>
     <option_ios_iphone_splash_png>Configs\Default\ios\iPhonesplash.png</option_ios_iphone_splash_png>
+    <option_ios_iphone_splash_portrait_png>Configs\Default\ios\iPhonesplashPortrait.png</option_ios_iphone_splash_portrait_png>
     <option_ios_major_version>1</option_ios_major_version>
     <option_ios_minor_version>0</option_ios_minor_version>
     <option_ios_orient_landscape>-1</option_ios_orient_landscape>
@@ -367,9 +378,11 @@
     <option_windows_runner_finished>Configs\Default\windows\Runner_finish.bmp</option_windows_runner_finished>
     <option_windows_runner_header>Configs\Default\windows\Runner_header.bmp</option_windows_runner_header>
     <option_windows_save_location>0</option_windows_save_location>
+    <option_windows_splash_background_colour>#000000</option_windows_splash_background_colour>
     <option_windows_splash_screen>Configs\Default\windows\splash.png</option_windows_splash_screen>
     <option_windows_steam_app_id>0</option_windows_steam_app_id>
     <option_windows_texture_page>2048</option_windows_texture_page>
+    <option_windows_use_splash>true</option_windows_use_splash>
     <option_winphone_480_splash_image>Configs\Default\WinPhone\SplashScreenImage480.jpg</option_winphone_480_splash_image>
     <option_winphone_720_splash_image>Configs\Default\WinPhone\SplashScreenImage720.jpg</option_winphone_720_splash_image>
     <option_winphone_768_splash_image>Configs\Default\WinPhone\SplashScreenImage.jpg</option_winphone_768_splash_image>
@@ -437,11 +450,16 @@
     <option_xbone_events_manifest_index>-1</option_xbone_events_manifest_index>
     <option_xbone_foreground_text>light</option_xbone_foreground_text>
     <option_xbone_interpolation>-1</option_xbone_interpolation>
+    <option_xbone_languages>"&lt;!-- Add languages you support here --&gt;","&lt;!-- os_get_language will only return languages listed --&gt;","&lt;!-- ""en"" is supported by default --&gt;","&lt;!-- See ""NLS APIs and Localization"" white paper --&gt;","&lt;!-- from developer.xboxlive.com for info --&gt;"</option_xbone_languages>
     <option_xbone_major_version>0</option_xbone_major_version>
     <option_xbone_minor_version>0</option_xbone_minor_version>
     <option_xbone_network_manifest_file></option_xbone_network_manifest_file>
+    <option_xbone_product_id></option_xbone_product_id>
     <option_xbone_publisher></option_xbone_publisher>
     <option_xbone_publisher_display_name></option_xbone_publisher_display_name>
+    <option_xbone_ratings>"&lt;mx:Ratings Category=""game""&gt;","&lt;!-- Insert your title ratings here --&gt;","&lt;!-- See ""Title Ratings for Xbox One"" white paper --&gt;","&lt;!-- from developer.xboxlive.com for details --&gt;","&lt;/mx:Ratings&gt;"</option_xbone_ratings>
+    <option_xbone_require_audio_recording>false</option_xbone_require_audio_recording>
+    <option_xbone_require_game_chat>false</option_xbone_require_game_chat>
     <option_xbone_require_xbox_live>0</option_xbone_require_xbox_live>
     <option_xbone_revision_version>0</option_xbone_revision_version>
     <option_xbone_scale>-1</option_xbone_scale>

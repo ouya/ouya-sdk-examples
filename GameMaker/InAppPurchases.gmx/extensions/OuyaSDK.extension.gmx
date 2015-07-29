@@ -3,7 +3,7 @@
   <name>OuyaSDK</name>
   <version>0.1.0</version>
   <packageID></packageID>
-  <ProductID>F79C97955FD1AF4686EB4EF4EF90F0DB</ProductID>
+  <ProductID></ProductID>
   <date>02/03/15</date>
   <license>Free to use, also for commercial games.</license>
   <description></description>
@@ -17,6 +17,7 @@
   <androidsourcedir></androidsourcedir>
   <macsourcedir></macsourcedir>
   <maclinkerflags></maclinkerflags>
+  <maccompilerflags></maccompilerflags>
   <androidinject>    &lt;activity android:name="${YYAndroidPackageName}.RunnerActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:label="@string/app_name" android:launchMode="singleTask"  android:configChanges="orientation|keyboardHidden|screenSize"&gt;
       &lt;intent-filter&gt;
         &lt;action android:name="android.intent.action.MAIN"/&gt;
