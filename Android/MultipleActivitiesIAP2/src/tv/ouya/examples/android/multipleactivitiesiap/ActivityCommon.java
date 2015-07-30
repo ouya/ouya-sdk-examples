@@ -40,6 +40,9 @@ public class ActivityCommon extends Activity
 	// Your game talks to the OuyaFacade, which hides all the mechanics of doing an in-app purchase.
 	private static OuyaFacade sOuyaFacade = null;
 	
+	// listener for initialization
+	private static CancelIgnoringOuyaResponseListener<Bundle> sInitCompletedListener = null;
+	
 	// listener for fetching gamer info
 	private static CancelIgnoringOuyaResponseListener<GamerInfo> sRequestGamerInfoListener = null;
 
@@ -96,8 +99,21 @@ public class ActivityCommon extends Activity
         };
 
         developerInfo.putStringArray(OuyaFacade.OUYA_PRODUCT_ID_LIST, products);
+
+        sInitCompletedListener = new CancelIgnoringOuyaResponseListener<Bundle>() {
+            @Override
+            public void onSuccess(Bundle info) {
+            	Log.i(TAG, "sInitCompletedListener: onSuccess");
+            }
+
+            @Override
+            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            	Log.i(TAG, "sInitCompletedListener: onFailure errorCode="+errorCode+" errorMessage="+errorMessage);
+            }
+        };
         
 		sOuyaFacade = OuyaFacade.getInstance();
+		sOuyaFacade.registerInitCompletedListener(sInitCompletedListener);
 		sOuyaFacade.init(context, developerInfo);
 		
 		sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
