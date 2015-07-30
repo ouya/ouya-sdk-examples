@@ -16,15 +16,12 @@
 
 package tv.ouya.examples.android.NativeActivityOuyaInput;
 
-import android.app.Activity;
 import android.app.NativeActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
-import tv.ouya.console.api.DebugInput;
-import tv.ouya.console.api.OuyaController;
-import tv.ouya.console.api.OuyaInputMapper;
+import tv.ouya.sdk.DebugInput;
 import tv.ouya.sdk.OuyaInputView;
 
 public class MainActivity extends NativeActivity {
@@ -47,7 +44,9 @@ public class MainActivity extends NativeActivity {
     public void onDestroy()
     {
     	super.onDestroy();
-    	mInputView.shutdown();
+    	if (null != mInputView) {
+    		mInputView.shutdown();
+    	}
     }
 	
 	@Override

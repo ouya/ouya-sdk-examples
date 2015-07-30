@@ -20,6 +20,7 @@ LOCAL_MODULE    := native-activity
 LOCAL_SRC_FILES := main.cpp OuyaInputView.cpp
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
+LOCAL_CPPFLAGS += -fexceptions
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -16,13 +16,11 @@
 
 package tv.ouya.sdk;
 
-import tv.ouya.console.api.DebugInput;
-import tv.ouya.console.api.OuyaController;
-import tv.ouya.console.api.OuyaInputMapper;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -30,6 +28,10 @@ import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
 import android.view.View;
 import android.widget.FrameLayout;
+import java.util.HashMap;
+import tv.ouya.console.api.OuyaController;
+import tv.ouya.console.api.OuyaInputMapper;
+import tv.ouya.sdk.DebugInput;
 
 public class OuyaInputView extends View {
 
@@ -41,6 +43,12 @@ public class OuyaInputView extends View {
 
 	public static boolean sNativeInitialized = false;
 	
+	// Interim axis and button values before applied to states
+	private static SparseArray<HashMap<Integer, Float>> sAxisValues = new SparseArray<HashMap<Integer, Float>>();
+	private static SparseArray<HashMap<Integer, Boolean>> sButtonValues = new SparseArray<HashMap<Integer, Boolean>>();
+	
+	private static final float DEAD_ZONE = 0.25f;
+	
     private static class ViewRemappedEventDispatcher implements OuyaInputMapper.RemappedEventDispatcher {
         public static OuyaInputView mView;
         public ViewRemappedEventDispatcher(OuyaInputView view) {
@@ -48,21 +56,36 @@ public class OuyaInputView extends View {
         }
         @Override
         public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+        	/*
             if (sEnableLogging) {
                 Log.i(TAG, "ViewRemappedEventDispatcher: dispatchGenericMotionEvent");
             }
+            */
             return OuyaInputView.remappedDispatchGenericMotionEvent(motionEvent);
         }
         @Override
         public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+        	/*
             if (sEnableLogging) {
                 Log.i(TAG, "ViewRemappedEventDispatcher: dispatchKeyEvent");
             }
+            */
             return OuyaInputView.remappedDispatchKeyEvent(keyEvent);
         }
     }
     
     private static ViewRemappedEventDispatcher sViewRemappedEventDispatcher = null;
+    
+	static {
+		for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index) {
+			HashMap<Integer, Float> axisMap = new HashMap<Integer, Float>();
+			axisMap.put(MotionEvent.AXIS_HAT_X, 0f);
+			axisMap.put(MotionEvent.AXIS_HAT_Y, 0f);
+			sAxisValues.put(index, axisMap);
+			HashMap<Integer, Boolean> buttonMap = new HashMap<Integer, Boolean>();
+			sButtonValues.put(index, buttonMap);
+		}
+    }
 
     public OuyaInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -126,25 +149,31 @@ public class OuyaInputView extends View {
                                         int repeat, int metaState, int deviceId, int scancode, int flags, int source) {
     	try {
     		if (sNativeInitialized) {
+    			/*
     			if (sEnableLogging) {
     				Log.i(TAG, "javaDispatchKeyEvent: Native plugin has initialized!");
     			}
+    			*/
     		} else {
     			Log.e(TAG, "javaDispatchKeyEvent: Native plugin has not been initialized!");
     			return false;
     		}
     		
+    		/*
     		if (sEnableLogging) {
     			Log.i(TAG, "javaDispatchKeyEvent downTime="+downTime+" eventTime="+eventTime+" action="+action+" code="+code+" repeat="+repeat+
     				" metaState="+metaState+" deviceId="+deviceId+" scancode="+scancode+" flags="+flags+" source="+source);
     		}
+    		*/
 	    	
 	        KeyEvent keyEvent = new KeyEvent(downTime, eventTime, action, code,
 	        	repeat, metaState, deviceId, scancode, flags, source);
 	
+	        /*
 	        if (sEnableLogging) {
-	            Log.i(TAG, "javaDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+	            Log.i(TAG, "javaDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" ("+DebugInput.debugGetKeyEvent(keyEvent) + ")");
 	        }
+	        */
 	        
 	        // support Xiaomi volume controls
 	        InputDevice device = keyEvent.getDevice();
@@ -152,13 +181,15 @@ public class OuyaInputView extends View {
 	        	Log.e(TAG, "javaDispatchKeyEvent: Device is null!");
 	        } else {
 	            String name = device.getName();
+	            /*
 	            if (sEnableLogging) {
-	                Log.i(TAG, "InputDevice name="+name+" keyCode="+code);
+	                Log.i(TAG, "javaDispatchKeyEvent device name="+name+" keyCode="+code+" ("+DebugInput.debugGetButtonName(code)+")");
 	            }
+	            */
 	            if (null != name &&
 	                name.equals("aml_keypad")) {
 	                int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
-	                if (playerNum < 0) {
+	                if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
 	                    playerNum = 0;
 	                }
 	                switch (code) {
@@ -238,9 +269,11 @@ public class OuyaInputView extends View {
             int[] axisIndexes,
             float[] axisValues) {
 
+    	/*
         if (sEnableLogging) {
             Log.i(TAG, "javaDispatchGenericMotionEvent");
         }
+        */
 
         PointerProperties[] pointerProperties = new PointerProperties[pointerCount];
         PointerCoords[] pointerCoords = new PointerCoords[pointerCount];
@@ -302,22 +335,59 @@ public class OuyaInputView extends View {
 			Log.e(TAG, "Native plugin has not been initialized!");
 			return false;
 		}
+		/*
         if (sEnableLogging) {
             Log.i(TAG, "remappedDispatchGenericMotionEvent");
             DebugInput.debugOuyaMotionEvent(motionEvent);
         }
+        */
 
         int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());
-        if (playerNum < 0) {
+        if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
             playerNum = 0;
         }
+        
+		float dpadX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+		float dpadY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+		sAxisValues.get(playerNum).put(MotionEvent.AXIS_HAT_X, dpadX);
+		sAxisValues.get(playerNum).put(MotionEvent.AXIS_HAT_Y, dpadY);
+		
+		if (null == sButtonValues.get(playerNum).get(OuyaController.BUTTON_DPAD_LEFT) &&
+			null == sButtonValues.get(playerNum).get(OuyaController.BUTTON_DPAD_RIGHT)) {
+			if (dpadX < -DEAD_ZONE) {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_LEFT, KeyEvent.ACTION_DOWN);
+			} else {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_LEFT, KeyEvent.ACTION_UP);
+			}
+			if (dpadX > DEAD_ZONE) {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_RIGHT, KeyEvent.ACTION_DOWN);
+			} else {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_RIGHT, KeyEvent.ACTION_UP);
+			}
+		}
+
+		if (null == sButtonValues.get(playerNum).get(OuyaController.BUTTON_DPAD_DOWN) &&
+			null == sButtonValues.get(playerNum).get(OuyaController.BUTTON_DPAD_UP)) {
+			if (dpadY > DEAD_ZONE) {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_DOWN, KeyEvent.ACTION_DOWN);
+			} else {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_DOWN, KeyEvent.ACTION_UP);
+			}
+			if (dpadY < -DEAD_ZONE) {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_UP, KeyEvent.ACTION_DOWN);
+			} else {
+				dispatchKeyEventNative(playerNum, OuyaController.BUTTON_DPAD_UP, KeyEvent.ACTION_UP);
+			}
+		}
+        
         dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
         dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
         dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
         dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
         dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
         dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
-        return true;
+        
+        return false;
     }
 
     public static boolean remappedDispatchKeyEvent(KeyEvent keyEvent) {
@@ -326,15 +396,71 @@ public class OuyaInputView extends View {
 			return false;
 		}
         if (sEnableLogging) {
-            Log.i(TAG, "remappedDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+            Log.i(TAG, "remappedDispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" ("+DebugInput.debugGetButtonName(keyEvent.getKeyCode())+") name="+DebugInput.debugGetKeyEvent(keyEvent));
         }
 
         int keyCode = keyEvent.getKeyCode();
         int action = keyEvent.getAction();
         int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());
-        if (playerNum < 0) {
+        if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
             playerNum = 0;
         }
+		switch (keyCode) {
+			case OuyaController.BUTTON_DPAD_DOWN:
+				if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
+					if (sAxisValues.get(playerNum).get(MotionEvent.AXIS_HAT_Y) > DEAD_ZONE) {
+						dispatchKeyEventNative(playerNum, keyCode, action);
+					}
+					return true;
+				} else {
+					sButtonValues.get(playerNum).put(keyCode, action == KeyEvent.ACTION_DOWN);
+				}
+				break;
+			case OuyaController.BUTTON_DPAD_LEFT:
+				if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
+					if (sAxisValues.get(playerNum).get(MotionEvent.AXIS_HAT_X) < -DEAD_ZONE) {
+						dispatchKeyEventNative(playerNum, keyCode, action);
+					}
+					return true;
+				} else {
+					sButtonValues.get(playerNum).put(keyCode, action == KeyEvent.ACTION_DOWN);
+				}
+				break;
+			case OuyaController.BUTTON_DPAD_RIGHT:
+				if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
+					if (sAxisValues.get(playerNum).get(MotionEvent.AXIS_HAT_X) > DEAD_ZONE) {
+						dispatchKeyEventNative(playerNum, keyCode, action);
+					}
+					return true;
+				} else {
+					sButtonValues.get(playerNum).put(keyCode, action == KeyEvent.ACTION_DOWN);
+				}
+				break;
+			case OuyaController.BUTTON_DPAD_UP:
+				if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK ) {
+					if (sAxisValues.get(playerNum).get(MotionEvent.AXIS_HAT_Y) < -DEAD_ZONE) {
+						dispatchKeyEventNative(playerNum, keyCode, action);
+					}
+					return true;
+				} else {
+					sButtonValues.get(playerNum).put(keyCode, action == KeyEvent.ACTION_DOWN);
+				}
+				break;
+			case OuyaController.BUTTON_L2:
+				if (action == KeyEvent.ACTION_DOWN) {
+					sAxisValues.get(playerNum).put(OuyaController.AXIS_L2, 1f);
+				} else {
+					sAxisValues.get(playerNum).put(OuyaController.AXIS_L2, 0f);
+				}
+				break;
+			case OuyaController.BUTTON_R2:
+				if (action == KeyEvent.ACTION_DOWN) {
+					sAxisValues.get(playerNum).put(OuyaController.AXIS_R2, 1f);
+				} else {
+					sAxisValues.get(playerNum).put(OuyaController.AXIS_R2, 0f);
+				}
+				break;
+		}
         dispatchKeyEventNative(playerNum, keyCode, action);
         return true;
     }
