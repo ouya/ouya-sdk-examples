@@ -12,7 +12,7 @@ settings = {
    {
       mainIntentFilter =
       {
-         categories = { "tv.ouya.intent.category.GAME" },
+         categories = { "tv.ouya.intent.category.GAME", "android.intent.category.LEANBACK_LAUNCHER" },
       }
    },
 	
