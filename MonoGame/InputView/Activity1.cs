@@ -17,10 +17,11 @@ namespace InputView
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
     [IntentFilter(new[] { Intent.ActionMain }
-        , Categories = new[] { Intent.CategoryLauncher, CategoryGame })]
+		, Categories = new[] { Intent.CategoryLauncher, CategoryGame, CategoryForgeTV })]
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
-        public const String CategoryGame = "tv.ouya.intent.category.GAME";
+		public const String CategoryForgeTV = "android.intent.category.LEANBACK_LAUNCHER";
+		public const String CategoryGame = "tv.ouya.intent.category.GAME";
 		private Game1 _game = null;
 
         protected override void OnCreate(Bundle bundle)
