@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import tv.ouya.console.api.*;
+import tv.ouya.sdk.DebugInput;
 
 public class CoronaOuyaInputView extends View {
 	
