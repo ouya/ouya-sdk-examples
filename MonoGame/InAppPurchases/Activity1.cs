@@ -29,10 +29,12 @@ namespace InAppPurchases
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
 	[IntentFilter(new[] { Intent.ActionMain }
-		, Categories = new[] { Intent.CategoryLauncher, CATEGORY_GAME })]
+		, Categories = new[] { Intent.CategoryLauncher, CATEGORY_GAME, CATEGORY_FORGE_TV })]
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
 		private const string TAG = "Activity1";
+
+		private const String CATEGORY_FORGE_TV = "android.intent.category.LEANBACK_LAUNCHER";
 
 		private const String CATEGORY_GAME = "tv.ouya.intent.category.GAME";
 
@@ -58,20 +60,19 @@ namespace InAppPurchases
 
 		private Game1 mGame = null;
 
+		private OuyaInputView mOuyaInputView = null;
+
         protected override void OnCreate(Bundle bundle)
         {
 			sInstance = this;
 
             base.OnCreate(bundle);
 
-            Game1.Activity = this;
+			Game1.Activity = this;
 			mGame = new Game1();
 			SetContentView(mGame.Window);
 
-			using (var ignore = new TV.Ouya.Sdk.OuyaInputView(this))
-			{
-				// do nothing
-			}
+			mOuyaInputView = new TV.Ouya.Sdk.OuyaInputView (this);
 
 			View content = FindViewById (Android.Resource.Id.Content);
 			if (null != content) {
@@ -331,18 +332,6 @@ namespace InAppPurchases
 					Log.Error (TAG, "Failed to draw string text=" + text);
 				}
 			}
-		}
-
-		protected override void OnPause ()
-		{
-			base.OnPause ();
-			mGame.UninitializeContent ();
-		}
-
-		protected override void OnResume ()
-		{
-			base.OnResume ();
-			mGame.InitializeContent ();
 		}
     }
 }
