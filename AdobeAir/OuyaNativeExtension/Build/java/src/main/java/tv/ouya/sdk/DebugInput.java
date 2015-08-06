@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.console.api;
+package tv.ouya.sdk;
 
 import tv.ouya.console.api.OuyaController;
 import android.util.Log;
