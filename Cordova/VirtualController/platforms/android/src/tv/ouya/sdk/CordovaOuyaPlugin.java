@@ -25,6 +25,7 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        Log.i(TAG, "********************* execute action="+action);
         if (action.equals("echo")) {
             String message = args.getString(0);
             this.echo(message, callbackContext);
@@ -34,6 +35,7 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
     }
 
     private void echo(String message, CallbackContext callbackContext) {
+        Log.i(TAG, "********************* execute echo="+message);
         if (message != null && message.length() > 0) {
             callbackContext.success(message);
         } else {

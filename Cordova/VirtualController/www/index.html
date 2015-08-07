@@ -9,14 +9,29 @@
         background-color:CornflowerBlue
       }
     </style>
-  </head>
-  <body style="zoom: 0.5">
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
+    <script>
+	
+	function onLoad() {
+		console.log("**** Page loaded.");
+		cordova.exec(
+			function(success) {
+				console.log("***** Success: "+success);
+			},
+			function(err) {
+				console.error("***** Failed: "+err);
+			},
+			"OuyaSDK", "echo", [ ]);
+	}
+	
+    </script>
+  </head>
+  <body style="zoom: 0.5" onload="onLoad()">
 
     <canvas id="htmlCanvas" width="1920" height="1080"></canvas>
     <script>
-
+	
       var OuyaController = {
 		AXIS_LS_X: 0,
 		AXIS_LS_Y: 1,
