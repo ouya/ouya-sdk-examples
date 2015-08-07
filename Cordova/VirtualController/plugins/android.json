@@ -19,7 +19,7 @@
     },
     "installed_plugins": {
         "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "tv.ouya.sdk.examples.cordova.virtualcontroller"
+            "PACKAGE_NAME": "tv.ouya.examples.cordova.virtualcontroller"
         }
     },
     "dependent_plugins": {}

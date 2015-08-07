@@ -1,1 +1,1 @@
-adb shell am start -n tv.ouya.sdk.examples.cordova.virtualcontroller/.MainActivity
+adb shell am start -n tv.ouya.examples.cordova.virtualcontroller/.MainActivity

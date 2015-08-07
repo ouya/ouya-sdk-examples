@@ -1,1 +1,1 @@
-adb shell am force-stop tv.ouya.sdk.examples.cordova.virtualcontroller
+adb shell am force-stop tv.ouya.examples.cordova.virtualcontroller
