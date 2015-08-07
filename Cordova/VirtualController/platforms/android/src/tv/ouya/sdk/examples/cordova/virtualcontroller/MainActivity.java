@@ -20,10 +20,30 @@
 package tv.ouya.sdk.examples.cordova.virtualcontroller;
 
 import android.os.Bundle;
+import android.util.SparseArray;
+import android.view.MotionEvent;
+import java.util.HashMap;
 import org.apache.cordova.*;
+import tv.ouya.console.api.OuyaController;
 
 public class MainActivity extends CordovaActivity
 {
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static SparseArray<HashMap<Integer, Float>> sAxisValues = new SparseArray<HashMap<Integer, Float>>();
+    private static SparseArray<HashMap<Integer, Boolean>> sButtonValues = new SparseArray<HashMap<Integer, Boolean>>();
+
+    static {
+        for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index) {
+            HashMap<Integer, Float> axisMap = new HashMap<Integer, Float>();
+            axisMap.put(MotionEvent.AXIS_HAT_X, 0f);
+            axisMap.put(MotionEvent.AXIS_HAT_Y, 0f);
+            sAxisValues.put(index, axisMap);
+            HashMap<Integer, Boolean> buttonMap = new HashMap<Integer, Boolean>();
+            sButtonValues.put(index, buttonMap);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
