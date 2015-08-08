@@ -13,3 +13,5 @@ out
 # Gradle builds
 /build
 .gradle/*
+assets/*
+.idea/*
