@@ -14,15 +14,46 @@
     <script>
 	
 	function onLoad() {
-		console.log("**** Page loaded.");
+
 		cordova.exec(
-			function(success) {
-				console.log("***** Success: "+success);
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var axis = jsonObject.axis;
+				var val = jsonObject.val;
+				//console.log("HTML5 CallbackOnGenericMotionEvent playerNum="+playerNum+" axis="+axis+" val="+val);
+				onGenericMotionEvent(playerNum, axis, val);
 			},
 			function(err) {
-				console.error("***** Failed: "+err);
+				console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
 			},
-			"OuyaSDK", "echo", [ ]);
+			"OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var button = jsonObject.button;
+				//console.log("HTML5 CallbackOnKeyUp playerNum="+playerNum+" button="+button);
+				onKeyUp(playerNum, button);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var button = jsonObject.button;
+				//console.log("HTML5 CallbackonKeyDown playerNum="+playerNum+" button="+button);
+				onKeyDown(playerNum, button);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
 	}
 	
     </script>
