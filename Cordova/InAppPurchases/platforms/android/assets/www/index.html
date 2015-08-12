@@ -1,49 +1,635 @@
-<!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
+<!DOCTYPE HTML>
 <html>
-    <head>
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-    </body>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+        background-color:CornflowerBlue
+      }
+    </style>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script>
+	
+	function onLoad() {
+
+	    initOuyaPlugin();
+
+	    setTimeout(function(){ setInterval(function(){ showScene()}, 1) }, 100);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var axis = jsonObject.axis;
+				var val = jsonObject.val;
+				//console.log("HTML5 CallbackOnGenericMotionEvent playerNum="+playerNum+" axis="+axis+" val="+val);
+				onGenericMotionEvent(playerNum, axis, val);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var button = jsonObject.button;
+				//console.log("HTML5 CallbackOnKeyUp playerNum="+playerNum+" button="+button);
+				onKeyUp(playerNum, button);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var button = jsonObject.button;
+				//console.log("HTML5 CallbackonKeyDown playerNum="+playerNum+" button="+button);
+				onKeyDown(playerNum, button);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
+	}
+	
+    </script>
+  </head>
+  <body style="zoom: 0.5" onload="onLoad()">
+
+    <canvas id="htmlCanvas" width="1920" height="1080"></canvas>
+    <script>
+
+      var OuyaController = {
+		AXIS_LS_X: 0,
+		AXIS_LS_Y: 1,
+		AXIS_RS_X: 11,
+		AXIS_RS_Y: 14,
+		AXIS_L2: 17,
+		AXIS_R2: 18,
+		BUTTON_O: 96,
+		BUTTON_U: 99,
+		BUTTON_Y: 100,
+		BUTTON_A: 97,
+		BUTTON_L1: 102,
+		BUTTON_R1: 103,
+		BUTTON_L3: 106,
+		BUTTON_R3: 107,
+		BUTTON_DPAD_UP: 19,
+		BUTTON_DPAD_DOWN: 20,
+		BUTTON_DPAD_RIGHT: 22,
+		BUTTON_DPAD_LEFT: 21,
+		BUTTON_MENU: 82,
+		MAX_CONTROLLERS: 4};
+
+      function initAxises() {
+      	var axises = {
+			AXIS_LS_X: 0,
+			AXIS_LS_Y: 0,
+			AXIS_RS_X: 0,
+			AXIS_RS_Y: 0,
+			AXIS_L2: 0,
+			AXIS_R2: 0
+			};
+		return axises;
+      }
+
+      function initButtons() {
+      	var buttons = {
+			BUTTON_O: false,
+			BUTTON_U: false,
+			BUTTON_Y: false,
+			BUTTON_A: false,
+			BUTTON_L1: false,
+			BUTTON_R1: false,
+			BUTTON_L3: false,
+			BUTTON_R3: false,
+			BUTTON_DPAD_UP: false,
+			BUTTON_DPAD_DOWN: false,
+			BUTTON_DPAD_RIGHT: false,
+			BUTTON_DPAD_LEFT: false,
+			BUTTON_MENU: false
+			};
+		return buttons;
+      }
+
+      function loadImage(path) {
+		  var image = new Image();
+		  image.src = path;
+		  return image;
+      }
+
+      var OuyaSDK = new Object();
+      OuyaSDK.method = "";
+      OuyaSDK.initOuyaPlugin = function(jsonData, onSuccess, onFailure) {
+		cordova.exec(
+			function() {
+				console.log("HTML5 initOuyaPlugin: SUCCESS");
+				onSuccess();
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 initOuyaPlugin: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "initOuyaPlugin", [ jsonData ]);
+      };
+      OuyaSDK.requestGamerInfo = function(onSuccess, onFailure, onCancel) {
+		cordova.exec(
+			function(jsonObject) {
+				console.log("HTML5 requestGamerInfo: SUCCESS");
+				onSuccess(jsonObject);
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 requestGamerInfo: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "requestGamerInfo", [ ]);
+      };
+      OuyaSDK.requestProducts = function(products, onSuccess, onFailure, onCancel) {
+        OuyaSDK.method = "requestProducts";
+		cordova.exec(
+			function(jsonObject) {
+				console.log("HTML5 requestProducts: SUCCESS: products="+jsonObject.toString());
+				onSuccess(jsonObject);
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 requestProducts: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "requestProducts", [ products ]);
+      };
+      OuyaSDK.requestPurchase = function(purchasable, onSuccess, onFailure, onCancel) {
+        OuyaSDK.purchasable = purchasable;
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.onCancel = onCancel;
+        OuyaSDK.method = "requestPurchase";
+      };
+      OuyaSDK.requestReceipts = function(onSuccess, onFailure, onCancel) {
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.onCancel = onCancel;
+        OuyaSDK.method = "requestReceipts";
+      };
+      OuyaSDK.setSafeArea = function(amount, onSuccess, onFailure) {
+        OuyaSDK.safeAreaAmount = amount;
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.method = "setSafeArea";
+      }
+      OuyaSDK.shutdown = function(onSuccess, onFailure) {
+        OuyaSDK.onSuccess = onSuccess;
+        OuyaSDK.onFailure = onFailure;
+        OuyaSDK.method = "shutdown";
+      }
+
+      var canvas = document.getElementById('htmlCanvas');
+      var context = canvas.getContext('2d');
+
+      var pluginReady = false;
+
+      var gamerUsername = "(unknown)";
+      var gamerUuid = "(unknown)";
+
+      var safeAreaAmount = 1.0;
+
+      var images = {
+        button_active: loadImage('button_active.png'),
+		button_inactive: loadImage('button_inactive.png')
+      };
+
+      function createButton(label, width) {
+      	var button = Object();
+      	button.label = label;
+      	button.width = width;
+      	return button;
+      }
+
+      var buttons = Array(
+      	createButton("Get Products", 145),
+      	createButton("Request Purchase", 190),
+      	createButton("Get Receipts", 145),
+      	createButton("Request Gamer Info", 210),
+      	createButton("Adjust Safe Area", 175),
+      	createButton("Pause", 85),
+      	createButton("Exit", 70)
+      );
+
+      function setupFocus(button, left, right) {
+      	button.left = left;
+      	button.right = right;
+      }
+
+      var btnGetProducts = buttons[0];
+      var btnRequestPurchase = buttons[1];
+      var btnGetReceipts = buttons[2];
+      var btnRequestGamerInfo = buttons[3];
+      var btnSetSafeArea = buttons[4];
+      var btnPause = buttons[5];
+      var btnExit = buttons[6];
+
+      setupFocus(btnGetProducts, undefined, btnRequestPurchase);
+      setupFocus(btnRequestPurchase, btnGetProducts, btnGetReceipts);
+      setupFocus(btnGetReceipts, btnRequestPurchase, btnRequestGamerInfo);
+      setupFocus(btnRequestGamerInfo, btnGetReceipts, btnSetSafeArea);
+      setupFocus(btnSetSafeArea, btnRequestGamerInfo, undefined);
+      setupFocus(btnPause, btnSetSafeArea, btnExit);
+      setupFocus(btnExit, btnPause, undefined);
+
+      var focus = btnGetProducts;
+
+      var lblStatus = "page loaded";
+
+      var redraw = true;
+
+      var jsonProducts = undefined;
+      var jsonReceipts = "";
+
+      var lblProductIndex = 0;
+
+      function showScene() {
+
+		  if (!redraw) {
+		  	return;
+		  } else {
+		  	redraw = false;
+		  }
+
+		  context.clearRect(0, 0, 1920, 1080);
+
+		  context.font="20px Georgia";
+		  context.fillStyle = 'white';
+		  context.fillText("Hello from HTML5",100,100);
+
+		  context.fillText("Status: "+lblStatus, 300, 100);
+
+		  context.fillText("Gamer Username: "+gamerUsername,150,120);
+		  context.fillText("Gamer UUID: "+gamerUuid,150,140);
+
+		  context.fillText("Use DPAD to switch between buttons | Press O to click the button:",100,180);
+
+		  var x = 150;
+		  var y = 240;
+		  var padding = 15;
+
+		  for (i = 0; i < buttons.length; i++) {
+		  	var button = buttons[i];
+		  	if (focus == button) {
+		  		context.drawImage(images.button_active, x-15, y-20, button.width, 30);
+		  	} else {
+		  		context.drawImage(images.button_inactive, x-15, y-20, button.width, 30);
+		  	}
+		  	context.fillText(button.label,x,y);
+		  	x += button.width + padding;
+		  }
+
+          if (focus == btnSetSafeArea) {
+              x = 200;
+              y = 300;
+              context.fillText("Use UP and DOWN on the DPAD to adjust the safe area: "+safeAreaAmount, x, y);
+          }
+
+          if (focus == btnGetProducts ||
+              focus == btnRequestPurchase) {
+              if (jsonProducts != undefined) {
+                  x = 200;
+                  y = 300;
+                  context.fillText("Products: "+jsonProducts.length,x,y);
+                  y += 40;
+
+                  for (var i = 0; i < jsonProducts.length; ++i) {
+                    var product = jsonProducts[i];
+                    if (product != undefined) {
+                        var name = "";
+                        if (product.name != undefined &&
+                            product.name != null) {
+                            name = product.name;
+                        }
+                        var description = "";
+                        if (product.description != undefined &&
+                            product.description != null) {
+                            description = product.description;
+                        }
+                        var localPrice = "";
+                        if (product.localPrice != undefined &&
+                            product.localPrice != null) {
+                            localPrice = product.localPrice;
+                        }
+                        if (lblProductIndex == i) {
+                            context.fillStyle = 'white';
+                            context.fillText("name="+name+" description="+description+" localPrice="+localPrice,x,y+=20);
+                        } else {
+                            context.fillStyle = 'black';
+                            context.fillText("name="+name+" description="+description+" localPrice="+localPrice,x,y+=20);
+                        }
+                    }
+                  }
+              }
+          }
+
+          if (focus == btnGetReceipts) {
+              if (jsonReceipts != "") {
+                  var jsonObject = JSON.parse(jsonReceipts);
+
+                  x = 200;
+                  y = 300;
+                  context.fillText("Receipts: "+jsonObject.length,x,y);
+                  y += 40;
+
+                  for (var i = 0; i < jsonObject.length; ++i) {
+                    var receipt = jsonObject[i];
+                    if (receipt != undefined) {
+                        var identifier = "";
+                        if (receipt.identifier != undefined &&
+                            receipt.identifier != null) {
+                            identifier = receipt.identifier;
+                        }
+                        var generatedDate = "";
+                        if (receipt.generatedDate != undefined &&
+                            receipt.generatedDate != null) {
+                            generatedDate = receipt.generatedDate;
+                        }
+                        var localPrice = "";
+                        if (receipt.localPrice != undefined &&
+                            receipt.localPrice != null) {
+                            localPrice = receipt.localPrice;
+                        }
+                        context.fillStyle = 'white';
+                        context.fillText("identifier="+identifier+" generatedDate="+generatedDate+" localPrice="+localPrice,x,y+=20);
+                    }
+                  }
+              }
+          }
+      }
+
+      function clickButton() {
+
+        if (!pluginReady) {
+            lblStatus = "wait for plugin to init...";
+      		redraw = true;
+      		return;
+        }
+
+      	if (focus == btnGetProducts) {
+      	    jsonProducts = undefined;
+      	    lblProductIndex = 0;
+      		lblStatus = "requesting products...";
+      		redraw = true;
+      		if (OuyaSDK.requestProducts != undefined) {
+      		    var products = Array("long_sword", "sharp_axe", "cool_level", "awesome_sauce", "__DECLINED__THIS_PURCHASE");
+      		    OuyaSDK.requestProducts(products, onSuccessRequestProducts, onFailureRequestProducts, onCancelRequestProducts);
+      		}
+      	} else if (focus == btnRequestPurchase) {
+      		lblStatus = "requesting purchase...";
+      		redraw = true;
+      		if (OuyaSDK.requestPurchase != undefined) {
+      		    if (jsonProducts != undefined) {
+                   if (lblProductIndex >= 0 &&
+                       lblProductIndex < jsonProducts.length) {
+                       var product = jsonObject[lblProductIndex];
+                       if (null != product &&
+                           product.name != undefined &&
+                           null != product.identifier) {
+                           var purchasable = product.identifier;
+      		               OuyaSDK.requestPurchase(purchasable, onSuccessRequestPurchase, onFailureRequestPurchase, onCancelRequestPurchase);
+      		               return;
+                       }
+                   }
+                }
+
+                lblStatus = "select a product first...";
+      		    redraw = true;
+      		}
+      	} else if (focus == btnGetReceipts) {
+      		lblStatus = "requesting receipts...";
+      		redraw = true;
+      		if (OuyaSDK.requestReceipts != undefined) {
+      		    OuyaSDK.requestReceipts(onSuccessRequestReceipts, onFailureRequestReceipts, onCancelRequestReceipts);
+      		}
+      	} else if (focus == btnRequestGamerInfo) {
+      		lblStatus = "requesting gamer info...";
+      		redraw = true;
+      		if (OuyaSDK.requestGamerInfo != undefined) {
+      		    OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
+      		}
+      	} else if (focus == btnExit) {
+      		lblStatus = "quiting application...";
+      		redraw = true;
+      		if (OuyaSDK.shutdown != undefined) {
+      		    OuyaSDK.shutdown(onSuccessShutdown, onFailureShutdown);
+      		}
+      	}
+      }
+
+      function onGenericMotionEvent(playerNum, axis, val) {
+      }
+
+      function onKeyDown(playerNum, button) {
+      }
+
+      function onKeyUp(playerNum, button) {
+      	switch (button) {
+      	case OuyaController.BUTTON_O:
+      		clickButton();
+      		break;
+		case OuyaController.BUTTON_DPAD_UP:
+      		if (focus.up != undefined) {
+      			focus = focus.up;
+      			redraw = true;
+      		}
+            if (focus == btnGetProducts ||
+                focus == btnRequestPurchase) {
+                if (jsonProducts != undefined) {
+                   lblProductIndex = Math.max(0, Math.min(jsonProducts.length-1, lblProductIndex-1));
+                   redraw = true;
+                }
+            }
+            if (focus == btnSetSafeArea) {
+              var oldAmount = safeAreaAmount;
+              safeAreaAmount = Math.max(0.0, Math.min(1.0, safeAreaAmount+0.1));
+              if (oldAmount != safeAreaAmount) {
+                redraw = true;
+                OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
+              }
+            }
+      		break;
+		case OuyaController.BUTTON_DPAD_DOWN:
+      		if (focus.down != undefined) {
+      			focus = focus.down;
+      			redraw = true;
+      		}
+            if (focus == btnGetProducts ||
+                focus == btnRequestPurchase) {
+                if (jsonProducts != undefined) {
+                   lblProductIndex = Math.max(0, Math.min(jsonProducts.length-1, lblProductIndex+1));
+                   redraw = true;
+                }
+            }
+            if (focus == btnSetSafeArea) {
+              var oldAmount = safeAreaAmount;
+              safeAreaAmount = Math.max(0.0, Math.min(1.0, safeAreaAmount-0.1));
+              if (oldAmount != safeAreaAmount) {
+                redraw = true;
+                OuyaSDK.setSafeArea(safeAreaAmount, onSuccessSetSafeArea, onFailureSafeArea);
+              }
+            }
+      		break;
+		case OuyaController.BUTTON_DPAD_RIGHT:
+      		if (focus.right != undefined) {
+      			focus = focus.right;
+      			redraw = true;
+      		}
+      		break;
+		case OuyaController.BUTTON_DPAD_LEFT:
+      		if (focus.left != undefined) {
+      			focus = focus.left;
+      			redraw = true;
+      		}
+      		break;
+		case OuyaController.BUTTON_MENU:
+      		focus = btnPause;
+      		lblStatus = "pause detected...";
+      		redraw = true;
+      		break;
+      	}
+      }
+
+      function onSuccessRequestGamerInfo(gamerInfo) {
+      	gamerUsername = gamerInfo.username;
+      	gamerUuid = gamerInfo.uuid;
+      	lblStatus = "received gamer info username="+gamerUsername+" uuid="+gamerUuid;
+      	redraw = true;
+      }
+
+      function onFailureRequestGamerInfo(errorCode, errorMessage) {
+      	lblStatus = "RequestGamerInfo failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestGamerInfo() {
+        lblStatus = "RequestGamerInfo cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessRequestProducts(jsonArray) {
+        jsonProducts = jsonArray;
+      	lblStatus = "received products=";
+      	for (var i = 0; i < jsonArray.length; ++i) {
+      		var jsonObject = jsonArray[i];
+      		lblStatus += jsonObject.identifier;
+      		lblStatus += " (";
+      		lblStatus += jsonObject.localPrice;
+      		lblStatus += ") ";
+      	}
+      	redraw = true;
+      }
+
+      function onFailureRequestProducts(errorCode, errorMessage) {
+      	lblStatus = "RequestProducts failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestProducts() {
+        lblStatus = "RequestProducts cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessRequestPurchase(jsonData) {
+      	lblStatus = "purchase was successful="+jsonData;
+      	redraw = true;
+      }
+
+      function onFailureRequestPurchase(errorCode, errorMessage) {
+      	lblStatus = "RequestPurchase failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestPurchase() {
+        lblStatus = "RequestPurchase cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessRequestReceipts(jsonData) {
+      	jsonReceipts = jsonData;
+      	lblStatus = "received receipts="+jsonData;
+      	redraw = true;
+      }
+
+      function onFailureRequestReceipts(errorCode, errorMessage) {
+      	lblStatus = "RequestReceipts failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onCancelRequestReceipts() {
+        lblStatus = "RequestReceipts cancelled.";
+        redraw = true;
+      }
+
+      function onSuccessInitOuyaPlugin() {
+      	pluginReady = true;
+      	lblStatus = "ouya plugin has initialized.";
+      	redraw = true;
+      }
+
+      function onFailureInitOuyaPlugin(errorCode, errorMessage) {
+	      lblStatus = "failed to initialize plugin. " + errorMessage;
+	      redraw = true;
+	      setTimeout(function(){ initOuyaPlugin() }, 1000);
+      }
+
+      function initOuyaPlugin() {
+        if (OuyaSDK.initOuyaPlugin == undefined) {
+            lblStatus = "waiting for OuyaSDK.initOuyaPlugin...";
+            redraw = true;
+            setTimeout(function(){ initOuyaPlugin() }, 1000);
+            return;
+        } else {
+            lblStatus = "initializing plugin...";
+            redraw = true;
+            var data = Array();
+            data[0] =
+			{
+				'key': 'tv.ouya.developer_id',
+				'value': '310a8f51-4d6e-4ae5-bda0-b93878e5f5d0'
+			};
+            var jsonData = JSON.stringify(data);
+            OuyaSDK.initOuyaPlugin(jsonData, onSuccessInitOuyaPlugin, onFailureInitOuyaPlugin);
+        }
+      }
+
+      function onSuccessSetSafeArea() {
+      	lblStatus = "Safe area adjusted.";
+      	redraw = true;
+      }
+
+      function onFailureSafeArea(errorCode, errorMessage) {
+      	lblStatus = "SetSafeArea failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onSuccessShutdown() {
+      	lblStatus = "shutdown success.";
+      	redraw = true;
+      }
+
+      function onFailureShutdown(errorCode, errorMessage) {
+      	lblStatus = "Shutdown failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+    </script>
+  </body>
 </html>
