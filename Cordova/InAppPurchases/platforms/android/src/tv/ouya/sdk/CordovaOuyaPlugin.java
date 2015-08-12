@@ -3,8 +3,14 @@ package tv.ouya.sdk;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,6 +71,8 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
     private static CallbackContext sCallbackRequestProducts = null;
     private static CallbackContext sCallbackRequestPurchase = null;
     private static CallbackContext sCallbackRequestReceipts = null;
+    private static CallbackContext sCallbackSetSafeArea = null;
+    private static CallbackContext sCallbackShutdown = null;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -162,7 +170,31 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             sCallbackRequestReceipts = callbackContext;
             requestReceipts();
             return true;
+        } else if (action.equals("setSafeArea")) {
+            sCallbackSetSafeArea = callbackContext;
+            float amount = 0f;
+            if (args.length() > 0) {
+                try {
+                    Log.i(TAG, "setSafeArea identifier="+args.getString(0));
+                    amount = (float)args.getDouble(0);
+                } catch (Exception e) {
+                    result = createError(0, "setSafeArea failed to read argument!");
+                    sCallbackSetSafeArea.error(result);
+                    return true;
+                }
+            } else {
+                result = createError(0, "setSafeArea arg1 is null!");
+                sCallbackSetSafeArea.error(result);
+                return true;
+            }
+            setSafeArea(amount);
+            return true;
+        } else if (action.equals("shutdown")) {
+            sCallbackShutdown = callbackContext;
+            shutdown();
+            return true;
         }
+
         return false;
     }
 
@@ -587,5 +619,56 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             return;
         }
         sOuyaFacade.requestReceipts(cordova.getActivity(), sRequestReceiptsListener);
+    }
+
+    private int getDisplayWidth() {
+        Activity activity = cordova.getActivity();
+        WindowManager windowManager = activity.getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
+    }
+
+    private int getDisplayHeight() {
+        Activity activity = cordova.getActivity();
+        WindowManager windowManager = activity.getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.y;
+    }
+
+
+    protected void setSafeArea(final float progress) {
+        final Activity activity = cordova.getActivity();
+        if (null != activity) {
+            Runnable runnable = new Runnable()
+            {
+                public void run()
+                {
+                    // bring in by %
+                    float percent = 0.1f;
+                    float ratio = 1 - (1 - progress) * percent;
+                    float halfRatio = 1 - (1 - progress) * percent * 0.5f;
+                    float maxWidth = getDisplayWidth();
+                    float maxHeight = getDisplayHeight();
+                    FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
+                    ViewGroup.LayoutParams layout = content.getLayoutParams();
+                    layout.width = (int)(maxWidth * ratio);
+                    layout.height = (int)(maxHeight * ratio);
+                    content.setLayoutParams(layout);
+                    content.setX(maxWidth - maxWidth * halfRatio);
+                    content.setY(maxHeight - maxHeight * halfRatio);
+                }
+            };
+            activity.runOnUiThread(runnable);
+        }
+        sCallbackSetSafeArea.success();
+    }
+
+    protected void shutdown() {
+        cordova.getActivity().finish();
+        sCallbackShutdown.success();
     }
 }

@@ -203,15 +203,34 @@
 			"OuyaSDK", "requestReceipts", [ ]);
       };
       OuyaSDK.setSafeArea = function(amount, onSuccess, onFailure) {
-        OuyaSDK.safeAreaAmount = amount;
-        OuyaSDK.onSuccess = onSuccess;
-        OuyaSDK.onFailure = onFailure;
-        OuyaSDK.method = "setSafeArea";
+      	console.log("HTML5 setSafeArea amount="+amount);
+		cordova.exec(
+			function() {
+				console.log("HTML5 setSafeArea: SUCCESS");
+				onSuccess();
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 setSafeArea: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "setSafeArea", [ amount ]);
       }
       OuyaSDK.shutdown = function(onSuccess, onFailure) {
-        OuyaSDK.onSuccess = onSuccess;
-        OuyaSDK.onFailure = onFailure;
-        OuyaSDK.method = "shutdown";
+      	console.log("HTML5 shutdown");
+		cordova.exec(
+			function() {
+				console.log("HTML5 shutdown: SUCCESS");
+				onSuccess();
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 shutdown: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "shutdown", [ ]);
       }
 
       var canvas = document.getElementById('htmlCanvas');
@@ -242,8 +261,8 @@
       	createButton("Get Receipts", 145),
       	createButton("Request Gamer Info", 210),
       	createButton("Adjust Safe Area", 175),
-      	createButton("Pause", 85),
-      	createButton("Exit", 70)
+      	createButton("Exit", 85),
+      	createButton("Pause", 70)
       );
 
       function setupFocus(button, left, right) {
@@ -256,16 +275,16 @@
       var btnGetReceipts = buttons[2];
       var btnRequestGamerInfo = buttons[3];
       var btnSetSafeArea = buttons[4];
-      var btnPause = buttons[5];
-      var btnExit = buttons[6];
+      var btnExit = buttons[5];
+      var btnPause = buttons[6];
 
       setupFocus(btnGetProducts, undefined, btnRequestPurchase);
       setupFocus(btnRequestPurchase, btnGetProducts, btnGetReceipts);
       setupFocus(btnGetReceipts, btnRequestPurchase, btnRequestGamerInfo);
       setupFocus(btnRequestGamerInfo, btnGetReceipts, btnSetSafeArea);
-      setupFocus(btnSetSafeArea, btnRequestGamerInfo, undefined);
-      setupFocus(btnPause, btnSetSafeArea, btnExit);
-      setupFocus(btnExit, btnPause, undefined);
+      setupFocus(btnSetSafeArea, btnRequestGamerInfo, btnExit);
+      setupFocus(btnExit, btnSetSafeArea, undefined);
+      setupFocus(btnPause, btnExit, undefined);
 
       var focus = btnGetProducts;
 
