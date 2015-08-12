@@ -141,10 +141,11 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             return true;
         } else if (action.equals("requestPurchase")) {
             sCallbackRequestPurchase = callbackContext;
-            JSONArray jsonArray = null;
+            String identifier = null;
             if (args.length() > 0) {
                 try {
-                    jsonArray = new JSONArray(args.get(0).toString());
+                    Log.i(TAG, "requestPurchase identifier="+args.getString(0));
+                    identifier = args.getString(0);
                 } catch (Exception e) {
                     result = createError(0, "requestPurchase failed to read argument!");
                     sCallbackRequestPurchase.error(result);
@@ -155,11 +156,11 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                 sCallbackRequestPurchase.error(result);
                 return true;
             }
-            //requestPurchase(jsonArray);
+            requestPurchase(identifier);
             return true;
         } else if (action.equals("requestReceipts")) {
             sCallbackRequestReceipts = callbackContext;
-            //requestReceipts();
+            requestReceipts();
             return true;
         }
         return false;
@@ -383,12 +384,14 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                 } catch (JSONException e) {
                     result = createError(0, "Failed to set username!");
                     sCallbackRequestGamerInfo.error(result);
+                    return;
                 }
                 try {
                     result.put("uuid", info.getUuid());
                 } catch (JSONException e) {
                     result = createError(0, "Failed to set uuid!");
                     sCallbackRequestGamerInfo.error(result);
+                    return;
                 }
                 sCallbackRequestGamerInfo.success(result);
             }
@@ -436,21 +439,31 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
         sRequestPurchaseListener = new OuyaResponseListener<PurchaseResult>() {
 
             @Override
-            public void onSuccess(PurchaseResult result) {
+            public void onSuccess(PurchaseResult purchaseResult) {
                 Log.i(TAG, "sRequestPurchaseListener: onSuccess");
-                //sCallbacks.onSuccessRequestPurchase(result);
+                JSONObject result = new JSONObject();
+                try {
+                    result.put("productIdentifier", purchaseResult.getProductIdentifier());
+                } catch (JSONException e) {
+                    result = createError(0, "Failed to set productIdentifier!");
+                    sCallbackRequestPurchase.error(result);
+                    return;
+                }
+                sCallbackRequestPurchase.success(result);
             }
 
             @Override
             public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
                 Log.i(TAG, "sRequestPurchaseListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
-                //sCallbacks.onFailureRequestPurchase(errorCode, errorMessage, optionalData);
+                JSONObject result = createError(errorCode, errorMessage);
+                sCallbackRequestPurchase.error(result);
             }
 
             @Override
             public void onCancel() {
                 Log.i(TAG, "sRequestPurchaseListener: onCancel");
-                //sCallbacks.onCancelRequestPurchase();
+                JSONObject result = createError(0, "Purchase was cancelled!");
+                sCallbackRequestPurchase.error(result);
             }
         };
 
@@ -459,19 +472,37 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             @Override
             public void onSuccess(Collection<Receipt> receipts) {
                 Log.i(TAG, "requestReceipts onSuccess: received " + receipts.size() + " receipts");
-                //sCallbacks.onSuccessRequestReceipts(receipts);
+                JSONArray result = new JSONArray();
+                try {
+                    int i = 0;
+                    for (Receipt receipt : receipts) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("currency", receipt.getCurrency());
+                        jsonObject.put("identifier", receipt.getIdentifier());
+                        jsonObject.put("localPrice", receipt.getLocalPrice());
+                        result.put(i, jsonObject);
+                        ++i;
+                    }
+                } catch (JSONException e) {
+                    JSONObject error = createError(0, "Failed to create results!");
+                    sCallbackRequestReceipts.error(error);
+                    return;
+                }
+                sCallbackRequestReceipts.success(result);
             }
 
             @Override
             public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
                 Log.e(TAG, "requestReceipts onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
-                //sCallbacks.onFailureRequestReceipts(errorCode, errorMessage, optionalData);
+                JSONObject result = createError(errorCode, errorMessage);
+                sCallbackRequestReceipts.error(result);
             }
 
             @Override
             public void onCancel() {
                 Log.i(TAG, "requestReceipts onCancel");
-                //sCallbacks.onCancelRequestReceipts();
+                JSONObject result = createError(0, "Request Receipts was cancelled!");
+                sCallbackRequestReceipts.error(result);
             }
         };
 
@@ -537,5 +568,24 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             return;
         }
         sOuyaFacade.requestProductList(cordova.getActivity(), products, sRequestProductsListener);
+    }
+
+    protected void requestPurchase(String identifier) {
+        if (null == sRequestPurchaseListener) {
+            JSONObject result = createError(0, "requestPurchase: sRequestPurchaseListener is null");
+            sCallbackRequestProducts.error(result);
+            return;
+        }
+        Purchasable purchasable = new Purchasable(identifier);
+        sOuyaFacade.requestPurchase(cordova.getActivity(), purchasable, sRequestPurchaseListener);
+    }
+
+    protected void requestReceipts() {
+        if (null == sRequestReceiptsListener) {
+            JSONObject result = createError(0, "requestReceipts: sRequestReceiptsListener is null");
+            sCallbackRequestReceipts.error(result);
+            return;
+        }
+        sOuyaFacade.requestReceipts(cordova.getActivity(), sRequestReceiptsListener);
     }
 }

@@ -18,46 +18,6 @@
 	    initOuyaPlugin();
 
 	    setTimeout(function(){ setInterval(function(){ showScene()}, 1) }, 100);
-
-		cordova.exec(
-			function(jsonData) {
-				var jsonObject = JSON.parse(jsonData);
-				var playerNum = jsonObject.playerNum;
-				var axis = jsonObject.axis;
-				var val = jsonObject.val;
-				//console.log("HTML5 CallbackOnGenericMotionEvent playerNum="+playerNum+" axis="+axis+" val="+val);
-				onGenericMotionEvent(playerNum, axis, val);
-			},
-			function(err) {
-				console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
-			},
-			"OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
-
-		cordova.exec(
-			function(jsonData) {
-				var jsonObject = JSON.parse(jsonData);
-				var playerNum = jsonObject.playerNum;
-				var button = jsonObject.button;
-				//console.log("HTML5 CallbackOnKeyUp playerNum="+playerNum+" button="+button);
-				onKeyUp(playerNum, button);
-			},
-			function(err) {
-				console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
-			},
-			"OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
-
-		cordova.exec(
-			function(jsonData) {
-				var jsonObject = JSON.parse(jsonData);
-				var playerNum = jsonObject.playerNum;
-				var button = jsonObject.button;
-				//console.log("HTML5 CallbackonKeyDown playerNum="+playerNum+" button="+button);
-				onKeyDown(playerNum, button);
-			},
-			function(err) {
-				console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
-			},
-			"OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
 	}
 	
     </script>
@@ -127,8 +87,50 @@
       }
 
       var OuyaSDK = new Object();
-      OuyaSDK.method = "";
       OuyaSDK.initOuyaPlugin = function(jsonData, onSuccess, onFailure) {
+      	if (cordova.exec == undefined) {
+      		onFailure(0, "Wait for plugin to load!");
+      		return;
+      	}
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var axis = jsonObject.axis;
+				var val = jsonObject.val;
+				//console.log("HTML5 CallbackOnGenericMotionEvent playerNum="+playerNum+" axis="+axis+" val="+val);
+				onGenericMotionEvent(playerNum, axis, val);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var button = jsonObject.button;
+				//console.log("HTML5 CallbackOnKeyUp playerNum="+playerNum+" button="+button);
+				onKeyUp(playerNum, button);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
+
+		cordova.exec(
+			function(jsonData) {
+				var jsonObject = JSON.parse(jsonData);
+				var playerNum = jsonObject.playerNum;
+				var button = jsonObject.button;
+				//console.log("HTML5 CallbackonKeyDown playerNum="+playerNum+" button="+button);
+				onKeyDown(playerNum, button);
+			},
+			function(err) {
+				console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
+			},
+			"OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
 		cordova.exec(
 			function() {
 				console.log("HTML5 initOuyaPlugin: SUCCESS");
@@ -157,7 +159,6 @@
 			"OuyaSDK", "requestGamerInfo", [ ]);
       };
       OuyaSDK.requestProducts = function(products, onSuccess, onFailure, onCancel) {
-        OuyaSDK.method = "requestProducts";
 		cordova.exec(
 			function(jsonObject) {
 				console.log("HTML5 requestProducts: SUCCESS: products="+jsonObject.toString());
@@ -172,17 +173,34 @@
 			"OuyaSDK", "requestProducts", [ products ]);
       };
       OuyaSDK.requestPurchase = function(purchasable, onSuccess, onFailure, onCancel) {
-        OuyaSDK.purchasable = purchasable;
-        OuyaSDK.onSuccess = onSuccess;
-        OuyaSDK.onFailure = onFailure;
-        OuyaSDK.onCancel = onCancel;
-        OuyaSDK.method = "requestPurchase";
+      	console.log("HTML5 requestPurchase: purchasable="+purchasable);
+		cordova.exec(
+			function(jsonObject) {
+				console.log("HTML5 requestPurchase: SUCCESS: identifier="+jsonObject.productIdentifier);
+				onSuccess(jsonObject.productIdentifier);
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 requestPurchase: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "requestPurchase", [ purchasable ]);
       };
       OuyaSDK.requestReceipts = function(onSuccess, onFailure, onCancel) {
-        OuyaSDK.onSuccess = onSuccess;
-        OuyaSDK.onFailure = onFailure;
-        OuyaSDK.onCancel = onCancel;
-        OuyaSDK.method = "requestReceipts";
+      	console.log("HTML5 requestReceipts");
+		cordova.exec(
+			function(jsonArray) {
+				console.log("HTML5 requestReceipts: SUCCESS: jsonObject="+jsonArray.toString());
+				onSuccess(jsonArray);
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 requestReceipts: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "requestReceipts", [ ]);
       };
       OuyaSDK.setSafeArea = function(amount, onSuccess, onFailure) {
         OuyaSDK.safeAreaAmount = amount;
@@ -256,7 +274,7 @@
       var redraw = true;
 
       var jsonProducts = undefined;
-      var jsonReceipts = "";
+      var jsonReceipts = undefined;
 
       var lblProductIndex = 0;
 
@@ -313,10 +331,10 @@
                   for (var i = 0; i < jsonProducts.length; ++i) {
                     var product = jsonProducts[i];
                     if (product != undefined) {
-                        var name = "";
-                        if (product.name != undefined &&
-                            product.name != null) {
-                            name = product.name;
+                        var identifier = "";
+                        if (product.identifier != undefined &&
+                            product.identifier != null) {
+                            identifier = product.identifier;
                         }
                         var description = "";
                         if (product.description != undefined &&
@@ -330,10 +348,10 @@
                         }
                         if (lblProductIndex == i) {
                             context.fillStyle = 'white';
-                            context.fillText("name="+name+" description="+description+" localPrice="+localPrice,x,y+=20);
+                            context.fillText("identifier="+identifier+" description="+description+" localPrice="+localPrice,x,y+=20);
                         } else {
                             context.fillStyle = 'black';
-                            context.fillText("name="+name+" description="+description+" localPrice="+localPrice,x,y+=20);
+                            context.fillText("identifier="+identifier+" description="+description+" localPrice="+localPrice,x,y+=20);
                         }
                     }
                   }
@@ -341,16 +359,14 @@
           }
 
           if (focus == btnGetReceipts) {
-              if (jsonReceipts != "") {
-                  var jsonObject = JSON.parse(jsonReceipts);
-
+              if (jsonReceipts != undefined) {
                   x = 200;
                   y = 300;
-                  context.fillText("Receipts: "+jsonObject.length,x,y);
+                  context.fillText("Receipts: "+jsonReceipts.length,x,y);
                   y += 40;
 
-                  for (var i = 0; i < jsonObject.length; ++i) {
-                    var receipt = jsonObject[i];
+                  for (var i = 0; i < jsonReceipts.length; ++i) {
+                    var receipt = jsonReceipts[i];
                     if (receipt != undefined) {
                         var identifier = "";
                         if (receipt.identifier != undefined &&
@@ -399,7 +415,7 @@
       		    if (jsonProducts != undefined) {
                    if (lblProductIndex >= 0 &&
                        lblProductIndex < jsonProducts.length) {
-                       var product = jsonObject[lblProductIndex];
+                       var product = jsonProducts[lblProductIndex];
                        if (null != product &&
                            product.name != undefined &&
                            null != product.identifier) {
@@ -515,7 +531,7 @@
       }
 
       function onFailureRequestGamerInfo(errorCode, errorMessage) {
-      	lblStatus = "RequestGamerInfo failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	lblStatus = "RequestGamerInfo failed errorCode="+errorCode+" errorMessage="+errorMessage;
       	redraw = true;
       }
 
@@ -538,7 +554,7 @@
       }
 
       function onFailureRequestProducts(errorCode, errorMessage) {
-      	lblStatus = "RequestProducts failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	lblStatus = "RequestProducts failed errorCode="+errorCode+" errorMessage="+errorMessage;
       	redraw = true;
       }
 
@@ -547,13 +563,13 @@
         redraw = true;
       }
 
-      function onSuccessRequestPurchase(jsonData) {
-      	lblStatus = "purchase was successful="+jsonData;
+      function onSuccessRequestPurchase(identifier) {
+      	lblStatus = "purchase was successful="+identifier;
       	redraw = true;
       }
 
       function onFailureRequestPurchase(errorCode, errorMessage) {
-      	lblStatus = "RequestPurchase failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	lblStatus = "RequestPurchase failed errorCode="+errorCode+" errorMessage="+errorMessage;
       	redraw = true;
       }
 
@@ -562,14 +578,21 @@
         redraw = true;
       }
 
-      function onSuccessRequestReceipts(jsonData) {
-      	jsonReceipts = jsonData;
-      	lblStatus = "received receipts="+jsonData;
+      function onSuccessRequestReceipts(jsonArray) {
+      	jsonReceipts = jsonArray;
+      	lblStatus = "received receipts=";
+      	for (var i = 0; i < jsonArray.length; ++i) {
+      		var jsonObject = jsonArray[i];
+      		lblStatus += jsonObject.identifier;
+      		lblStatus += " (";
+      		lblStatus += jsonObject.localPrice;
+      		lblStatus += ") ";
+      	}
       	redraw = true;
       }
 
       function onFailureRequestReceipts(errorCode, errorMessage) {
-      	lblStatus = "RequestReceipts failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	lblStatus = "RequestReceipts failed errorCode="+errorCode+" errorMessage="+errorMessage;
       	redraw = true;
       }
 
