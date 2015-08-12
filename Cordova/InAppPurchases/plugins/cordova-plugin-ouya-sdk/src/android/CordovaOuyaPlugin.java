@@ -71,8 +71,6 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
     private static CallbackContext sCallbackRequestProducts = null;
     private static CallbackContext sCallbackRequestPurchase = null;
     private static CallbackContext sCallbackRequestReceipts = null;
-    private static CallbackContext sCallbackSetSafeArea = null;
-    private static CallbackContext sCallbackShutdown = null;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -171,7 +169,6 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             requestReceipts();
             return true;
         } else if (action.equals("setSafeArea")) {
-            sCallbackSetSafeArea = callbackContext;
             float amount = 0f;
             if (args.length() > 0) {
                 try {
@@ -179,19 +176,21 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                     amount = (float)args.getDouble(0);
                 } catch (Exception e) {
                     result = createError(0, "setSafeArea failed to read argument!");
-                    sCallbackSetSafeArea.error(result);
+                    callbackContext.error(result);
                     return true;
                 }
             } else {
                 result = createError(0, "setSafeArea arg1 is null!");
-                sCallbackSetSafeArea.error(result);
+                callbackContext.error(result);
                 return true;
             }
-            setSafeArea(amount);
+            setSafeArea(callbackContext, amount);
+            return true;
+        } else if (action.equals("getDeviceHardware")) {
+            getDeviceHardware(callbackContext);
             return true;
         } else if (action.equals("shutdown")) {
-            sCallbackShutdown = callbackContext;
-            shutdown();
+            shutdown(callbackContext);
             return true;
         }
 
@@ -640,7 +639,7 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
     }
 
 
-    protected void setSafeArea(final float progress) {
+    protected void setSafeArea(CallbackContext callback, final float progress) {
         final Activity activity = cordova.getActivity();
         if (null != activity) {
             Runnable runnable = new Runnable()
@@ -664,11 +663,31 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             };
             activity.runOnUiThread(runnable);
         }
-        sCallbackSetSafeArea.success();
+        callback.success();
     }
 
-    protected void shutdown() {
+    protected void getDeviceHardware(CallbackContext callback) {
+        JSONObject result = null;
+        if (null == sOuyaFacade) {
+            result = createError(0, "getDeviceHardware sOuyaFacade is null!");
+            callback.error(result);
+            return;
+        }
+        OuyaFacade.DeviceHardware deviceHardware = sOuyaFacade.getDeviceHardware();
+        result = new JSONObject();
+        try {
+            result.put("deviceEnum", deviceHardware.deviceEnum());
+            result.put("deviceHardware", deviceHardware.deviceName());
+        } catch (JSONException e) {
+            result = createError(0, "getDeviceHardware Failed to prepare result!");
+            callback.error(result);
+            return;
+        }
+        callback.success(result);
+    }
+
+    protected void shutdown(CallbackContext callback) {
         cordova.getActivity().finish();
-        sCallbackShutdown.success();
+        callback.success();
     }
 }

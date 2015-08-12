@@ -232,12 +232,27 @@
 			},
 			"OuyaSDK", "shutdown", [ ]);
       }
+      OuyaSDK.getDeviceHardware = function(onSuccess, onFailure) {
+		cordova.exec(
+			function(jsonObject) {
+				console.log("HTML5 getDeviceHardware: SUCCESS");
+				onSuccess(jsonObject.deviceHardware);
+			},
+			function(jsonObject) {
+			    var errorCode = jsonObject.errorCode;
+			    var errorMessage = jsonObject.errorMessage;
+				console.error("HTML5 getDeviceHardware: FAILURE errorCode="+errorCode+" errorMessage="+errorMessage);
+				onFailure(errorCode, errorMessage);
+			},
+			"OuyaSDK", "getDeviceHardware", [ ]);
+      };
 
       var canvas = document.getElementById('htmlCanvas');
       var context = canvas.getContext('2d');
 
       var pluginReady = false;
 
+      var deviceHardware = "(unknown)";
       var gamerUsername = "(unknown)";
       var gamerUuid = "(unknown)";
 
@@ -259,10 +274,11 @@
       	createButton("Get Products", 145),
       	createButton("Request Purchase", 190),
       	createButton("Get Receipts", 145),
-      	createButton("Request Gamer Info", 210),
-      	createButton("Adjust Safe Area", 175),
+      	createButton("Request Gamer Info", 215),
+      	createButton("Adjust Safe Area", 180),
+      	createButton("Get Device Hardware", 240),
       	createButton("Exit", 85),
-      	createButton("Pause", 70)
+      	createButton("Pause", 90)
       );
 
       function setupFocus(button, left, right) {
@@ -275,15 +291,17 @@
       var btnGetReceipts = buttons[2];
       var btnRequestGamerInfo = buttons[3];
       var btnSetSafeArea = buttons[4];
-      var btnExit = buttons[5];
-      var btnPause = buttons[6];
+      var btnGetDeviceHardware = buttons[5];
+      var btnExit = buttons[6];
+      var btnPause = buttons[7];
 
       setupFocus(btnGetProducts, undefined, btnRequestPurchase);
       setupFocus(btnRequestPurchase, btnGetProducts, btnGetReceipts);
       setupFocus(btnGetReceipts, btnRequestPurchase, btnRequestGamerInfo);
       setupFocus(btnRequestGamerInfo, btnGetReceipts, btnSetSafeArea);
-      setupFocus(btnSetSafeArea, btnRequestGamerInfo, btnExit);
-      setupFocus(btnExit, btnSetSafeArea, undefined);
+      setupFocus(btnSetSafeArea, btnRequestGamerInfo, btnGetDeviceHardware);
+      setupFocus(btnGetDeviceHardware, btnSetSafeArea, btnExit);
+      setupFocus(btnExit, btnGetDeviceHardware, undefined);
       setupFocus(btnPause, btnExit, undefined);
 
       var focus = btnGetProducts;
@@ -313,10 +331,11 @@
 
 		  context.fillText("Status: "+lblStatus, 300, 100);
 
-		  context.fillText("Gamer Username: "+gamerUsername,150,120);
-		  context.fillText("Gamer UUID: "+gamerUuid,150,140);
+		  context.fillText("Device Hardware: "+deviceHardware,150,120);
+		  context.fillText("Gamer Username: "+gamerUsername,150,140);
+		  context.fillText("Gamer UUID: "+gamerUuid,150,160);
 
-		  context.fillText("Use DPAD to switch between buttons | Press O to click the button:",100,180);
+		  context.fillText("Use DPAD to switch between buttons | Press O to click the button:",100,200);
 
 		  var x = 150;
 		  var y = 240;
@@ -459,6 +478,12 @@
       		redraw = true;
       		if (OuyaSDK.requestGamerInfo != undefined) {
       		    OuyaSDK.requestGamerInfo(onSuccessRequestGamerInfo, onFailureRequestGamerInfo, onCancelRequestGamerInfo);
+      		}
+      	} else if (focus == btnGetDeviceHardware) {
+      		lblStatus = "requesting device hardware...";
+      		redraw = true;
+      		if (OuyaSDK.getDeviceHardware != undefined) {
+      		    OuyaSDK.getDeviceHardware(onSuccessGetDeviceHardware, onFailureGetDeviceHardware);
       		}
       	} else if (focus == btnExit) {
       		lblStatus = "quiting application...";
@@ -669,6 +694,17 @@
 
       function onFailureShutdown(errorCode, errorMessage) {
       	lblStatus = "Shutdown failed errorCode="+errorCode+" errorMessage"+errorMessage;
+      	redraw = true;
+      }
+
+      function onSuccessGetDeviceHardware(name) {
+      	deviceHardware = name;
+      	lblStatus = "received device hardware="+deviceHardware;
+      	redraw = true;
+      }
+
+      function onFailureGetDeviceHardware(errorCode, errorMessage) {
+      	lblStatus = "GetDeviceHardware failed errorCode="+errorCode+" errorMessage"+errorMessage;
       	redraw = true;
       }
 
