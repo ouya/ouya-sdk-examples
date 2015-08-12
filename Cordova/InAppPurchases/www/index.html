@@ -104,7 +104,7 @@
 			function(err) {
 				console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
 			},
-			"OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
+			"OuyaSDK", "setCallbackOnGenericMotionEvent", [ ]);
 
 		cordova.exec(
 			function(jsonData) {
@@ -117,7 +117,7 @@
 			function(err) {
 				console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
 			},
-			"OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
+			"OuyaSDK", "setCallbackOnKeyUp", [ ]);
 
 		cordova.exec(
 			function(jsonData) {
@@ -130,7 +130,7 @@
 			function(err) {
 				console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
 			},
-			"OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
+			"OuyaSDK", "setCallbackOnKeyDown", [ ]);
 		cordova.exec(
 			function() {
 				console.log("HTML5 initOuyaPlugin: SUCCESS");
@@ -652,7 +652,7 @@
       }
 
       function onFailureInitOuyaPlugin(errorCode, errorMessage) {
-	      lblStatus = "failed to initialize plugin. " + errorMessage;
+	      lblStatus = "failed to initialize plugin. errorCode="+errorCode+" errorMessage="+errorMessage;
 	      redraw = true;
 	      setTimeout(function(){ initOuyaPlugin() }, 1000);
       }

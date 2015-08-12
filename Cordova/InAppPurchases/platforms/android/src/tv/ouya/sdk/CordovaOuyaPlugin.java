@@ -319,10 +319,9 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
         return result;
     }
 
-    public void initOuyaPlugin(JSONArray jsonArray) {
-        JSONObject result = null;
+    public void initOuyaPlugin(final JSONArray jsonArray) {
         if (null == jsonArray) {
-            result = createError(0, "initOuyaPlugin jsonArray is null!");
+            JSONObject result = createError(0, "initOuyaPlugin jsonArray is null!");
             sCallbackInitOuyaPlugin.error(result);
             return;
         }
@@ -331,215 +330,310 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             Log.i(TAG, "initOuyaPlugin jsonArray=" + jsonArray.toString());
         }
 
-        Bundle developerInfo = new Bundle();
-
-        try {
-            for (int index = 0; index < jsonArray.length(); ++index) {
-                JSONObject jsonObject = jsonArray.getJSONObject(index);
-                String name = jsonObject.getString("key");
-                String value = jsonObject.getString("value");
-                if (null == name || null == value) {
-                    continue;
-                }
-                if (name.equals("tv.ouya.product_id_list")) {
-                    String[] productIds = value.split(",");
-                    if (null == productIds) {
-                        continue;
-                    }
-                    developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
-                } else {
-                    Log.i(TAG, "initOuyaPlugin name="+name+" value="+value);
-                    developerInfo.putString(name, value);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-            result = createError(0, "initOuyaPlugin Failed to read JSON data!");
-            sCallbackInitOuyaPlugin.error(result);
-            return;
-        }
-
-        byte[] applicationKey = null;
-
-        // load the application key from assets
-        try {
-            AssetManager assetManager = cordova.getActivity().getAssets();
-            InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
-            applicationKey = new byte[inputStream.available()];
-            inputStream.read(applicationKey);
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            result = createError(0, "Failed to load signing key!");
-            sCallbackInitOuyaPlugin.error(result);
-            return;
-        }
-
-        if (null == applicationKey) {
-            result = createError(0, "Failed to load signing key!");
-            sCallbackInitOuyaPlugin.error(result);
-            return;
-        }
-
-        developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
-
         sInitCompletedListener = new CancelIgnoringOuyaResponseListener<Bundle>() {
             @Override
             public void onSuccess(Bundle info) {
                 if (sEnableLogging) {
                     Log.i(TAG, "sInitCompletedListener: onSuccess");
                 }
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "");
-                pluginResult.setKeepCallback(true);
-                sCallbackInitOuyaPlugin.sendPluginResult(pluginResult);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        sCallbackInitOuyaPlugin.success();
+                    }
+                });
             }
 
             @Override
-            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
                 if (sEnableLogging) {
                     Log.i(TAG, "sInitCompletedListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
                 }
-                JSONObject result = createError(errorCode, errorMessage);
-                sCallbackInitOuyaPlugin.error(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(errorCode, errorMessage);
+                        sCallbackInitOuyaPlugin.error(result);
+                    }
+                });
             }
         };
 
         sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
             @Override
-            public void onSuccess(GamerInfo info) {
+            public void onSuccess(final GamerInfo info) {
                 Log.i(TAG, "sRequestGamerInfoListener: onSuccess");
-                JSONObject result = new JSONObject();
-                try {
-                    result.put("username", info.getUsername());
-                } catch (JSONException e) {
-                    result = createError(0, "Failed to set username!");
-                    sCallbackRequestGamerInfo.error(result);
-                    return;
-                }
-                try {
-                    result.put("uuid", info.getUuid());
-                } catch (JSONException e) {
-                    result = createError(0, "Failed to set uuid!");
-                    sCallbackRequestGamerInfo.error(result);
-                    return;
-                }
-                sCallbackRequestGamerInfo.success(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = new JSONObject();
+                        try {
+                            result.put("username", info.getUsername());
+                            result.put("uuid", info.getUuid());
+                        } catch (JSONException e) {
+                            result = createError(0, "Failed to create results!");
+                            sCallbackRequestGamerInfo.error(result);
+                            return;
+                        }
+                        sCallbackRequestGamerInfo.success(result);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
                 Log.i(TAG, "sRequestGamerInfoListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
-                JSONObject result = createError(errorCode, errorMessage);
-                sCallbackRequestGamerInfo.error(result);
-            }
-        };
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(errorCode, errorMessage);
+                        sCallbackRequestGamerInfo.error(result);
+                    }
+                });
+                }
+            };
 
         sRequestProductsListener = new CancelIgnoringOuyaResponseListener<List<Product>>() {
             @Override
             public void onSuccess(final List<Product> products) {
                 Log.i(TAG, "sRequestProductsListener: onSuccess");
-                JSONArray result = new JSONArray();
-                try {
-                    int i = 0;
-                    for (Product product : products) {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("description", product.getDescription());
-                        jsonObject.put("identifier", product.getIdentifier());
-                        jsonObject.put("name", product.getName());
-                        jsonObject.put("localPrice", product.getLocalPrice());
-                        result.put(i, jsonObject);
-                        ++i;
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONArray result = new JSONArray();
+                        try {
+                            int i = 0;
+                            for (Product product : products) {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("description", product.getDescription());
+                                jsonObject.put("identifier", product.getIdentifier());
+                                jsonObject.put("name", product.getName());
+                                jsonObject.put("localPrice", product.getLocalPrice());
+                                result.put(i, jsonObject);
+                                ++i;
+                            }
+                        } catch (JSONException e) {
+                            JSONObject error = createError(0, "Failed to create results!");
+                            sCallbackRequestProducts.error(error);
+                            return;
+                        }
+                        sCallbackRequestProducts.success(result);
                     }
-                } catch (JSONException e) {
-                    JSONObject error = createError(0, "Failed to create results!");
-                    sCallbackRequestProducts.error(error);
-                    return;
-                }
-                sCallbackRequestProducts.success(result);
+                });
             }
 
             @Override
-            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
                 Log.i(TAG, "sRequestProductsListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
-                JSONObject result = createError(errorCode, errorMessage);
-                sCallbackRequestProducts.error(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(errorCode, errorMessage);
+                        sCallbackRequestProducts.error(result);
+                    }
+                });
             }
         };
 
         sRequestPurchaseListener = new OuyaResponseListener<PurchaseResult>() {
 
             @Override
-            public void onSuccess(PurchaseResult purchaseResult) {
+            public void onSuccess(final PurchaseResult purchaseResult) {
                 Log.i(TAG, "sRequestPurchaseListener: onSuccess");
-                JSONObject result = new JSONObject();
-                try {
-                    result.put("productIdentifier", purchaseResult.getProductIdentifier());
-                } catch (JSONException e) {
-                    result = createError(0, "Failed to set productIdentifier!");
-                    sCallbackRequestPurchase.error(result);
-                    return;
-                }
-                sCallbackRequestPurchase.success(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = new JSONObject();
+                        try {
+                            result.put("productIdentifier", purchaseResult.getProductIdentifier());
+                        } catch (JSONException e) {
+                            result = createError(0, "Failed to set productIdentifier!");
+                            sCallbackRequestPurchase.error(result);
+                            return;
+                        }
+                        sCallbackRequestPurchase.success(result);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
                 Log.i(TAG, "sRequestPurchaseListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
-                JSONObject result = createError(errorCode, errorMessage);
-                sCallbackRequestPurchase.error(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(errorCode, errorMessage);
+                        sCallbackRequestPurchase.error(result);
+                    }
+                });
             }
 
             @Override
             public void onCancel() {
                 Log.i(TAG, "sRequestPurchaseListener: onCancel");
-                JSONObject result = createError(0, "Purchase was cancelled!");
-                sCallbackRequestPurchase.error(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(0, "Purchase was cancelled!");
+                        sCallbackRequestPurchase.error(result);
+                    }
+                });
             }
         };
 
         sRequestReceiptsListener = new OuyaResponseListener<Collection<Receipt>>() {
 
             @Override
-            public void onSuccess(Collection<Receipt> receipts) {
+            public void onSuccess(final Collection<Receipt> receipts) {
                 Log.i(TAG, "requestReceipts onSuccess: received " + receipts.size() + " receipts");
-                JSONArray result = new JSONArray();
-                try {
-                    int i = 0;
-                    for (Receipt receipt : receipts) {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("currency", receipt.getCurrency());
-                        jsonObject.put("identifier", receipt.getIdentifier());
-                        jsonObject.put("localPrice", receipt.getLocalPrice());
-                        result.put(i, jsonObject);
-                        ++i;
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONArray result = new JSONArray();
+                        try {
+                            int i = 0;
+                            for (Receipt receipt : receipts) {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("currency", receipt.getCurrency());
+                                jsonObject.put("identifier", receipt.getIdentifier());
+                                jsonObject.put("localPrice", receipt.getLocalPrice());
+                                result.put(i, jsonObject);
+                                ++i;
+                            }
+                        } catch (JSONException e) {
+                            JSONObject error = createError(0, "Failed to create results!");
+                            sCallbackRequestReceipts.error(error);
+                            return;
+                        }
+                        sCallbackRequestReceipts.success(result);
                     }
-                } catch (JSONException e) {
-                    JSONObject error = createError(0, "Failed to create results!");
-                    sCallbackRequestReceipts.error(error);
-                    return;
-                }
-                sCallbackRequestReceipts.success(result);
+                });
             }
 
             @Override
-            public void onFailure(int errorCode, String errorMessage, Bundle optionalData) {
+            public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
                 Log.e(TAG, "requestReceipts onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
-                JSONObject result = createError(errorCode, errorMessage);
-                sCallbackRequestReceipts.error(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(errorCode, errorMessage);
+                        sCallbackRequestReceipts.error(result);
+                    }
+                });
             }
 
             @Override
             public void onCancel() {
                 Log.i(TAG, "requestReceipts onCancel");
-                JSONObject result = createError(0, "Request Receipts was cancelled!");
-                sCallbackRequestReceipts.error(result);
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        JSONObject result = createError(0, "Request Receipts was cancelled!");
+                        sCallbackRequestReceipts.error(result);
+                    }
+                });
             }
         };
 
-        sOuyaFacade = OuyaFacade.getInstance();
-        sOuyaFacade.registerInitCompletedListener(sInitCompletedListener);
-        sOuyaFacade.init(cordova.getActivity(), developerInfo);
+        Runnable runnable = new Runnable() {
+            public void run() {
+
+                Bundle developerInfo = new Bundle();
+
+                try {
+                    for (int index = 0; index < jsonArray.length(); ++index) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(index);
+                        String name = jsonObject.getString("key");
+                        String value = jsonObject.getString("value");
+                        if (null == name || null == value) {
+                            continue;
+                        }
+                        if (name.equals("tv.ouya.product_id_list")) {
+                            String[] productIds = value.split(",");
+                            if (null == productIds) {
+                                continue;
+                            }
+                            developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
+                        } else {
+                            Log.i(TAG, "initOuyaPlugin name=" + name + " value=" + value);
+                            developerInfo.putString(name, value);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            JSONObject result = createError(0, "initOuyaPlugin Failed to read JSON data!");
+                            sCallbackInitOuyaPlugin.error(result);
+                        }
+                    });
+
+                    return;
+                }
+
+                byte[] applicationKey = null;
+
+                // load the application key from assets
+                try {
+                    AssetManager assetManager = cordova.getActivity().getAssets();
+                    InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
+                    applicationKey = new byte[inputStream.available()];
+                    inputStream.read(applicationKey);
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            JSONObject result = createError(0, "Failed to load signing key!");
+                            sCallbackInitOuyaPlugin.error(result);
+                        }
+                    });
+
+                    return;
+                }
+
+                if (null == applicationKey) {
+                    cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            JSONObject result = createError(0, "Failed to load signing key!");
+                            sCallbackInitOuyaPlugin.error(result);
+                        }
+                    });
+                    return;
+                }
+
+                developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
+
+                try {
+                    sOuyaFacade = OuyaFacade.getInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            JSONObject result = createError(0, "Failed to get OUYA Facade instance!");
+                            sCallbackInitOuyaPlugin.error(result);
+                        }
+                    });
+
+                    return;
+                }
+
+                try {
+                    sOuyaFacade.registerInitCompletedListener(sInitCompletedListener);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            JSONObject result = createError(0, "Failed to register init completed listener!");
+                            sCallbackInitOuyaPlugin.error(result);
+                        }
+                    });
+                    return;
+                }
+
+                try {
+                    sOuyaFacade.init(cordova.getActivity(), developerInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            JSONObject result = createError(0, "Failed to initialize the OuyaFacade!");
+                            sCallbackInitOuyaPlugin.error(result);
+                        }
+                    });
+                    return;
+                }
+            }
+        };
+        cordova.getActivity().runOnUiThread(runnable);
     }
 
     public static boolean processActivityResult(final int requestCode, final int resultCode, final Intent data) {
