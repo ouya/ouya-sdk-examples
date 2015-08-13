@@ -10,7 +10,6 @@ import android.view.Display;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import tv.ouya.console.api.Product;
 import tv.ouya.console.api.Purchasable;
 import tv.ouya.console.api.PurchaseResult;
 import tv.ouya.console.api.Receipt;
-import tv.ouya.examples.cordova.inapppurchases.MainActivity;
 
 /**
  * This class echoes a string called from JavaScript.

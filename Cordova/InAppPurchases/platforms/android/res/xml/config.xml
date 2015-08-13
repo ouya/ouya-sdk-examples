@@ -10,7 +10,7 @@
         <param name="onload" value="true" />
     </feature>
     <allow-intent href="market:*" />
-    <name>InAppPurchases</name>
+    <name>Cordova InAppPurchases</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>

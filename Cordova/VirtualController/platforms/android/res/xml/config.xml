@@ -10,7 +10,7 @@
         <param name="onload" value="true" />
     </feature>
     <allow-intent href="market:*" />
-    <name>VirtualController</name>
+    <name>Cordova VirtualController</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
