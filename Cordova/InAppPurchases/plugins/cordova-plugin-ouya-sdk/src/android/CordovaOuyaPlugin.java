@@ -332,13 +332,15 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
 
         sInitCompletedListener = new CancelIgnoringOuyaResponseListener<Bundle>() {
             @Override
-            public void onSuccess(Bundle info) {
+            public void onSuccess(final Bundle info) {
                 if (sEnableLogging) {
                     Log.i(TAG, "sInitCompletedListener: onSuccess");
                 }
                 cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
-                        sCallbackInitOuyaPlugin.success();
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "SUCCESS");
+                        pluginResult.setKeepCallback(false);
+                        sCallbackInitOuyaPlugin.sendPluginResult(pluginResult);
                     }
                 });
             }
@@ -351,7 +353,9 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                 cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
                         JSONObject result = createError(errorCode, errorMessage);
-                        sCallbackInitOuyaPlugin.error(result);
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, result);
+                        pluginResult.setKeepCallback(false);
+                        sCallbackInitOuyaPlugin.sendPluginResult(pluginResult);
                     }
                 });
             }
@@ -631,6 +635,14 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                     });
                     return;
                 }
+
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "WAIT");
+                        pluginResult.setKeepCallback(true);
+                        sCallbackInitOuyaPlugin.sendPluginResult(pluginResult);
+                    }
+                });
             }
         };
         cordova.getActivity().runOnUiThread(runnable);

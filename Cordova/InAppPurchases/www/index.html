@@ -132,9 +132,15 @@
 			},
 			"OuyaSDK", "setCallbackOnKeyDown", [ ]);
 		cordova.exec(
-			function() {
-				console.log("HTML5 initOuyaPlugin: SUCCESS");
-				onSuccess();
+			function(status) {
+				console.log("HTML5 initOuyaPlugin: SUCCESS status="+status);
+				if (status == "WAIT") {
+					console.log("**********************HTML5 initOuyaPlugin: Waiting for result...");
+				} else if (status == "SUCCESS") {
+					onSuccess();
+				} else {
+					onFailure(0, "Unknown success state!");
+				}
 			},
 			function(jsonObject) {
 			    var errorCode = jsonObject.errorCode;
