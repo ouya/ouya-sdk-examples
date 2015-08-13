@@ -606,10 +606,10 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                             sCallbackInitOuyaPlugin.error(result);
                         }
                     });
-
                     return;
                 }
 
+                /*
                 try {
                     sOuyaFacade.registerInitCompletedListener(sInitCompletedListener);
                 } catch (Exception e) {
@@ -622,6 +622,7 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                     });
                     return;
                 }
+                */
 
                 try {
                     sOuyaFacade.init(cordova.getActivity(), developerInfo);
@@ -636,10 +637,20 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                     return;
                 }
 
+                /*
                 cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
                         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "WAIT");
                         pluginResult.setKeepCallback(true);
+                        sCallbackInitOuyaPlugin.sendPluginResult(pluginResult);
+                    }
+                });
+                */
+
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "SUCCESS");
+                        pluginResult.setKeepCallback(false);
                         sCallbackInitOuyaPlugin.sendPluginResult(pluginResult);
                     }
                 });
@@ -743,7 +754,6 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
         display.getSize(size);
         return size.y;
     }
-
 
     protected void setSafeArea(CallbackContext callback, final float progress) {
         final Activity activity = cordova.getActivity();
