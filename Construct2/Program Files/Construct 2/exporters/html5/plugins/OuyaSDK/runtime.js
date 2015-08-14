@@ -5,6 +5,63 @@
 
 // start of OUYA SDK
 
+	function hookCordovaInput() {
+        if (cordova.exec == undefined) {
+            console.log("Wait for plugin to load...");
+            setTimeout(function(){ hookCordovaInput() }, 1000);
+            return;
+        }
+		
+
+        cordova.exec(
+            function(jsonData) {
+                var jsonObject = JSON.parse(jsonData);
+                var playerNum = jsonObject.playerNum;
+                var axis = jsonObject.axis;
+                var val = jsonObject.val;
+                //console.log("HTML5 CallbackOnGenericMotionEvent playerNum="+playerNum+" axis="+axis+" val="+val);
+				if (onGenericMotionEvent != undefined) {
+					onGenericMotionEvent(playerNum, axis, val);
+				}
+            },
+            function(err) {
+                console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
+            },
+            "OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
+
+        cordova.exec(
+            function(jsonData) {
+                var jsonObject = JSON.parse(jsonData);
+                var playerNum = jsonObject.playerNum;
+                var button = jsonObject.button;
+                //console.log("HTML5 CallbackOnKeyUp playerNum="+playerNum+" button="+button);
+				if (onKeyUp != undefined) {
+					onKeyUp(playerNum, button);
+				}
+            },
+            function(err) {
+                console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
+            },
+            "OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
+
+        cordova.exec(
+            function(jsonData) {
+                var jsonObject = JSON.parse(jsonData);
+                var playerNum = jsonObject.playerNum;
+                var button = jsonObject.button;
+                //console.log("HTML5 CallbackonKeyDown playerNum="+playerNum+" button="+button);
+                if (onKeyDown != undefined) {
+					onKeyDown(playerNum, button);
+				}
+            },
+            function(err) {
+                console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
+            },
+            "OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
+	}
+	
+	hookCordovaInput();
+
 	var OuyaSDK = Object();
 
 	var OuyaController = {
@@ -62,7 +119,7 @@
 
 	if (navigator != undefined &&
 		navigator.userAgent != undefined &&
-		navigator.userAgent == "Mozilla/5.0 (Linux; Android 4.1.2; OUYA Console Build/JZO54L-OUYA) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/19.77.34.5 Mobile Safari/537.36") {
+		navigator.userAgent.toLowerCase().indexOf('android') != -1) {
 		gamepads = createGamepads();
 		navigator["getGamepads"] = function () { return gamepads; }
 	}

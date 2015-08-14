@@ -1,4 +1,4 @@
-function GetPluginSettings()
+﻿function GetPluginSettings()
 {
 	return {
 		"name":			"Gamepad",				// as appears in 'insert object' dialog, can be changed as long as "id" stays the same
@@ -49,7 +49,7 @@ function GetPluginSettings()
 //				display_str,		// as appears in event sheet - use {0}, {1} for parameters and also <b></b>, <i></i>
 //				description,		// appears in event wizard dialog when selected
 //				script_name);		// corresponding runtime function name
-
+			
 AddCondition(1, cf_trigger, "On gamepad connected", "Gamepads", "On gamepad connected", "Triggered when a gamepad device is connected to the computer.", "OnGamepadConnected");
 
 AddCondition(2, cf_trigger, "On gamepad disconnected", "Gamepads", "On gamepad disconnected", "Triggered when a gamepad device is disconnected from the computer.", "OnGamepadDisconnected");
@@ -225,7 +225,7 @@ ACESDone();
 var property_list = [
 	new cr.Property(ept_float,		"Analog deadzone", 25,	"Analog stick values (0-100) below this range are returned as zero to smooth the input.")
 	];
-
+	
 // Called by IDE when a new object type is to be created
 function CreateIDEObjectType()
 {
@@ -248,17 +248,17 @@ IDEObjectType.prototype.CreateInstance = function(instance)
 function IDEInstance(instance, type)
 {
 	assert2(this instanceof arguments.callee, "Constructor called as a function");
-
+	
 	// Save the constructor parameters
 	this.instance = instance;
 	this.type = type;
-
+	
 	// Set the default property values from the property table
 	this.properties = {};
-
+	
 	for (var i = 0; i < property_list.length; i++)
 		this.properties[property_list[i].name] = property_list[i].initial_value;
-
+		
 	// Plugin-specific variables
 	// this.myValue = 0...
 }
