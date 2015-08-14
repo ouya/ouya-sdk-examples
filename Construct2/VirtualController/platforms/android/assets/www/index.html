@@ -6,7 +6,7 @@
 	<title>New project</title>
 	
 	<!-- Standardised web app manifest -->
-	<link rel="manifest" href="app.manifest" />
+	<link rel="manifest" href="appmanifest.json" />
 	
 	<!-- Allow fullscreen mode on iOS devices. (These are Apple specific meta tags.) -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
@@ -42,74 +42,13 @@
 	<script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
 	
-	<script>
-    function onLoad() {
-
-        if (cordova.exec == undefined) {
-            onFailure(0, "Wait for plugin to load!");
-            setTimeout(function(){ onLoad() }, 1000);
-            return;
-        }
-
-        cordova.exec(
-            function(jsonData) {
-                var jsonObject = JSON.parse(jsonData);
-                var playerNum = jsonObject.playerNum;
-                var axis = jsonObject.axis;
-                var val = jsonObject.val;
-                //console.log("HTML5 CallbackOnGenericMotionEvent playerNum="+playerNum+" axis="+axis+" val="+val);
-                onGenericMotionEvent(playerNum, axis, val);
-            },
-            function(err) {
-                console.error("HTML5 setCallbackOnGenericMotionEvent Failed: "+err);
-            },
-            "OuyaSDK", "setCallbackOnGenericMotionEvent", [ "" ]);
-
-        cordova.exec(
-            function(jsonData) {
-                var jsonObject = JSON.parse(jsonData);
-                var playerNum = jsonObject.playerNum;
-                var button = jsonObject.button;
-                //console.log("HTML5 CallbackOnKeyUp playerNum="+playerNum+" button="+button);
-                onKeyUp(playerNum, button);
-            },
-            function(err) {
-                console.error("HTML5 setCallbackOnKeyUp Failed: "+err);
-            },
-            "OuyaSDK", "setCallbackOnKeyUp", [ "" ]);
-
-        cordova.exec(
-            function(jsonData) {
-                var jsonObject = JSON.parse(jsonData);
-                var playerNum = jsonObject.playerNum;
-                var button = jsonObject.button;
-                //console.log("HTML5 CallbackonKeyDown playerNum="+playerNum+" button="+button);
-                onKeyDown(playerNum, button);
-            },
-            function(err) {
-                console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
-            },
-            "OuyaSDK", "setCallbackOnKeyDown", [ "" ]);
-    }
-	</script>
 
 </head> 
  
-<body onload="onLoad()">
+<body> 
 	<div id="fb-root"></div>
 	
-	<script>
-	// Issue a warning if trying to preview an exported project on disk.
-	(function(){
-		/*
-		// Check for running exported on file protocol
-		if (window.location.protocol.substr(0, 4) === "file")
-		{
-			alert("Exported games won't work until you upload them. (When running on the file:/// protocol, browsers block many features from working for security reasons.)");
-		}
-		*/
-	})();
-	</script>
+	<!-- allow file:// export-fs.html -->
 	
 	<!-- The canvas must be inside a div called c2canvasdiv -->
 	<div id="c2canvasdiv">
@@ -133,7 +72,7 @@
 	<!-- Pages load faster with scripts at the bottom -->
 	
 	<!-- Construct 2 exported games require jQuery. -->
-	<script src="jquery-2.0.0.min.js"></script>
+	<script src="jquery-2.1.1.min.js"></script>
 
 
 	
@@ -167,6 +106,11 @@
 		document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
 		document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
 		
+		if (navigator.serviceWorker && navigator.serviceWorker.register)
+		{
+			// Register an empty service worker to trigger web app install banners.
+			navigator.serviceWorker.register("sw.js", { scope: "./" });
+		}
     </script>
 </body> 
 </html> 

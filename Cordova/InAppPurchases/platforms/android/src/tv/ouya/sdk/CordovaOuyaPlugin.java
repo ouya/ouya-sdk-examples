@@ -487,6 +487,7 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                             for (Receipt receipt : receipts) {
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("currency", receipt.getCurrency());
+                                jsonObject.put("generatedDate", receipt.getGeneratedDate());
                                 jsonObject.put("identifier", receipt.getIdentifier());
                                 jsonObject.put("localPrice", receipt.getLocalPrice());
                                 result.put(i, jsonObject);
