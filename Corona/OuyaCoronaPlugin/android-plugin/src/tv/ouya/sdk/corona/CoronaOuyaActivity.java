@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 OUYA, Inc.
+ * Copyright (C) 2012-2015 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,10 @@ import tv.ouya.console.api.OuyaController;
 public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	
 	private final String TAG = "CoronaOuyaActivity";
+
+	private static final boolean mEnableLogging = false;
+
+	private static boolean mIsAvailable = false;
 		
 	/** Called when your application has started. */
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,9 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		
 		super.onCreate(savedInstanceState);
 		
-		Log.i(TAG, "***Starting Activity*********");
+		if (mEnableLogging) {
+			Log.i(TAG, "***Starting Activity*********");
+		}
 
 		Context context = getBaseContext();
 
@@ -79,15 +85,22 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 			inputStream.close();
 			IOuyaActivity.SetApplicationKey(applicationKey);
 			
-			Log.i(TAG, "***Loaded signing key*********");
+			if (mEnableLogging) {
+				Log.i(TAG, "***Loaded signing key*********");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		// Init the controller
 		OuyaController.init(context);
+
+		mIsAvailable = true;
 	}
-	
+
+	public static boolean isAvailable() {
+		return mIsAvailable;
+	}
 
 	@Override
 	protected void onDestroy() {

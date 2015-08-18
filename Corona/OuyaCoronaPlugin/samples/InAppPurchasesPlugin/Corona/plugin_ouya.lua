@@ -26,23 +26,10 @@ print "plugin.ouya is loading plugin_ouya";
 local library = require("CoronaLibrary")
 local plugin_ouya = library:new{ name = "ouya", publisherId = "tv.ouya" }
 
-plugin_ouya.developerId = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
-
 plugin_ouya.initialized = false;
 
-plugin_ouya.initialize = function ()
-	if ouyaSDK == nil then
-		print "ouyaSDK named java functions are not initialized";
-		return;
-	end
-	if plugin_ouya.initialized == false then
-			plugin_ouya.ouyaSetDeveloperId(plugin_ouya.developerId);
-			print "plugin_ouya is initialized";
-	end
-end
-
--- Set IAP Developer ID
-plugin_ouya.ouyaSetDeveloperId = function(developerId)
+-- Initialize the OUYA Plugin
+plugin_ouya.initOuyaPlugin = function(onSuccess, onFailure, jsonData)
 	if ouyaSDK == nil then
 		print "ouyaSDK named java functions are not initialized";
 		return;
@@ -52,8 +39,7 @@ plugin_ouya.ouyaSetDeveloperId = function(developerId)
 		return;
 	end
 	
-	--print ("plugin_ouya.ouyaSetDeveloperId (" .. developerId .. ")");
-	ouyaSDK.ouyaSetDeveloperId(developerId);
+	ouyaSDK.initOuyaPlugin(onSuccess, onFailure, jsonData);
 	plugin_ouya.initialized = true;
 end
 
@@ -63,7 +49,10 @@ plugin_ouya.asyncLuaOuyaRequestGamerInfo = function(onSuccess, onFailure, onCanc
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
-	plugin_ouya.initialize();
+	if plugin_ouya.initialized == false then
+		print "plugin_ouya is not initialized";
+		return;
+	end
 	
 	print ("plugin_ouya.asyncLuaOuyaRequestGamerInfo");
 	ouyaSDK.asyncLuaOuyaRequestGamerInfo(onSuccess, onFailure, onCancel);
@@ -75,7 +64,10 @@ plugin_ouya.asyncLuaOuyaRequestProducts = function(onSuccess, onFailure, onCance
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
-	plugin_ouya.initialize();
+	if plugin_ouya.initialized == false then
+		print "plugin_ouya is not initialized";
+		return;
+	end
 	
 	print ("plugin_ouya.asyncLuaOuyaRequestProducts");
 	ouyaSDK.asyncLuaOuyaRequestProducts(onSuccess, onFailure, onCancel, products);	
@@ -87,7 +79,10 @@ plugin_ouya.asyncLuaOuyaRequestPurchase = function(onSuccess, onFailure, onCance
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
-	plugin_ouya.initialize();
+	if plugin_ouya.initialized == false then
+		print "plugin_ouya is not initialized";
+		return;
+	end
 	
 	print ("plugin_ouya.asyncLuaOuyaRequestPurchase (" .. purchasable .. ")");
 	ouyaSDK.asyncLuaOuyaRequestPurchase(onSuccess, onFailure, onCancel, purchasable);
@@ -99,7 +94,10 @@ plugin_ouya.asyncLuaOuyaRequestReceipts = function(onSuccess, onFailure, onCance
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
-	plugin_ouya.initialize();
+	if plugin_ouya.initialized == false then
+		print "plugin_ouya is not initialized";
+		return;
+	end
 	
 	print ("plugin_ouya.asyncLuaOuyaRequestReceipts");
 	ouyaSDK.asyncLuaOuyaRequestReceipts(onSuccess, onFailure, onCancel)
@@ -127,6 +125,17 @@ plugin_ouya.asyncLuaOuyaGetControllerName = function(onGetControllerName, player
 	
 	print ("plugin_ouya.asyncLuaOuyaGetControllerName");
 	ouyaSDK.asyncLuaOuyaGetControllerName(onGetControllerName, playerNum)
+end
+
+-- check if the plugin is available
+plugin_ouya.luaOuyaIsAvailable = function()
+	if ouyaSDK == nil then
+		print "ouyaSDK named java functions are not initialized";
+		return;
+	end
+	
+	print ("plugin_ouya.luaOuyaIsAvailable");
+	return ouyaSDK.luaOuyaIsAvailable()
 end
 
 -- Return the Ouya library from the require() 

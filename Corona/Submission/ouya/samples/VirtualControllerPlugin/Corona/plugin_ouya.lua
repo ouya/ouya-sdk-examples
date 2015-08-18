@@ -109,6 +109,7 @@ plugin_ouya.asyncLuaOuyaInitInput = function(onGenericMotionEvent, onKeyDown, on
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
+	plugin_ouya.initialize();
 	
 	print ("plugin_ouya.asyncLuaOuyaInitInput");
 	ouyaSDK.asyncLuaOuyaInitInput(onGenericMotionEvent, onKeyDown, onKeyUp)
@@ -120,13 +121,21 @@ plugin_ouya.asyncLuaOuyaGetControllerName = function(onGetControllerName, player
 		print "ouyaSDK named java functions are not initialized";
 		return;
 	end
-	if plugin_ouya.initialized == false then
-		print "plugin_ouya is not initialized";
-		return;
-	end
+	plugin_ouya.initialize();
 	
 	print ("plugin_ouya.asyncLuaOuyaGetControllerName");
 	ouyaSDK.asyncLuaOuyaGetControllerName(onGetControllerName, playerNum)
+end
+
+-- check if the plugin is available
+plugin_ouya.luaOuyaIsAvailable = function()
+	if ouyaSDK == nil then
+		print "ouyaSDK named java functions are not initialized";
+		return;
+	end
+	
+	print ("plugin_ouya.luaOuyaIsAvailable");
+	return ouyaSDK.luaOuyaIsAvailable()
 end
 
 -- Return the Ouya library from the require() 
