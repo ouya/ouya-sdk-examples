@@ -37,22 +37,22 @@ namespace tv_ouya_console_api_OuyaController
 	int OuyaController::InitJNI(JNIEnv* env)
 	{
 		{
-			const char* strOuyaControllerClass = "tv/ouya/console/api/OuyaController";
-			if (VERBOSE_LOGGING)
+			const char* strClass = "tv/ouya/console/api/OuyaController";
+#if ENABLE_VERBOSE_LOGGING
+			__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strClass);
+#endif
+			jclass localRef = (jclass)env->FindClass(strClass);
+			if (localRef)
 			{
-				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Searching for %s", strOuyaControllerClass);
-			}
-			_jcOuyaController = env->FindClass(strOuyaControllerClass);
-			if (_jcOuyaController)
-			{
-				if (VERBOSE_LOGGING)
-				{
-					__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strOuyaControllerClass);
-				}
+#if ENABLE_VERBOSE_LOGGING
+				__android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, "Found %s", strClass);
+#endif
+				_jcOuyaController = (jclass)env->NewGlobalRef(localRef);
+				env->DeleteLocalRef(localRef);
 			}
 			else
 			{
-				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strOuyaControllerClass);
+				__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "Failed to find %s", strClass);
 				return JNI_ERR;
 			}
 		}

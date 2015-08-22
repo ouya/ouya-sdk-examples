@@ -110,6 +110,8 @@ void OuyaPlugin_JSONArray_Put(int jsonArray, int index, int jsonObject);
 
 const char* OuyaPlugin_JSONArray_ToString(int jsonArray);
 
+// \cond HIDDEN_DEFINES
 S3E_END_C_DECL
+// \endcond
 
 #endif /* !S3E_EXT_ODK_H */

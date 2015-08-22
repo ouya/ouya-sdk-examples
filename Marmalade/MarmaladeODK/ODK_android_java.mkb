@@ -30,10 +30,12 @@ files
 	CallbacksRequestProducts.java
 	CallbacksRequestPurchase.java
 	CallbacksRequestReceipts.java
+	DebugInput.java
 	IMarmaladeOuyaActivity.java
 	MarmaladeOuyaFacade.java
 	MarmaladeOuyaPlugin.java
 	ODK.java
+	OuyaInputView.java
 }
 
 librarypath "$MARMALADE_ROOT/s3e/deploy/plugins/android/android.jar"

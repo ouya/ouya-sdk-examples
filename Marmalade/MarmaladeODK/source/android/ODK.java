@@ -43,7 +43,6 @@ import com.ideaworks3d.marmalade.LoaderAPI;
 import com.ideaworks3d.marmalade.LoaderActivity;
 import java.io.IOException;
 import java.io.InputStream;
-import tv.ouya.console.api.*;
 import tv.ouya.sdk.marmalade.*;
 
 public class ODK extends LoaderActivity
@@ -52,20 +51,22 @@ public class ODK extends LoaderActivity
 
 	private static final boolean sEnableLogging = false;
 
-	// Only use native methods after the native plugin loads
-	private static boolean mNativePluginLoaded = false;
+	private static OuyaInputView sInputView = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
-        Log.i(TAG, "onCreate" );
+		if (sEnableLogging) {
+			Log.i(TAG, "onCreate" );
+		}
         super.onCreate(savedInstanceState);
 
+		if (sEnableLogging) {
+			Log.d(TAG, "Add inputView");
+		}
+		sInputView = new OuyaInputView(this);
+
 		IMarmaladeOuyaActivity.SetActivity(this);
-
-		OuyaController.init(this);
-
-		OuyaInputMapper.init(this);
     }
 
 	@Override
@@ -74,25 +75,29 @@ public class ODK extends LoaderActivity
 
 		View content = (View)findViewById(android.R.id.content);
 		if (null != content) {
-			Log.d(TAG, "Disable screensaver" );
+			if (sEnableLogging) {
+				Log.d(TAG, "Disable screensaver" );
+			}
 			content.setKeepScreenOn(true);
 		} else {
 			Log.e(TAG, "Content view is missing");
 		}
 	}
 
-    @Override
-		protected void onDestroy() {
-
-			Log.i(TAG, "onDestroy" );
-			super.onDestroy();
-
-			OuyaInputMapper.shutdown(this);
-	}
+	@Override
+    public void onDestroy()
+    {
+    	super.onDestroy();
+    	if (null != sInputView) {
+    		sInputView.shutdown();
+    	}
+    }
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		Log.i(TAG, "onActivityResult");
+		if (sEnableLogging) {
+			Log.i(TAG, "onActivityResult");
+		}
 		super.onActivityResult(requestCode, resultCode, data);
 		MarmaladeOuyaFacade marmaladeOuyaFacade = IMarmaladeOuyaActivity.GetMarmaladeOuyaFacade();
 		if (null != marmaladeOuyaFacade)
@@ -106,135 +111,31 @@ public class ODK extends LoaderActivity
 		}
 	}
 
-	public static void nativeLoaded() {
-		mNativePluginLoaded = true;
-	}
-
-	public native void dispatchGenericMotionEventNative(int deviceId, int axis, float value);
-	public native void dispatchKeyEventNative(int deviceId, int keyCode, int action);
-
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
     	//Log.i(TAG, "dispatchGenericMotionEvent");
     	//DebugInput.debugMotionEvent(motionEvent);
-		if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
-		    return OuyaInputMapper.dispatchGenericMotionEvent(this, motionEvent);
+    	//DebugInput.debugOuyaMotionEvent(motionEvent);
+		if (null == sInputView) {
+			if (sEnableLogging) {
+				Log.e(TAG, "dispatchGenericMotionEvent InputView is not initialized!");
+			}
+			return false;
 		}
-    	return super.dispatchGenericMotionEvent(motionEvent);
+		return sInputView.dispatchGenericMotionEvent(motionEvent);
     }
 	
 	@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-    	if (sEnableLogging) {
-			Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
+		if (sEnableLogging) {
+			Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
 		}
-		InputDevice device = keyEvent.getDevice();
-		if (null != device) {
-			String name = device.getName();
-			if (null != name &&
-				name.equals("aml_keypad")) {
-				switch (keyEvent.getKeyCode()) {
-				case 24:
-					if (sEnableLogging) {
-						Log.i(TAG, "Volume Up detected.");
-					}
-					return false;
-				case 25:
-					if (sEnableLogging) {
-						Log.i(TAG, "Volume Down detected.");
-					}
-					return false;
-				case 66:
-					if (sEnableLogging) {
-						Log.i(TAG, "Remote button detected.");
-					}
-					if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-						onKeyDown(OuyaController.BUTTON_O, keyEvent);
-					} else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
-						onKeyUp(OuyaController.BUTTON_O, keyEvent);
-					}
-					return false;
-				}
+		if (null == sInputView) {
+			if (sEnableLogging) {
+				Log.e(TAG, "dispatchKeyEvent InputView is not initialized!");
 			}
-		}
-	    if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
-	    	return OuyaInputMapper.dispatchKeyEvent(this, keyEvent);
-	    }
-	    return super.dispatchKeyEvent(keyEvent);
-    }
-
-	@Override
-	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-		//DebugInput.debugMotionEvent(motionEvent);
-
-		if (!mNativePluginLoaded) {
 			return false;
 		}
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(motionEvent.getDeviceId());	    
-	    if (playerNum < 0) {
-	    	//Log.w(TAG, "Failed to find playerId for Controller="+motionEvent.getDevice().getName());
-	    	playerNum = 0;
-	    }
-
-		try {
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
-			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
-		} catch (Exception e) {
-			// axis might be used before native plugin loads
-		}
-		return true;
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyUp keyCode=" + keyCode);
-		//Log.i(TAG, "It came from=" + this.getClass().getSimpleName());
-		//Log.i(TAG, "onKeyUp keyCode=" + DebugInput.debugGetButtonName(keyCode));
-
-		if (!mNativePluginLoaded) {
-			return false;
-		}
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
-	    if (playerNum < 0) {
-	    	Log.w(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	playerNum = 0;
-	    }
-
-		int action = keyEvent.getAction();
-		try {
-			dispatchKeyEventNative(playerNum, keyCode, action);
-		} catch (Exception e) {
-			// button might be used before native plugin loads
-		}
-		return true;
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-		//Log.i(TAG, "onKeyDown keyCode=" + DebugInput.debugGetButtonName(keyCode));
-
-		if (!mNativePluginLoaded) {
-			return false;
-		}
-
-		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
-	    if (playerNum < 0) {
-	    	Log.w(TAG, "Failed to find playerId for Controller="+keyEvent.getDevice().getName());
-	    	playerNum = 0;
-	    }
-
-		int action = keyEvent.getAction();
-		try {
-			dispatchKeyEventNative(playerNum, keyCode, action);
-		} catch (Exception e) {
-			// button might be used before native plugin loads
-		}
-		return true;
+		return sInputView.dispatchKeyEvent(keyEvent);
 	}
 }

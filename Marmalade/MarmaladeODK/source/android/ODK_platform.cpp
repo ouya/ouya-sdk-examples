@@ -70,7 +70,9 @@ void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 	jint axis,
 	jfloat val)
 {
-	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "dispatchGenericMotionEventNative: Device=%d axis=%d val=%f", deviceId, axis, val);
+#if ENABLE_VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "dispatchGenericMotionEventNative: Device=%d axis=%d val=%f", deviceId, axis, val);
+#endif
 	if (deviceId < 0 ||
 		deviceId >= MAX_CONTROLLERS)
 	{
@@ -84,7 +86,9 @@ void dispatchKeyEventNative(JNIEnv* env, jobject thiz,
 	jint keyCode,
 	jint action)
 {
-	//__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "dispatchKeyEventNative: Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
+#if ENABLE_VERBOSE_LOGGING
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "dispatchKeyEventNative: Device=%d KeyCode=%d Action=%d", deviceId, keyCode, action);
+#endif
 	if (deviceId < 0 ||
 		deviceId >= MAX_CONTROLLERS)
 	{
@@ -121,6 +125,10 @@ static int method_table_size2 = sizeof(method_table2) / sizeof(method_table2[0])
 
 s3eResult ODKInit_platform()
 {
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Marmalade Plugin Native Version: 0.0.1");
+	IwTrace(ODK, ("Marmalade Plugin Native Version: 0.0.1"));
+
+
     // Get the environment from the pointer
     JNIEnv* env = s3eEdkJNIGetEnv();
 
@@ -134,21 +142,22 @@ s3eResult ODKInit_platform()
 		g_lastButtonUp.push_back(std::map<int, bool>());
 	}
 
-	jclass clazz = env->FindClass("tv/ouya/sdk/marmalade/ODK");
+	__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Find OuyaInputView...");
+	jclass clazz = env->FindClass("tv/ouya/sdk/marmalade/OuyaInputView");
 	if (clazz)
 	{
 		jint ret = env->RegisterNatives(clazz, method_table, method_table_size);
 		ret = env->RegisterNatives(clazz, method_table2, method_table_size2);
 
-		const char* strMethod = "nativeLoaded";
-		jmethodID nativeLoaded = env->GetStaticMethodID(clazz, strMethod, "()V");
-		env->CallStaticVoidMethod(clazz, nativeLoaded);
-
+		const char* strField = "sNativeInitialized";
+		jfieldID fieldNativeInitialized = env->GetStaticFieldID(clazz, strField, "Z");
+		env->SetStaticBooleanField(clazz, fieldNativeInitialized, true);
 		env->DeleteLocalRef(clazz);
+		__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "Loaded Native Plugin: 003");
 	}
 	else
 	{
-		IwTrace(ODK, ("Failed to find ODK"));
+		IwTrace(ODK, ("*********************Failed to find OuyaInputView"));
 		goto fail;
 	}
 

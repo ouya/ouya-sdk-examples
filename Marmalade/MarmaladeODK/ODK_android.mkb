@@ -31,13 +31,3 @@ options
 define S3E_BUILD_EXT
 
 subproject ODK_build
-
-#files
-#{
-#	(source)
-#	android/ExtensionGamerInfo.cpp
-#	android/ExtensionProduct.cpp
-#	android/ExtensionReceipt.cpp
-#	android/JSONArray.cpp
-#	android/JSONObject.cpp	
-#}

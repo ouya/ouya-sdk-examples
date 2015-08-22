@@ -1,13 +1,13 @@
 files
 {
-	Main.cpp
+	main.cpp
 	VirtualControllerSprite.h
 	VirtualControllerSprite.cpp
 }
 
 subprojects
 {
-	IwGx
+	iwGx
 	iw2d
 	../MarmaladeODK/ODK
 }
@@ -27,4 +27,10 @@ deployments
     android-manifest=data/AndroidManifest.xml
     android-external-res=res
     [Android]
+}
+#### AUTO GENERATED deployment settings from DeployTool.exe. Do not edit below this line ####
+deployments
+{
+	["Android"]
+	["Default"]
 }
