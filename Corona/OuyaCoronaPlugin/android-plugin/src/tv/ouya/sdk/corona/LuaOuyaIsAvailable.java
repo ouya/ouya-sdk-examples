@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 OUYA, Inc.
+ * Copyright (C) 2012-2015 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,11 @@ import android.util.Log;
  * <p>
  * Demonstrates how to fetch a string argument from a Lua function.
  */
-public class AsyncLuaInitOuyaPlugin implements com.naef.jnlua.NamedJavaFunction {
+public class LuaOuyaIsAvailable implements com.naef.jnlua.NamedJavaFunction {
 
-	private static final String TAG = AsyncLuaInitOuyaPlugin.class.getSimpleName();
+	private static final String TAG = LuaOuyaIsAvailable.class.getSimpleName();
+
+	private static final boolean mEnableLogging = false;
 
 	/**
 	 * Gets the name of the Lua function as it would appear in the Lua script.
@@ -35,7 +37,7 @@ public class AsyncLuaInitOuyaPlugin implements com.naef.jnlua.NamedJavaFunction 
 	 */
 	@Override
 	public String getName() {
-		return "initOuyaPlugin";
+		return "luaOuyaIsAvailable";
 	}
 	
 	/**
@@ -49,36 +51,13 @@ public class AsyncLuaInitOuyaPlugin implements com.naef.jnlua.NamedJavaFunction 
 	@Override
 	public int invoke(final com.naef.jnlua.LuaState luaState) {
 
-		final CallbacksInitOuyaPlugin callbacks = new CallbacksInitOuyaPlugin(luaState);
-					
-		// store for access
-		IOuyaActivity.SetCallbacksInitOuyaPlugin(callbacks);
-
-		Activity activity = IOuyaActivity.GetActivity();
-		if (null == activity) {
-			Log.e(TAG, "Activity is null!");
-		} else {
-			Runnable runnable = new Runnable()
-			{
-				public void run()
-				{
-					// Print the Lua function's argument to the Android logging system.
-					try {
-						CoronaOuyaPlugin.initOuyaPlugin(callbacks.getJSONData());
-						callbacks.onSuccess();
-					}
-					catch (Exception ex) {
-						// An exception will occur if given an invalid argument or no argument. Print the error.
-						ex.printStackTrace();
-
-						callbacks.onFailure(0, "Failed to initialize CoronaOuyaPlugin");
-					}
-				}
-			};
-			activity.runOnUiThread(runnable);
-		};
+		boolean result = CoronaOuyaPlugin.isAvailable();
 		
-		// Return 0 since this Lua function does not return any values.
-		return 0;
+		if (mEnableLogging) {
+			Log.i(TAG, "OuyaPlugin isAvailable="+result);
+		}
+
+		luaState.pushBoolean(result);
+		return 1;
 	}
 }
