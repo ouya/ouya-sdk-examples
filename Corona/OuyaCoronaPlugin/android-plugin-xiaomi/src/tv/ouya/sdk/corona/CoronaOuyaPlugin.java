@@ -32,7 +32,11 @@ import tv.ouya.console.api.*;
 
 public class CoronaOuyaPlugin
 {
-	private static final String TAG = "OuyaCoronaPlugin";
+	private static final String TAG = CoronaOuyaPlugin.class.getSimpleName();
+
+	private static final String VERSION = "1501.3";
+
+	private static final boolean mEnableLogging = false;
 
 	private static boolean sInitialized = false;
 
@@ -41,7 +45,15 @@ public class CoronaOuyaPlugin
 		throws Exception
 	{
 		try {
-			if (!sInitialized) {
+			if (sInitialized) {
+				Log.i(TAG, "Corona Plugin Already Initialized");
+			} else {
+				Log.i(TAG, "VERSION="+VERSION);
+
+				if (mEnableLogging) {
+					Log.i(TAG, "initOuyaPlugin jsonData="+jsonData);
+				}
+
 				if (null == IOuyaActivity.GetActivity())
 				{
 					throw new Exception("Activity is not set");
@@ -61,18 +73,28 @@ public class CoronaOuyaPlugin
 					JSONObject jsonObject = jsonArray.getJSONObject(index);
 					String name = jsonObject.getString("key");
 					String value = jsonObject.getString("value");
-					//Log.i(TAG, "key="+key+" value="+value);
 					if (null == name ||
 						null == value) {
 						continue;
 					}
 					if (name.equals("tv.ouya.product_id_list")) {
+						if (mEnableLogging) {
+							Log.i(TAG, "key="+name);
+						}
 						String[] productIds = value.split(",");
 						if (null == productIds) {
 							continue;
 						}
+						if (mEnableLogging) {
+							for (String productId : productIds) {
+								Log.i(TAG, " value="+productId);
+							}
+						}
 						developerInfo.putStringArray("tv.ouya.product_id_list", productIds);
 					} else {
+						if (mEnableLogging) {
+							Log.i(TAG, "key="+name+" value="+value);
+						}
 						developerInfo.putString(name, value);
 					}
 				}
@@ -196,5 +218,9 @@ public class CoronaOuyaPlugin
 			Log.e(TAG, "CoronaOuyaPlugin: getDeviceHardwareName exception: " + ex.toString());
 		}
 		return "";	
+	}
+
+	public static boolean isAvailable() {
+		return CoronaOuyaActivity.isAvailable();
 	}
 }

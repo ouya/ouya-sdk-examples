@@ -54,6 +54,10 @@ import tv.ouya.console.api.OuyaController;
 public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	
 	private final String TAG = "CoronaOuyaActivity";
+
+	private static final boolean mEnableLogging = false;
+
+	private static boolean mIsAvailable = false;
 		
 	/** Called when your application has started. */
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +69,14 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		IOuyaActivity.SetSavedInstanceState(savedInstanceState);
 		
 		super.onCreate(savedInstanceState);
-		
-		Log.i(TAG, "***Starting Activity*********");
 
-		Context context = getBaseContext();
+		if (mEnableLogging) {
+			Log.i(TAG, "***Starting Activity*********");
+		}
 
 		// load the application key from Corona assets
 		try {
-			AssetManager assetManager = context.getAssets();
+			AssetManager assetManager = getAssets();
 			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
 			byte[] applicationKey = new byte[inputStream.available()];
 			inputStream.read(applicationKey);
@@ -85,9 +89,14 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		}
 
 		// Init the controller
-		OuyaController.init(context);
+		OuyaController.init(this);
+
+		mIsAvailable = true;
 	}
-	
+
+	public static boolean isAvailable() {
+		return mIsAvailable;
+	}	
 
 	@Override
 	protected void onDestroy() {

@@ -98,7 +98,7 @@ public class CallbacksInitOuyaPlugin {
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.i(TAG, "Activity is null");
+			Log.e(TAG, "Activity is null");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {
@@ -144,7 +144,7 @@ public class CallbacksInitOuyaPlugin {
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.i(TAG, "Activity is null");
+			Log.e(TAG, "Activity is null");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {
