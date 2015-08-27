@@ -2,4 +2,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="tv.ouya.examples.MonoGame.InputView">
 	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="16" />
 	<application></application>
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>

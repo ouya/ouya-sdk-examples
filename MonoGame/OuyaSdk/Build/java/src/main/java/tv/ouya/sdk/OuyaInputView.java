@@ -26,6 +26,7 @@ import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import java.util.HashMap;
 import tv.ouya.console.api.OuyaController;
@@ -85,6 +86,8 @@ public class OuyaInputView extends View {
     private void init() {
 		Activity activity = ((Activity)getContext());
 		if (null != activity) {
+			
+			activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 				
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
 			if (null != content) {
