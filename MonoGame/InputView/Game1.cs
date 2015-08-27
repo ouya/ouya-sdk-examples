@@ -1,3 +1,5 @@
+//#define MONOGAME_4_4
+
 using Color = Microsoft.Xna.Framework.Color;
 using Android.Graphics;
 using Android.Graphics.Drawables;
@@ -138,7 +140,11 @@ namespace InputView
 			graphics.GraphicsDevice.Clear (Color.CornflowerBlue);
 
 			spriteBatch.Begin ();
+#if MONOGAME_4_4
+            spriteBatch.DrawString(font, "Hello from MonoGame: " + DateTime.Now.ToString(), new Vector2(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40), Color.White);
+#else
 			spriteBatch.DrawString (font, "Hello from MonoGame: "+DateTime.Now.ToString(), new Vector2 (Window.Width / 2 - 200, Window.Height / 2 - 40), Color.White);
+#endif
 			Vector2 position = new Vector2 (400, 100);
 			int index = 0;
 			for (; index < m_controllerButtons.Count && index < 7; ++index) { 
