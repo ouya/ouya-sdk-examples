@@ -1,5 +1,6 @@
 package tv.ouya.examples.android.virtualcontroller;
 
+import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +13,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+
 import tv.ouya.console.api.*;
 import tv.ouya.console.api.OuyaController.ButtonData;
 import tv.ouya.sdk.*;
@@ -99,8 +104,30 @@ public class MainActivity extends OuyaActivity {
 		
 		mainLayout.setKeepScreenOn(true);
 		
+		byte[] applicationKey = null;
+		
+		// load the application key from assets
+		try {
+			AssetManager assetManager = getAssets();
+			InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
+			applicationKey = new byte[inputStream.available()];
+			inputStream.read(applicationKey);
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (null == applicationKey) {
+			Log.e(TAG, "Failed to load signing key");
+			return;
+		}
+		
 		mOuyaFacade = OuyaFacade.getInstance();
-		mOuyaFacade.init(this, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+		
+		Bundle developerInfo = new Bundle();
+		developerInfo.putString(OuyaFacade.OUYA_DEVELOPER_ID, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+		developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
+		mOuyaFacade.init(this, developerInfo);
 		
 		txtSystem = (TextView)findViewById(R.id.txtSystem);
 		txtController = (TextView)findViewById(R.id.txtController);
@@ -250,6 +277,18 @@ public class MainActivity extends OuyaActivity {
 
 		imageView.setImageDrawable(data.buttonDrawable);
 	}
+	
+	@Override
+	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		if (null != txtKeyCode) {
+			InputDevice device = motionEvent.getDevice();
+			if (null != device) {
+				txtKeyCode.setText("Original MotionEvent device=" + device.getName());
+			}
+		}
+		//DebugInput.debugMotionEvent(motionEvent);		
+		return super.dispatchGenericMotionEvent(motionEvent);
+	}
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
@@ -262,18 +301,6 @@ public class MainActivity extends OuyaActivity {
 			}
 		}
 		return super.dispatchKeyEvent(keyEvent);
-	}
-	
-	@Override
-	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		if (null != txtKeyCode) {
-			InputDevice device = motionEvent.getDevice();
-			if (null != device) {
-				txtKeyCode.setText("Original MotionEvent device=" + device.getName());
-			}
-		}
-		//DebugInput.debugMotionEvent(motionEvent);		
-		return super.dispatchGenericMotionEvent(motionEvent);
 	}
 	
 	void updateDPad(int playerNum) {
@@ -328,7 +355,8 @@ public class MainActivity extends OuyaActivity {
 				}
 			}
 		}
-		if (playerNum < 0) {
+		if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
+			Log.e(TAG, "PlayerNum is not assigned!");
 			playerNum = 0;
 		}
 		
@@ -399,6 +427,7 @@ public class MainActivity extends OuyaActivity {
 		
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
+	    	Log.e(TAG, "PlayerNum is not assigned!");
 	    	playerNum = 0;
 	    }
 		
@@ -496,6 +525,7 @@ public class MainActivity extends OuyaActivity {
 		
 		int playerNum = OuyaController.getPlayerNumByDeviceId(keyEvent.getDeviceId());	    
 	    if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
+	    	Log.e(TAG, "PlayerNum is not assigned!");
 	    	playerNum = 0;
 	    }
 		
