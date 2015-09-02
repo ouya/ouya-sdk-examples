@@ -349,6 +349,7 @@ namespace InAppPurchases
 					Activity1.RequestGamerInfo ();
 				} else if (m_focusManager.SelectedButton == BtnExit) {
 					m_debugText = "Exiting...";
+                    Activity1._ouyaFacade.Shutdown();
 					Activity1.Quit ();
 				} else if (m_focusManager.SelectedButton == BtnPause) {
 					m_debugText = "Pause button detected...";
@@ -385,11 +386,29 @@ namespace InAppPurchases
 
 			m_spriteBatch.Begin();
 
-			Activity1.DrawString(m_spriteBatch, m_font, string.Format("Hello from MonoGame! {0} | {1}",
-				Activity1._ouyaFacade.IsRunningOnOUYAHardware ? "(Running on OUYA)" : "Not Running on OUYA",
-                m_debugText), new Vector2(100, 100), Color.White);
+            if (Activity1._ouyaFacade.IsRunningOnOUYASupportedHardware)
+            {
+                OuyaFacade.DeviceHardware deviceHardware = Activity1._ouyaFacade.GetDeviceHardware();
+                if (null == deviceHardware)
+                {
+                    Activity1.DrawString(m_spriteBatch, m_font, string.Format("Hello from MonoGame! Running on null device | {0}",
+                        m_debugText), new Vector2(100, 100), Color.White);
+                }
+                else
+                {
+                    Activity1.DrawString(m_spriteBatch, m_font, string.Format("Hello from MonoGame! Running on '{0}' device enum '{1}' | {2}",
+                        deviceHardware.DeviceName(),
+                        deviceHardware.DeviceEnum(),
+                        m_debugText), new Vector2(100, 100), Color.White);
+                }
+            }
+            else
+            {
+                Activity1.DrawString(m_spriteBatch, m_font, string.Format("Hello from MonoGame! Not Running on OUYA Supported Hardware | {0}",
+                    m_debugText), new Vector2(100, 100), Color.White);
+            }
 
-			Activity1.DrawString(m_spriteBatch, m_font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
+            Activity1.DrawString(m_spriteBatch, m_font, "Use DPAD to switch between buttons | Press O to click the button", new Vector2(500, 170), Color.Orange);
             foreach (ButtonSprite button in m_buttons)
             {
 				button.Draw(m_spriteBatch, m_font, m_activeButton, m_inactiveButton);
