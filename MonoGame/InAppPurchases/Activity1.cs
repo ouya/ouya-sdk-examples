@@ -1,20 +1,17 @@
+#define MONOGAME_4_4
+
 using Android.App;
 using Android.Content;
 using Android.Content.Res;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
 using Android.Views;
-using Android.Widget;
-using Java.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using TV.Ouya.Console.Api;
 using TV.Ouya.Sdk;
 
@@ -29,12 +26,10 @@ namespace InAppPurchases
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
 	[IntentFilter(new[] { Intent.ActionMain }
-		, Categories = new[] { Intent.CategoryLauncher, CATEGORY_GAME, CATEGORY_FORGE_TV })]
+		, Categories = new[] { Intent.CategoryLauncher, CATEGORY_GAME })]
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
 		private const string TAG = "Activity1";
-
-		private const String CATEGORY_FORGE_TV = "android.intent.category.LEANBACK_LAUNCHER";
 
 		private const String CATEGORY_GAME = "tv.ouya.intent.category.GAME";
 
@@ -58,9 +53,9 @@ namespace InAppPurchases
 		// listener for getting receipts
 		private static RequestReceiptsListener sRequestReceiptsListener = null;
 
-		private Game1 mGame = null;
+        private Game1 _game = null;
 
-		private OuyaInputView mOuyaInputView = null;
+		private OuyaInputView _ouyaInputView = null;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -68,21 +63,27 @@ namespace InAppPurchases
 
             base.OnCreate(bundle);
 
-			Game1.Activity = this;
-			mGame = new Game1();
-			SetContentView(mGame.Window);
+#if MONOGAME_4_4
+            _game = new Game1();
+            SetContentView((View)_game.Services.GetService(typeof(View)));
 
-			mOuyaInputView = new TV.Ouya.Sdk.OuyaInputView (this);
+#else
+            Game1.Activity = this;
+			_game = new Game1();
+			SetContentView(_game.Window);
+#endif
+
+			_ouyaInputView = new TV.Ouya.Sdk.OuyaInputView (this);
 
 			View content = FindViewById (Android.Resource.Id.Content);
 			if (null != content) {
 				content.KeepScreenOn = true;
 			}
-			mGame.Run();
+            _game.Run();
 
 			Bundle developerInfo = new Bundle();
 
-			developerInfo.PutString(OuyaFacade.OUYA_DEVELOPER_ID, "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0");
+            developerInfo.PutString(OuyaFacade.OUYA_DEVELOPER_ID, DEVELOPER_ID);
 
 			byte[] applicationKey = null;
 
@@ -114,14 +115,35 @@ namespace InAppPurchases
 				return;
 			}
 
-			developerInfo.PutString(OuyaFacade.XIAOMI_APPLICATION_ID, "0000000000000");
-			developerInfo.PutString(OuyaFacade.XIAOMI_APPLICATION_KEY, "000000000000000000");
+			//developerInfo.PutString(OuyaFacade.XIAOMI_APPLICATION_ID, "0000000000000");
+			//developerInfo.PutString(OuyaFacade.XIAOMI_APPLICATION_KEY, "000000000000000000");
 
-			developerInfo.PutStringArray(OuyaFacade.OUYA_PRODUCT_ID_LIST, Game1.PURCHASABLES);
+			//developerInfo.PutStringArray(OuyaFacade.OUYA_PRODUCT_ID_LIST, Game1.PURCHASABLES);
 
 			_ouyaFacade = OuyaFacade.Instance;
 			_ouyaFacade.Init(this, developerInfo);
         }
+
+#if MONOGAME_4_4
+        public override bool DispatchGenericMotionEvent(MotionEvent motionEvent)
+        {
+            if (null != _ouyaInputView)
+            {
+                return _ouyaInputView.DispatchGenericMotionEvent(motionEvent);
+
+            }
+            return base.DispatchGenericMotionEvent(motionEvent);
+        }
+
+        public override bool DispatchKeyEvent(KeyEvent keyEvent)
+        {
+            if (null != _ouyaInputView)
+            {
+                return _ouyaInputView.DispatchKeyEvent(keyEvent);
+            }
+            return base.DispatchKeyEvent(keyEvent);
+        }
+#endif
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{

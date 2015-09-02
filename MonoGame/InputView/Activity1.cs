@@ -1,4 +1,4 @@
-//#define MONOGAME_4_4
+#define MONOGAME_4_4
 
 using Android.App;
 using Android.Content;
@@ -21,10 +21,9 @@ namespace InputView
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
     [IntentFilter(new[] { Intent.ActionMain }
-		, Categories = new[] { Intent.CategoryLauncher, CategoryGame, CategoryForgeTV })]
+		, Categories = new[] { Intent.CategoryLauncher, CategoryGame })]
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
-		public const String CategoryForgeTV = "android.intent.category.LEANBACK_LAUNCHER";
 		public const String CategoryGame = "tv.ouya.intent.category.GAME";
 		private Game1 _game = null;
         private OuyaInputView _ouyaInputView = null;

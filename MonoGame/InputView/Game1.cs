@@ -1,4 +1,4 @@
-//#define MONOGAME_4_4
+#define MONOGAME_4_4
 
 using Color = Microsoft.Xna.Framework.Color;
 using Android.Graphics;

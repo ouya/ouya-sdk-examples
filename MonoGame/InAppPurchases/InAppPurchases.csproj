@@ -16,8 +16,9 @@
     <AndroidSupportedAbis>armeabi%3barmeabi-v7a%3bx86</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
-    <TargetFrameworkVersion>v4.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+    <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -83,8 +84,6 @@
   <ItemGroup>
     <Folder Include="Resources\Layout\" />
     <Folder Include="Resources\Raw\" />
-    <Folder Include="Jars\" />
-    <Folder Include="Resources\Values-zh-rCN\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Splash.png" />
