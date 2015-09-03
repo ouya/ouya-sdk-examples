@@ -20,6 +20,8 @@ static std::vector< std::map<int, float> > g_axis;
 static std::vector< std::map<int, bool> > g_button;
 static std::vector< std::map<int, bool> > g_buttonDown;
 static std::vector< std::map<int, bool> > g_buttonUp;
+static std::vector< std::map<int, bool> > g_lastButtonDown;
+static std::vector< std::map<int, bool> > g_lastButtonUp;
 
 void dispatchGenericMotionEventNative(JNIEnv* env, jobject thiz,
 	jint playerNum,
@@ -89,6 +91,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		g_button.push_back(std::map<int, bool>());
 		g_buttonDown.push_back(std::map<int, bool>());
 		g_buttonUp.push_back(std::map<int, bool>());
+		g_lastButtonDown.push_back(std::map<int, bool>());
+		g_lastButtonUp.push_back(std::map<int, bool>());
 	}
 
 	JNIEnv* env;
@@ -181,8 +185,8 @@ extern "C"
 			playerNum = 0;
 		}
 
-		std::map<int, bool>::const_iterator search = g_buttonDown[playerNum].find(keyCode);
-		if (search != g_buttonDown[playerNum].end())
+		std::map<int, bool>::const_iterator search = g_lastButtonDown[playerNum].find(keyCode);
+		if (search != g_lastButtonDown[playerNum].end())
 		{
 			return search->second;
 		}
@@ -202,8 +206,8 @@ extern "C"
 			playerNum = 0;
 		}
 
-		std::map<int, bool>::const_iterator search = g_buttonUp[playerNum].find(keyCode);
-		if (search != g_buttonUp[playerNum].end())
+		std::map<int, bool>::const_iterator search = g_lastButtonUp[playerNum].find(keyCode);
+		if (search != g_lastButtonUp[playerNum].end())
 		{
 			return search->second;
 		}
@@ -216,13 +220,23 @@ extern "C"
 		if (g_buttonDown.size() == 0) {
 			return;
 		}
-		
 		if (g_buttonUp.size() == 0) {
 			return;
 		}
-		
 		for (int playerNum = 0; playerNum < MAX_CONTROLLERS; ++playerNum)
 		{
+			g_lastButtonDown[playerNum].clear();
+			g_lastButtonUp[playerNum].clear();
+			for (std::map<int, bool>::iterator it = g_buttonDown[playerNum].begin(); it != g_buttonDown[playerNum].end(); ++it)
+			{
+				int keyCode = it->first;
+				g_lastButtonDown[playerNum][keyCode] = g_buttonDown[playerNum][keyCode];
+			}
+			for (std::map<int, bool>::iterator it = g_buttonUp[playerNum].begin(); it != g_buttonUp[playerNum].end(); ++it)
+			{
+				int keyCode = it->first;
+				g_lastButtonUp[playerNum][keyCode] = g_buttonUp[playerNum][keyCode];
+			}
 			g_buttonDown[playerNum].clear();
 			g_buttonUp[playerNum].clear();
 		}
@@ -255,6 +269,8 @@ extern "C"
 			g_button[playerNum].clear();
 			g_buttonDown[playerNum].clear();
 			g_buttonUp[playerNum].clear();
+			g_lastButtonDown[playerNum].clear();
+			g_lastButtonUp[playerNum].clear();
 		}
 	}
 }
