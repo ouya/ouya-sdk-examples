@@ -349,7 +349,6 @@ namespace InAppPurchases
 					Activity1.RequestGamerInfo ();
 				} else if (m_focusManager.SelectedButton == BtnExit) {
 					m_debugText = "Exiting...";
-                    Activity1._ouyaFacade.Shutdown();
 					Activity1.Quit ();
 				} else if (m_focusManager.SelectedButton == BtnPause) {
 					m_debugText = "Pause button detected...";

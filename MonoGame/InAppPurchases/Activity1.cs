@@ -280,7 +280,12 @@ namespace InAppPurchases
 
 		public static void Quit()
 		{
-			if (null != sInstance) {
+		    if (null != _ouyaFacade)
+		    {
+		        _ouyaFacade.Shutdown();
+		    }
+			if (null != sInstance)
+			{
 				sInstance.Finish ();
 			}
 		}
