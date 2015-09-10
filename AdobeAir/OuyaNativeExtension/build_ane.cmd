@@ -1,6 +1,10 @@
 SET PATH=c:\Program Files\Java\jdk1.8.0_40\bin;%PATH%
 
-SET AIR_SDK=%USERPROFILE%\Downloads\AdobeAIRSDK
+SET AIR_SDK=%USERPROFILE%\Downloads\AIRSDK_Compiler
+
+IF NOT EXIST %AIR_SDK% ECHO AdobeAIRSDK was not found!
+IF NOT EXIST %AIR_SDK% PAUSE
+IF NOT EXIST %AIR_SDK% EXIT
 
 REM path to the ADT tool in Flash Builder sdks
 SET ADT=%AIR_SDK%\bin\adt.bat
