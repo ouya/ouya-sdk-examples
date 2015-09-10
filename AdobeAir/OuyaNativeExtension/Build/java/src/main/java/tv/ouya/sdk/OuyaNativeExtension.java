@@ -16,6 +16,7 @@
 
 package tv.ouya.sdk;
 
+import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
@@ -34,5 +35,6 @@ public class OuyaNativeExtension implements FREExtension {
 	
 	@Override
 	public void initialize() {
+		Log.d(TAG, "******** OuyaNativeExtension initialized ********");
 	}	
 }

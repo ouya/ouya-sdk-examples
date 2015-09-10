@@ -20,18 +20,24 @@
 	<android> 
 		  <manifestAdditions>
 		  <![CDATA[
-			  <manifest>
+				<manifest>
 					<uses-permission android:name="android.permission.WAKE_LOCK" />
-				    <application>
-					    <activity>
-							    <intent-filter>
-								      <action android:name="android.intent.action.MAIN"/>
-								      <category android:name="android.intent.category.LAUNCHER"/>
-								      <category android:name="tv.ouya.intent.category.GAME"/>
-						</intent-filter>
-					</activity>
-				</application>
-			</manifest>
+					<application>
+						<activity>
+							<intent-filter>
+								<action android:name="android.intent.action.MAIN"/>
+								<category android:name="android.intent.category.LAUNCHER"/>
+								<category android:name="tv.ouya.intent.category.GAME"/>
+							</intent-filter>
+						</activity>
+						<activity android:name="tv.ouya.sdk.MainActivity">
+							<intent-filter>
+								<action android:name="tv.ouya.examples.adobeair.flashvirtualcontroller.ACTION1" />
+								<category android:name="android.intent.category.DEFAULT" />
+							</intent-filter>
+						</activity>					
+					</application>
+				</manifest>
 			]]>
 		</manifestAdditions>
 	</android> 	
@@ -55,7 +61,6 @@
   <customUpdateUI>false</customUpdateUI>
   <allowBrowserInvocation>false</allowBrowserInvocation>
   <supportedLanguages>en</supportedLanguages>  
-  
   <extensions>
     <extensionID>tv.ouya.sdk.ouyanativecontext</extensionID>
   </extensions>
