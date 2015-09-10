@@ -30,7 +30,8 @@
 								<category android:name="tv.ouya.intent.category.GAME"/>
 							</intent-filter>
 						</activity>
-						<activity android:name="tv.ouya.sdk.MainActivity">
+						<activity android:name="tv.ouya.sdk.MainActivity"
+							android:theme="@android:style/Theme.Translucent.NoTitleBar">
 							<intent-filter>
 								<action android:name="tv.ouya.examples.adobeair.flashvirtualcontroller.ACTION1" />
 								<category android:name="android.intent.category.DEFAULT" />
@@ -61,6 +62,9 @@
   <customUpdateUI>false</customUpdateUI>
   <allowBrowserInvocation>false</allowBrowserInvocation>
   <supportedLanguages>en</supportedLanguages>  
+  
+  
+  
   <extensions>
     <extensionID>tv.ouya.sdk.ouyanativecontext</extensionID>
   </extensions>

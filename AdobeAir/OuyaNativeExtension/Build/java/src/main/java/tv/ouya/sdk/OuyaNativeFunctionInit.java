@@ -38,6 +38,8 @@ public class OuyaNativeFunctionInit implements FREFunction {
 			return null;
 		}
 		
+		Log.d(TAG, "****** Launch Main Activity ******");
+		
 		Intent intent = new Intent(activity, MainActivity.class);
 		activity.startActivity(intent);
 		
