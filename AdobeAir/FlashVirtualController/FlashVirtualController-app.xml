@@ -21,6 +21,7 @@
 		  <manifestAdditions>
 		  <![CDATA[
 			  <manifest>
+					<uses-permission android:name="android.permission.WAKE_LOCK" />
 				    <application>
 					    <activity>
 							    <intent-filter>
