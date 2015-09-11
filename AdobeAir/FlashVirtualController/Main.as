@@ -10,6 +10,8 @@
     {
 		var _mOuyaNativeInterface: OuyaNativeInterface;
 		
+		var DEADZONE = 0.25;
+		
 		var _mController:Bitmap;
 		var _mButtonO:Bitmap;
 		var _mButtonU:Bitmap;
@@ -49,13 +51,11 @@
 			UpdateVisibility(_mButtonA, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_A));
 			
 			UpdateVisibility(_mButtonL1, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_L1));
-			//UpdateVisibility(_mButtonL2, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_L2));
 			
 			UpdateVisibility(_mButtonL3, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_L3));
 			UpdateVisibility(_mButtonLS, !_mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_L3));
 			
-			UpdateVisibility(_mButtonR1, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_R1));
-			//UpdateVisibility(_mButtonR2, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_R2));
+			UpdateVisibility(_mButtonR1, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_R1));			
 			
 			UpdateVisibility(_mButtonR3, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_R3));
 			UpdateVisibility(_mButtonRS, !_mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_R3));
@@ -66,6 +66,20 @@
 			UpdateVisibility(_mButtonDpadUp, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_DPAD_UP));
 			
 			UpdateVisibility(_mButtonMenu, _mOuyaNativeInterface.GetAnyButtonUp(OuyaController.BUTTON_MENU));
+			
+			var lx = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_LS_X);
+			var ly = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_LS_Y);
+			var rx = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_RS_X);
+			var ry = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_RS_Y);
+			var l2 = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_L2);
+			var r2 = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_R2);
+			
+			UpdateVisibility(_mButtonL2, l2 > DEADZONE);
+			UpdateVisibility(_mButtonR2, r2 > DEADZONE);
+			
+			_mOuyaNativeInterface.LogInfo("***** LX:"+lx+" LY:"+ly+" RX:"+rx+" RY:"+ry+" L2:"+l2+" R2:"+r2);	
+			
+			_mOuyaNativeInterface.ClearButtonStatesPressedReleased();
 		}
 		
 		private function AddBitmap(bitmap : Bitmap) : Bitmap

@@ -130,6 +130,9 @@ public class OuyaInputView extends View {
 			
 			sInstance = this;
 			
+			// disable screensaver
+			setKeepScreenOn(true);
+			
 		} else {
 			Log.e(TAG, "Activity is null");
 		}
