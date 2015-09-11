@@ -42,15 +42,15 @@ package tv.ouya.sdk
 		}
 		
 		public function GetButton(playerNum:int, button:int):Boolean {
-			return context.call("ouyaGetButton", button);
+			return context.call("ouyaGetButton", playerNum, button);
 		}
 
 		public function GetButtonDown(playerNum:int, button:int):Boolean {
-			return context.call("ouyaGetButtonDown", button);
+			return context.call("ouyaGetButtonDown", playerNum, button);
 		}
 		
 		public function GetButtonUp(playerNum:int, button:int):Boolean {
-			return context.call("ouyaGetButtonUp", button);
+			return context.call("ouyaGetButtonUp", playerNum, button);
 		}
 		
 		public function ClearButtonStatesPressedReleased():Boolean {
