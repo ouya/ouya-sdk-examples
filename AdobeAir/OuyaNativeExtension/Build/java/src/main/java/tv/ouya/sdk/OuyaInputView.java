@@ -39,7 +39,7 @@ public class OuyaInputView extends View {
 
 	private static final String TAG = OuyaInputView.class.getSimpleName();
 	
-	private static boolean sEnableInputLogging = false;
+	private static boolean sEnableLogging = false;
 	
 	private static OuyaInputView sInstance = null;
 	
@@ -61,6 +61,29 @@ public class OuyaInputView extends View {
 	private static float mTrackpadY = 0f;
 	private static boolean mTrackpadDown = false;
 	private static boolean mLastTrackpadDown = false;
+
+	private static class ViewRemappedEventDispatcher implements OuyaInputMapper.RemappedEventDispatcher {
+		public static OuyaInputView mView;
+		public ViewRemappedEventDispatcher(OuyaInputView view) {
+			mView = view;
+		}
+		@Override
+		public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+			return mView.onGenericMotionEvent(motionEvent);
+		}
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+			if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+				return mView.onKeyDown(keyEvent.getKeyCode(), keyEvent);
+			} else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+				return mView.onKeyUp(keyEvent.getKeyCode(), keyEvent);
+			} else {
+				return false;
+			}
+		}
+	}
+	
+	private static ViewRemappedEventDispatcher sViewRemappedEventDispatcher = null;
 	
 	static {
 		for (int index = 0; index < OuyaController.MAX_CONTROLLERS; ++index) {
@@ -75,7 +98,7 @@ public class OuyaInputView extends View {
 
     public OuyaInputView(Context context, AttributeSet attrs) {
     	super(context, attrs);
-		if (sEnableInputLogging) {
+		if (sEnableLogging) {
 			Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs)");
 		}
         init();
@@ -83,7 +106,7 @@ public class OuyaInputView extends View {
 
     public OuyaInputView(Context context, AttributeSet attrs, int defStyle) {
     	super(context, attrs, defStyle);
-		if (sEnableInputLogging) {
+		if (sEnableLogging) {
 			Log.d(TAG, "OuyaInputView(Context context, AttributeSet attrs, int defStyle)");
 		}
         init();
@@ -91,20 +114,21 @@ public class OuyaInputView extends View {
 
     public OuyaInputView(Context context) {
         super(context);
-		if (sEnableInputLogging) {
+		if (sEnableLogging) {
 			Log.d(TAG, "OuyaInputView(Context context)");
 		}
         init();
     }
 
     private void init() {
+		sViewRemappedEventDispatcher = new ViewRemappedEventDispatcher(this);
 		Activity activity = ((Activity)getContext());
 		if (null != activity) {
 				
 			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
 			if (null != content) {
 				content.addView(this);
-				if (sEnableInputLogging) {
+				if (sEnableLogging) {
 					Log.d(TAG, "Added view");
 				}
 			} else {
@@ -112,11 +136,6 @@ public class OuyaInputView extends View {
 			}
 
 			OuyaInputMapper.init(activity);
-
-			activity.takeKeyEvents(true);
-
-			setFocusable(true);
-			requestFocus();
 			
 			// prepare OUYA-Everywhere Input states
 			for (int playerNum = 0; playerNum < OuyaController.MAX_CONTROLLERS; ++playerNum) {
@@ -133,6 +152,17 @@ public class OuyaInputView extends View {
 			// disable screensaver
 			setKeepScreenOn(true);
 			
+			// give our custom view focus
+			View oldFocus = activity.getCurrentFocus();
+			if (null != oldFocus) {
+				if (sEnableLogging) {
+					Log.i(TAG, "Disable the current focus");
+				}
+				oldFocus.setFocusable(false);
+			}			
+			activity.takeKeyEvents(true);			
+			setFocusable(true);
+			requestFocus();
 		} else {
 			Log.e(TAG, "Activity is null");
 		}
@@ -148,43 +178,53 @@ public class OuyaInputView extends View {
     }
 	
 	public static void toggleInputLogging(boolean enabled) {
-		sEnableInputLogging = enabled;
+		sEnableLogging = enabled;
 	}
 	
 	@Override
-    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-		if (sEnableInputLogging) {
-			Log.i(TAG, "dispatchGenericMotionEvent");
-			DebugInput.debugMotionEvent(motionEvent);
+	public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+		if (sEnableLogging) {
+			OuyaController ouyaController = OuyaController.getControllerByDeviceId(keyEvent.getDeviceId());
+			if (null == ouyaController) {
+				Log.i(TAG, "dispatchKeyEvent keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+			} else {
+				Log.i(TAG, "dispatchKeyEvent name=\""+ouyaController.getDeviceName()+"\" keyCode=" + keyEvent.getKeyCode()+" name="+DebugInput.debugGetKeyEvent(keyEvent));
+			}
 		}
-    	Activity activity = ((Activity)getContext());
-		if (null != activity) {
-		    if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
-		    	return OuyaInputMapper.dispatchGenericMotionEvent(activity, motionEvent);
-		    }
-	    } else {
-	    	Log.e(TAG, "Activity was not found.");
-	    }
-    	return false;
-    }
-
-	@Override
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-		Activity activity = ((Activity)getContext());
+		Activity activity = ((Activity)getContext());		
 		if (null != activity) {
 	    	if (OuyaInputMapper.shouldHandleInputEvent(keyEvent)) {
-	    		return OuyaInputMapper.dispatchKeyEvent(activity, keyEvent);
+	    		return OuyaInputMapper.dispatchKeyEvent(keyEvent, this, sViewRemappedEventDispatcher);
 	    	}
 	    } else {
 	    	Log.e(TAG, "Activity was not found.");
 	    }
-	    return super.dispatchKeyEvent(keyEvent);
+		return false;
+	}
+
+	@Override
+	public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+		/*
+    	if (sEnableLogging) {
+			DebugInput.debugMotionEvent(motionEvent);
+		}
+		*/
+    	
+    	Activity activity = ((Activity)getContext());		
+		if (null != activity) {
+		    if (OuyaInputMapper.shouldHandleInputEvent(motionEvent)) {
+		    	return OuyaInputMapper.dispatchGenericMotionEvent(motionEvent, this, sViewRemappedEventDispatcher);
+		    }
+	    } else {
+	    	Log.e(TAG, "Activity was not found.");
+	    }
+		return false;
     }
 	
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent motionEvent) {
 		/*
-		if (sEnableInputLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "onGenericMotionEvent");
 			DebugInput.debugMotionEvent(motionEvent);
 			DebugInput.debugOuyaMotionEvent(motionEvent);
@@ -200,7 +240,7 @@ public class OuyaInputView extends View {
 			return false;
 		}
 		
-		//Log.i(TAG, "dispatchGenericMotionEventNative");
+		//Log.i(TAG, "onGenericMotionEvent");
 		SparseArray<Float> stateAxises = sStateAxis.get(playerNum);
 		if (null == stateAxises) {
 			Log.e(TAG, "onGenericMotionEvent stateAxises is null");
@@ -476,7 +516,7 @@ public class OuyaInputView extends View {
 	
 	public static boolean getButton(int playerNum, int button) {
 		/*
-		if (sEnableInputLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "getButton playerNum="+playerNum+" button=" + button);
 		}
 		*/
@@ -490,7 +530,7 @@ public class OuyaInputView extends View {
 		}		
 		boolean result = stateButton.get(button);
 		/*
-		if (sEnableInputLogging) {
+		if (sEnableLogging) {
 			Log.i(TAG, "getButton result=" + result);
 		}
 		*/

@@ -77,7 +77,7 @@
 			UpdateVisibility(_mButtonL2, l2 > DEADZONE);
 			UpdateVisibility(_mButtonR2, r2 > DEADZONE);
 			
-			_mOuyaNativeInterface.LogInfo("***** LX:"+lx+" LY:"+ly+" RX:"+rx+" RY:"+ry+" L2:"+l2+" R2:"+r2);	
+			//_mOuyaNativeInterface.LogInfo("***** LX:"+lx+" LY:"+ly+" RX:"+rx+" RY:"+ry+" L2:"+l2+" R2:"+r2);	
 			
 			_mOuyaNativeInterface.ClearButtonStatesPressedReleased();
 		}

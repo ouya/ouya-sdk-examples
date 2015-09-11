@@ -19,6 +19,7 @@ package tv.ouya.sdk;
 import tv.ouya.console.api.OuyaController;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class DebugInput {
@@ -107,6 +108,44 @@ public class DebugInput {
 		} else {
 			return 0;
 		}
+	}
+	
+	public static String debugGetKeyEvent(KeyEvent keyEvent) {
+		int keyCode = keyEvent.getKeyCode();
+		switch (keyCode)
+		{
+		case OuyaController.BUTTON_O:
+			return "OuyaController.BUTTON_O";
+		case OuyaController.BUTTON_U:
+			return "OuyaController.BUTTON_U";
+		case OuyaController.BUTTON_Y:
+			return "OuyaController.BUTTON_Y";
+		case OuyaController.BUTTON_A:
+			return "OuyaController.BUTTON_A";
+		case OuyaController.BUTTON_L1:
+			return "OuyaController.BUTTON_L1";
+		case OuyaController.BUTTON_R1:
+			return "OuyaController.BUTTON_R1";
+		case OuyaController.BUTTON_L2:
+			return "OuyaController.BUTTON_L2";
+		case OuyaController.BUTTON_R2:
+			return "OuyaController.BUTTON_R2";
+		case OuyaController.BUTTON_L3:
+			return "OuyaController.BUTTON_L3";
+		case OuyaController.BUTTON_R3:
+			return "OuyaController.BUTTON_R3";
+		case OuyaController.BUTTON_DPAD_UP:
+			return "OuyaController.BUTTON_DPAD_UP";
+		case OuyaController.BUTTON_DPAD_DOWN:
+			return "OuyaController.BUTTON_DPAD_DOWN";
+		case OuyaController.BUTTON_DPAD_RIGHT:
+			return "OuyaController.BUTTON_DPAD_RIGHT";
+		case OuyaController.BUTTON_DPAD_LEFT:
+			return "OuyaController.BUTTON_DPAD_LEFT";
+		case OuyaController.BUTTON_MENU:
+			return "OuyaController.BUTTON_MENU";
+		}
+		return "UNKNOWN";
 	}
 	
 	public static String debugGetButtonName(int button) {
