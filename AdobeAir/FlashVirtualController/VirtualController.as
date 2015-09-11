@@ -14,7 +14,7 @@
 		
 		var AXIS_SCALAR:Number = 4;
 		
-		var _mPlayerNum = 0;
+		var _mPlayerNum:int = 0;
 		
 		var _mX:Number = 121.80;
 		var _mY:Number = 84.25;
@@ -48,7 +48,7 @@
 			return bitmap;
 		}
 		
-		public function VirtualController(main:Main, ane:OuyaNativeInterface, playerNum:Number, x:Number, y:Number)
+		public function VirtualController(main:Main, ane:OuyaNativeInterface, playerNum:int, x:Number, y:Number)
         {
 			_mMain = main;
 			_mOuyaNativeInterface = ane;
