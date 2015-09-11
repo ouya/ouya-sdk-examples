@@ -1,25 +1,35 @@
 ﻿package
 {
-	import flash.display.Bitmap;
     import flash.display.MovieClip;
 	import flash.events.Event;
 	import tv.ouya.sdk.OuyaNativeInterface;
 
     public class Main extends MovieClip
     {
+		var INTERVAL_MS_INPUT:Number = 10;
+		
 		var _mOuyaNativeInterface: OuyaNativeInterface;
 		var _mVirtualController1: VirtualController;
 		var _mVirtualController2: VirtualController;
 		var _mVirtualController3: VirtualController;
 		var _mVirtualController4: VirtualController;
 		
+		var _mInputTimer:Number = 0;
+		
 		private function fl_EnterFrameHandler_1(event:Event):void
 		{
-			_mVirtualController1.Update();
-			_mVirtualController2.Update();
-			_mVirtualController3.Update();
-			_mVirtualController4.Update();
-			_mOuyaNativeInterface.ClearButtonStatesPressedReleased();
+			var date:Date = new Date();
+			if (_mInputTimer < date.getTime())
+			{
+				_mInputTimer = date.getTime() + INTERVAL_MS_INPUT;
+			
+				_mVirtualController1.Update();
+				_mVirtualController2.Update();
+				_mVirtualController3.Update();
+				_mVirtualController4.Update();
+				
+				_mOuyaNativeInterface.ClearButtonStatesPressedReleased();
+			}
 		}
 		
         public function Main()
