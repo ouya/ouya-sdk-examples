@@ -36,6 +36,8 @@
 		var _mButtonDpadUp:Bitmap;
 		var _mButtonMenu:Bitmap;
 		
+		var _mMenuTimer:Number = 0;
+		
 		private function UpdateVisibility(bitmap:Bitmap, show:Boolean) : void
 		{
 			if (show)
@@ -70,23 +72,35 @@
 			UpdateVisibility(_mButtonDpadRight, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_DPAD_RIGHT));
 			UpdateVisibility(_mButtonDpadUp, _mOuyaNativeInterface.GetAnyButton(OuyaController.BUTTON_DPAD_UP));
 			
-			UpdateVisibility(_mButtonMenu, _mOuyaNativeInterface.GetAnyButtonUp(OuyaController.BUTTON_MENU));
+			var date:Date = new Date();
+			if (_mOuyaNativeInterface.GetAnyButtonUp(OuyaController.BUTTON_MENU))
+			{
+				_mMenuTimer = date.getTime() + 1000;
+			}
+			UpdateVisibility(_mButtonMenu, date.getTime() < _mMenuTimer);
 			
-			var lx = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_LS_X);
-			var ly = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_LS_Y);
-			var rx = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_RS_X);
-			var ry = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_RS_Y);
+			var lsX = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_LS_X);
+			var lsY = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_LS_Y);
+			var rsX = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_RS_X);
+			var rsY = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_RS_Y);
 			var l2 = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_L2);
 			var r2 = _mOuyaNativeInterface.GetAxis(0, OuyaController.AXIS_R2);
 			
 			UpdateVisibility(_mButtonL2, l2 > DEADZONE);
 			UpdateVisibility(_mButtonR2, r2 > DEADZONE);
 			
-			MoveBitmap(_mButtonL3, lx*AXIS_SCALAR, ly*AXIS_SCALAR);
-			MoveBitmap(_mButtonLS, lx*AXIS_SCALAR, ly*AXIS_SCALAR);
+			//rotate input by N degrees to match image
+			var degrees:Number = 135;
+			var radians:Number = degrees / 180.0 * 3.14;
+			var cos:Number = Math.cos(radians);
+			var sin:Number = Math.sin(radians);
 			
-			MoveBitmap(_mButtonR3, rx*AXIS_SCALAR, ry*AXIS_SCALAR);
-			MoveBitmap(_mButtonRS, rx*AXIS_SCALAR, ry*AXIS_SCALAR);
+			
+			MoveBitmap(_mButtonL3, AXIS_SCALAR * (lsX * cos - lsY * sin), AXIS_SCALAR * (lsX * sin + lsY * cos));
+			MoveBitmap(_mButtonLS, AXIS_SCALAR * (lsX * cos - lsY * sin), AXIS_SCALAR * (lsX * sin + lsY * cos));
+			
+			MoveBitmap(_mButtonR3, AXIS_SCALAR * (rsX * cos - rsY * sin), AXIS_SCALAR * (rsX * sin + rsY * cos));
+			MoveBitmap(_mButtonRS, AXIS_SCALAR * (rsX * cos - rsY * sin), AXIS_SCALAR * (rsX * sin + rsY * cos));
 			
 			//_mOuyaNativeInterface.LogInfo("***** LX:"+lx+" LY:"+ly+" RX:"+rx+" RY:"+ry+" L2:"+l2+" R2:"+r2);	
 			
