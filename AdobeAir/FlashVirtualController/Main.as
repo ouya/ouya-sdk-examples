@@ -10,7 +10,12 @@
     {
 		var _mOuyaNativeInterface: OuyaNativeInterface;
 		
-		var DEADZONE = 0.25;
+		var DEADZONE:Number = 0.25;
+		
+		var AXIS_SCALAR:Number = 4;
+		
+		var _mX:Number = 121.80;
+		var _mY:Number = 84.25;
 		
 		var _mController:Bitmap;
 		var _mButtonO:Bitmap;
@@ -77,6 +82,12 @@
 			UpdateVisibility(_mButtonL2, l2 > DEADZONE);
 			UpdateVisibility(_mButtonR2, r2 > DEADZONE);
 			
+			MoveBitmap(_mButtonL3, lx*AXIS_SCALAR, ly*AXIS_SCALAR);
+			MoveBitmap(_mButtonLS, lx*AXIS_SCALAR, ly*AXIS_SCALAR);
+			
+			MoveBitmap(_mButtonR3, rx*AXIS_SCALAR, ry*AXIS_SCALAR);
+			MoveBitmap(_mButtonRS, rx*AXIS_SCALAR, ry*AXIS_SCALAR);
+			
 			//_mOuyaNativeInterface.LogInfo("***** LX:"+lx+" LY:"+ly+" RX:"+rx+" RY:"+ry+" L2:"+l2+" R2:"+r2);	
 			
 			_mOuyaNativeInterface.ClearButtonStatesPressedReleased();
@@ -84,10 +95,16 @@
 		
 		private function AddBitmap(bitmap : Bitmap) : Bitmap
 		{
-			bitmap.x = 121.80;
-			bitmap.y = 84.25;
+			bitmap.x = _mX;
+			bitmap.y = _mY;
 			addChild(bitmap);
 			return bitmap;
+		}
+		
+		private function MoveBitmap(bitmap : Bitmap, offsetX : Number, offsetY : Number) : void
+		{
+			bitmap.x = _mX + offsetX;
+			bitmap.y = _mY + offsetY;
 		}
 		
         public function Main()
