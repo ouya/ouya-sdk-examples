@@ -27,10 +27,10 @@
 			_mOuyaNativeInterface = new OuyaNativeInterface();
 			_mOuyaNativeInterface.OuyaInit();
 			
-			_mVirtualController1 = new VirtualController(this, _mOuyaNativeInterface, 0, 288.9, 93.05);
-			_mVirtualController2 = new VirtualController(this, _mOuyaNativeInterface, 1, 1253.55, 93.05);
-			_mVirtualController3 = new VirtualController(this, _mOuyaNativeInterface, 2, 288.9, 585.95);
-			_mVirtualController4 = new VirtualController(this, _mOuyaNativeInterface, 3, 1253.55, 585.95);
+			_mVirtualController1 = new VirtualController(this, _mOuyaNativeInterface, 0, 15.65, -75.1);
+			_mVirtualController2 = new VirtualController(this, _mOuyaNativeInterface, 1, 1232.55, -75.1);
+			_mVirtualController3 = new VirtualController(this, _mOuyaNativeInterface, 2, 15.65, 495.75);
+			_mVirtualController4 = new VirtualController(this, _mOuyaNativeInterface, 3, 1232.55, 495.75);
 			
 			//_mOuyaNativeInterface.LogInfo("***** Add event listener...");			
 			addEventListener(Event.ENTER_FRAME, fl_EnterFrameHandler_1);

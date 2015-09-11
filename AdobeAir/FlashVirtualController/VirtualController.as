@@ -1,7 +1,10 @@
 ﻿package
 {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
     import flash.display.MovieClip;
+	import flash.display.PixelSnapping;
+	import flash.geom.Matrix;
 	import tv.ouya.console.api.OuyaController;
 	import tv.ouya.sdk.OuyaNativeInterface;
 
@@ -16,8 +19,8 @@
 		
 		var _mPlayerNum:int = 0;
 		
-		var _mX:Number = 121.80;
-		var _mY:Number = 84.25;
+		var _mX:Number = 0;
+		var _mY:Number = 0;
 		
 		var _mController:Bitmap;
 		var _mButtonO:Bitmap;
@@ -42,10 +45,20 @@
 		
 		private function AddBitmap(bitmap : Bitmap) : Bitmap
 		{
-			bitmap.x = _mX;
-			bitmap.y = _mY;
-			_mMain.addChild(bitmap);
-			return bitmap;
+			var scale:Number = 2;
+			var matrix:Matrix = new Matrix();
+			matrix.scale(scale, scale);
+
+			var resizedBitmapData:BitmapData = new BitmapData(bitmap.width * scale, bitmap.height * scale, true, 0x000000);
+			resizedBitmapData.draw(bitmap, matrix, null, null, null, true);
+
+			var resizedBitmap = new Bitmap(resizedBitmapData, PixelSnapping.NEVER, true);
+			
+			resizedBitmap.x = _mX;
+			resizedBitmap.y = _mY;
+			
+			_mMain.addChild(resizedBitmap);
+			return resizedBitmap;
 		}
 		
 		public function VirtualController(main:Main, ane:OuyaNativeInterface, playerNum:int, x:Number, y:Number)
