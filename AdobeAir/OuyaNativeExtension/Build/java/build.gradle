@@ -10,7 +10,7 @@ buildscript {
 }
 
 dependencies {
-    compile files('../../jar/ouya-sdk.jar','../../jar/FlashRuntimeExtensions.jar')
+    compile files('../../jar/ouya-sdk.jar','../../jar/FlashRuntimeExtensions.jar','../../jar/runtimeClasses.jar')
 }
 
 android {

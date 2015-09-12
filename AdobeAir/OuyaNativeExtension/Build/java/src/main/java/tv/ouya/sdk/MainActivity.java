@@ -17,6 +17,7 @@
 package tv.ouya.sdk;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,10 +72,30 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
+		Log.d(TAG, "**** onStart");
 	}
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.d(TAG, "**** onPause");
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d(TAG, "**** onResume");
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		Log.d(TAG, "**** onStop isFinishing="+isFinishing());
+		//Intent intent = new Intent(this, MainActivity.class);
+		//startActivity(intent);
+		//finish();
+	}
 
 	@Override
     public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {

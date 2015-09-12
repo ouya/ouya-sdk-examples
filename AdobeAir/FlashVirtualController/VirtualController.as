@@ -73,7 +73,6 @@
 			_mButtonU = AddBitmap(new Bitmap(new ImageU()));
 			_mButtonY = AddBitmap(new Bitmap(new ImageY()));
 			_mButtonA = AddBitmap(new Bitmap(new ImageA()));
-			
 			_mButtonL1 = AddBitmap(new Bitmap(new ImageL1()));
 			_mButtonL2 = AddBitmap(new Bitmap(new ImageL2()));
 			_mButtonL3 = AddBitmap(new Bitmap(new ImageL3()));
@@ -99,6 +98,12 @@
 			{
 				bitmap.alpha = 0;
 			}
+		}
+		
+		private function MoveBitmap(bitmap : Bitmap, offsetX : Number, offsetY : Number) : void
+		{
+			bitmap.x = _mX + offsetX;
+			bitmap.y = _mY + offsetY;
 		}
 		
 		public function Update():void
@@ -154,12 +159,6 @@
 			MoveBitmap(_mButtonRS, AXIS_SCALAR * (rsX * cos - rsY * sin), AXIS_SCALAR * (rsX * sin + rsY * cos));
 			
 			//_mOuyaNativeInterface.LogInfo("***** LX:"+lx+" LY:"+ly+" RX:"+rx+" RY:"+ry+" L2:"+l2+" R2:"+r2);	
-		}
-		
-		private function MoveBitmap(bitmap : Bitmap, offsetX : Number, offsetY : Number) : void
-		{
-			bitmap.x = _mX + offsetX;
-			bitmap.y = _mY + offsetY;
 		}
     }
 }

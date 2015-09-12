@@ -16,14 +16,55 @@
 
 package tv.ouya.sdk;
 
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.util.Log;
+import com.adobe.air.ActivityResultCallback;
+import com.adobe.air.AndroidActivityWrapper;
+import com.adobe.air.AndroidActivityWrapper.ActivityState;
+import com.adobe.air.StateChangeCallback;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OuyaNativeContext extends FREContext {
+public class OuyaNativeContext extends FREContext implements ActivityResultCallback, StateChangeCallback {
 	
 	private static final String TAG = OuyaNativeContext.class.getSimpleName();
+	
+	private AndroidActivityWrapper mAndroidActivityWrapper;
+	
+	public OuyaNativeContext() {  
+        mAndroidActivityWrapper = AndroidActivityWrapper.GetAndroidActivityWrapper();  
+        mAndroidActivityWrapper.addActivityResultListener(this);  
+        mAndroidActivityWrapper.addActivityStateChangeListner(this);  
+    }
+	
+	@Override  
+    public void onActivityResult(int requestCode, int resultCode, Intent intent ) {  
+    }
+	
+	@Override   
+    public void onActivityStateChanged(ActivityState state) {
+		Log.d(TAG, "***** onActivityStateChanged state="+state);
+        switch ( state ) {  
+            case STARTED:  
+            case RESTARTED:  
+            case RESUMED:  
+            case PAUSED:  
+            case STOPPED:  
+            case DESTROYED:  
+        }  
+    }
+	
+	@Override  
+    public void onConfigurationChanged(Configuration paramConfiguration) {
+		if (null != mAndroidActivityWrapper) {  
+            mAndroidActivityWrapper.removeActivityResultListener(this);  
+            mAndroidActivityWrapper.removeActivityStateChangeListner(this);  
+            mAndroidActivityWrapper = null;  
+        }  
+    }
 	
 	@Override
 	public void dispose() {

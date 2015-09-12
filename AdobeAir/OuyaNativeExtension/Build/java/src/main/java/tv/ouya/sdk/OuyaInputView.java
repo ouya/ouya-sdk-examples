@@ -295,10 +295,6 @@ public class OuyaInputView extends View {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
 		
-		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
-			return false;
-		}
-		
 		/*
 		if (sEnableLogging) {
 			Log.i(TAG, "onKeyUp keyCode=" + keyCode + " ("+DebugInput.debugGetButtonName(keyCode)+") source="+keyEvent.getSource());
@@ -395,10 +391,6 @@ public class OuyaInputView extends View {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-	
-		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
-			return false;
-		}
 		
 		/*
 		if (sEnableLogging) {
