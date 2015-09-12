@@ -92,9 +92,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onStop() {
 		super.onStop();
 		Log.d(TAG, "**** onStop isFinishing="+isFinishing());
-		//Intent intent = new Intent(this, MainActivity.class);
-		//startActivity(intent);
-		//finish();
+		finish();
 	}
 
 	@Override

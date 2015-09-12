@@ -16,6 +16,7 @@
 
 package tv.ouya.sdk;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
@@ -34,6 +35,8 @@ public class OuyaNativeContext extends FREContext implements ActivityResultCallb
 	
 	private AndroidActivityWrapper mAndroidActivityWrapper;
 	
+	private boolean mDetectedStop = false;
+	
 	public OuyaNativeContext() {  
         mAndroidActivityWrapper = AndroidActivityWrapper.GetAndroidActivityWrapper();  
         mAndroidActivityWrapper.addActivityResultListener(this);  
@@ -47,12 +50,27 @@ public class OuyaNativeContext extends FREContext implements ActivityResultCallb
 	@Override   
     public void onActivityStateChanged(ActivityState state) {
 		Log.d(TAG, "***** onActivityStateChanged state="+state);
-        switch ( state ) {  
-            case STARTED:  
-            case RESTARTED:  
-            case RESUMED:  
+        switch ( state ) {
+            case STOPPED:
+				mDetectedStop = true;
+				break;
+			case RESUMED:
+				if (mDetectedStop &&
+					null != mAndroidActivityWrapper) {
+					mDetectedStop = false;
+					Activity activity = mAndroidActivityWrapper.getActivity();
+					if (null != activity) {
+						Log.d(TAG, "***** onActivityStateChanged: Relaunch MainActivity!");
+						Intent intent = new Intent(activity, MainActivity.class);
+						activity.startActivity(intent);
+					} else {
+						Log.e(TAG, "***** onActivityStateChanged: Activity is null!");
+					}
+				}
+				break;
+			case RESTARTED:
+            case STARTED:      
             case PAUSED:  
-            case STOPPED:  
             case DESTROYED:  
         }  
     }
