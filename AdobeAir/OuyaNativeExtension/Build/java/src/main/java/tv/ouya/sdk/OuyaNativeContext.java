@@ -112,6 +112,9 @@ public class OuyaNativeContext extends FREContext implements ActivityResultCallb
 		
 		map.put("ouyaToggleInputLogging", new OuyaNativeFunctionToggleInputLogging());
 		
+		map.put("ouyaSetResolution", new OuyaNativeFunctionSetResolution());
+		map.put("ouyaSetSafeArea", new OuyaNativeFunctionSetSafeArea());
+		
 		return map;
 	}
 }

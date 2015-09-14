@@ -19,10 +19,15 @@ package tv.ouya.sdk;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -35,6 +40,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
 	private static final boolean sEnableLogging = false;
+	
+	private static MainActivity sInstance = null;
 
     private OuyaInputView mInputView = null;
     
@@ -42,6 +49,8 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "**** onCreate");
         super.onCreate(savedInstanceState);
+		
+		sInstance = this;
         
         mInputView = new OuyaInputView(this);
         
@@ -68,6 +77,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (null != mInputView) {
 			mInputView.shutdown();
 		}
+		sInstance = null;
     }
 	
 	@Override
@@ -201,4 +211,97 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		OuyaInputView.setTrackpadDown();
 	}
+	
+	private static int getDisplayWidth() {
+		Activity activity = sInstance;
+		if (null != activity) {
+			WindowManager windowManager = activity.getWindowManager();
+			Display display = windowManager.getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			return size.x;
+		} else {
+			return 0;
+		}
+	}
+
+	private static int getDisplayHeight() {
+		Activity activity = sInstance;
+		if (null != activity) {
+			WindowManager windowManager = activity.getWindowManager();
+			Display display = windowManager.getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			return size.y;
+		} else {
+			return 0;
+		}
+	}
+	
+	private static void updateSafeArea(float progress) {
+		Activity activity = sInstance;
+		if (null != activity) {
+			//Log.d(TAG, "updateSafeArea: progress="+progress);
+			// bring in by %
+			float percent = 0.1f;
+			float ratio = 1 - (1 - progress) * percent;
+			float halfRatio = 1 - (1 - progress) * percent * 0.5f;
+			float maxWidth = getDisplayWidth();
+			float maxHeight = getDisplayHeight();
+			FrameLayout content = (FrameLayout)activity.findViewById(android.R.id.content);
+			LayoutParams layout = content.getLayoutParams();
+			layout.width = (int)(maxWidth * ratio);
+			layout.height = (int)(maxHeight * ratio);
+			content.setLayoutParams(layout);
+			content.setX(maxWidth - maxWidth * halfRatio);
+			content.setY(maxHeight - maxHeight * halfRatio);
+		}
+	}
+	
+	public static void setResolution(final int width, final int height)
+	{
+		try
+		{
+			//Log.d(TAG, "setResolution: width="+width+" height="+height);
+			Activity activity = sInstance;
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						
+					}
+				};
+				activity.runOnUiThread(runnable);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "setResolution: exception=" + e.toString());
+		}
+	}
+
+	public static void setSafeArea(final float percentage)
+	{
+		try
+		{
+			//Log.d(TAG, "setSafeArea: percentage="+percentage);
+			Activity activity = sInstance;
+			if (null != activity) {
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						updateSafeArea(percentage);
+					}
+				};
+				activity.runOnUiThread(runnable);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "setSafeArea: exception=" + e.toString());
+		}
+	}
+	
 }
