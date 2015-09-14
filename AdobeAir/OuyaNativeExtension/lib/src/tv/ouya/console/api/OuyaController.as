@@ -14,6 +14,8 @@ package tv.ouya.console.api
 		public static const BUTTON_A:int = 97;
 		public static const BUTTON_L1:int = 102;
 		public static const BUTTON_R1:int = 103;
+		public static const BUTTON_L2:int = 104;
+		public static const BUTTON_R2:int = 105;
 		public static const BUTTON_L3:int = 106;
 		public static const BUTTON_R3:int = 107;
 		public static const BUTTON_DPAD_UP:int = 19;

@@ -80,5 +80,13 @@ package tv.ouya.sdk
 		public function ToggleInputLogging(toggle:Boolean):void {
 			context.call("ouyaToggleInputLogging", toggle);
 		}
+		
+		public function SetSafeArea(percentage:Number):void {
+			context.call("ouyaSetSafeArea", percentage);
+		}
+		
+		public function SetResolution(width:int, height:int):void {
+			context.call("ouyaSetResolution", width, height);
+		}
 	}
 }
