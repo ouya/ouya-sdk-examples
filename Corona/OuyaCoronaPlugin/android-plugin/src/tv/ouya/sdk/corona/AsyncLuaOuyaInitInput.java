@@ -97,12 +97,16 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 						field.setAccessible(true);
 						
 						//Log.i(TAG, "Get ViewInputHandler");
-						ViewInputHandler view = (ViewInputHandler)field.get(activity);
-						if (null != view) {
-							//Log.i(TAG, "Got the view handler");
-							unsubscribeViewInputHandler(view);
+						if (null != field.get(activity)) {
+							ViewInputHandler view = (ViewInputHandler)field.get(activity);
+							if (null != view) {
+								//Log.i(TAG, "Got the view handler");
+								unsubscribeViewInputHandler(view);
+							} else {
+								Log.w(TAG, "disableBuiltInCoronaInput: Failed to cast ViewInputHandler");
+							}
 						} else {
-							Log.w(TAG, "Didn't get the view handler");
+							Log.w(TAG, "disableBuiltInCoronaInput: ViewInputHandler is null");
 						}
 					}
 				} catch (java.lang.Exception ex) {
