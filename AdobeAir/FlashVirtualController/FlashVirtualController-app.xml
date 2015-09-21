@@ -42,7 +42,7 @@
 			]]>
 		</manifestAdditions>
 	</android> 	
-  <id>FlashVirtualController</id>
+  <id>tv.ouya.examples.air.flashvirtualcontroller</id>
   <versionNumber>1.0.0</versionNumber>
   <versionLabel/>
   <filename>FlashVirtualController</filename>
