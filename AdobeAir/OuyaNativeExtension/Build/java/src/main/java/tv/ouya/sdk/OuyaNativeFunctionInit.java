@@ -32,6 +32,22 @@ public class OuyaNativeFunctionInit implements FREFunction {
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) {
 		
+		String developerId;
+		if (args.length > 0) {
+			try {
+				developerId = args[0].getAsString();
+			} catch (Exception e) {
+				Log.e(TAG, "Exception reading developerId:String argument");
+				return null;
+			}
+		} else {
+			Log.e(TAG, "Missing developerId:String argument");
+			return null;
+		}
+		
+		Log.d(TAG, "DeveloperId: "+developerId);
+		MainActivity.setDeveloperId(developerId);
+		
 		final Activity activity = context.getActivity();
 		if (null == activity) {
 			Log.e(TAG, "Activity is null!");

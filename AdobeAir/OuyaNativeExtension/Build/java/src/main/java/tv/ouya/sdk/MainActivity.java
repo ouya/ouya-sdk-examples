@@ -18,6 +18,7 @@ package tv.ouya.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -32,6 +33,9 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import java.io.IOException;
+import java.io.InputStream;
+import tv.ouya.console.api.*;
 import tv.ouya.console.api.*;
 import tv.ouya.sdk.*;
 
@@ -42,12 +46,18 @@ public class MainActivity extends Activity implements OnClickListener {
 	private static final boolean sEnableLogging = false;
 	
 	private static MainActivity sInstance = null;
-
+	
     private OuyaInputView mInputView = null;
+	
+	private static String sDeveloperId;
+	
+	private static OuyaFacade sOuyaFacade = null;
+	
+	private static boolean sInitialized = false;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "**** onCreate");
+		Log.d(TAG, "**** onCreate");
         super.onCreate(savedInstanceState);
 		
 		sInstance = this;
@@ -67,6 +77,38 @@ public class MainActivity extends Activity implements OnClickListener {
 			content.addView(button);
 		} else {
 			Log.e(TAG, "Content view is missing");
+		}
+		
+		OuyaController.init(this);
+		
+		if (null == sOuyaFacade) {
+			byte[] applicationKey = null;
+			
+			// load the application key from assets
+			try {
+				AssetManager assetManager = getAssets();
+				InputStream inputStream = assetManager.open("key.der", AssetManager.ACCESS_BUFFER);
+				applicationKey = new byte[inputStream.available()];
+				inputStream.read(applicationKey);
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			if (null == applicationKey) {
+				Log.e(TAG, "Failed to load signing key");
+				return;
+			}
+			
+			sOuyaFacade = OuyaFacade.getInstance();
+			
+			Bundle developerInfo = new Bundle();
+			developerInfo.putString(OuyaFacade.OUYA_DEVELOPER_ID, sDeveloperId);
+			developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
+			sOuyaFacade.init(this, developerInfo);
+			
+			Log.d(TAG, "Initialized OuyaFacade.");
+			sInitialized = true;
 		}
     }
     
@@ -303,5 +345,28 @@ public class MainActivity extends Activity implements OnClickListener {
 			Log.e(TAG, "setSafeArea: exception=" + e.toString());
 		}
 	}
+	
+	public static void setDeveloperId(String developerId) {
+		sDeveloperId = developerId;
+	}
+	
+	public static boolean isInitialized() {
+		return sInitialized;
+	}
+	
+	// Process onActivityResult events that only happen for Activity
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Log.i(TAG, "Processing activity result");
+        
+        if (null == sOuyaFacade) {
+        	return;
+        }
+
+        // Forward this result to the facade, in case it is waiting for any activity results
+        if (sOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
+    }
 	
 }

@@ -118,6 +118,8 @@ public class OuyaNativeContext extends FREContext implements ActivityResultCallb
 		map.put("ouyaGetDeviceHardwareName", new OuyaNativeFunctionGetDeviceHardwareName());
 		map.put("ouyaGetButtonName", new OuyaNativeFunctionGetButtonName());
 		
+		map.put("ouyaIsInitialized", new OuyaNativeFunctionIsInitialized());
+		
 		return map;
 	}
 }

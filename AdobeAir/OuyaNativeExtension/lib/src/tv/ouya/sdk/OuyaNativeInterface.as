@@ -13,8 +13,8 @@ package tv.ouya.sdk
 			}
 		}
 		
-		public function OuyaInit():void {
-			context.call("ouyaInit");
+		public function OuyaInit(developerId:String):void {
+			context.call("ouyaInit", developerId);
 		}
 		
 		public function IsAnyConnected():Boolean {
@@ -95,6 +95,10 @@ package tv.ouya.sdk
 		
 		public function GetButtonName(button:int):String {
 			return context.call("ouyaGetButtonName", button) as String;
+		}
+		
+		public function IsInitialized():Boolean {
+			return context.call("ouyaIsInitialized") as Boolean;
 		}
 	}
 }
