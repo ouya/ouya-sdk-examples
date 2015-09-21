@@ -88,5 +88,13 @@ package tv.ouya.sdk
 		public function SetResolution(width:int, height:int):void {
 			context.call("ouyaSetResolution", width, height);
 		}
+		
+		public function GetDeviceHardwareName():String {
+			return context.call("ouyaGetDeviceHardwareName") as String;
+		}
+		
+		public function GetButtonName(button:int):String {
+			return context.call("ouyaGetButtonName", button) as String;
+		}
 	}
 }

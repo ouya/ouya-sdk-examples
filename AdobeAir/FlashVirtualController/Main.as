@@ -2,6 +2,7 @@
 {
     import flash.display.MovieClip;
 	import flash.events.Event;
+	import tv.ouya.console.api.OuyaController;
 	import tv.ouya.sdk.OuyaNativeInterface;
 
     public class Main extends MovieClip
@@ -41,6 +42,13 @@
 			_mVirtualController2 = new VirtualController(this, _mOuyaNativeInterface, 1, 1232.55, -75.1);
 			_mVirtualController3 = new VirtualController(this, _mOuyaNativeInterface, 2, 15.65, 495.75);
 			_mVirtualController4 = new VirtualController(this, _mOuyaNativeInterface, 3, 1232.55, 495.75);
+			
+			_mOuyaNativeInterface.LogInfo("HardwareDevice: "+_mOuyaNativeInterface.GetDeviceHardwareName());
+			
+			_mOuyaNativeInterface.LogInfo("BUTTON_O Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_O));
+			_mOuyaNativeInterface.LogInfo("BUTTON_U Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_U));
+			_mOuyaNativeInterface.LogInfo("BUTTON_Y Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_Y));
+			_mOuyaNativeInterface.LogInfo("BUTTON_A Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_A));
 			
 			//_mOuyaNativeInterface.LogInfo("***** Add event listener...");			
 			addEventListener(Event.ENTER_FRAME, fl_EnterFrameHandler_1);
