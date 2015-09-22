@@ -45,19 +45,10 @@ public class OuyaNativeFunctionInit implements FREFunction {
 			return null;
 		}
 		
-		if (args.length > 1) {
-			try {
-				OuyaInputView.sFREContext = context;
-			} catch (Exception e) {
-				Log.e(TAG, "Exception reading callback:OuyaInputCallback argument");
-				return null;
-			}
-		} else {
-			Log.e(TAG, "Missing callback:OuyaInputCallback argument");
-			return null;
-		}
+		// save a reference to the context to make async calls
+		OuyaInputView.sFREContext = context;
 		
-		Log.d(TAG, "DeveloperId: "+developerId);
+		//Log.d(TAG, "DeveloperId: "+developerId);
 		MainActivity.setDeveloperId(developerId);
 		
 		final Activity activity = context.getActivity();

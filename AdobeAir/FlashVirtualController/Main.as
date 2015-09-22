@@ -13,7 +13,6 @@
 		var INTERVAL_MS_INPUT:Number = 10;
 		
 		var _mOuyaNativeInterface: OuyaNativeInterface;
-		var _mCustomInputCallback: CustomInputCallback;
 		var _mVirtualController1: VirtualController;
 		var _mVirtualController2: VirtualController;
 		var _mVirtualController3: VirtualController;
@@ -109,8 +108,7 @@
         public function Main()
         {
 			_mOuyaNativeInterface = new OuyaNativeInterface();
-			_mCustomInputCallback = new CustomInputCallback(_mOuyaNativeInterface);
-			_mOuyaNativeInterface.OuyaInit(DEVLEOPER_ID, _mCustomInputCallback);
+			_mOuyaNativeInterface.OuyaInit(DEVLEOPER_ID);
 			
 			_mVirtualController1 = new VirtualController(this, _mOuyaNativeInterface, 0, 15.65, -75.1);
 			_mVirtualController2 = new VirtualController(this, _mOuyaNativeInterface, 1, 1232.55, -75.1);

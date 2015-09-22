@@ -17,8 +17,8 @@ package tv.ouya.sdk
 			return context;
 		}
 		
-		public function OuyaInit(developerId:String, callback:OuyaInputCallback):void {
-			context.call("ouyaInit", developerId, callback);
+		public function OuyaInit(developerId:String):void {
+			context.call("ouyaInit", developerId);
 		}
 		
 		public function IsAnyConnected():Boolean {
