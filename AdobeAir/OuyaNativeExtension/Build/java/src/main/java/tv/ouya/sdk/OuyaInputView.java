@@ -28,9 +28,12 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import com.adobe.fre.FREContext;
+import com.adobe.fre.FREObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.json.JSONObject;
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.console.api.OuyaInputMapper;
 import tv.ouya.sdk.DebugInput;
@@ -61,6 +64,8 @@ public class OuyaInputView extends View {
 	private static float mTrackpadY = 0f;
 	private static boolean mTrackpadDown = false;
 	private static boolean mLastTrackpadDown = false;
+	
+	public static FREContext sFREContext = null;
 
 	private static class ViewRemappedEventDispatcher implements OuyaInputMapper.RemappedEventDispatcher {
 		public static OuyaInputView mView;
@@ -280,16 +285,42 @@ public class OuyaInputView extends View {
 			}
 		}
 		
-		stateAxises.put(MotionEvent.AXIS_HAT_X, dpadX);
-    	stateAxises.put(MotionEvent.AXIS_HAT_Y, dpadY);
-    	stateAxises.put(OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-    	stateAxises.put(OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-    	stateAxises.put(OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-    	stateAxises.put(OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-    	stateAxises.put(OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
-    	stateAxises.put(OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		processAxis(stateAxises, playerNum, MotionEvent.AXIS_HAT_X, dpadX);
+    	processAxis(stateAxises, playerNum, MotionEvent.AXIS_HAT_Y, dpadY);
+    	processAxis(stateAxises, playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+    	processAxis(stateAxises, playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+    	processAxis(stateAxises, playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
+    	processAxis(stateAxises, playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
+    	processAxis(stateAxises, playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));
+    	processAxis(stateAxises, playerNum, OuyaController.AXIS_R2, motionEvent.getAxisValue(OuyaController.AXIS_R2));
 
 		return false;
+	}
+	
+	private void processAxis(SparseArray<Float> stateAxises, final int playerNum, final int axis, final float val) {
+		stateAxises.put(axis, val);
+		Activity activity = ((Activity)getContext());
+		if (null != activity) {
+			Runnable runnable = new Runnable() {
+				@Override 
+				public void run() {
+					try {
+						if (null != sFREContext) {
+							JSONObject jsonObject = new JSONObject();
+							jsonObject.put("playerNum", playerNum);
+							jsonObject.put("axis", axis);
+							jsonObject.put("value", val);
+							sFREContext.dispatchStatusEventAsync("Axis", jsonObject.toString());
+						} else {
+							Log.e(TAG, "Input context not set!");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			activity.runOnUiThread(runnable);
+		}
 	}
 
 	@Override
@@ -358,7 +389,7 @@ public class OuyaInputView extends View {
 		return processKeyUp(playerNum, keyCode);
 	}
 	
-	private boolean processKeyUp(int playerNum, int keyCode) {
+	private boolean processKeyUp(final int playerNum, final int keyCode) {
 		
 		SparseBooleanArray stateButton = sStateButton.get(playerNum);
 		if (null == stateButton) {
@@ -383,6 +414,27 @@ public class OuyaInputView extends View {
 					Log.i(TAG, "processKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButtonUp.get(keyCode));
 				}
 				*/
+				Activity activity = ((Activity)getContext());
+				if (null != activity) {
+					Runnable runnable = new Runnable() {
+						@Override 
+						public void run() {
+							try {
+								if (null != sFREContext) {
+									JSONObject jsonObject = new JSONObject();
+									jsonObject.put("playerNum", playerNum);
+									jsonObject.put("button", keyCode);
+									sFREContext.dispatchStatusEventAsync("ButtonUp", jsonObject.toString());
+								} else {
+									Log.e(TAG, "Input context not set!");
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					};
+					activity.runOnUiThread(runnable);
+				}
 			}
 		}
 		
@@ -455,7 +507,7 @@ public class OuyaInputView extends View {
 		return processKeyDown(playerNum, keyCode);
 	}
 	
-	private boolean processKeyDown(int playerNum, int keyCode) {
+	private boolean processKeyDown(final int playerNum, final int keyCode) {
 
 		SparseBooleanArray stateButton = sStateButton.get(playerNum);
 		if (null == stateButton) {
@@ -480,6 +532,28 @@ public class OuyaInputView extends View {
 					Log.i(TAG, "processKeyDown stateButtonDown playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButtonDown.get(keyCode));
 				}
 				*/
+				
+				Activity activity = ((Activity)getContext());
+				if (null != activity) {
+					Runnable runnable = new Runnable() {
+						@Override 
+						public void run() {
+							try {
+								if (null != sFREContext) {
+									JSONObject jsonObject = new JSONObject();
+									jsonObject.put("playerNum", playerNum);
+									jsonObject.put("button", keyCode);
+									sFREContext.dispatchStatusEventAsync("ButtonDown", jsonObject.toString());
+								} else {
+									Log.e(TAG, "Input context not set!");
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					};
+					activity.runOnUiThread(runnable);
+				}
 			}
 		}
 

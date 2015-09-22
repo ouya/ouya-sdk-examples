@@ -41,6 +41,27 @@
 		var _mButtonDpadUp:Bitmap;
 		var _mButtonMenu:Bitmap;
 		
+		var _mAxisLsX:Number = 0;
+		var _mAxisLsY:Number = 0;
+		var _mAxisRsX:Number = 0;
+		var _mAxisRsY:Number = 0;
+		var _mAxisL2:Number = 0;
+		var _mAxisR2:Number = 0;
+		
+		var _mToggleButtonO:Boolean = false;
+		var _mToggleButtonU:Boolean = false;
+		var _mToggleButtonY:Boolean = false;
+		var _mToggleButtonA:Boolean = false;
+		var _mToggleButtonL1:Boolean = false;
+		var _mToggleButtonL3:Boolean = false;
+		var _mToggleButtonR1:Boolean = false;
+		var _mToggleButtonR3:Boolean = false;
+		var _mToggleButtonDpadDown:Boolean = false;
+		var _mToggleButtonDpadLeft:Boolean = false;
+		var _mToggleButtonDpadRight:Boolean = false;
+		var _mToggleButtonDpadUp:Boolean = false;
+		var _mToggleButtonMenu:Boolean = false;
+		
 		var _mMenuTimer:Number = 0;
 		
 		private function AddBitmap(bitmap : Bitmap) : Bitmap
@@ -106,41 +127,116 @@
 			bitmap.y = _mY + offsetY;
 		}
 		
-		public function Update():void
-		{
-			UpdateVisibility(_mButtonO, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_O));
-			UpdateVisibility(_mButtonU, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_U));
-			UpdateVisibility(_mButtonY, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_Y));
-			UpdateVisibility(_mButtonA, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_A));
-			
-			UpdateVisibility(_mButtonL1, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_L1));
-			
-			UpdateVisibility(_mButtonL3, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_L3));
-			UpdateVisibility(_mButtonLS, !_mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_L3));
-			
-			UpdateVisibility(_mButtonR1, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_R1));			
-			
-			UpdateVisibility(_mButtonR3, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_R3));
-			UpdateVisibility(_mButtonRS, !_mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_R3));
-			
-			UpdateVisibility(_mButtonDpadDown, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_DPAD_DOWN));
-			UpdateVisibility(_mButtonDpadLeft, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_DPAD_LEFT));
-			UpdateVisibility(_mButtonDpadRight, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_DPAD_RIGHT));
-			UpdateVisibility(_mButtonDpadUp, _mOuyaNativeInterface.GetButton(_mPlayerNum, OuyaController.BUTTON_DPAD_UP));
-			
-			var date:Date = new Date();
-			if (_mOuyaNativeInterface.GetButtonUp(_mPlayerNum, OuyaController.BUTTON_MENU))
-			{
+		public function Axis(axis:int,val:Number) {
+			//_mOuyaNativeInterface.LogInfo("Axis: axis:"+axis+" val:"+val);			
+			if (axis == OuyaController.AXIS_LS_X) {
+				_mAxisLsX = val;
+			} else if (axis == OuyaController.AXIS_LS_Y) {
+				_mAxisLsY = val;
+			} else if (axis == OuyaController.AXIS_RS_X) {
+				_mAxisRsX = val;
+			} else if (axis == OuyaController.AXIS_RS_Y) {
+				_mAxisRsY = val;
+			} else if (axis == OuyaController.AXIS_L2) {
+				_mAxisL2 = val;
+			} else if (axis == OuyaController.AXIS_R2) {
+				_mAxisR2 = val;
+			}
+		}
+		
+		public function ButtonDown(button:int) {
+			//_mOuyaNativeInterface.LogInfo("ButtonDown: button:"+button);
+			if (button == OuyaController.BUTTON_O) {
+				_mToggleButtonO = true;
+			} else if (button == OuyaController.BUTTON_U) {
+				_mToggleButtonU = true;
+			} else if (button == OuyaController.BUTTON_Y) {
+				_mToggleButtonY = true;
+			} else if (button == OuyaController.BUTTON_A) {
+				_mToggleButtonA = true;
+			} else if (button == OuyaController.BUTTON_L1) {
+				_mToggleButtonL1 = true;
+			} else if (button == OuyaController.BUTTON_L3) {
+				_mToggleButtonL3 = true;
+			} else if (button == OuyaController.BUTTON_R1) {
+				_mToggleButtonR1 = true;
+			} else if (button == OuyaController.BUTTON_R3) {
+				_mToggleButtonR3 = true;
+			} else if (button == OuyaController.BUTTON_DPAD_DOWN) {
+				_mToggleButtonDpadDown = true;
+			} else if (button == OuyaController.BUTTON_DPAD_LEFT) {
+				_mToggleButtonDpadLeft = true;
+			} else if (button == OuyaController.BUTTON_DPAD_RIGHT) {
+				_mToggleButtonDpadRight = true;
+			} else if (button == OuyaController.BUTTON_DPAD_UP) {
+				_mToggleButtonDpadUp = true;
+			} else if (button == OuyaController.BUTTON_MENU) {
+				_mToggleButtonMenu = true;
+				var date:Date = new Date();
 				_mMenuTimer = date.getTime() + 1000;
 			}
+		}
+		
+		public function ButtonUp(button:int) {
+			//_mOuyaNativeInterface.LogInfo("ButtonUp: button:"+button);
+			if (button == OuyaController.BUTTON_O) {
+				_mToggleButtonO = false;
+			} else if (button == OuyaController.BUTTON_U) {
+				_mToggleButtonU = false;
+			} else if (button == OuyaController.BUTTON_Y) {
+				_mToggleButtonY = false;
+			} else if (button == OuyaController.BUTTON_A) {
+				_mToggleButtonA = false;
+			} else if (button == OuyaController.BUTTON_L1) {
+				_mToggleButtonL1 = false;
+			} else if (button == OuyaController.BUTTON_L3) {
+				_mToggleButtonL3 = false;
+			} else if (button == OuyaController.BUTTON_R1) {
+				_mToggleButtonR1 = false;
+			} else if (button == OuyaController.BUTTON_R3) {
+				_mToggleButtonR3 = false;
+			} else if (button == OuyaController.BUTTON_DPAD_DOWN) {
+				_mToggleButtonDpadDown = false;
+			} else if (button == OuyaController.BUTTON_DPAD_LEFT) {
+				_mToggleButtonDpadLeft = false;
+			} else if (button == OuyaController.BUTTON_DPAD_RIGHT) {
+				_mToggleButtonDpadRight = false;
+			} else if (button == OuyaController.BUTTON_DPAD_UP) {
+				_mToggleButtonDpadUp = false;
+			}
+		}
+		
+		public function Update():void
+		{
+            UpdateVisibility(_mButtonO, _mToggleButtonO);
+            UpdateVisibility(_mButtonU, _mToggleButtonU);
+            UpdateVisibility(_mButtonY, _mToggleButtonY);
+            UpdateVisibility(_mButtonA, _mToggleButtonA);
+            
+            UpdateVisibility(_mButtonL1, _mToggleButtonL1);
+            
+            UpdateVisibility(_mButtonL3, _mToggleButtonL3);
+            UpdateVisibility(_mButtonLS, !_mToggleButtonL3);
+            
+            UpdateVisibility(_mButtonR1, _mToggleButtonR1);
+            
+            UpdateVisibility(_mButtonR3, _mToggleButtonR3);
+            UpdateVisibility(_mButtonRS, !_mToggleButtonR3);
+            
+            UpdateVisibility(_mButtonDpadDown, _mToggleButtonDpadDown);
+            UpdateVisibility(_mButtonDpadLeft, _mToggleButtonDpadLeft);
+            UpdateVisibility(_mButtonDpadRight, _mToggleButtonDpadRight);
+            UpdateVisibility(_mButtonDpadUp, _mToggleButtonDpadUp);
+
+			var date:Date = new Date();
 			UpdateVisibility(_mButtonMenu, date.getTime() < _mMenuTimer);
 			
-			var lsX = _mOuyaNativeInterface.GetAxis(_mPlayerNum, OuyaController.AXIS_LS_X);
-			var lsY = _mOuyaNativeInterface.GetAxis(_mPlayerNum, OuyaController.AXIS_LS_Y);
-			var rsX = _mOuyaNativeInterface.GetAxis(_mPlayerNum, OuyaController.AXIS_RS_X);
-			var rsY = _mOuyaNativeInterface.GetAxis(_mPlayerNum, OuyaController.AXIS_RS_Y);
-			var l2 = _mOuyaNativeInterface.GetAxis(_mPlayerNum, OuyaController.AXIS_L2);
-			var r2 = _mOuyaNativeInterface.GetAxis(_mPlayerNum, OuyaController.AXIS_R2);
+			var lsX = _mAxisLsX;
+			var lsY = _mAxisLsY;
+			var rsX = _mAxisRsX;
+			var rsY = _mAxisRsY;
+			var l2 = _mAxisL2;
+			var r2 = _mAxisR2;
 			
 			UpdateVisibility(_mButtonL2, l2 > DEADZONE);
 			UpdateVisibility(_mButtonR2, r2 > DEADZONE);
@@ -150,7 +246,6 @@
 			var radians:Number = degrees / 180.0 * 3.14;
 			var cos:Number = Math.cos(radians);
 			var sin:Number = Math.sin(radians);
-			
 			
 			MoveBitmap(_mButtonL3, AXIS_SCALAR * (lsX * cos - lsY * sin), AXIS_SCALAR * (lsX * sin + lsY * cos));
 			MoveBitmap(_mButtonLS, AXIS_SCALAR * (lsX * cos - lsY * sin), AXIS_SCALAR * (lsX * sin + lsY * cos));
