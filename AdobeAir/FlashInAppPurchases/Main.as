@@ -1,8 +1,12 @@
 ﻿package
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
     import flash.display.MovieClip;
+	import flash.display.PixelSnapping;
 	import flash.events.Event;
 	import flash.events.StatusEvent;
+	import flash.geom.Matrix;
 	import tv.ouya.console.api.OuyaController;
 	import tv.ouya.sdk.OuyaNativeInterface;
 
@@ -17,6 +21,13 @@
 		var _mInputTimer:Number = 0;
 		
 		var _mInitialized:Boolean = false;
+		
+		var _mBtnRequestProductList:Bitmap;
+		var _mBtnRequestPurchase:Bitmap;
+		var _mBtnRequestReceipts:Bitmap;
+		var _mBtnRequestGamerInfo:Bitmap;
+		var _mBtnExit:Bitmap;
+		var _mBtnPause:Bitmap;
 		
 		private function fl_EnterFrameHandler_1(event:Event):void
 		{
@@ -47,7 +58,7 @@
 			var playerNum:int = json.playerNum;
 			var axis:int = json.axis;
 			var val:Number = json.value;
-			//_mOuyaNativeInterface.LogInfo("Axis: playerNum:"+playerNum+" axis:"+axis+" value:"+val);
+			_mOuyaNativeInterface.LogInfo("Axis: playerNum:"+playerNum+" axis:"+axis+" value:"+val);
 		}
 		
 		private function ButtonDown(jsonData:String):void
@@ -55,7 +66,7 @@
 			var json:Object = JSON.parse(jsonData);
 			var playerNum:int = json.playerNum;
 			var button:int = json.button;
-			//_mOuyaNativeInterface.LogInfo("ButtonDown: playerNum:"+playerNum+" button:"+button);
+			_mOuyaNativeInterface.LogInfo("ButtonDown: playerNum:"+playerNum+" button:"+button);
 		}
 		
 		private function ButtonUp(jsonData:String):void
@@ -63,7 +74,7 @@
 			var json:Object = JSON.parse(jsonData);
 			var playerNum:int = json.playerNum;
 			var button:int = json.button;
-			//_mOuyaNativeInterface.LogInfo("ButtonUp: playerNum:"+playerNum+" button:"+button);
+			_mOuyaNativeInterface.LogInfo("ButtonUp: playerNum:"+playerNum+" button:"+button);
 		}
 		
 		private function onStatusEvent( _event : StatusEvent ) : void 
@@ -80,13 +91,64 @@
 			}
 		}
 		
+		private function AddBitmap(textField : TextField, bitmap : Bitmap) : Bitmap
+		{
+			var matrix:Matrix = new Matrix();
+			matrix.scale(new Number(textField.width)/bitmap.width, new Number(textField.height)/bitmap.height);
+
+			var resizedBitmapData:BitmapData = new BitmapData(textField.width, textField.height, true, 0x000000);
+			resizedBitmapData.draw(bitmap, matrix, null, null, null, true);
+
+			var resizedBitmap = new Bitmap(resizedBitmapData, PixelSnapping.NEVER, true);
+			
+			resizedBitmap.x = textField.x;
+			resizedBitmap.y = textField.y;
+			
+			addChild(resizedBitmap);
+			return resizedBitmap;
+		}
+		
+		private function CreateButton(textField : TextField) : Bitmap
+		{
+			AddBitmap(textField, new Bitmap(new ImageButtonInactive()));
+			var result:Bitmap = AddBitmap(textField, new Bitmap(new ImageButtonActive()));
+			
+			// put the label on top of the sprites
+			setChildIndex(textField, numChildren-1);
+			
+			return result;
+		}
+		
+		private function UpdateVisibility(bitmap:Bitmap, show:Boolean) : void
+		{
+			if (show)
+			{
+				bitmap.alpha = 1;
+			}
+			else
+			{
+				bitmap.alpha = 0;
+			}
+		}
+		
         public function Main()
         {
 			_mOuyaNativeInterface = new OuyaNativeInterface();
 			_mOuyaNativeInterface.OuyaInit(DEVLEOPER_ID);
 			
-			// put the label on top of the sprites
-			setChildIndex(LblHello, numChildren-1);
+			_mBtnRequestProductList = CreateButton(BtnRequestProductList);
+			_mBtnRequestPurchase = CreateButton(BtnRequestPurchase);
+			_mBtnRequestReceipts = CreateButton(BtnRequestReceipts);
+			_mBtnRequestGamerInfo = CreateButton(BtnRequestGamerInfo);
+			_mBtnExit = CreateButton(BtnExit);
+			_mBtnPause = CreateButton(BtnPause);
+			
+			UpdateVisibility(_mBtnRequestProductList, true);
+			UpdateVisibility(_mBtnRequestPurchase, false);
+			UpdateVisibility(_mBtnRequestReceipts, false);
+			UpdateVisibility(_mBtnRequestGamerInfo, false);
+			UpdateVisibility(_mBtnExit, false);
+			UpdateVisibility(_mBtnPause, false);
 			
 			//_mOuyaNativeInterface.LogInfo("***** Add event listener...");			
 			addEventListener(Event.ENTER_FRAME, fl_EnterFrameHandler_1);
