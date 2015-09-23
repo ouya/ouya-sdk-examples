@@ -46,6 +46,7 @@ public class OuyaNativeFunctionInit implements FREFunction {
 		}
 		
 		// save a reference to the context to make async calls
+		MainActivity.sFREContext = context;
 		OuyaInputView.sFREContext = context;
 		
 		//Log.d(TAG, "DeveloperId: "+developerId);

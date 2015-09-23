@@ -7,6 +7,7 @@
 	import flash.events.Event;
 	import flash.events.StatusEvent;
 	import flash.geom.Matrix;
+	import flash.system.System;
 	import tv.ouya.console.api.OuyaController;
 	import tv.ouya.sdk.OuyaNativeInterface;
 
@@ -52,11 +53,10 @@
 				var deviceName:String = _mOuyaNativeInterface.GetDeviceHardwareName();
 				_mOuyaNativeInterface.LogInfo("HardwareDevice: "+_mOuyaNativeInterface.GetDeviceHardwareName());
 				LblHello.text = "Running on device: `"+deviceName+"`";
+					
+				var strButtonO:String = _mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_O);
 				
-				_mOuyaNativeInterface.LogInfo("BUTTON_O Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_O));
-				_mOuyaNativeInterface.LogInfo("BUTTON_U Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_U));
-				_mOuyaNativeInterface.LogInfo("BUTTON_Y Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_Y));
-				_mOuyaNativeInterface.LogInfo("BUTTON_A Name: "+_mOuyaNativeInterface.GetButtonName(OuyaController.BUTTON_A));
+				LblDirections.text = "Use DPAD to switch between buttons | Press '"+strButtonO+"' to click the button";
 					
 				_mInitialized = true;
 			}
@@ -96,29 +96,36 @@
 			} else if (button == OuyaController.BUTTON_O) {
 				if (_mButtonIndex == 0) {
 					LblStatus.text = "STATUS: Requesting Product List...";
+					var jsonData:String = "{[\"sharp_axe\"]}";
+					_mOuyaNativeInterface.RequestProducts(jsonData);
 				} else if (_mButtonIndex == 1) {
 					LblStatus.text = "STATUS: Requesting Purchase...";
+					_mOuyaNativeInterface.RequestPurchase("sharp_axe");
 				} else if (_mButtonIndex == 2) {
 					LblStatus.text = "STATUS: Requesting Receipts...";
+					_mOuyaNativeInterface.RequestReceipts();
 				} else if (_mButtonIndex == 3) {
 					LblStatus.text = "STATUS: Requesting Gamer Info...";
+					_mOuyaNativeInterface.RequestGamerInfo();
 				} else if (_mButtonIndex == 4) {
 					LblStatus.text = "STATUS: Exiting...";
+					_mOuyaNativeInterface.Shutdown();
+					System.exit(0);
 				}
 			}
 		}
 		
 		private function onStatusEvent( _event : StatusEvent ) : void 
 		{
-			//_mOuyaNativeInterface.LogInfo("Code: " + _event.code );
-			//_mOuyaNativeInterface.LogInfo("Level: " + _event.level );
-			
 			if (_event.code == "Axis") {
 				Axis(_event.level);
 			} else if (_event.code == "ButtonDown") {
 				ButtonDown(_event.level);
 			} else if (_event.code == "ButtonUp") {
 				ButtonUp(_event.level);
+			} else {
+				_mOuyaNativeInterface.LogInfo("Code: " + _event.code );
+				_mOuyaNativeInterface.LogInfo("Level: " + _event.level );
 			}
 		}
 		

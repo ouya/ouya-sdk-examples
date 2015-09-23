@@ -104,5 +104,25 @@ package tv.ouya.sdk
 		public function IsInitialized():Boolean {
 			return context.call("ouyaIsInitialized") as Boolean;
 		}
+		
+		public function RequestProducts(jsonData:String):void {
+			context.call("ouyaRequestProducts", jsonData);
+		}
+		
+		public function RequestPurchase(identifier:String):void {
+			context.call("ouyaRequestPurchase", identifier);
+		}
+		
+		public function RequestReceipts():void {
+			context.call("ouyaRequestReceipts");
+		}
+		
+		public function RequestGamerInfo():void {
+			context.call("ouyaRequestGamerInfo");
+		}
+		
+		public function Shutdown():void {
+			context.call("ouyaShutdown");
+		}
 	}
 }

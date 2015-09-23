@@ -33,8 +33,15 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import com.adobe.fre.FREContext;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import tv.ouya.console.api.*;
 import tv.ouya.console.api.*;
 import tv.ouya.sdk.*;
@@ -53,7 +60,21 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	private static OuyaFacade sOuyaFacade = null;
 	
+    // listener for fetching gamer info
+    private static CancelIgnoringOuyaResponseListener<GamerInfo> sRequestGamerInfoListener = null;
+
+    // listener for getting products
+    private static CancelIgnoringOuyaResponseListener<List<Product>> sRequestProductsListener = null;
+
+    // listener for requesting purchase
+    private OuyaResponseListener<PurchaseResult> sRequestPurchaseListener = null;
+
+    // listener for getting receipts
+    private static OuyaResponseListener<Collection<Receipt>> sRequestReceiptsListener = null;
+	
 	private static boolean sInitialized = false;
+	
+	public static FREContext sFREContext = null;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -369,4 +390,93 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     }
 	
+	private static void sendError(final String tag, final int errorCode, final String errorMessage) {
+		if (null == sFREContext) {
+			return;
+		}
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("errorCode", errorCode);
+			jsonObject.put("errorMessage", errorMessage);
+		} catch (JSONException e) {
+		}
+		sFREContext.dispatchStatusEventAsync(tag, jsonObject.toString());
+	}
+	
+	public static void requestProducts(String jsonData) {
+		if (null == sFREContext) {
+			Log.e(TAG, "Context is not set!");
+			return;
+		}
+		if (null == sInstance) {
+			sendError("RequestProductsError", 0, "MainActivity is null!");
+			return;
+		}
+		JSONObject result = null;
+        if (null == sOuyaFacade) {
+            sendError("RequestProductsError", 0, "requestProducts sOuyaFacade is null!");
+            return;
+        }
+
+        if (sEnableLogging) {
+            Log.d(TAG, "requestProducts");
+        }
+
+        if (null == sRequestProductsListener) {
+            sendError("RequestProductsError", 0, "requestProducts: sRequestGamerInfoListener is null");
+            return;
+        }
+		
+		JSONArray jsonArray = null;
+		try {
+			jsonArray = new JSONArray(jsonData);
+		} catch (JSONException e) {
+            sendError("RequestProductsError", 0, "requestProducts Failed to create product list!");
+            return;
+        }
+		
+		ArrayList<Purchasable> products = new ArrayList<Purchasable>();
+        try {
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                String identifier = jsonArray.getString(i);
+                Purchasable purchasable = new Purchasable(identifier);
+                products.add(purchasable);
+            }
+        } catch (JSONException e) {
+            sendError("RequestProductsError", 0, "requestProducts Failed to create product list!");
+            return;
+        }
+        sOuyaFacade.requestProductList(sInstance, products, sRequestProductsListener);
+	}
+	
+	public static void requestPurchase(String identifier) {
+	}
+	
+	public static void requestReceipts() {
+	}
+	
+	public static void requestGamerInfo() {
+	}
+	
+	public static void shutdown() {
+		
+		if (null != sOuyaFacade) {
+			sOuyaFacade.shutdown();
+			sOuyaFacade = null;
+		}
+		
+		if (null != sFREContext) {
+			Activity activity = sFREContext.getActivity();
+			if (null != activity) {
+				activity.finish();
+			}
+		}
+		
+		if (null != sInstance) {
+			sInstance.finish();
+			Log.d(TAG, "Shutdown");
+		} else {
+			Log.e(TAG, "MainActivity instance is null!");
+		}
+	}	
 }
