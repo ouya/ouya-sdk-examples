@@ -29,12 +29,22 @@
 		var _mBtnExit:Bitmap;
 		var _mBtnPause:Bitmap;
 		
+		var _mButtonIndex:int = 0;
+		var _mButtonMax:int = 6;
+		
 		private function fl_EnterFrameHandler_1(event:Event):void
 		{
 			var date:Date = new Date();
 			if (_mInputTimer < date.getTime())
 			{
 				_mInputTimer = date.getTime() + INTERVAL_MS_INPUT;
+				
+				UpdateVisibility(_mBtnRequestProductList, _mButtonIndex == 0);
+				UpdateVisibility(_mBtnRequestPurchase, _mButtonIndex == 1);
+				UpdateVisibility(_mBtnRequestReceipts, _mButtonIndex == 2);
+				UpdateVisibility(_mBtnRequestGamerInfo, _mButtonIndex == 3);
+				UpdateVisibility(_mBtnExit, _mButtonIndex == 4);
+				UpdateVisibility(_mBtnPause, _mButtonIndex == 5);
 			}
 			
 			if (!_mInitialized &&
@@ -58,7 +68,7 @@
 			var playerNum:int = json.playerNum;
 			var axis:int = json.axis;
 			var val:Number = json.value;
-			_mOuyaNativeInterface.LogInfo("Axis: playerNum:"+playerNum+" axis:"+axis+" value:"+val);
+			//_mOuyaNativeInterface.LogInfo("Axis: playerNum:"+playerNum+" axis:"+axis+" value:"+val);
 		}
 		
 		private function ButtonDown(jsonData:String):void
@@ -66,7 +76,7 @@
 			var json:Object = JSON.parse(jsonData);
 			var playerNum:int = json.playerNum;
 			var button:int = json.button;
-			_mOuyaNativeInterface.LogInfo("ButtonDown: playerNum:"+playerNum+" button:"+button);
+			//_mOuyaNativeInterface.LogInfo("ButtonDown: playerNum:"+playerNum+" button:"+button);
 		}
 		
 		private function ButtonUp(jsonData:String):void
@@ -74,7 +84,28 @@
 			var json:Object = JSON.parse(jsonData);
 			var playerNum:int = json.playerNum;
 			var button:int = json.button;
-			_mOuyaNativeInterface.LogInfo("ButtonUp: playerNum:"+playerNum+" button:"+button);
+			//_mOuyaNativeInterface.LogInfo("ButtonUp: playerNum:"+playerNum+" button:"+button);
+			if (button == OuyaController.BUTTON_DPAD_LEFT) {
+				if (_mButtonIndex > 0) {
+					--_mButtonIndex;
+				}
+			} else if (button == OuyaController.BUTTON_DPAD_RIGHT) {
+				if ((_mButtonIndex+2) < _mButtonMax) {
+					++_mButtonIndex;
+				}
+			} else if (button == OuyaController.BUTTON_O) {
+				if (_mButtonIndex == 0) {
+					LblStatus.text = "STATUS: Requesting Product List...";
+				} else if (_mButtonIndex == 1) {
+					LblStatus.text = "STATUS: Requesting Purchase...";
+				} else if (_mButtonIndex == 2) {
+					LblStatus.text = "STATUS: Requesting Receipts...";
+				} else if (_mButtonIndex == 3) {
+					LblStatus.text = "STATUS: Requesting Gamer Info...";
+				} else if (_mButtonIndex == 4) {
+					LblStatus.text = "STATUS: Exiting...";
+				}
+			}
 		}
 		
 		private function onStatusEvent( _event : StatusEvent ) : void 
