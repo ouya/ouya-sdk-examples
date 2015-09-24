@@ -1,5 +1,6 @@
 ﻿package
 {
+	import flash.desktop.NativeApplication;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
     import flash.display.MovieClip;
@@ -140,7 +141,7 @@
 				} else if (_mButtonIndex == 4) {
 					LblStatus.text = "STATUS: Exiting...";
 					_mOuyaNativeInterface.Shutdown();
-					System.exit(0);
+					NativeApplication.nativeApplication.exit();
 				}
 			}
 		}
