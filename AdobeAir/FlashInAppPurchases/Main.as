@@ -115,9 +115,12 @@
 			}
 		}
 		
-		private function OnGenericError(jsonData:String):void
+		private function OnGenericError(tag:String, jsonData:String):void
 		{
-			
+			var json:Object = JSON.parse(jsonData);
+			var errorCode:int = json.errorCode;
+			var errorMessage:String = json.errorMessage;
+			LblStatus.text = "STATUS: "+tag+" errorCode="+errorCode+" errorMessage="+errorMessage;
 		}
 		
 		private function RequestGamerInfoOnSuccess(jsonData:String):void
@@ -127,17 +130,60 @@
 			LblUsername.text = "Gamer Username: "+json.username;
 		}
 		
+		private function RequestProductsOnSuccess(jsonData:String):void
+		{
+			var json:Object = JSON.parse(jsonData);
+			LblContent.text = jsonData;
+		}
+		
+		private function RequestPurchaseOnSuccess(jsonData:String):void
+		{
+			var json:Object = JSON.parse(jsonData);
+			LblContent.text = jsonData;
+		}
+		
+		private function RequestReceiptsOnSuccess(jsonData:String):void
+		{
+			var json:Object = JSON.parse(jsonData);
+			LblContent.text = jsonData;
+		}
+		
 		private function onStatusEvent( _event : StatusEvent ) : void 
 		{
 			if (_event.code == "Axis") {
 				Axis(_event.level);
+				return;
 			} else if (_event.code == "ButtonDown") {
 				ButtonDown(_event.level);
+				return;
 			} else if (_event.code == "ButtonUp") {
 				ButtonUp(_event.level);
-			} else if (_event.code == "RequestGamerInfoOnSuccess") {
-				LblStatus.text = "STATUS: "+_event.code;
+				return;
+			}
+			
+			LblStatus.text = "STATUS: "+_event.code;
+			
+			if (_event.code == "RequestGamerInfoOnSuccess") {
 				RequestGamerInfoOnSuccess(_event.level);
+			} else if (_event.code == "RequestGamerInfoError" ||
+				_event.code == "RequestProductsError" ||
+				_event.code == "RequestPurchaseError" ||
+				_event.code == "RequestReceiptsError" ||
+				_event.code == "RequestGamerInfoOnFailure" ||
+				_event.code == "RequestProductsOnFailure" ||
+				_event.code == "RequestPurchaseOnFailure" ||
+				_event.code == "RequestReceiptsOnFailure" ||
+				_event.code == "RequestGamerInfoOnCancel" ||
+				_event.code == "RequestProductsOnCancel" ||
+				_event.code == "RequestPurchaseOnCancel" ||
+				_event.code == "RequestReceiptsOnCancel") {
+				OnGenericError(_event.code, _event.level);
+			} else if (_event.code == "RequestProductsOnSuccess") {
+				RequestProductsOnSuccess(_event.level);
+			} else if (_event.code == "RequestPurchaseOnSuccess") {
+				RequestPurchaseOnSuccess(_event.level);
+			} else if (_event.code == "RequestReceiptsOnSuccess") {
+				RequestReceiptsOnSuccess(_event.level);
 			} else {
 				_mOuyaNativeInterface.LogInfo("Code: " + _event.code );
 				_mOuyaNativeInterface.LogInfo("Level: " + _event.level );
