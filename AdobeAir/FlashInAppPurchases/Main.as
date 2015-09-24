@@ -33,6 +33,12 @@
 		var _mButtonIndex:int = 0;
 		var _mButtonMax:int = 6;
 		
+		var _mProducts:Array = null;
+		
+		var _mProductIndex:int = 0;
+		
+		var _mReceipts:Array = null;
+		
 		private function fl_EnterFrameHandler_1(event:Event):void
 		{
 			var date:Date = new Date();
@@ -46,6 +52,14 @@
 				UpdateVisibility(_mBtnRequestGamerInfo, _mButtonIndex == 3);
 				UpdateVisibility(_mBtnExit, _mButtonIndex == 4);
 				UpdateVisibility(_mBtnPause, _mButtonIndex == 5);
+				
+				if (_mButtonIndex < 2) {
+					DisplayProducts();
+				} else if (_mButtonIndex == 2) {
+					DisplayReceipts();
+				} else {
+					LblContent.text = "";
+				}
 			}
 			
 			if (!_mInitialized &&
@@ -85,6 +99,7 @@
 			var playerNum:int = json.playerNum;
 			var button:int = json.button;
 			//_mOuyaNativeInterface.LogInfo("ButtonUp: playerNum:"+playerNum+" button:"+button);
+			var products:Array = _mProducts;
 			if (button == OuyaController.BUTTON_DPAD_LEFT) {
 				if (_mButtonIndex > 0) {
 					--_mButtonIndex;
@@ -93,14 +108,29 @@
 				if ((_mButtonIndex+2) < _mButtonMax) {
 					++_mButtonIndex;
 				}
+			} else if (button == OuyaController.BUTTON_DPAD_DOWN) {
+				if (null != products) {
+					if ((_mProductIndex+1) < products.length) {
+						++_mProductIndex;
+					}
+				}
+			} else if (button == OuyaController.BUTTON_DPAD_UP) {
+				if (_mProductIndex > 0) {
+					--_mProductIndex;
+				}
 			} else if (button == OuyaController.BUTTON_O) {
 				if (_mButtonIndex == 0) {
 					LblStatus.text = "STATUS: Requesting Product List...";
-					var jsonData:String = "[\"sharp_axe\"]";
+					_mProductIndex = 0;
+					var jsonData:String = "[\"long_sword\",\"sharp_axe\",\"__DECLINED__THIS_PURCHASE\"]";
 					_mOuyaNativeInterface.RequestProducts(jsonData);
 				} else if (_mButtonIndex == 1) {
-					LblStatus.text = "STATUS: Requesting Purchase...";
-					_mOuyaNativeInterface.RequestPurchase("sharp_axe");
+					if (_mProductIndex < products.length) {
+						LblStatus.text = "STATUS: Requesting Purchase...";
+						_mOuyaNativeInterface.RequestPurchase(products[_mProductIndex].identifier);
+					} else {
+						LblStatus.text = "STATUS: Request products before making a purchase!";
+					}
 				} else if (_mButtonIndex == 2) {
 					LblStatus.text = "STATUS: Requesting Receipts...";
 					_mOuyaNativeInterface.RequestReceipts();
@@ -132,8 +162,8 @@
 		
 		private function RequestProductsOnSuccess(jsonData:String):void
 		{
-			var json:Object = JSON.parse(jsonData);
-			LblContent.text = jsonData;
+			//LblContent.text = jsonData;
+			_mProducts = JSON.parse(jsonData) as Array;
 		}
 		
 		private function RequestPurchaseOnSuccess(jsonData:String):void
@@ -144,8 +174,8 @@
 		
 		private function RequestReceiptsOnSuccess(jsonData:String):void
 		{
-			var json:Object = JSON.parse(jsonData);
-			LblContent.text = jsonData;
+			//LblContent.text = jsonData;
+			_mReceipts = JSON.parse(jsonData) as Array;
 		}
 		
 		private function onStatusEvent( _event : StatusEvent ) : void 
@@ -228,6 +258,49 @@
 			{
 				bitmap.alpha = 0;
 			}
+		}
+		
+		private function DisplayProducts():void
+		{
+			var json:Array = _mProducts;
+			var str:String = "";
+			if (null != json) {
+				for (var i:int = 0; i < json.length; ++i) {
+					if (i == _mProductIndex) {
+						str += "* ";
+					}
+					var description:String = json[i].description;
+					var identifier:String = json[i].identifier;
+					var name:String = json[i].name;
+					var localPrice:Number = json[i].localPrice;
+					str += "description="+description;
+					str += " identifier="+identifier;
+					str += " name="+name;
+					str += " localPrice="+localPrice;
+					str += "\n";
+				}
+			}
+			LblContent.text = str;
+		}
+		
+		private function DisplayReceipts():void
+		{
+			var json:Array = _mReceipts;
+			var str:String = "";
+			if (null != json) {
+				for (var i:int = 0; i < json.length; ++i) {
+					var currency:String = json[i].currency;
+					var identifier:String = json[i].identifier;
+					var generatedDate:String = json[i].generatedDate;
+					var localPrice:Number = json[i].localPrice;
+					str += "currency="+currency;
+					str += " identifier="+identifier;
+					str += " generatedDate="+generatedDate;
+					str += " localPrice="+localPrice;
+					str += "\n";
+				}
+			}
+			LblContent.text = str;
 		}
 		
         public function Main()
