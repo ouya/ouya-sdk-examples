@@ -67,7 +67,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private static CancelIgnoringOuyaResponseListener<List<Product>> sRequestProductsListener = null;
 
     // listener for requesting purchase
-    private OuyaResponseListener<PurchaseResult> sRequestPurchaseListener = null;
+    private static OuyaResponseListener<PurchaseResult> sRequestPurchaseListener = null;
 
     // listener for getting receipts
     private static OuyaResponseListener<Collection<Receipt>> sRequestReceiptsListener = null;
@@ -103,6 +103,124 @@ public class MainActivity extends Activity implements OnClickListener {
 		OuyaController.init(this);
 		
 		if (null == sOuyaFacade) {
+			
+			sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
+				@Override
+				public void onSuccess(final GamerInfo info) {
+					Log.d(TAG, "sRequestGamerInfoListener: onSuccess");
+					JSONObject result = new JSONObject();
+					try {
+						result.put("username", info.getUsername());
+						result.put("uuid", info.getUuid());
+					} catch (JSONException e) {
+						sendError("RequestGamerInfoOnFailure", 0, "Failed to create results!");
+						return;
+					}
+					sendResult("RequestGamerInfoOnSuccess", result.toString());
+				}
+
+				@Override
+				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
+					Log.d(TAG, "sRequestGamerInfoListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					sendError("RequestGamerInfoOnFailure", errorCode, errorMessage);
+				};
+			};
+
+			sRequestProductsListener = new CancelIgnoringOuyaResponseListener<List<Product>>() {
+				@Override
+				public void onSuccess(final List<Product> products) {
+					Log.d(TAG, "sRequestProductsListener: onSuccess");
+					JSONArray result = new JSONArray();
+					try {
+						int i = 0;
+						for (Product product : products) {
+							JSONObject jsonObject = new JSONObject();
+							jsonObject.put("description", product.getDescription());
+							jsonObject.put("identifier", product.getIdentifier());
+							jsonObject.put("name", product.getName());
+							jsonObject.put("localPrice", product.getLocalPrice());
+							result.put(i, jsonObject);
+							++i;
+						}
+					} catch (JSONException e) {
+						sendError("RequestProductsOnFailure", 0, "Failed to create results!");
+						return;
+					}
+					sendResult("RequestProductsOnSuccess", result.toString());
+				}
+
+				@Override
+				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
+					Log.d(TAG, "sRequestProductsListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					sendError("RequestProductsOnFailure", errorCode, errorMessage);
+				}
+			};
+
+			sRequestPurchaseListener = new OuyaResponseListener<PurchaseResult>() {
+
+				@Override
+				public void onSuccess(final PurchaseResult purchaseResult) {
+					Log.d(TAG, "sRequestPurchaseListener: onSuccess");
+					JSONObject result = new JSONObject();
+					try {
+						result.put("productIdentifier", purchaseResult.getProductIdentifier());
+					} catch (JSONException e) {
+						sendError("RequestPurchaseOnFailure", 0, "Failed to set productIdentifier!");
+						return;
+					}
+					sendResult("RequestPurchaseOnSuccess", result.toString());
+				}
+
+				@Override
+				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
+					Log.d(TAG, "sRequestPurchaseListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					sendError("RequestPurchaseOnFailure", errorCode, errorMessage);
+				}
+
+				@Override
+				public void onCancel() {
+					Log.d(TAG, "sRequestPurchaseListener: onCancel");
+					sendError("RequestPurchaseOnCancel", 0, "Purchase was cancelled!");
+				}
+			};
+
+			sRequestReceiptsListener = new OuyaResponseListener<Collection<Receipt>>() {
+
+				@Override
+				public void onSuccess(final Collection<Receipt> receipts) {
+					Log.d(TAG, "requestReceipts onSuccess: received " + receipts.size() + " receipts");
+					JSONArray result = new JSONArray();
+					try {
+						int i = 0;
+						for (Receipt receipt : receipts) {
+							JSONObject jsonObject = new JSONObject();
+							jsonObject.put("currency", receipt.getCurrency());
+							jsonObject.put("generatedDate", receipt.getGeneratedDate());
+							jsonObject.put("identifier", receipt.getIdentifier());
+							jsonObject.put("localPrice", receipt.getLocalPrice());
+							result.put(i, jsonObject);
+							++i;
+						}
+					} catch (JSONException e) {
+						sendError("RequestReceiptsOnFailure", 0, "Failed to create results!");
+						return;
+					}
+					sendResult("RequestReceiptsOnSuccess", result.toString());
+				}
+
+				@Override
+				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
+					Log.d(TAG, "requestReceipts onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					sendError("RequestReceiptsOnFailure", errorCode, errorMessage);
+				}
+
+				@Override
+				public void onCancel() {
+					Log.d(TAG, "requestReceipts onCancel");
+					sendError("RequestReceiptsOnCancel", 0, "Request Receipts was cancelled!");
+				}
+			};
+			
 			byte[] applicationKey = null;
 			
 			// load the application key from assets
@@ -390,6 +508,13 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     }
 	
+	private static void sendResult(final String tag, final String jsonData) {
+		if (null == sFREContext) {
+			return;
+		}
+		sFREContext.dispatchStatusEventAsync(tag, jsonData);
+	}
+	
 	private static void sendError(final String tag, final int errorCode, final String errorMessage) {
 		if (null == sFREContext) {
 			return;
@@ -412,29 +537,24 @@ public class MainActivity extends Activity implements OnClickListener {
 			sendError("RequestProductsError", 0, "MainActivity is null!");
 			return;
 		}
-		JSONObject result = null;
         if (null == sOuyaFacade) {
             sendError("RequestProductsError", 0, "requestProducts sOuyaFacade is null!");
             return;
         }
-
         if (sEnableLogging) {
             Log.d(TAG, "requestProducts");
         }
-
         if (null == sRequestProductsListener) {
             sendError("RequestProductsError", 0, "requestProducts: sRequestGamerInfoListener is null");
             return;
         }
-		
 		JSONArray jsonArray = null;
 		try {
 			jsonArray = new JSONArray(jsonData);
 		} catch (JSONException e) {
             sendError("RequestProductsError", 0, "requestProducts Failed to create product list!");
             return;
-        }
-		
+        }		
 		ArrayList<Purchasable> products = new ArrayList<Purchasable>();
         try {
             for (int i = 0; i < jsonArray.length(); ++i) {
@@ -450,12 +570,67 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	public static void requestPurchase(String identifier) {
+		if (null == sFREContext) {
+			Log.e(TAG, "Context is not set!");
+			return;
+		}
+		if (null == sInstance) {
+			sendError("RequestReceiptsError", 0, "MainActivity is null!");
+			return;
+		}
+		if (null == sOuyaFacade) {
+            sendError("RequestReceiptsError", 0, "requestProducts sOuyaFacade is null!");
+            return;
+        }
+		if (null == sRequestPurchaseListener) {
+            sendError("RequestPurchaseError", 0, "requestPurchase: sRequestPurchaseListener is null");
+            return;
+        }
+        Purchasable purchasable = new Purchasable(identifier);
+        sOuyaFacade.requestPurchase(sInstance, purchasable, sRequestPurchaseListener);
 	}
 	
 	public static void requestReceipts() {
+		if (null == sFREContext) {
+			Log.e(TAG, "Context is not set!");
+			return;
+		}
+		if (null == sInstance) {
+			sendError("RequestReceiptsError", 0, "MainActivity is null!");
+			return;
+		}
+		if (null == sOuyaFacade) {
+            sendError("RequestReceiptsError", 0, "requestProducts sOuyaFacade is null!");
+            return;
+        }
+		if (null == sRequestReceiptsListener) {
+            sendError("RequestReceiptsError", 0, "requestReceipts: sRequestReceiptsListener is null");
+            return;
+        }
+        sOuyaFacade.requestReceipts(sInstance, sRequestReceiptsListener);
 	}
 	
 	public static void requestGamerInfo() {
+		if (null == sFREContext) {
+			Log.e(TAG, "Context is not set!");
+			return;
+		}
+		if (null == sInstance) {
+			sendError("RequestGamerInfoError", 0, "MainActivity is null!");
+			return;
+		}
+		if (null == sOuyaFacade) {
+            sendError("RequestGamerInfoError", 0, "requestProducts sOuyaFacade is null!");
+            return;
+        }
+        if (sEnableLogging) {
+            Log.i(TAG, "requestGamerInfo");
+        }
+        if (null == sRequestGamerInfoListener) {
+            sendError("RequestGamerInfoError", 0, "requestGamerInfo: sRequestGamerInfoListener is null");
+            return;
+        }
+        sOuyaFacade.requestGamerInfo(sInstance, sRequestGamerInfoListener);
 	}
 	
 	public static void shutdown() {

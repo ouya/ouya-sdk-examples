@@ -96,7 +96,7 @@
 			} else if (button == OuyaController.BUTTON_O) {
 				if (_mButtonIndex == 0) {
 					LblStatus.text = "STATUS: Requesting Product List...";
-					var jsonData:String = "{[\"sharp_axe\"]}";
+					var jsonData:String = "[\"sharp_axe\"]";
 					_mOuyaNativeInterface.RequestProducts(jsonData);
 				} else if (_mButtonIndex == 1) {
 					LblStatus.text = "STATUS: Requesting Purchase...";
@@ -115,6 +115,18 @@
 			}
 		}
 		
+		private function OnGenericError(jsonData:String):void
+		{
+			
+		}
+		
+		private function RequestGamerInfoOnSuccess(jsonData:String):void
+		{
+			var json:Object = JSON.parse(jsonData);
+			LblGamerUUID.text = "Gamer UUID: "+json.uuid;
+			LblUsername.text = "Gamer Username: "+json.username;
+		}
+		
 		private function onStatusEvent( _event : StatusEvent ) : void 
 		{
 			if (_event.code == "Axis") {
@@ -123,6 +135,9 @@
 				ButtonDown(_event.level);
 			} else if (_event.code == "ButtonUp") {
 				ButtonUp(_event.level);
+			} else if (_event.code == "RequestGamerInfoOnSuccess") {
+				LblStatus.text = "STATUS: "+_event.code;
+				RequestGamerInfoOnSuccess(_event.level);
 			} else {
 				_mOuyaNativeInterface.LogInfo("Code: " + _event.code );
 				_mOuyaNativeInterface.LogInfo("Level: " + _event.level );
