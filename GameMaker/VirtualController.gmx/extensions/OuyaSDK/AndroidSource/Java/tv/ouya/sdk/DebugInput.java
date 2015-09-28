@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 OUYA, Inc.
+ * Copyright (C) 2012-2015 OUYA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tv.ouya.console.api;
+package tv.ouya.sdk;
 
 import tv.ouya.console.api.OuyaController;
 import android.util.Log;

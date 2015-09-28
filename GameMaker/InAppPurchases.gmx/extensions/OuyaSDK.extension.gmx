@@ -286,6 +286,26 @@
             <arg>1</arg>
           </args>
         </function>
+        <function>
+          <name>OuyaSDK_GetDeviceHardwareName</name>
+          <externalName>getDeviceHardwareName</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>-1</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_GetButtonName</name>
+          <externalName>getButtonName</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>2</arg>
+          </args>
+        </function>
       </functions>
       <constants/>
     </file>

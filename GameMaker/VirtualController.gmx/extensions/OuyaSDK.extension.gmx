@@ -3,7 +3,7 @@
   <name>OuyaSDK</name>
   <version>0.1.0</version>
   <packageID></packageID>
-  <ProductID>F79C97955FD1AF4686EB4EF4EF90F0DB</ProductID>
+  <ProductID></ProductID>
   <date>02/03/15</date>
   <license>Free to use, also for commercial games.</license>
   <description></description>
@@ -284,6 +284,26 @@
           <args>
             <arg>1</arg>
             <arg>1</arg>
+          </args>
+        </function>
+        <function>
+          <name>OuyaSDK_GetDeviceHardwareName</name>
+          <externalName>getDeviceHardwareName</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>-1</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>OuyaSDK_GetButtonName</name>
+          <externalName>getButtonName</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>1</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>2</arg>
           </args>
         </function>
       </functions>

@@ -234,7 +234,12 @@ if (asyncResult != undefined &&
     if (asyncMethod != undefined &&
         asyncMethod != "") {
         text_message = "Status: Method="+asyncMethod+" json="+asyncResult;
-        if (asyncMethod == "onSuccessRequestGamerInfo") {
+        if (asyncMethod == "onSuccessInit") {
+            var deviceName = OuyaSDK_GetDeviceHardwareName();
+            var buttonName = OuyaSDK_GetButtonName(BUTTON_O);
+            text_message = "Init Success: DeviceName="+deviceName+" BUTTON_O name="+buttonName;
+        }
+        else if (asyncMethod == "onSuccessRequestGamerInfo") {
             var uuid = OuyaSDK_GetAsyncDataString("uuid");
             var username = OuyaSDK_GetAsyncDataString("username");            
             text_message = "Status: RequestGamerInfo uuid="+uuid+" username="+username;

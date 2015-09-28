@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,6 +24,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tv.ouya.console.api.*;
+import tv.ouya.console.api.OuyaController;
+import tv.ouya.console.api.OuyaController.ButtonData;
+import tv.ouya.console.api.OuyaFacade;
+import tv.ouya.console.api.OuyaFacade.DeviceHardware;
 import tv.ouya.sdk.OuyaInputView;
 
 import ${YYAndroidPackageName}.R;
@@ -402,13 +407,40 @@ public class OuyaSDK extends RunnerSocial {
 						}
 					};
 					
+					OuyaController.init(activity);
+					
 					sInitialized = true;
+					sendOnSuccessInit();
 				}
 			};
 			activity.runOnUiThread(runnable);
         }
 		
 		return sTrue;
+	}
+	
+	private void sendOnSuccessInit() {
+		if (null == sOuyaFacade) {
+			Log.e(TAG, "OuyaFacade is null!");
+			return;
+		}
+		if (sOuyaFacade.isInitialized()) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("method", "onSuccessInit");
+			} catch (JSONException e) {
+			}
+			String jsonData = json.toString();
+			sAsyncResults.add(jsonData);
+			return;
+		}
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				sendOnSuccessInit();
+			}
+		}, 1000);
 	}
 	
 	public String getAsyncResult() {
@@ -836,5 +868,39 @@ public class OuyaSDK extends RunnerSocial {
 		};
 		activity.runOnUiThread(runnable);
 		return sNoop;
+	}
+	
+	public String getDeviceHardwareName() {
+		if (null == sOuyaFacade) {
+			Log.e(TAG, "OuyaFacade is null!");
+			return "UNKNOWN";
+		}
+		final DeviceHardware deviceHardware = sOuyaFacade.getDeviceHardware();
+		if (null == deviceHardware) {
+			return "UNKNOWN";
+		}
+		String deviceName = deviceHardware.deviceName();
+		if (null == deviceName) {
+			return "UNKNOWN";
+		}
+		return deviceName;
+	}
+	
+	public String getButtonName(double button) {
+		if (null == sOuyaFacade) {
+			Log.e(TAG, "OuyaFacade is null!");
+			return "UNKNOWN";
+		}
+		OuyaController.ButtonData buttonData = OuyaController.getButtonData((int)button);
+		if (null != buttonData) {
+			String buttonName = buttonData.buttonName;
+			if (null == buttonName) {
+				return "UNKNOWN";
+			}
+			Log.d(TAG, "Button:"+(int)button+" ButtonName: "+buttonName);
+			return buttonName;
+		} else {
+			return "UNKNOWN";
+		}
 	}
 }

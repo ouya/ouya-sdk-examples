@@ -31,9 +31,9 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
-import tv.ouya.console.api.DebugInput;
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.console.api.OuyaInputMapper;
+import tv.ouya.sdk.DebugInput;
 
 public class OuyaInputView extends View {
 
