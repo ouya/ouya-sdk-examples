@@ -35,7 +35,7 @@ public class LuaOuyaGetDeviceHardwareName implements com.naef.jnlua.NamedJavaFun
 	 */
 	@Override
 	public String getName() {
-		return "ouyaGetDeviceHardwareName";
+		return "luaOuyaGetDeviceHardwareName";
 	}
 	
 	/**

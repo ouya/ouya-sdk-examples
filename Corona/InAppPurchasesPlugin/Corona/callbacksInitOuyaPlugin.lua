@@ -21,6 +21,7 @@
 globals = require "globals"
 inputs = require "inputs"
 json = require "json"
+plugin_ouya = require "plugin_ouya"
 
 local callbacksInitOuyaPlugin = {}
 
@@ -28,6 +29,13 @@ callbacksInitOuyaPlugin.onSuccess = function ()
 	print "callbacksInitOuyaPlugin.onSuccess";
 	globals.txtStatus.text = "onSuccessRequestInitOuyaPlugin";
 	inputs.initialize();
+
+	if nil ~= plugin_ouya and nil ~= plugin_ouya.luaOuyaGetDeviceHardwareName then
+		local deviceName = plugin_ouya.luaOuyaGetDeviceHardwareName();
+		local message = "Running on Device Name: " .. deviceName;
+		globals.txtStatus.text = message;
+		print (message);
+	end
 end
 
 callbacksInitOuyaPlugin.onFailure = function (errorCode, errorMessage)
