@@ -412,4 +412,13 @@ public class CoronaOuyaFacade
 
 		return deviceHardware.deviceName().toString();
     }
+
+    public void shutdown() {
+    	if (null == ouyaFacade) {
+    		return;
+    	}
+
+    	Log.d(LOG_TAG, "OuyaFacade shutdown");
+    	ouyaFacade.shutdown();
+    }
 }

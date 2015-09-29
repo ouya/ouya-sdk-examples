@@ -108,6 +108,7 @@ inputs.onKeyUp = function (playerNum, button)
     		globals.txtStatus.text = "Exiting...";
     		print "Exiting...";
     		native.requestExit();
+            plugin_ouya.luaOuyaShutdown();
     	end
     end
        	
@@ -118,6 +119,7 @@ end
 
 inputs.initialize = function ()
     if nil ~= plugin_ouya and nil ~= plugin_ouya.asyncLuaOuyaInitInput then
+        print "Initializing input...";
     	plugin_ouya.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
     end
 end
