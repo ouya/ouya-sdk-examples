@@ -28,6 +28,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import plugin.ouya.LuaLoader;
+
 
 /**
  * Implements the asyncCallLuaFunction() function in Lua.
@@ -81,9 +83,10 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 	
 	private void disableBuiltInCoronaInput() {
 		
-		Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		final Activity activity = LuaLoader.sActivity;
 
 		if (null == activity) {
+			Log.e(TAG, "disableBuiltInCoronaInput: Activity is null!");
 			return;
 		}
 		
@@ -185,9 +188,10 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 	private void addCoronaOuyaInputView() {
 		//Log.i(TAG, "addCoronaOuyaInputView");
 		
-		final Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+		final Activity activity = LuaLoader.sActivity;
 		
 		if (null == activity) {
+			Log.e(TAG, "addCoronaOuyaInputView: Activity is null!");
 			return;
 		}
 
@@ -198,7 +202,7 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 				try {
 					//Log.i(TAG, "Construct CoronaOuyaInputView");
 					if (null == mInputView) {
-						mInputView = new CoronaOuyaInputView(activity.getApplicationContext());
+						mInputView = new CoronaOuyaInputView(activity, activity.getApplicationContext());
 						
 						mInputView.setLayoutParams(new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,

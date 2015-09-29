@@ -98,7 +98,7 @@ public class CallbacksInitOuyaPlugin {
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.e(TAG, "Activity is null!");
+			Log.e(TAG, "onSuccess: Activity is null!");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {
@@ -138,13 +138,13 @@ public class CallbacksInitOuyaPlugin {
 	
 	public void onFailure(final int errorCode, final String errorMessage) {
 		
-		Log.i(TAG, "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
+		Log.d(TAG, "onFailure: errorCode=" + errorCode + " errorMessagee=" + errorMessage);
 		
 		// Post a Runnable object on the UI thread that will call the given Lua function.
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.i(TAG, "Activity is null");
+			Log.e(TAG, "onFailure: Activity is null!");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {

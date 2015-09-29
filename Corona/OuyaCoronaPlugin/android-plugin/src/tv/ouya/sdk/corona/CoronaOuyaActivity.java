@@ -61,18 +61,13 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		
 	/** Called when your application has started. */
 	protected void onCreate(Bundle savedInstanceState) {
-		
-		//make activity accessible to Corona
-		IOuyaActivity.SetActivity(this);
+
+		Log.d(TAG, "***Starting Activity*********");
 
 		//make bundle accessible to Corona
 		IOuyaActivity.SetSavedInstanceState(savedInstanceState);
 		
 		super.onCreate(savedInstanceState);
-		
-		if (sEnableLogging) {
-			Log.d(TAG, "***Starting Activity*********");
-		}
 
 		Context context = getBaseContext();
 
@@ -95,10 +90,16 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		// Init the controller
 		OuyaController.init(context);
 
-		sIsAvailable = true;
+		//make activity accessible to Corona
+		IOuyaActivity.SetActivity(this);
 	}
 
 	public static boolean isAvailable() {
+		// first request should return false
+		if (!sIsAvailable) {
+			sIsAvailable = true;
+			return false;
+		}
 		return sIsAvailable;
 	}
 

@@ -18,6 +18,7 @@ package tv.ouya.sdk.corona;
 
 import android.app.Activity;
 import android.util.Log;
+import plugin.ouya.LuaLoader;
 
 
 /**
@@ -58,6 +59,11 @@ public class LuaOuyaShutdown implements com.naef.jnlua.NamedJavaFunction {
 		CoronaOuyaPlugin.shutdown();
 
 		Activity activity = IOuyaActivity.GetActivity();
+		if (null != activity) {
+			activity.finish();
+		}
+
+		activity = LuaLoader.sActivity;
 		if (null != activity) {
 			activity.finish();
 		}

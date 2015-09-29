@@ -118,6 +118,7 @@ end
 
 
 inputs.initialize = function ()
+    print "inputs.initialize";
     if nil ~= plugin_ouya and nil ~= plugin_ouya.asyncLuaOuyaInitInput then
         print "Initializing input...";
     	plugin_ouya.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);

@@ -60,6 +60,7 @@ if nil ~= plugin_ouya and nil ~= plugin_ouya.initOuyaPlugin then
 	}};
 	local jsonData = json.encode(data);
 	--print (jsonData);
+	print "plugin_ouya.initOuyaPlugin";
 	plugin_ouya.initOuyaPlugin(callbacksInitOuyaPlugin.onSuccess, callbacksInitOuyaPlugin.onFailure, jsonData);
 end
 

@@ -25,6 +25,7 @@ json = require "json"
 local callbacksInitOuyaPlugin = {}
 
 callbacksInitOuyaPlugin.onSuccess = function ()
+	print "callbacksInitOuyaPlugin.onSuccess";
 	globals.txtStatus.text = "onSuccessRequestInitOuyaPlugin";
 	inputs.initialize();
 end

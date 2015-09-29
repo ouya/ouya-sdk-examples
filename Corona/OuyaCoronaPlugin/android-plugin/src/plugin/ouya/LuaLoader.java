@@ -35,6 +35,8 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 	
 	private static LuaLoader.CoronaRuntimeEventHandler sRuntimeEventHandler = null;
 
+	public static Activity sActivity = null;
+
 	public LuaLoader() {
 	
 		if (null == sRuntimeEventHandler) {
@@ -53,8 +55,8 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		// Set up a Corona runtime listener used to add custom APIs to Lua.
 		if (null == sRuntimeEventHandler) { //only construct one
 			sRuntimeEventHandler = new LuaLoader.CoronaRuntimeEventHandler();
+			com.ansca.corona.CoronaEnvironment.addRuntimeListener(sRuntimeEventHandler);
 		}
-		com.ansca.corona.CoronaEnvironment.addRuntimeListener(sRuntimeEventHandler);		
 	}
 
 	/**
@@ -198,7 +200,7 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		
 		Context context = com.ansca.corona.CoronaEnvironment.getApplicationContext();
 		if (null == context) {
-			Log.e(TAG, "Context is null!");
+			Log.e(TAG, "initializeOUYA: Context is null!");
 			return;
 		}
 		
@@ -221,11 +223,13 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 		
 		// Init the controller
 		OuyaController.init(context);
-			
+
 		Log.d(TAG, "Get activity from Corona Environment...");
 		final Activity activity = CoronaEnvironment.getCoronaActivity();
-		
-		//make activity accessible to Unity
-		IOuyaActivity.SetActivity(activity);
+		if (null == activity) {
+			Log.e(TAG, "initializeOUYA: Corona activity is null!");
+		} else {
+			sActivity = activity;
+		}
 	}
 }

@@ -17,6 +17,7 @@
 package tv.ouya.sdk.corona;
 
 import android.app.Activity;
+import android.util.Log;
 
 
 /**
@@ -25,6 +26,9 @@ import android.app.Activity;
  * Demonstrates how to fetch a string argument from a Lua function.
  */
 public class AsyncLuaInitOuyaPlugin implements com.naef.jnlua.NamedJavaFunction {
+
+	private static final String TAG = AsyncLuaInitOuyaPlugin.class.getSimpleName();
+
 	/**
 	 * Gets the name of the Lua function as it would appear in the Lua script.
 	 * @return Returns the name of the custom Lua function.
@@ -51,7 +55,9 @@ public class AsyncLuaInitOuyaPlugin implements com.naef.jnlua.NamedJavaFunction 
 		IOuyaActivity.SetCallbacksInitOuyaPlugin(callbacks);
 
 		Activity activity = IOuyaActivity.GetActivity();
-		if (null != activity) {
+		if (null == activity) {
+			Log.e(TAG, "Activity is null!");
+		} else {
 			Runnable runnable = new Runnable()
 			{
 				public void run()
