@@ -19,7 +19,30 @@
 -----------------------------------------------------------------------------------------
 
 
+print "*******************";
+print "*******************";
+print "*******************";
+print "*****START OF******";
+print "******MAIN LUA*****";
+print "*******************";
+print "*******************";
+print "*******************";
+
 local ouya = require("plugin.ouya") -- load the ouya plugin
+
+plugin_ouya = require "plugin_ouya"
+if nil ~= plugin_ouya and nil ~= plugin_ouya.luaOuyaIsAvailable then
+	print "Info: main.lua: Found plugin_ouya.luaOuyaIsAvailable";
+	if (plugin_ouya.luaOuyaIsAvailable()) then
+		print "Info: main.lua: Loading...";
+	else
+		print "Info: main.lua: Waiting to load...";
+		return;
+	end
+else
+	print "Error: main.lua: Missing plugin_ouya.lua script!";
+	return;
+end
 
 callbacksInitOuyaPlugin = require "callbacksInitOuyaPlugin"
 globals = require "globals"

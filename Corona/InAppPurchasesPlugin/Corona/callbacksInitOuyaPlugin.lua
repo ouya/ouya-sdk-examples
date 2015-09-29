@@ -19,12 +19,14 @@
 -----------------------------------------------------------------------------------------
 
 globals = require "globals"
+inputs = require "inputs"
 json = require "json"
 
 local callbacksInitOuyaPlugin = {}
 
 callbacksInitOuyaPlugin.onSuccess = function ()
 	globals.txtStatus.text = "onSuccessRequestInitOuyaPlugin";
+	inputs.initialize();
 end
 
 callbacksInitOuyaPlugin.onFailure = function (errorCode, errorMessage)

@@ -82,6 +82,10 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 	private void disableBuiltInCoronaInput() {
 		
 		Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
+
+		if (null == activity) {
+			return;
+		}
 		
 		//disable standard Corona input
 		Field[] fs = com.ansca.corona.CoronaActivity.class.getDeclaredFields();
@@ -183,6 +187,10 @@ public class AsyncLuaOuyaInitInput implements com.naef.jnlua.NamedJavaFunction {
 		
 		final Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		
+		if (null == activity) {
+			return;
+		}
+
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

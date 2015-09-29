@@ -42,9 +42,11 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 			
 			Log.i(LOG_TAG, "Switching to OUYA SDK activity");
 			final Activity activity = CoronaEnvironment.getCoronaActivity();
-			Intent intent = new Intent(activity, CoronaOuyaActivity.class);
-			activity.startActivity(intent);
-			activity.finish();
+			if (null != activity) {
+				Intent intent = new Intent(activity, CoronaOuyaActivity.class);
+				activity.startActivity(intent);
+				activity.finish();
+			}
 			return;
 		}
 		
@@ -139,13 +141,14 @@ public class LuaLoader implements com.naef.jnlua.JavaFunction {
 				}
 			};
 
-			Log.i(LOG_TAG, "Get activity from Corona Environment...");
+			Log.d(LOG_TAG, "Get activity from Corona Environment...");
 			CoronaActivity coronaActivity = CoronaEnvironment.getCoronaActivity();
+			if (null != coronaActivity) {
+				Log.d(LOG_TAG, "Registered Activity Result Handler");
+				int result = coronaActivity.registerActivityResultHandler(mOnActivityResultHandler);
 
-			Log.i(LOG_TAG, "Registered Activity Result Handler");
-			int result = coronaActivity.registerActivityResultHandler(mOnActivityResultHandler);
-
-			Log.i(LOG_TAG, "Registered Activity Result Handler returned="+result);
+				Log.d(LOG_TAG, "Registered Activity Result Handler returned="+result);
+			}
 		}
 		
 		/**

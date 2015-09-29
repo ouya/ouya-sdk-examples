@@ -52,7 +52,7 @@ public class CallbacksInitOuyaPlugin {
 	private void setupJSONData(com.naef.jnlua.LuaState luaState) {
 		try {
 			mJSONData = luaState.checkString(m_luaStackIndexJSONData);
-			Log.i(TAG, "jsonData="+mJSONData);
+			//Log.d(TAG, "jsonData="+mJSONData);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

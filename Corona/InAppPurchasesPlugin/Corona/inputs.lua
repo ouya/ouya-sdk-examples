@@ -116,8 +116,10 @@ inputs.onKeyUp = function (playerNum, button)
 end
 
 
-if nil ~= plugin_ouya and nil ~= plugin_ouya.asyncLuaOuyaInitInput then
-	plugin_ouya.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
+inputs.initialize = function ()
+    if nil ~= plugin_ouya and nil ~= plugin_ouya.asyncLuaOuyaInitInput then
+    	plugin_ouya.asyncLuaOuyaInitInput(inputs.onGenericMotionEvent, inputs.onKeyDown, inputs.onKeyUp);
+    end
 end
 
 
