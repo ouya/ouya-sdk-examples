@@ -90,15 +90,15 @@ public class VirtualController : MonoBehaviour
         HelperUpdateSprite(button_rb, OuyaController.BUTTON_R1);
 
         Vector2 inputLeft;
-        inputLeft.x = OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_LS_X);
-        inputLeft.y = -OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_LS_Y);
+        inputLeft.x = Mathf.Clamp(OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_LS_X), -1f, 1f);
+        inputLeft.y = -Mathf.Clamp(OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_LS_Y), -1f, 1f);
         RotateInput(ref inputLeft);
         axis_l_stick.transform.localPosition = inputLeft * AXIS_SCALER;
         axis_thumbl.transform.localPosition = inputLeft * AXIS_SCALER;
 
         Vector2 inputRight;
-        inputRight.x = OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_RS_X);
-        inputRight.y = -OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_RS_Y);
+        inputRight.x = Mathf.Clamp(OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_RS_X), -1f, 1f);
+        inputRight.y = -Mathf.Clamp(OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_RS_Y), -1f, 1f);
         RotateInput(ref inputRight);
         axis_r_stick.transform.localPosition = inputRight * AXIS_SCALER;
         axis_thumbr.transform.localPosition = inputRight * AXIS_SCALER;
@@ -106,7 +106,7 @@ public class VirtualController : MonoBehaviour
         HelperUpdateSprite(axis_thumbl, OuyaController.BUTTON_L3);
         HelperUpdateSprite(axis_thumbr, OuyaController.BUTTON_R3);
 
-        float leftTrigger = OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_L2);
+        float leftTrigger = Mathf.Clamp(OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_L2), 0f, 1f);
         if (Mathf.Abs(leftTrigger) > DEADZONE)
         {
             axis_lt.gameObject.SetActive(true);
@@ -116,7 +116,7 @@ public class VirtualController : MonoBehaviour
             axis_lt.gameObject.SetActive(false);
         }
 
-        float leftRight = OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_R2);
+        float leftRight = Mathf.Clamp(OuyaSDK.OuyaInput.GetAxis(_PlayerNumber, OuyaController.AXIS_R2), 0f, 1f);
         if (Mathf.Abs(leftRight) > DEADZONE)
         {
             axis_rt.gameObject.SetActive(true);
