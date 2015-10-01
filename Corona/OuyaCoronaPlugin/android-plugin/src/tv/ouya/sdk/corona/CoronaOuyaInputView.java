@@ -49,11 +49,11 @@ public class CoronaOuyaInputView extends View {
 		}
     }
 
-	public CoronaOuyaInputView(Context context) {
+	public CoronaOuyaInputView(Activity activity, Context context) {
 		super(context);
 		//Log.i(TAG, "CoronaOuyaInputView(Context)");
 		
-		mActivity = CoronaEnvironment.getCoronaActivity();
+		mActivity = activity;
 		OuyaInputMapper.init(mActivity);
 
 		// prepare OUYA-Everywhere Input states

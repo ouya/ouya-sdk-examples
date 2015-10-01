@@ -53,26 +53,21 @@ import tv.ouya.console.api.OuyaController;
  */
 public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 	
-	private final String TAG = "CoronaOuyaActivity";
+	private final String TAG = CoronaOuyaActivity.class.getSimpleName();
 
-	private static final boolean mEnableLogging = false;
+	private static final boolean sEnableLogging = false;
 
-	private static boolean mIsAvailable = false;
+	private static boolean sIsAvailable = false;
 		
 	/** Called when your application has started. */
 	protected void onCreate(Bundle savedInstanceState) {
-		
-		//make activity accessible to Corona
-		IOuyaActivity.SetActivity(this);
+
+		Log.d(TAG, "***Starting Activity*********");
 
 		//make bundle accessible to Corona
 		IOuyaActivity.SetSavedInstanceState(savedInstanceState);
 		
 		super.onCreate(savedInstanceState);
-		
-		if (mEnableLogging) {
-			Log.i(TAG, "***Starting Activity*********");
-		}
 
 		Context context = getBaseContext();
 
@@ -85,8 +80,8 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 			inputStream.close();
 			IOuyaActivity.SetApplicationKey(applicationKey);
 			
-			if (mEnableLogging) {
-				Log.i(TAG, "***Loaded signing key*********");
+			if (sEnableLogging) {
+				Log.d(TAG, "***Loaded signing key*********");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -95,11 +90,17 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
 		// Init the controller
 		OuyaController.init(context);
 
-		mIsAvailable = true;
+		//make activity accessible to Corona
+		IOuyaActivity.SetActivity(this);
 	}
 
 	public static boolean isAvailable() {
-		return mIsAvailable;
+		// first request should return false
+		if (!sIsAvailable) {
+			sIsAvailable = true;
+			return false;
+		}
+		return sIsAvailable;
 	}
 
 	@Override
@@ -130,11 +131,11 @@ public class CoronaOuyaActivity extends com.ansca.corona.CoronaActivity {
     private BroadcastReceiver mMenuAppearingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-			Log.i(TAG, "BroadcastReceiver intent=" + intent.getAction());
+			Log.d(TAG, "BroadcastReceiver intent=" + intent.getAction());
 			if(intent.getAction().equals(OuyaIntent.ACTION_MENUAPPEARING)) {
 				//pause music, free up resources, etc.
 
-				Log.i(TAG, "BroadcastReceiver tell Corona we see the menu appearing");
+				Log.d(TAG, "BroadcastReceiver tell Corona we see the menu appearing");
 			}
         }
     };

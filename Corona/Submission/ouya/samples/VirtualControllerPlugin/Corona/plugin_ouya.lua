@@ -140,5 +140,27 @@ plugin_ouya.luaOuyaIsAvailable = function()
 	return ouyaSDK.luaOuyaIsAvailable()
 end
 
+-- get the string name of the device hardware
+plugin_ouya.luaOuyaGetDeviceHardwareName = function()
+	if ouyaSDK == nil then
+		print "ouyaSDK named java functions are not initialized";
+		return;
+	end
+	
+	print ("plugin_ouya.luaOuyaGetDeviceHardwareName");
+	return ouyaSDK.luaOuyaGetDeviceHardwareName()
+end
+
+-- shut down the plugin
+plugin_ouya.luaOuyaShutdown = function()
+	if ouyaSDK == nil then
+		print "ouyaSDK named java functions are not initialized";
+		return;
+	end
+	
+	print ("plugin_ouya.luaOuyaShutdown");
+	return ouyaSDK.luaOuyaShutdown()
+end
+
 -- Return the Ouya library from the require() 
 return plugin_ouya

@@ -98,7 +98,7 @@ public class CallbacksOuyaInput {
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.i(TAG, "Activity is null");
+			Log.e(TAG, "onGenericMotionEvent: Activity is null!");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {
@@ -153,7 +153,7 @@ public class CallbacksOuyaInput {
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.i(TAG, "Activity is null");
+			Log.e(TAG, "onKeyUp: Activity is null!");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {
@@ -205,7 +205,7 @@ public class CallbacksOuyaInput {
 		//Activity activity = com.ansca.corona.CoronaEnvironment.getCoronaActivity();
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null == activity) {
-			Log.i(TAG, "Activity is null");
+			Log.e(TAG, "onKeyDown: Activity is null!");
 			return;
 		}
 		activity.runOnUiThread(new Runnable() {

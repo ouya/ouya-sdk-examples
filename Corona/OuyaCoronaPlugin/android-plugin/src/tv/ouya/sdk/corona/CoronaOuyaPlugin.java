@@ -195,4 +195,21 @@ public class CoronaOuyaPlugin
 	public static boolean isAvailable() {
 		return CoronaOuyaActivity.isAvailable();
 	}
+
+	public static void shutdown() {
+		try {
+			if (null == IOuyaActivity.GetCoronaOuyaFacade())
+			{
+				Log.e(TAG, "CoronaOuyaPlugin.shutdown: CoronaOuyaFacade is null");
+			}
+			else
+			{
+				
+				IOuyaActivity.GetCoronaOuyaFacade().shutdown();
+			}
+		}
+		catch (Exception ex) {
+			Log.e(TAG, "CoronaOuyaPlugin: shutdown exception: " + ex.toString());
+		}		
+	}
 }
