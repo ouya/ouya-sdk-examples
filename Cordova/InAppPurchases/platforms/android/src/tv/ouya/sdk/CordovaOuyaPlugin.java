@@ -64,6 +64,8 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
     private static CallbackContext sCallbackOnGenericMotionEvent = null;
     private static CallbackContext sCallbackOnKeyUp = null;
     private static CallbackContext sCallbackOnKeyDown = null;
+	private static CallbackContext sCallbackOnPause = null;
+	private static CallbackContext sCallbackOnResume = null;
     private static CallbackContext sCallbackInitOuyaPlugin = null;
     private static CallbackContext sCallbackRequestGamerInfo = null;
     private static CallbackContext sCallbackRequestProducts = null;
@@ -102,6 +104,18 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "");
             pluginResult.setKeepCallback(true);
             sCallbackOnKeyDown.sendPluginResult(pluginResult);
+            return true;
+		} else if (action.equals("setCallbackOnPause")) {
+            sCallbackOnPause = callbackContext;
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "OK");
+            pluginResult.setKeepCallback(true);
+            sCallbackOnPause.sendPluginResult(pluginResult);
+            return true;
+		} else if (action.equals("setCallbackOnResume")) {
+            sCallbackOnResume = callbackContext;
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "OK");
+            pluginResult.setKeepCallback(true);
+            sCallbackOnResume.sendPluginResult(pluginResult);
             return true;
         } else if (action.equals("initOuyaPlugin")) {
             sCallbackInitOuyaPlugin = callbackContext;
@@ -295,6 +309,50 @@ public class CordovaOuyaPlugin extends CordovaPlugin {
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonObject.toString());
                 pluginResult.setKeepCallback(true);
                 sCallbackOnKeyDown.sendPluginResult(pluginResult); // Thread-safe.
+            }
+        });
+    }
+	
+    public static void onPause() {
+        if (null == sCallbackOnPause) {
+            if (sEnableLogging) {
+                Log.e(TAG, "sCallbackOnPause is null!");
+            }
+            return;
+        }
+        if (null == sInstance) {
+            if (sEnableLogging) {
+                Log.e(TAG, "sInstance is null!");
+            }
+            return;
+        }
+        sInstance.cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "");
+                pluginResult.setKeepCallback(true);
+                sCallbackOnPause.sendPluginResult(pluginResult); // Thread-safe.
+            }
+        });
+    }
+	
+    public static void onResume() {
+        if (null == sCallbackOnResume) {
+            if (sEnableLogging) {
+                Log.e(TAG, "sCallbackOnResume is null!");
+            }
+            return;
+        }
+        if (null == sInstance) {
+            if (sEnableLogging) {
+                Log.e(TAG, "sInstance is null!");
+            }
+            return;
+        }
+        sInstance.cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "");
+                pluginResult.setKeepCallback(true);
+                sCallbackOnResume.sendPluginResult(pluginResult); // Thread-safe.
             }
         });
     }

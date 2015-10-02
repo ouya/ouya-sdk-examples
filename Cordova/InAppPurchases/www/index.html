@@ -131,6 +131,33 @@
 				console.error("HTML5 setCallbackOnKeyDown Failed: "+err);
 			},
 			"OuyaSDK", "setCallbackOnKeyDown", [ ]);
+			
+        cordova.exec(
+            function(message) {
+				if (message == "OK") {
+					console.log("HTML5 CallbackOnPause SET");
+				} else {
+					console.log("HTML5 CallbackOnPause onPause");
+				}
+            },
+            function(err) {
+                console.error("HTML5 setCallbackOnPause Failed: "+err);
+            },
+            "OuyaSDK", "setCallbackOnPause", [ "" ]);
+			
+        cordova.exec(
+            function(message) {
+				if (message == "OK") {
+					console.log("HTML5 CallbackOnResume SET");
+				} else {
+					console.log("HTML5 CallbackOnResume onResume");
+				}
+            },
+            function(err) {
+                console.error("HTML5 setCallbackOnResume Failed: "+err);
+            },
+            "OuyaSDK", "setCallbackOnResume", [ "" ]);
+			
 		cordova.exec(
 			function(status) {
 				console.log("HTML5 initOuyaPlugin: SUCCESS status="+status);

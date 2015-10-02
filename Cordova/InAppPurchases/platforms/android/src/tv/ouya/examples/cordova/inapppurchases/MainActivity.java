@@ -26,9 +26,10 @@ import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Window;
+import android.view.WindowManager;
 import java.util.HashMap;
 import org.apache.cordova.*;
-
 import tv.ouya.console.api.OuyaController;
 import tv.ouya.sdk.CordovaOuyaPlugin;
 import tv.ouya.sdk.OuyaInputView;
@@ -47,6 +48,10 @@ public class MainActivity extends CordovaActivity
         super.onCreate(savedInstanceState);
 
         mInputView = new OuyaInputView(this);
+		
+		Log.d(TAG, "Disable screensaver");
+        mInputView.setKeepScreenOn(true);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
@@ -129,6 +134,20 @@ public class MainActivity extends CordovaActivity
         }
         return true;
     }
+	
+	@Override
+    public void onPause()
+    {
+    	super.onPause();
+		CordovaOuyaPlugin.onPause();
+	}
+	
+	@Override
+    public void onResume()
+    {
+    	super.onResume();
+		CordovaOuyaPlugin.onResume();
+	}
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
