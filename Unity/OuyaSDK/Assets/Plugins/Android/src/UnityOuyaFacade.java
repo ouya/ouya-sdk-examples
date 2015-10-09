@@ -554,8 +554,10 @@ public class UnityOuyaFacade {
      * The IAP Facade registers a broadcast receiver with Android. You should take care to call shutdown(),
      * which unregisters the broadcast receiver, when you're done with the IAP Facade.
      */
-    public void onDestroy() {
-        ouyaFacade.shutdown();
+    public void shutdown() {
+		if (null != ouyaFacade) {
+			ouyaFacade.shutdown();
+		}
     }
 
 	public boolean processActivityResult(final int requestCode, final int resultCode, final Intent data) {

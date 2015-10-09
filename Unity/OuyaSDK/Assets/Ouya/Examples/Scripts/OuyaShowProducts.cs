@@ -285,6 +285,7 @@ public class OuyaShowProducts : MonoBehaviour
                 OuyaSDK.OuyaInput.GetButtonUp(OuyaController.BUTTON_O)))
             {
                 m_status = "Exiting...";
+                OuyaSDK.shutdown();
                 Application.Quit();
             }
             GUI.backgroundColor = oldColor;

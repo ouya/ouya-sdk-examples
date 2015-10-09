@@ -40,6 +40,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmGetBitmapArray = IntPtr.Zero;
         private static IntPtr _jmGetOuyaModScreenshotArray = IntPtr.Zero;
         private static IntPtr _jmGetStringArray = IntPtr.Zero;
+        private static IntPtr _jmShutdown = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         /// <summary>
@@ -498,6 +499,22 @@ namespace tv.ouya.sdk
                     string strMethod = "getStringArray";
                     _jmGetStringArray = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "(Ljava/util/List;)[Ljava/lang/String;");
                     if (_jmGetStringArray != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
+
+                {
+                    string strMethod = "shutdown";
+                    _jmShutdown = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmShutdown != IntPtr.Zero)
                     {
 #if VERBOSE_LOGGING
                         Debug.Log(string.Format("Found {0} method", strMethod));
@@ -1280,6 +1297,35 @@ namespace tv.ouya.sdk
 #endif
 
             return result;
+        }
+
+        public static void shutdown()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+
+            string strMethod = "shutdown";
+            IntPtr method = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+            if (method != IntPtr.Zero)
+            {
+#if VERBOSE_LOGGING
+                Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+            }
+            else
+            {
+                Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                return;
+            }
+
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, method, new jvalue[] { });
         }
 
     }

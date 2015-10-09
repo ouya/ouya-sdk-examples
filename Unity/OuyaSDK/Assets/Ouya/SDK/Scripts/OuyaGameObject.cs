@@ -636,7 +636,6 @@ public class OuyaGameObject : MonoBehaviour
     }
     void Start()
     {
-        Input.ResetInputAxes();
         Application.targetFrameRate = 60;
         DontDestroyOnLoad(transform.gameObject);
 

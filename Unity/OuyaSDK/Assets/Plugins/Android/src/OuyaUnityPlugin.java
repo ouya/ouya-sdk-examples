@@ -628,4 +628,24 @@ public class OuyaUnityPlugin
 		}
 		return resources.getString(id);
 	}
+
+	public static void shutdown() {
+		final Activity activity = IOuyaActivity.GetActivity();
+		if (null == activity) {
+			Log.e(TAG, "shutdown: activity is null!");
+			return;
+		}
+		final UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+		if (null == unityOuyaFacade) {
+			Log.e(TAG, "shutdown: unityOuyaFacade is null!");
+			return;
+		}
+		Runnable runnable = new Runnable() {
+			public void run() {
+				unityOuyaFacade.shutdown();
+				activity.finish();
+			}
+		};
+		activity.runOnUiThread(runnable);
+	}
 }
