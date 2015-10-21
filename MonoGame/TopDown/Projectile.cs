@@ -39,6 +39,11 @@ namespace TopDown
         private Color _mColor;
 
         /// <summary>
+        /// Speed of the projectile
+        /// </summary>
+        private const float PROJECTILE_SPEED = 2f;
+
+        /// <summary>
         /// Construct the player
         /// </summary>
         /// <param name="index"></param>
@@ -94,7 +99,7 @@ namespace TopDown
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            _mPosition += _mDirection * deltaTime;
+            _mPosition += _mDirection * deltaTime * PROJECTILE_SPEED;
 
             _mLifeTime -= deltaTime;
         }

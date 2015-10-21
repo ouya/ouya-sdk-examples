@@ -15,6 +15,8 @@ namespace TopDown
         SpriteBatch _mSpriteBatch;
         SpriteFont _mFont;
 
+        public static Random _sRandom = new Random();
+
         List<Player> _mPlayers = new List<Player>();
 
         public static List<Projectile> _sProjectiles = new List<Projectile>();

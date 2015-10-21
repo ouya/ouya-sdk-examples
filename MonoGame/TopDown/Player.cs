@@ -13,12 +13,20 @@ namespace TopDown
         /// </summary>
         private int _mIndex = 0;
 
+        /// <summary>
+        /// Color of the player
+        /// </summary>
         private Color _mColor;
 
         /// <summary>
         /// The axis deadzone
         /// </summary>
         private const float DEAD_ZONE = 0.25f;
+
+        /// <summary>
+        /// A small direction variance
+        /// </summary>
+        private const float PROJECTILE_VARIANCE = 0.01f;
 
         /// <summary>
         /// Position of the player
@@ -52,9 +60,8 @@ namespace TopDown
             _mIndex = index;
             _mColor = color;
             _mRectangle = new Rectangle(0, 0, width, height);
-            Random random = new Random();
-            _mPosition.X = random.Next() % Game1._sGraphics.PreferredBackBufferWidth;
-            _mPosition.Y = random.Next() % Game1._sGraphics.PreferredBackBufferHeight;
+            _mPosition.X = Game1._sRandom.Next() % Game1._sGraphics.PreferredBackBufferWidth;
+            _mPosition.Y = Game1._sRandom.Next() % Game1._sGraphics.PreferredBackBufferHeight;
             PositionPlayerInBounds();
 
             _mProjectilePrefab = new Projectile(color, new Vector2(-100, -100), 10, 10, Vector2.Zero);
@@ -109,9 +116,14 @@ namespace TopDown
                 Math.Abs(rsY) > DEAD_ZONE)
             {
                 Vector2 direction = new Vector2(rsX, rsY);
-                direction.Normalize();
-                Game1._sProjectiles.Add(new Projectile(_mProjectilePrefab,
-                    _mPosition + new Vector2(_mRectangle.Width / 2, _mRectangle.Height / 2), direction));
+                Vector2 variance = new Vector2((Game1._sRandom.Next() % 10 * PROJECTILE_VARIANCE), (Game1._sRandom.Next() % 10 * PROJECTILE_VARIANCE));
+                direction += variance;
+                if (direction != Vector2.Zero)
+                {
+                    direction.Normalize();
+                    Game1._sProjectiles.Add(new Projectile(_mProjectilePrefab,
+                        _mPosition + new Vector2(_mRectangle.Width / 2, _mRectangle.Height / 2), direction));
+                }
             }
         }
 
