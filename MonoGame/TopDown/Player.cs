@@ -36,6 +36,11 @@ namespace TopDown
         Texture2D _mTexture = null;
 
         /// <summary>
+        /// The projectile prefab fired by the player
+        /// </summary>
+        Projectile _mProjectilePrefab = null;
+
+        /// <summary>
         /// Construct the player
         /// </summary>
         /// <param name="index"></param>
@@ -51,6 +56,8 @@ namespace TopDown
             _mPosition.X = random.Next() % Game1._sGraphics.PreferredBackBufferWidth;
             _mPosition.Y = random.Next() % Game1._sGraphics.PreferredBackBufferHeight;
             PositionPlayerInBounds();
+
+            _mProjectilePrefab = new Projectile(color, new Vector2(-100, -100), 10, 10, Vector2.Zero);
         }
 
         /// <summary>
@@ -66,6 +73,8 @@ namespace TopDown
                 data[i] = _mColor;
             }
             _mTexture.SetData(data);
+
+            _mProjectilePrefab.LoadContent(graphicsDevice);
         }
 
         /// <summary>
@@ -93,6 +102,17 @@ namespace TopDown
             }
 
             PositionPlayerInBounds();
+
+            float rsX = OuyaInput.GetAxis(_mIndex, OuyaController.AXIS_RS_X);
+            float rsY = OuyaInput.GetAxis(_mIndex, OuyaController.AXIS_RS_Y);
+            if (Math.Abs(rsX) > DEAD_ZONE ||
+                Math.Abs(rsY) > DEAD_ZONE)
+            {
+                Vector2 direction = new Vector2(rsX, rsY);
+                direction.Normalize();
+                Game1._sProjectiles.Add(new Projectile(_mProjectilePrefab,
+                    _mPosition + new Vector2(_mRectangle.Width / 2, _mRectangle.Height / 2), direction));
+            }
         }
 
         /// <summary>

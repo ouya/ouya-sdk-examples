@@ -17,6 +17,8 @@ namespace TopDown
 
         List<Player> _mPlayers = new List<Player>();
 
+        public static List<Projectile> _sProjectiles = new List<Projectile>();
+
         public Game1()
         {
             _sGraphics = new GraphicsDeviceManager(this);
@@ -39,7 +41,7 @@ namespace TopDown
         {
             // Create players
             _mPlayers.Add(new Player(0, Color.Orange, 75, 75));
-            _mPlayers.Add(new Player(1, Color.Purple, 75, 75));
+            _mPlayers.Add(new Player(1, Color.Cyan, 75, 75));
 
             base.Initialize();
         }
@@ -72,16 +74,28 @@ namespace TopDown
             _sGraphics.GraphicsDevice.Clear(Color.Black);
 
             _mSpriteBatch.Begin();
+            foreach (Projectile projectile in _sProjectiles)
+            {
+                projectile.Draw(_mSpriteBatch, _mFont, gameTime);
+            }
             foreach (Player player in _mPlayers)
             {
                 player.Draw(_mSpriteBatch, _mFont, gameTime);
             }
-            _mSpriteBatch.DrawString(_mFont, "Hello from MonoGame: " + DateTime.Now.ToString(), new Vector2(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40), Color.White);
+            _mSpriteBatch.DrawString(_mFont, 
+                string.Format("Hello from MonoGame: Projectiles={0}", _sProjectiles.Count),
+                new Vector2(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40), Color.White);
             _mSpriteBatch.End();
 
             OuyaInput.ClearButtonStates();
 
             base.Draw(gameTime);
+
+            while (_sProjectiles.Count > 0 &&
+                _sProjectiles[0]._mLifeTime < 0)
+            {
+                _sProjectiles.RemoveAt(0);
+            }
         }
     }
 }
