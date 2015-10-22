@@ -187,8 +187,10 @@ namespace TopDown
                 _mFrames = 0;
                 _mTimer = DateTime.Now + TimeSpan.FromSeconds(1);
             }
-
-            ++_mFrames;
+            else
+            {
+                ++_mFrames;
+            }
 
             #endregion
 
