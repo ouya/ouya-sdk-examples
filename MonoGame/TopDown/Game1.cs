@@ -67,6 +67,8 @@ namespace TopDown
             // Create players
             _mPlayers.Add(new Player(0, Color.Orange, 75, 75));
             _mPlayers.Add(new Player(1, Color.Cyan, 75, 75));
+            _mPlayers.Add(new Player(2, Color.Purple, 75, 75));
+            _mPlayers.Add(new Player(3, Color.Yellow, 75, 75));
 
             base.Initialize();
         }
