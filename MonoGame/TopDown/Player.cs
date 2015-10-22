@@ -110,7 +110,6 @@ namespace TopDown
         /// <param name="gameTime"></param>
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, GameTime gameTime)
         {
-            _mLight.Draw(spriteBatch);
             spriteBatch.Draw(_mTexture, _mPosition, Color.White);
             spriteBatch.DrawString(font, string.Format("{0}", _mIndex + 1),
                 _mPosition + new Vector2(_mRectangle.Width / 2 - 5, _mRectangle.Height / 2 - 10),
@@ -144,6 +143,15 @@ namespace TopDown
                         _mPosition + new Vector2(_mRectangle.Width / 2, _mRectangle.Height / 2), direction));
                 }
             }
+        }
+
+        /// <summary>
+        /// Draw the player light
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public void DrawLight(SpriteBatch spriteBatch)
+        {
+            _mLight.Draw(spriteBatch);
         }
 
         /// <summary>

@@ -111,7 +111,6 @@ namespace TopDown
                 return;
             }
 
-            _mLight.Draw(spriteBatch);
             spriteBatch.Draw(_mTexture, _mPosition, Color.White);
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -119,6 +118,15 @@ namespace TopDown
             _mPosition += _mDirection * deltaTime * PROJECTILE_SPEED;
 
             _mLifeTime -= deltaTime;
+        }
+
+        /// <summary>
+        /// Draw the projectile light
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public void DrawLight(SpriteBatch spriteBatch)
+        {
+            _mLight.Draw(spriteBatch);
         }
     }
 }

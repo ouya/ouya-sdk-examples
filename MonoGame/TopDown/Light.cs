@@ -72,7 +72,7 @@ namespace TopDown
                 int x = (int)Math.Round(radius + radius * Math.Cos(angle));
                 int y = (int)Math.Round(radius + radius * Math.Sin(angle));
 
-                data[y * outerRadius + x + 1] = Color.White;
+                data[y * outerRadius + x + 1] = Color.Black;
             }
 
             //width
@@ -94,13 +94,13 @@ namespace TopDown
                         }
 
                         //start is indicated by Color followed by Transparent
-                        if (data[i + (j * outerRadius)] == Color.White && data[i + ((j + 1) * outerRadius)] == Color.Transparent)
+                        if (data[i + (j * outerRadius)] == Color.Black && data[i + ((j + 1) * outerRadius)] == Color.Transparent)
                         {
                             yStart = j + 1;
                             continue;
                         }
                     }
-                    else if (data[i + (j * outerRadius)] == Color.White)
+                    else if (data[i + (j * outerRadius)] == Color.Black)
                     {
                         yEnd = j;
                         break;
@@ -113,7 +113,7 @@ namespace TopDown
                     //height
                     for (int j = yStart; j < yEnd; j++)
                     {
-                        data[i + (j * outerRadius)] = Color.White;
+                        data[i + (j * outerRadius)] = Color.Black;
                     }
                 }
             }
