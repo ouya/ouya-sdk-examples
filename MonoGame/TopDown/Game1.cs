@@ -22,6 +22,10 @@ namespace TopDown
         RenderTarget2D _mRenderTarget = null;
         RenderTarget2D _mLightRenderTarget = null;
 
+        private int _mFrames = 0;
+        private float _mFramesPerSecond = 0f;
+        private DateTime _mTimer = DateTime.MinValue;
+
         private Effect _mLightingEffect = null;
         private EffectParameter _mLightingAlpha = null;
 
@@ -175,6 +179,19 @@ namespace TopDown
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            #region Frames per second
+
+            if (_mTimer < DateTime.Now)
+            {
+                _mFramesPerSecond = _mFrames;
+                _mFrames = 0;
+                _mTimer = DateTime.Now + TimeSpan.FromSeconds(1);
+            }
+
+            ++_mFrames;
+
+            #endregion
+
             #region Render to Light Render Texture
             GraphicsDevice.SetRenderTarget(_mLightRenderTarget);
 
@@ -233,7 +250,7 @@ namespace TopDown
 
             _mSpriteBatch.Begin();
             _mSpriteBatch.DrawString(_mFont, 
-                string.Format("Hello from MonoGame: Projectiles={0}", _sProjectiles.Count),
+                string.Format("Hello from MonoGame: Projectiles={0} FPS={1:F2}", _sProjectiles.Count, _mFramesPerSecond),
                 new Vector2(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40), Color.White);
             _mSpriteBatch.End();
 

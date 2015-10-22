@@ -18,7 +18,7 @@ namespace TopDown
         /// <summary>
         /// The lifetime of the projectile
         /// </summary>
-        public float _mLifeTime = 2000f;
+        public float _mLifeTime = 1000f;
 
         /// <summary>
         /// Size of the projectile
