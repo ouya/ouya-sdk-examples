@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="Activity1.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="Light.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

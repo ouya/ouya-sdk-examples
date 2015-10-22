@@ -73,7 +73,7 @@ namespace TopDown
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            _sGraphics.GraphicsDevice.Clear(Color.Black);
+            _sGraphics.GraphicsDevice.Clear(Color.Green);
 
             _mSpriteBatch.Begin();
             foreach (Projectile projectile in _sProjectiles)

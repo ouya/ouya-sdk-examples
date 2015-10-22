@@ -1,12 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using TV.Ouya.Console.Api;
-using TV.Ouya.Sdk;
 
 namespace TopDown
 {
-    public class Projectile
+    public class Projectile : Entity
     {
         /// <summary>
         /// The position of the projectile
@@ -34,6 +31,11 @@ namespace TopDown
         public Texture2D _mTexture = null;
 
         /// <summary>
+        /// Light of the projectile
+        /// </summary>
+        private Light _mLight = null;
+
+        /// <summary>
         /// Color of the projectile
         /// </summary>
         private Color _mColor;
@@ -56,6 +58,7 @@ namespace TopDown
             _mRectangle = new Rectangle(0, 0, width, height);
             _mPosition = position;
             _mDirection = direction;
+            _mLight = new Light(this, width, height);
         }
 
         public Projectile(Projectile projectile, Vector2 position, Vector2 direction)
@@ -65,6 +68,17 @@ namespace TopDown
             _mTexture = projectile._mTexture;
             _mPosition = position;
             _mDirection = direction;
+
+            _mLight = new Light(projectile._mLight, this);
+        }
+
+        /// <summary>
+        /// Implement Entity
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetPosition()
+        {
+            return _mPosition;
         }
 
         /// <summary>
@@ -80,6 +94,8 @@ namespace TopDown
                 data[i] = _mColor;
             }
             _mTexture.SetData(data);
+
+            _mLight.LoadContent(graphicsDevice);
         }
 
         /// <summary>
@@ -95,6 +111,7 @@ namespace TopDown
                 return;
             }
 
+            _mLight.Draw(spriteBatch);
             spriteBatch.Draw(_mTexture, _mPosition, Color.White);
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
