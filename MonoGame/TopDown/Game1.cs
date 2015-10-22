@@ -191,6 +191,7 @@ namespace TopDown
             {
                 projectile.DrawLight(_mSpriteBatch);
             }
+
             foreach (Player player in _mPlayers)
             {
                 player.DrawLight(_mSpriteBatch);
