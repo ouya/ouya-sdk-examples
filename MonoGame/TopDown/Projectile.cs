@@ -58,7 +58,7 @@ namespace TopDown
             _mRectangle = new Rectangle(0, 0, width, height);
             _mPosition = position;
             _mDirection = direction;
-            _mLight = new Light(this, width, height);
+            _mLight = new Light(this, width*8, height*8);
         }
 
         public Projectile(Projectile projectile, Vector2 position, Vector2 direction)
@@ -79,6 +79,15 @@ namespace TopDown
         public Vector2 GetPosition()
         {
             return _mPosition;
+        }
+
+        /// <summary>
+        /// Implement Entity
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle GetRectangle()
+        {
+            return _mRectangle;
         }
 
         /// <summary>

@@ -69,7 +69,7 @@ namespace TopDown
             _mPosition.Y = Game1._sRandom.Next() % Game1._sGraphics.PreferredBackBufferHeight;
             PositionPlayerInBounds();
 
-            _mLight = new Light(this, width, height);
+            _mLight = new Light(this, width*2, height*2);
 
             _mProjectilePrefab = new Projectile(color, new Vector2(-100, -100), 10, 10, Vector2.Zero);
         }
@@ -81,6 +81,15 @@ namespace TopDown
         public Vector2 GetPosition()
         {
             return _mPosition;
+        }
+
+        /// <summary>
+        /// Implement Entity
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle GetRectangle()
+        {
+            return _mRectangle;
         }
 
         /// <summary>
@@ -110,9 +119,9 @@ namespace TopDown
         /// <param name="gameTime"></param>
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, GameTime gameTime)
         {
-            spriteBatch.Draw(_mTexture, _mPosition, Color.White);
+            spriteBatch.Draw(_mTexture, _mPosition - new Vector2(_mRectangle.Width*0.5f, _mRectangle.Height*0.5f), Color.White);
             spriteBatch.DrawString(font, string.Format("{0}", _mIndex + 1),
-                _mPosition + new Vector2(_mRectangle.Width / 2 - 5, _mRectangle.Height / 2 - 10),
+                _mPosition + new Vector2(-5, -10),
                 Color.Black);
 
             float lsX = OuyaInput.GetAxis(_mIndex, OuyaController.AXIS_LS_X);
@@ -139,8 +148,7 @@ namespace TopDown
                 if (direction != Vector2.Zero)
                 {
                     direction.Normalize();
-                    Game1._sProjectiles.Add(new Projectile(_mProjectilePrefab,
-                        _mPosition + new Vector2(_mRectangle.Width / 2, _mRectangle.Height / 2), direction));
+                    Game1._sProjectiles.Add(new Projectile(_mProjectilePrefab, _mPosition, direction));
                 }
             }
         }
@@ -159,10 +167,10 @@ namespace TopDown
         /// </summary>
         private void PositionPlayerInBounds()
         {
-            _mPosition.X = Math.Max(0f, _mPosition.X);
-            _mPosition.X = Math.Min(Game1._sGraphics.PreferredBackBufferWidth - _mRectangle.Width, _mPosition.X);
-            _mPosition.Y = Math.Max(0f, _mPosition.Y);
-            _mPosition.Y = Math.Min(Game1._sGraphics.PreferredBackBufferHeight - _mRectangle.Height, _mPosition.Y);
+            _mPosition.X = Math.Max(_mRectangle.Width / 2, _mPosition.X);
+            _mPosition.X = Math.Min(Game1._sGraphics.PreferredBackBufferWidth - _mRectangle.Width / 2, _mPosition.X);
+            _mPosition.Y = Math.Max(_mRectangle.Height / 2, _mPosition.Y);
+            _mPosition.Y = Math.Min(Game1._sGraphics.PreferredBackBufferHeight - _mRectangle.Height / 2, _mPosition.Y);
         }
     }
 }

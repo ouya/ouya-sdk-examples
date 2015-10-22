@@ -90,7 +90,10 @@ namespace TopDown
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_mTexture, _mParent.GetPosition() - new Vector2(_mRectangle.Width * 0.25f, _mRectangle.Height * 0.25f), Color.White);
+            Vector2 position = _mParent.GetPosition() - new Vector2(
+                _mParent.GetRectangle().Width * 0.5f + _mRectangle.Width * 0.5f,
+                _mParent.GetRectangle().Height * 0.5f + _mRectangle.Height * 0.5f);
+            spriteBatch.Draw(_mTexture, position, Color.White);
         }
     }
 }

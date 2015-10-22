@@ -9,5 +9,11 @@ namespace TopDown
         /// </summary>
         /// <returns></returns>
         Vector2 GetPosition();
+
+        /// <summary>
+        /// Get the rectangle of the entity
+        /// </summary>
+        /// <returns></returns>
+        Rectangle GetRectangle();
     }
 }

@@ -139,11 +139,8 @@ namespace TopDown
             // Load the font
             _mFont = Content.Load<SpriteFont>("spriteFont1");
 
-            int width = 320;
-            int height = 240;
-
-            width = _sGraphics.PreferredBackBufferWidth;
-            height = _sGraphics.PreferredBackBufferHeight;
+            int width = _sGraphics.PreferredBackBufferWidth;
+            int height = _sGraphics.PreferredBackBufferHeight;
 
             // Create the render target
             _mRenderTarget = new RenderTarget2D(GraphicsDevice, width, height, false,
@@ -226,8 +223,8 @@ namespace TopDown
 
             //draw light source
             _mSpriteBatch.Begin();
-            _mSpriteBatch.Draw(_mRenderTarget, new Vector2(200, 200), new Rectangle(0, 0, 320, 200), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-            _mSpriteBatch.Draw(_mLightRenderTarget, new Vector2(600, 200), new Rectangle(0, 0, 320, 200), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            _mSpriteBatch.Draw(_mLightRenderTarget, Vector2.Zero, new Rectangle(0, 0, 200, 400), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            _mSpriteBatch.Draw(_mRenderTarget, new Vector2(200, 0), new Rectangle(200, 0, 200, 400), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             _mSpriteBatch.End();
 
             // set sampler
