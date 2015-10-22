@@ -249,8 +249,8 @@ namespace TopDown
             _mSpriteBatch.End();
 
             // set sampler
-            GraphicsDevice.Textures[1] = _mLightRenderTarget; // some how the _light Texture2D is being disposed when this is set
-            _mLightingEffect.Parameters["LightSampler"].SetValue(_mLightRenderTarget); // this also causes the _light texture2D to be disposed
+            GraphicsDevice.Textures[1] = _mLightRenderTarget;
+            _mLightingEffect.Parameters["LightSampler"].SetValue(_mLightRenderTarget);
 
             _mSpriteBatch.Begin();
             _mSpriteBatch.DrawString(_mFont, 
