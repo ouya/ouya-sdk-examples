@@ -156,6 +156,7 @@ namespace TopDown
             _mLightRenderTarget = new RenderTarget2D(GraphicsDevice, width, height, false,
                 _sGraphics.PreferredBackBufferFormat, DepthFormat.Depth24);
 
+            // Load the light effect
             try
             {
                 Android.Util.Log.Info(TAG, "...Loading Lighting Effect");

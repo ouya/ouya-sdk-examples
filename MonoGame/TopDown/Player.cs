@@ -106,7 +106,7 @@ namespace TopDown
             }
             _mTexture.SetData(data);
 
-            _mLight.LoadContent(graphicsDevice);
+            _mLight.LoadContent(graphicsDevice, 0.5f, 0.6f, 0.75f);
 
             _mProjectilePrefab.LoadContent(graphicsDevice);
         }
