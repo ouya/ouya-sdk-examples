@@ -268,10 +268,6 @@ public class MainActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
 		//Log.i(TAG, "onKeyDown keyCode="+keyEvent.getKeyCode());
 		
-		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
-			return false;
-		}
-		
 		InputDevice device = keyEvent.getDevice();
 		if (null != device) {
 			String text = "KeyCode=(" + keyCode + ") "
@@ -390,10 +386,6 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
 		//Log.i(TAG, "onKeyUp keyCode="+keyEvent.getKeyCode());
-		
-		if (keyEvent.getSource() == InputDevice.SOURCE_JOYSTICK) {
-			return false;
-		}
 		
 		int playerNum = 0;
 
