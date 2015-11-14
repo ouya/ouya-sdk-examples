@@ -197,7 +197,7 @@ namespace Android.Graphics
                 Debug.LogError("_jmCompress is not initialized");
                 return;
             }
-            AndroidJNI.CallVoidMethod(_instance, _jmCompress, new jvalue[] { new jvalue() { l = format.Instance }, new jvalue() { i = quality }, new jvalue() { l = stream.GetInstance() } });
+            AndroidJNI.CallBooleanMethod(_instance, _jmCompress, new jvalue[] { new jvalue() { l = format.Instance }, new jvalue() { i = quality }, new jvalue() { l = stream.GetInstance() } });
         }
     }
 }
