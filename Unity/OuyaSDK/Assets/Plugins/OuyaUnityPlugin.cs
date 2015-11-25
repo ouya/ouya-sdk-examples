@@ -695,8 +695,7 @@ namespace tv.ouya.sdk
             m_pendingRequestProducts = true;
 
             IntPtr arg1 = AndroidJNI.NewStringUTF(jsonData);
-            IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmRequestProducts, new jvalue[] { new jvalue() { l = arg1 } });
-            AndroidJNI.DeleteLocalRef(arg1);
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, _jmRequestProducts, new jvalue[] { new jvalue() { l = arg1 } });
         }
 
         public static void requestPurchase(string identifier)
