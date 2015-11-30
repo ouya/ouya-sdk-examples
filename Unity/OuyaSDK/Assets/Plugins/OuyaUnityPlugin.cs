@@ -17,6 +17,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmConstructor = IntPtr.Zero;
         private static IntPtr _jmInitOuyaPlugin = IntPtr.Zero;
         private static IntPtr _jmIsInitialized = IntPtr.Zero;
+		private static IntPtr _jmGetDeviceHardwareName = IntPtr.Zero;
         private static IntPtr _jmGetGameData = IntPtr.Zero;
         private static IntPtr _jmPutGameData = IntPtr.Zero;
         private static IntPtr _jmRequestGamerInfo = IntPtr.Zero;
@@ -142,6 +143,22 @@ namespace tv.ouya.sdk
                         return;
                     }
                 }
+
+				{
+					string strMethod = "getDeviceHardwareName";
+					_jmGetDeviceHardwareName = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Ljava/lang/String;");
+					if (_jmGetDeviceHardwareName != IntPtr.Zero)
+					{
+						#if VERBOSE_LOGGING
+						Debug.Log(string.Format("Found {0} method", strMethod));
+						#endif
+					}
+					else
+					{
+						Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+						return;
+					}
+				}
 
                 {
                     string strMethod = "getGameData";
@@ -585,6 +602,36 @@ namespace tv.ouya.sdk
             }
             return AndroidJNI.CallStaticBooleanMethod(_jcOuyaUnityPlugin, _jmIsInitialized, new jvalue[] { });
         }
+
+		public static string getDeviceHardwareName()
+		{
+			#if VERBOSE_LOGGING
+			Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+			#endif
+			JNIFind();
+			
+			if (_jcOuyaUnityPlugin == IntPtr.Zero)
+			{
+				Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+				return null;
+			}
+			if (_jmGetDeviceHardwareName == IntPtr.Zero)
+			{
+				Debug.LogError("_jmGetDeviceHardwareName is not initialized");
+				return null;
+			}
+			IntPtr result = AndroidJNI.CallStaticObjectMethod(_jcOuyaUnityPlugin, _jmGetDeviceHardwareName, new jvalue[0]);
+
+			if (result == IntPtr.Zero)
+			{
+				Debug.LogError("Failed to getGameData");
+				return null;
+			}
+			
+			String retVal = AndroidJNI.GetStringUTFChars(result);
+			AndroidJNI.DeleteLocalRef(result);
+			return retVal;
+		}
 
         public static string getGameData(string key)
         {

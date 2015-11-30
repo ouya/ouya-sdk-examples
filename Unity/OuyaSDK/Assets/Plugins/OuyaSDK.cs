@@ -33,7 +33,7 @@ using UnityEngine;
 
 public static class OuyaSDK
 {
-    public const string PLUGIN_VERSION = "2.0.1.1";
+    public const string PLUGIN_VERSION = "2.0.1.2";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
@@ -503,6 +503,22 @@ public static class OuyaSDK
         return false;
 #endif
     }
+
+	public static string getDeviceHardwareName()
+	{
+#if UNITY_ANDROID && !UNITY_EDITOR
+		if (OuyaUnityPlugin.isInitialized())
+		{
+			return OuyaUnityPlugin.getDeviceHardwareName();
+		}
+		else
+		{
+			return string.Empty;
+		}
+#else
+		return string.Empty;
+#endif
+	}
 
     #region Mirror Java API
 

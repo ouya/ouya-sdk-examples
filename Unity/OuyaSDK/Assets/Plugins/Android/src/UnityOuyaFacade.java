@@ -52,6 +52,7 @@ import tv.ouya.console.api.content.OuyaContent;
 import tv.ouya.console.api.content.OuyaMod;
 import tv.ouya.console.api.content.OuyaModException;
 import tv.ouya.console.api.content.OuyaModScreenshot;
+import tv.ouya.console.api.OuyaFacade.DeviceHardware;
 
 public class UnityOuyaFacade {
     /**
@@ -63,7 +64,7 @@ public class UnityOuyaFacade {
     /**
      * Your game talks to the OuyaFacade, which hides all the mechanics of doing an in-app purchase.
      */
-    private OuyaFacade ouyaFacade = null;
+    private OuyaFacade mOuyaFacade = null;
 
     /**
      * The cryptographic key for this application
@@ -117,8 +118,8 @@ public class UnityOuyaFacade {
 		try {
 			this.context = context;
 
-			if (null == ouyaFacade) {
-				ouyaFacade = OuyaFacade.getInstance();
+			if (null == mOuyaFacade) {
+				mOuyaFacade = OuyaFacade.getInstance();
 			}
 
 			Init(developerInfo);
@@ -139,7 +140,11 @@ public class UnityOuyaFacade {
 
 	private void Init(Bundle developerInfo) {
         
-		ouyaFacade.init(context, developerInfo);
+        try {
+			mOuyaFacade.init(context, developerInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		m_requestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
             @Override
@@ -555,14 +560,14 @@ public class UnityOuyaFacade {
      * which unregisters the broadcast receiver, when you're done with the IAP Facade.
      */
     public void shutdown() {
-		if (null != ouyaFacade) {
-			ouyaFacade.shutdown();
+		if (null != mOuyaFacade) {
+			mOuyaFacade.shutdown();
 		}
     }
 
 	public boolean processActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		// Forward this result to the facade, in case it is waiting for any activity results
-		if(ouyaFacade.processActivityResult(requestCode, resultCode, data)) {
+		if(mOuyaFacade.processActivityResult(requestCode, resultCode, data)) {
 			return true;
 		} else {
 			return false;
@@ -570,10 +575,10 @@ public class UnityOuyaFacade {
 	}
 
 	public boolean isInitialized() {
-		if (null == ouyaFacade) {
+		if (null == mOuyaFacade) {
 			return false;
 		} else {
-			return ouyaFacade.isInitialized();
+			return mOuyaFacade.isInitialized();
 		}
 	}
 
@@ -582,7 +587,7 @@ public class UnityOuyaFacade {
      */
     public void requestProducts(ArrayList<Purchasable> products) {
 		if (null != m_requestProductsListener) {
-			ouyaFacade.requestProductList(IOuyaActivity.GetActivity(), products, m_requestProductsListener);
+			mOuyaFacade.requestProductList(IOuyaActivity.GetActivity(), products, m_requestProductsListener);
 		}
 		else {
 			Log.e(TAG, "m_requestProductsListener is null");
@@ -592,7 +597,7 @@ public class UnityOuyaFacade {
     public void requestGamerInfo() {
 
 		if (null != m_requestGamerInfoListener) {
-			ouyaFacade.requestGamerInfo(IOuyaActivity.GetActivity(), m_requestGamerInfoListener);
+			mOuyaFacade.requestGamerInfo(IOuyaActivity.GetActivity(), m_requestGamerInfoListener);
 		}
 		else {
 			Log.e(TAG, "UnityOuyaFacade.requestGamerInfo m_requestGamerInfoListener is null");
@@ -600,11 +605,11 @@ public class UnityOuyaFacade {
     }
 
 	public void putGameData(String key, String val) {
-		ouyaFacade.putGameData(key, val);
+		mOuyaFacade.putGameData(key, val);
     }
 
 	public String getGameData(String key) {
-		return ouyaFacade.getGameData(key);
+		return mOuyaFacade.getGameData(key);
     }
 
     /**
@@ -613,14 +618,14 @@ public class UnityOuyaFacade {
 
     public void requestReceipts() {
 		if (null != m_requestReceiptsListener) {
-			ouyaFacade.requestReceipts(IOuyaActivity.GetActivity(), m_requestReceiptsListener);
+			mOuyaFacade.requestReceipts(IOuyaActivity.GetActivity(), m_requestReceiptsListener);
 		} else {
 			Log.e(TAG, "m_requestReceiptsListener is null");
 		}
     }
 
 	public Boolean isRunningOnOUYASupportedHardware() {
-		return ouyaFacade.isRunningOnOUYASupportedHardware();
+		return mOuyaFacade.isRunningOnOUYASupportedHardware();
 	}
 
     /*
@@ -633,7 +638,7 @@ public class UnityOuyaFacade {
 		if (null != m_requestPurchaseListener) {
 			//Log.i(TAG, "requestPurchase(" + product.getIdentifier() + ")");
 			Purchasable purchasable = new Purchasable(product.getIdentifier());
-			ouyaFacade.requestPurchase(IOuyaActivity.GetActivity(), purchasable, m_requestPurchaseListener);
+			mOuyaFacade.requestPurchase(IOuyaActivity.GetActivity(), purchasable, m_requestPurchaseListener);
 		} else {
 			Log.e(TAG, "m_requestPurchaseListener is null");
 		}
@@ -717,5 +722,17 @@ public class UnityOuyaFacade {
 		} else {
 			ouyaMod.download(mDownloadListener);
 		}
+	}
+	
+	public String getDeviceHardwareName() {
+		if (!mOuyaFacade.isInitialized()) {
+			Log.e(TAG, "OuyaFacade is not initialized!");
+			return "";
+		}
+		DeviceHardware deviceHardware = mOuyaFacade.getDeviceHardware();
+		if (null == deviceHardware) {
+			return "";
+		}		
+		return deviceHardware.deviceName();
 	}
 }

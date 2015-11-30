@@ -1,3 +1,4 @@
 Library/*
 obj/*
 Temp/*
+!Assets/Plugins/Android/OuyaUnityPlugin.jar

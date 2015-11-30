@@ -38,7 +38,7 @@ public class VirtualController : MonoBehaviour
         GUILayout.FlexibleSpace();
         GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
         GUILayout.FlexibleSpace();
-        GUILayout.Label("Virtual Controller for Unity");
+		GUILayout.Label(string.Format ("Virtual Controller for Unity on {0}", OuyaSDK.getDeviceHardwareName()));
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
         GUILayout.FlexibleSpace();

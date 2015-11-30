@@ -648,4 +648,13 @@ public class OuyaUnityPlugin
 		};
 		activity.runOnUiThread(runnable);
 	}
+	
+	public static String getDeviceHardwareName() {
+		final UnityOuyaFacade unityOuyaFacade = IOuyaActivity.GetUnityOuyaFacade();
+		if (null == unityOuyaFacade) {
+			Log.e(TAG, "getDeviceHardwareName: unityOuyaFacade is null!");
+			return "";
+		}
+		return unityOuyaFacade.getDeviceHardwareName();
+	}
 }
