@@ -503,7 +503,7 @@ public class OuyaPanel : EditorWindow
     [MenuItem("Window/Open OUYA Panel")]
     private static void MenuOpenPanel()
     {
-        GetWindow<OuyaPanel>("ObundUYA Panel");
+        GetWindow<OuyaPanel>("OUYA Panel");
     }
 
     void OnEnable()
