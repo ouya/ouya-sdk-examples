@@ -61,6 +61,7 @@ public class OuyaMenuAdmin : MonoBehaviour
                 "Assets/Plugins/Android/libs/ouya-sdk.jar",
                 "Assets/Plugins/Android/OuyaUnityPlugin.jar",
                 "Assets/Plugins/Android/res/drawable/app_icon.png",
+				"Assets/Plugins/Android/res/drawable/icon.png",
                 "Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
                 "Assets/Plugins/Android/res/values/strings.xml",
                 "Assets/Plugins/Android/src/DebugInput.java",
