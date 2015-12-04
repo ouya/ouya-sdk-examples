@@ -1082,6 +1082,10 @@ public class OuyaPanel : EditorWindow
             "Assets/Plugins/Android/res/drawable/app_icon.png",
             true);
 
+		File.Copy(string.Format("Assets/Ouya/Examples/Icons/{0}/icon.png", sceneName),
+			"Assets/Plugins/Android/res/drawable/icon.png",
+			true);
+
         File.Copy(string.Format("Assets/Ouya/Examples/Icons/{0}/ouya_icon.png", sceneName),
             @"Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
             true);
@@ -1103,6 +1107,10 @@ public class OuyaPanel : EditorWindow
             "Assets/Plugins/Android/res/drawable/app_icon.png",
             true);
 
+		File.Copy("Assets/Ouya/StarterKit/Icons/icon.png",
+		          "Assets/Plugins/Android/res/drawable/icon.png",
+		          true);
+
         File.Copy("Assets/Ouya/StarterKit/Icons/ouya_icon.png",
             @"Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",
             true);
@@ -1116,6 +1124,10 @@ public class OuyaPanel : EditorWindow
         File.Copy("Assets/Ouya/Examples/Icons/OuyaEverywhere/app_icon.png",
             "Assets/Plugins/Android/res/drawable/app_icon.png",
             true);
+
+		File.Copy("Assets/Ouya/Examples/Icons/OuyaEverywhere/icon.png",
+		          "Assets/Plugins/Android/res/drawable/icon.png",
+		          true);
 
         File.Copy("Assets/Ouya/Examples/Icons/OuyaEverywhere//ouya_icon.png",
             @"Assets/Plugins/Android/res/drawable-xhdpi/ouya_icon.png",

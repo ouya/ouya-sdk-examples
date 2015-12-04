@@ -82,7 +82,7 @@ public class OuyaGameObject : MonoBehaviour
 
     public void onPause(string ignore)
     {
-        //Debug.Log("onPause");
+		//Debug.Log("onPause listeners="+OuyaSDK.getPauseListeners().Count);
         foreach (OuyaSDK.IPauseListener listener in OuyaSDK.getPauseListeners())
         {
             listener.OuyaOnPause();
@@ -91,7 +91,7 @@ public class OuyaGameObject : MonoBehaviour
 
     public void onResume(string ignore)
     {
-        Debug.Log("onResume");
+		//Debug.Log("onResume listeners="+OuyaSDK.getResumeListeners().Count);
         foreach (OuyaSDK.IResumeListener listener in OuyaSDK.getResumeListeners())
         {
             listener.OuyaOnResume();
