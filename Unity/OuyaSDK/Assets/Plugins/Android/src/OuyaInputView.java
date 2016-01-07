@@ -153,7 +153,7 @@ public class OuyaInputView extends View {
 	    if (playerNum < 0 || playerNum >= OuyaController.MAX_CONTROLLERS) {
 	    	playerNum = 0;
 	    }
-
+		
 		float dpadX = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
 		float dpadY = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
 		sAxisValues.get(playerNum).put(MotionEvent.AXIS_HAT_X, dpadX);
@@ -190,8 +190,10 @@ public class OuyaInputView extends View {
 
 		dispatchGenericMotionEventNative(playerNum, MotionEvent.AXIS_HAT_X, dpadX);
 		dispatchGenericMotionEventNative(playerNum, MotionEvent.AXIS_HAT_Y, dpadY);
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+		if (motionEvent.getSource() != 8194) {
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_X, motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
+			dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_LS_Y, motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
+		}
 		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_X, motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
 		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_RS_Y, motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
 		dispatchGenericMotionEventNative(playerNum, OuyaController.AXIS_L2, motionEvent.getAxisValue(OuyaController.AXIS_L2));

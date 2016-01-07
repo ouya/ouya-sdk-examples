@@ -7,7 +7,7 @@
 
 #define trace(fmt, ...) __android_log_print(ANDROID_LOG_DEBUG, "JNI", "trace: %s (%i) " fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
 
-#define PLUGIN_VERSION "2.0.1.3"
+#define PLUGIN_VERSION "2.0.1.4"
 
 #define LOG_TAG "lib-ouya-ndk.cpp"
 

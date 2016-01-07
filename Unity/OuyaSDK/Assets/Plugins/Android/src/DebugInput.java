@@ -134,12 +134,12 @@ public class DebugInput {
 	}
 
 	public static void debugOuyaMotionEvent(MotionEvent motionEvent) {
-		Log.i(TAG, "("+OuyaController.AXIS_LS_X + ") OuyaController.AXIS_LS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_X));
-		Log.i(TAG, "("+OuyaController.AXIS_LS_Y + ") OuyaController.AXIS_LS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_Y));
-		Log.i(TAG, "("+OuyaController.AXIS_RS_X + ") OuyaController.AXIS_RS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_X));
-		Log.i(TAG, "("+OuyaController.AXIS_RS_Y + ") OuyaController.AXIS_RS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_Y));
-		Log.i(TAG, "("+OuyaController.AXIS_L2 + ") OuyaController.AXIS_L2 value="+motionEvent.getAxisValue(OuyaController.AXIS_L2));
-		Log.i(TAG, "("+OuyaController.AXIS_R2 + ") OuyaController.AXIS_R2 value="+motionEvent.getAxisValue(OuyaController.AXIS_R2));
+		Log.i(TAG, "("+OuyaController.AXIS_LS_X + ") OuyaController.AXIS_LS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_X)+" source="+motionEvent.getSource());
+		Log.i(TAG, "("+OuyaController.AXIS_LS_Y + ") OuyaController.AXIS_LS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_LS_Y)+" source="+motionEvent.getSource());
+		Log.i(TAG, "("+OuyaController.AXIS_RS_X + ") OuyaController.AXIS_RS_X value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_X)+" source="+motionEvent.getSource());
+		Log.i(TAG, "("+OuyaController.AXIS_RS_Y + ") OuyaController.AXIS_RS_Y value="+motionEvent.getAxisValue(OuyaController.AXIS_RS_Y)+" source="+motionEvent.getSource());
+		Log.i(TAG, "("+OuyaController.AXIS_L2 + ") OuyaController.AXIS_L2 value="+motionEvent.getAxisValue(OuyaController.AXIS_L2)+" source="+motionEvent.getSource());
+		Log.i(TAG, "("+OuyaController.AXIS_R2 + ") OuyaController.AXIS_R2 value="+motionEvent.getAxisValue(OuyaController.AXIS_R2)+" source="+motionEvent.getSource());
 	}
 	
 	public static void debugMotionEvent(MotionEvent motionEvent) {
