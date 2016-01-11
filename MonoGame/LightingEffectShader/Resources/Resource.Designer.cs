@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("TopDown.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("LightingEffectShader.Resource", IsApplication=true)]
 
-namespace TopDown
+namespace LightingEffectShader
 {
 	
 	

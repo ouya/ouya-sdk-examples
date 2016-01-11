@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopDown", "TopDown.csproj", "{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightingEffectShader", "LightingEffectShader.csproj", "{A0A015A1-3C82-49FE-BA9B-B5967985D1EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OuyaSdk", "..\OuyaSdk\OuyaSdk.csproj", "{3C5C877C-83E9-4BC1-984C-940052D091E7}"
 EndProject
