@@ -73,6 +73,13 @@ public class MainActivity extends Activity {
 		
 		mSoundTone = mSoundPool.load(afd, 1);
 		
+		try {
+			afd.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// set up events
 		
 		btnBoom.setOnClickListener(new View.OnClickListener() {
