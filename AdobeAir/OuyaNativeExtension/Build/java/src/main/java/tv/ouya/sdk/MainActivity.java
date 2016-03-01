@@ -244,7 +244,12 @@ public class MainActivity extends Activity implements OnClickListener {
 			Bundle developerInfo = new Bundle();
 			developerInfo.putString(OuyaFacade.OUYA_DEVELOPER_ID, sDeveloperId);
 			developerInfo.putByteArray(OuyaFacade.OUYA_DEVELOPER_PUBLIC_KEY, applicationKey);
-			sOuyaFacade.init(this, developerInfo);
+			
+			try {
+				sOuyaFacade.init(this, developerInfo);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			Log.d(TAG, "Initialized OuyaFacade.");
 			sInitialized = true;

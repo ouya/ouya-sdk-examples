@@ -1,4 +1,4 @@
-SET PATH=c:\Program Files\Java\jdk1.8.0_40\bin;%PATH%
+SET PATH=C:\NVPACK\jdk1.7.0_71\bin;%PATH%
 
 SET AIR_SDK=%USERPROFILE%\Downloads\AIRSDK_Compiler
 
@@ -28,7 +28,7 @@ IF NOT EXIST %TEMP%\ane\Android-ARM md %TEMP%\ane\Android-ARM
 COPY %LIB_FOLDER%\src\extension.xml %TEMP%\ane
 COPY %LIB_FOLDER%\bin\*.swc %TEMP%\ane
 CD %TEMP%\ane\
-unzip *.swc
+jar xf *.swc
 MOVE library.swf Android-ARM
 cd ..\..\
 
@@ -42,7 +42,7 @@ mkdir tmp
 cd tmp
 CALL jar -xvf ../AirOuyaPlugin.jar
 CALL jar -xvf ../ouya-sdk.jar
-del Combined.jar
+IF EXIST Combined.jar DEL Combined.jar
 CALL jar -cvf Combined.jar .
 COPY /Y Combined.jar ..\..\%TEMP%\ane\Android-ARM\AirOuyaPlugin.jar
 cd ..\..
