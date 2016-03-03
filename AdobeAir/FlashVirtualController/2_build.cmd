@@ -1,9 +1,9 @@
 CALL init.cmd
-COPY /Y AndroidManifest.xml FlashVirtualController\AndroidManifest.xml
-COPY /Y icons\leanback_icon.png FlashVirtualController\res\drawable
-IF EXIST FlashVirtualControllerOld.apk DEL FlashVirtualControllerOld.apk
-IF EXIST FlashVirtualController.apk COPY FlashVirtualController.apk FlashVirtualControllerOld.apk
-IF EXIST FlashVirtualControllerNew.apk DEL FlashVirtualControllerNew.apk
-"%JDK7%\bin\java.exe" -jar %APKTOOL% build FlashVirtualController FlashVirtualController.apk
-IF EXIST FlashVirtualController\dist\FlashVirtualController.apk COPY FlashVirtualController\dist\FlashVirtualController.apk FlashVirtualControllerNew.apk
+rm -r -f %PROJNAME%New
+MOVE %PROJNAME% %PROJNAME%New
+COPY /Y AndroidManifest.xml %PROJNAME%New\AndroidManifest.xml
+COPY /Y icons\leanback_icon.png %PROJNAME%New\res\drawable
+IF EXIST %PROJNAME%New.apk DEL %PROJNAME%New.apk
+"%JDK7%\bin\java.exe" -jar %APKTOOL% build %PROJNAME%New %PROJNAME%New.apk
+IF EXIST %PROJNAME%New\dist\%PROJNAME%.apk COPY %PROJNAME%New\dist\%PROJNAME%.apk %PROJNAME%New.apk
 IF NOT "%1"=="1" PAUSE
