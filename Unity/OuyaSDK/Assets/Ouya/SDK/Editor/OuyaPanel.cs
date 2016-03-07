@@ -1163,6 +1163,7 @@ public class OuyaPanel : EditorWindow
             "SceneShowUnityInput",
 			"SceneShowUGUI",
             "VirtualController",
+			"VirtualControllerJS",
         };
 
     private static int m_selectedAdbMode = 0;
