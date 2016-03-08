@@ -124,6 +124,8 @@ public class OuyaNativeContext extends FREContext implements ActivityResultCallb
 		map.put("ouyaRequestPurchase", new OuyaNativeFunctionRequestPurchase());
 		map.put("ouyaRequestReceipts", new OuyaNativeFunctionRequestReceipts());
 		map.put("ouyaRequestGamerInfo", new OuyaNativeFunctionRequestGamerInfo());
+		map.put("ouyaGetGameData", new OuyaNativeFunctionGetGameData());
+		map.put("ouyaPutGameData", new OuyaNativeFunctionPutGameData());
 		map.put("ouyaShutdown", new OuyaNativeFunctionShutdown());
 		
 		return map;

@@ -28,11 +28,13 @@
 		var _mBtnRequestPurchase:Bitmap;
 		var _mBtnRequestReceipts:Bitmap;
 		var _mBtnRequestGamerInfo:Bitmap;
+		var _mBtnGetGameData:Bitmap;
+		var _mBtnPutGameData:Bitmap;
 		var _mBtnExit:Bitmap;
 		var _mBtnPause:Bitmap;
 		
 		var _mButtonIndex:int = 0;
-		var _mButtonMax:int = 6;
+		var _mButtonMax:int = 8;
 		
 		var _mProducts:Array = null;
 		
@@ -51,8 +53,10 @@
 				UpdateVisibility(_mBtnRequestPurchase, _mButtonIndex == 1);
 				UpdateVisibility(_mBtnRequestReceipts, _mButtonIndex == 2);
 				UpdateVisibility(_mBtnRequestGamerInfo, _mButtonIndex == 3);
-				UpdateVisibility(_mBtnExit, _mButtonIndex == 4);
-				UpdateVisibility(_mBtnPause, _mButtonIndex == 5);
+				UpdateVisibility(_mBtnGetGameData, _mButtonIndex == 4);
+				UpdateVisibility(_mBtnPutGameData, _mButtonIndex == 5);
+				UpdateVisibility(_mBtnExit, _mButtonIndex == 6);
+				UpdateVisibility(_mBtnPause, _mButtonIndex == 7);
 				
 				if (_mButtonIndex < 2) {
 					DisplayProducts();
@@ -139,6 +143,13 @@
 					LblStatus.text = "STATUS: Requesting Gamer Info...";
 					_mOuyaNativeInterface.RequestGamerInfo();
 				} else if (_mButtonIndex == 4) {
+					LblStatus.text = "STATUS: Get Game Data...";
+					var result:String = _mOuyaNativeInterface.GetGameData("FULL_GAME_UNLOCK");
+					LblStatus.text = "STATUS: Get Game Data: "+result;
+				} else if (_mButtonIndex == 5) {
+					LblStatus.text = "STATUS: Put Game Data...";
+					_mOuyaNativeInterface.PutGameData("FULL_GAME_UNLOCK", "DATA SET");
+				} else if (_mButtonIndex == 6) {
 					LblStatus.text = "STATUS: Exiting...";
 					_mOuyaNativeInterface.Shutdown();
 					NativeApplication.nativeApplication.exit();
@@ -313,6 +324,8 @@
 			_mBtnRequestPurchase = CreateButton(BtnRequestPurchase);
 			_mBtnRequestReceipts = CreateButton(BtnRequestReceipts);
 			_mBtnRequestGamerInfo = CreateButton(BtnRequestGamerInfo);
+			_mBtnGetGameData = CreateButton(BtnGetGameData);
+			_mBtnPutGameData = CreateButton(BtnPutGameData);
 			_mBtnExit = CreateButton(BtnExit);
 			_mBtnPause = CreateButton(BtnPause);
 			
@@ -320,6 +333,8 @@
 			UpdateVisibility(_mBtnRequestPurchase, false);
 			UpdateVisibility(_mBtnRequestReceipts, false);
 			UpdateVisibility(_mBtnRequestGamerInfo, false);
+			UpdateVisibility(_mBtnGetGameData, false);
+			UpdateVisibility(_mBtnPutGameData, false);
 			UpdateVisibility(_mBtnExit, false);
 			UpdateVisibility(_mBtnPause, false);
 			
