@@ -34,7 +34,7 @@ public class OuyaNativeFunctionLogError implements FREFunction {
 				message = args[0].getAsString();
 			} else {
 				Log.e(TAG, "Missing message:String argument");
-				return FREObject.newObject((double)0);
+				return null;
 			}
 			Log.e(TAG, message);
 		} catch (Exception e) {
