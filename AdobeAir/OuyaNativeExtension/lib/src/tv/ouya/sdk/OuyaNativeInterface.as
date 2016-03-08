@@ -121,6 +121,14 @@ package tv.ouya.sdk
 			context.call("ouyaRequestGamerInfo");
 		}
 		
+		public function GetGameData(key:String):String {
+			return context.call("ouyaGetGameData", key) as String;
+		}
+		
+		public function PutGameData(key:String, val:String):void {
+			context.call("ouyaPutGameData", key, val);
+		}
+		
 		public function Shutdown():void {
 			context.call("ouyaShutdown");
 		}

@@ -638,6 +638,56 @@ public class MainActivity extends Activity implements OnClickListener {
         sOuyaFacade.requestGamerInfo(sInstance, sRequestGamerInfoListener);
 	}
 	
+	public static String getGameData(String key) {
+		if (null == sFREContext) {
+			Log.e(TAG, "Context is not set!");
+			return null;
+		}
+		if (null == sInstance) {
+			sendError("GetGameData", 0, "getGameData: MainActivity is null!");
+			return null;
+		}
+		if (null == sOuyaFacade) {
+            sendError("GetGameData", 0, "getGameData: sOuyaFacade is null!");
+            return null;
+        }
+        if (sEnableLogging) {
+            Log.i(TAG, "GetGameData");
+        }
+        if (null == key) {
+            sendError("GetGameData", 0, "getGameData: key is null");
+            return null;
+        }
+        return sOuyaFacade.getGameData(key);
+	}
+	
+	public static void putGameData(String key, String val) {
+		if (null == sFREContext) {
+			Log.e(TAG, "Context is not set!");
+			return;
+		}
+		if (null == sInstance) {
+			sendError("PutGameData", 0, "putGameData: MainActivity is null!");
+			return;
+		}
+		if (null == sOuyaFacade) {
+            sendError("PutGameData", 0, "putGameData sOuyaFacade is null!");
+            return;
+        }
+        if (sEnableLogging) {
+            Log.i(TAG, "PutGameData");
+        }
+        if (null == key) {
+            sendError("PutGameData", 0, "putGameData: key is null");
+            return;
+        }
+		if (null == val) {
+            sendError("PutGameData", 0, "putGameData: value is null");
+            return;
+        }
+        sOuyaFacade.putGameData(key, val);
+	}
+	
 	public static void shutdown() {
 		
 		if (null != sOuyaFacade) {
@@ -658,5 +708,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		} else {
 			Log.e(TAG, "MainActivity instance is null!");
 		}
+		
+		// with multiple activities, make sure application exits
+		android.os.Process.killProcess(android.os.Process.myPid());
 	}	
 }
