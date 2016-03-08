@@ -16,12 +16,12 @@
 	<text xml:lang="ja">Japanese App name goes here</text>
 	</name>
 -->
-<application xmlns="http://ns.adobe.com/air/application/17.0">
+<application xmlns="http://ns.adobe.com/air/application/20.0">
 	<android> 
 		  <manifestAdditions>
 		  <![CDATA[
 				<manifest>
-					<uses-permission android:name="android.permission.WAKE_LOCK" />
+					<uses-permission android:name="android.permission.WAKE_LOCK"/>
 					<application>
 						<activity>
 							<intent-filter>
@@ -58,7 +58,11 @@
     <aspectRatio>landscape</aspectRatio>
     <renderMode>cpu</renderMode>
     <autoOrients>false</autoOrients></initialWindow>
-  <icon/>
+  <icon>
+    <image36x36>icons/icon_36x36.png</image36x36> 
+    <image48x48>icons/icon_48x48.png</image48x48> 
+    <image72x72>icons/icon_72x72.png</image72x72> 
+    <image96x96>icons/icon_96x96.png</image96x96></icon> 
   <customUpdateUI>false</customUpdateUI>
   <allowBrowserInvocation>false</allowBrowserInvocation>
   <extensions>
