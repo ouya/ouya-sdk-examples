@@ -288,6 +288,7 @@ public class MainActivity extends Activity implements OnClickListener {
     	super.onDestroy();
 		if (null != mInputView) {
 			mInputView.shutdown();
+			mInputView = null;
 		}
 		sInstance = null;
     }
@@ -726,12 +727,34 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	public static void shutdown() {
 		
-		if (null != sOuyaFacade) {
-			sOuyaFacade.shutdown();
-			sOuyaFacade = null;
+		if (null != sInstance) {
+			Runnable runnable = new Runnable() {
+				@Override
+				public void run() {
+					if (sEnableLogging) {
+						Log.d(TAG, "Shutdown");
+					}					
+					if (null != sOuyaFacade) {
+						sOuyaFacade.shutdown();
+						sOuyaFacade = null;
+					}
+					if (null != sFREContext) {
+						Activity activity = sFREContext.getActivity();
+						if (null != activity) {
+							activity.finish();
+						}
+					}
+					
+					// with multiple activities, make sure application exits
+					if (sEnableLogging) {
+						Log.i(TAG, "*** Forced Shutdown!");
+					}
+					android.os.Process.killProcess(android.os.Process.myPid());		
+				}
+			};
+			sInstance.runOnUiThread(runnable);
+		} else {
+			Log.e(TAG, "MainActivity instance is null!");
 		}
-		
-		// with multiple activities, make sure application exits
-		android.os.Process.killProcess(android.os.Process.myPid());		
 	}	
 }

@@ -299,7 +299,7 @@ public class OuyaInputView extends View {
 	
 	private void processAxis(SparseArray<Float> stateAxises, final int playerNum, final int axis, final float val) {
 		stateAxises.put(axis, val);
-		Activity activity = ((Activity)getContext());
+		final Activity activity = ((Activity)getContext());
 		if (null != activity) {
 			Runnable runnable = new Runnable() {
 				@Override 
@@ -312,7 +312,8 @@ public class OuyaInputView extends View {
 							jsonObject.put("value", val);
 							sFREContext.dispatchStatusEventAsync("Axis", jsonObject.toString());
 						} else {
-							Log.e(TAG, "Input context not set!");
+							// activity has been destroyed
+							activity.finish();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -414,7 +415,7 @@ public class OuyaInputView extends View {
 					Log.i(TAG, "processKeyUp stateButtonUp playerNum="+playerNum+" keyCode="+keyCode+" ("+DebugInput.debugGetButtonName(keyCode)+") is="+stateButtonUp.get(keyCode));
 				}
 				*/
-				Activity activity = ((Activity)getContext());
+				final Activity activity = ((Activity)getContext());
 				if (null != activity) {
 					Runnable runnable = new Runnable() {
 						@Override 
@@ -426,7 +427,8 @@ public class OuyaInputView extends View {
 									jsonObject.put("button", keyCode);
 									sFREContext.dispatchStatusEventAsync("ButtonUp", jsonObject.toString());
 								} else {
-									Log.e(TAG, "Input context not set!");
+									// activity has been destroyed
+									activity.finish();
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -533,7 +535,7 @@ public class OuyaInputView extends View {
 				}
 				*/
 				
-				Activity activity = ((Activity)getContext());
+				final Activity activity = ((Activity)getContext());
 				if (null != activity) {
 					Runnable runnable = new Runnable() {
 						@Override 
@@ -545,7 +547,8 @@ public class OuyaInputView extends View {
 									jsonObject.put("button", keyCode);
 									sFREContext.dispatchStatusEventAsync("ButtonDown", jsonObject.toString());
 								} else {
-									Log.e(TAG, "Input context not set!");
+									// activity has been destroyed
+									activity.finish();
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
