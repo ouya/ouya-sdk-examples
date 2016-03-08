@@ -78,14 +78,18 @@ public class MainActivity extends Activity implements OnClickListener {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "**** onCreate");
+		if (sEnableLogging) {
+			Log.d(TAG, "**** onCreate");
+		}
         super.onCreate(savedInstanceState);
 		
 		sInstance = this;
         
         mInputView = new OuyaInputView(this);
         
-        Log.d(TAG, "Disable screensaver");
+		if (sEnableLogging) {
+			Log.d(TAG, "Disable screensaver");
+		}
         mInputView.setKeepScreenOn(true);
 		
         FrameLayout content = (FrameLayout)findViewById(android.R.id.content);
@@ -107,7 +111,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
 				@Override
 				public void onSuccess(final GamerInfo info) {
-					Log.d(TAG, "sRequestGamerInfoListener: onSuccess");
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestGamerInfoListener: onSuccess");
+					}
 					JSONObject result = new JSONObject();
 					try {
 						result.put("username", info.getUsername());
@@ -121,7 +127,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
-					Log.d(TAG, "sRequestGamerInfoListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestGamerInfoListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					}
 					sendError("RequestGamerInfoOnFailure", errorCode, errorMessage);
 				};
 			};
@@ -129,7 +137,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			sRequestProductsListener = new CancelIgnoringOuyaResponseListener<List<Product>>() {
 				@Override
 				public void onSuccess(final List<Product> products) {
-					Log.d(TAG, "sRequestProductsListener: onSuccess");
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestProductsListener: onSuccess");
+					}
 					JSONArray result = new JSONArray();
 					try {
 						int i = 0;
@@ -151,7 +161,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
-					Log.d(TAG, "sRequestProductsListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestProductsListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					}
 					sendError("RequestProductsOnFailure", errorCode, errorMessage);
 				}
 			};
@@ -160,7 +172,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onSuccess(final PurchaseResult purchaseResult) {
-					Log.d(TAG, "sRequestPurchaseListener: onSuccess");
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestPurchaseListener: onSuccess");
+					}
 					JSONObject result = new JSONObject();
 					try {
 						result.put("productIdentifier", purchaseResult.getProductIdentifier());
@@ -173,13 +187,17 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
-					Log.d(TAG, "sRequestPurchaseListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestPurchaseListener: onFailure errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					}
 					sendError("RequestPurchaseOnFailure", errorCode, errorMessage);
 				}
 
 				@Override
 				public void onCancel() {
-					Log.d(TAG, "sRequestPurchaseListener: onCancel");
+					if (sEnableLogging) {
+						Log.d(TAG, "sRequestPurchaseListener: onCancel");
+					}
 					sendError("RequestPurchaseOnCancel", 0, "Purchase was cancelled!");
 				}
 			};
@@ -188,7 +206,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onSuccess(final Collection<Receipt> receipts) {
-					Log.d(TAG, "requestReceipts onSuccess: received " + receipts.size() + " receipts");
+					if (sEnableLogging) {
+						Log.d(TAG, "requestReceipts onSuccess: received " + receipts.size() + " receipts");
+					}
 					JSONArray result = new JSONArray();
 					try {
 						int i = 0;
@@ -210,13 +230,17 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onFailure(final int errorCode, final String errorMessage, final Bundle optionalData) {
-					Log.d(TAG, "requestReceipts onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					if (sEnableLogging) {
+						Log.d(TAG, "requestReceipts onFailure: errorCode=" + errorCode + " errorMessage=" + errorMessage);
+					}
 					sendError("RequestReceiptsOnFailure", errorCode, errorMessage);
 				}
 
 				@Override
 				public void onCancel() {
-					Log.d(TAG, "requestReceipts onCancel");
+					if (sEnableLogging) {
+						Log.d(TAG, "requestReceipts onCancel");
+					}
 					sendError("RequestReceiptsOnCancel", 0, "Request Receipts was cancelled!");
 				}
 			};
@@ -250,8 +274,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			Log.d(TAG, "Initialized OuyaFacade.");
+
+			if (sEnableLogging) {
+				Log.d(TAG, "Initialized OuyaFacade.");
+			}
 			sInitialized = true;
 		}
     }
@@ -269,25 +295,33 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		Log.d(TAG, "**** onStart");
+		if (sEnableLogging) {
+			Log.d(TAG, "**** onStart");
+		}
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.d(TAG, "**** onPause");
+		if (sEnableLogging) {
+			Log.d(TAG, "**** onPause");
+		}
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(TAG, "**** onResume");
+		if (sEnableLogging) {
+			Log.d(TAG, "**** onResume");
+		}
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		Log.d(TAG, "**** onStop isFinishing="+isFinishing());
+		if (sEnableLogging) {
+			Log.d(TAG, "**** onStop isFinishing="+isFinishing());
+		}
 		finish();
 	}
 
@@ -501,7 +535,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	// Process onActivityResult events that only happen for Activity
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.i(TAG, "Processing activity result");
+		if (sEnableLogging) {
+			Log.i(TAG, "Processing activity result");
+		}
         
         if (null == sOuyaFacade) {
         	return;
@@ -695,21 +731,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			sOuyaFacade = null;
 		}
 		
-		if (null != sFREContext) {
-			Activity activity = sFREContext.getActivity();
-			if (null != activity) {
-				activity.finish();
-			}
-		}
-		
-		if (null != sInstance) {
-			sInstance.finish();
-			Log.d(TAG, "Shutdown");
-		} else {
-			Log.e(TAG, "MainActivity instance is null!");
-		}
-		
 		// with multiple activities, make sure application exits
-		android.os.Process.killProcess(android.os.Process.myPid());
+		android.os.Process.killProcess(android.os.Process.myPid());		
 	}	
 }
