@@ -178,7 +178,11 @@ public class OuyaSDK extends RunnerSocial {
 					}
 					
 					sOuyaFacade = OuyaFacade.getInstance();
-					sOuyaFacade.init(activity, developerInfo);
+					try {
+						sOuyaFacade.init(activity, developerInfo);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					
 					sRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
 						@Override
