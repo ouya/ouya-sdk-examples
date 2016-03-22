@@ -278,6 +278,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (sEnableLogging) {
 				Log.d(TAG, "Initialized OuyaFacade.");
 			}
+			
+			sendResult("OuyaSDKInitialized", "");
+			
 			sInitialized = true;
 		}
     }
