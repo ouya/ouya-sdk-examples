@@ -1,3 +1,9 @@
+assets/*
 FlashInAppPurchases.apk
 FlashInAppPurchases.html
 FlashInAppPurchases.swf
+FlashInAppPurchasesAligned.apk
+FlashInAppPurchasesNew.apk
+FlashInAppPurchasesSigned.apk
+FlashInAppPurchases/*
+FlashInAppPurchasesNew/*

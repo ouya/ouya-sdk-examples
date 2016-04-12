@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="air.tv.ouya.examples.air.flashinapppurchases"
+	platformBuildVersionCode="21" platformBuildVersionName="5.0.1-1624448">
+    <application android:hardwareAccelerated="false"
+		android:icon="@drawable/icon"
+		android:logo="@drawable/leanback_icon"
+		android:label="@string/app_name"
+		android:isGame="true">
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:label="@string/app_name" android:launchMode="singleTask" android:name=".AppEntry" android:screenOrientation="user" android:theme="@style/Theme.NoShadow" android:windowSoftInputMode="adjustResize|stateHidden">
+            <meta-data android:name="namespaceVersion" android:value="20.0"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+				<category android:name="tv.ouya.intent.category.GAME"/>
+            </intent-filter>
+            <meta-data android:name="aspectRatio" android:value="landscape"/>
+            <meta-data android:name="autoOrients" android:value="false"/>
+            <meta-data android:name="fullScreen" android:value="false"/>
+            <meta-data android:name="uniqueappversionid" android:value="f89953d4-4e11-456e-951c-f9230be74701"/>
+            <meta-data android:name="initialcontent" android:value="FlashInAppPurchases.swf"/>
+            <meta-data android:name="containsVideo" android:value="false"/>
+        </activity>
+        <activity android:name="tv.ouya.sdk.MainActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="tv.ouya.examples.adobeair.flashvirtualcontroller.ACTION1"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+</manifest>
