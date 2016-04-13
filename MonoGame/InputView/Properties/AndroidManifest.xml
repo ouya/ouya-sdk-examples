@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="tv.ouya.examples.monogame.virtualcontroller" android:versionCode="1" android:versionName="1.1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          android:installLocation="auto"
+          package="tv.ouya.examples.monogame.virtualcontroller"
+          android:versionCode="1"
+          android:versionName="1.1">
 	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="21" />
-	<application android:label="MonoGame VirtualController" android:isGame="true"></application>
+	<application android:label="MonoGame VirtualController" android:logo="@drawable/Icon" android:isGame="true"></application>
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>
