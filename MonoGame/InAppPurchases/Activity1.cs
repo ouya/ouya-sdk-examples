@@ -1,4 +1,4 @@
-#define MONOGAME_4_4
+#define MONOGAME_3_5
 
 using Android.App;
 using Android.Content;
@@ -26,12 +26,14 @@ namespace InAppPurchases
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
 	[IntentFilter(new[] { Intent.ActionMain }
-		, Categories = new[] { Intent.CategoryLauncher, CATEGORY_GAME })]
+		, Categories = new[] { Intent.CategoryLauncher, CATEGORY_GAME, CATEGORY_LEANBACK })]
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
 		private const string TAG = "Activity1";
 
 		private const String CATEGORY_GAME = "tv.ouya.intent.category.GAME";
+		
+		private const String CATEGORY_LEANBACK = "android.intent.category.LEANBACK_LAUNCHER";
 
         private const string DEVELOPER_ID = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0";
 
@@ -63,7 +65,7 @@ namespace InAppPurchases
 
             base.OnCreate(bundle);
 
-#if MONOGAME_4_4
+#if MONOGAME_3_4 || MONOGAME_3_5
             _game = new Game1();
             SetContentView((View)_game.Services.GetService(typeof(View)));
 
@@ -124,7 +126,7 @@ namespace InAppPurchases
 			_ouyaFacade.Init(this, developerInfo);
         }
 
-#if MONOGAME_4_4
+#if MONOGAME_3_4 || MONOGAME_3_5
         public override bool DispatchGenericMotionEvent(MotionEvent motionEvent)
         {
             if (null != _ouyaInputView)
