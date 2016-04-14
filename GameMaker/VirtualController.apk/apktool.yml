@@ -1,0 +1,24 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: VirtualController.apk
+compressionType: false
+doNotCompress:
+- arsc
+- ext
+- der
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '16'
+  targetSdkVersion: '21'
+sharedLibrary: false
+unknownFiles: {}
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.1.0-5c7702-SNAPSHOT
+versionInfo:
+  versionCode: '1'
+  versionName: 1.1

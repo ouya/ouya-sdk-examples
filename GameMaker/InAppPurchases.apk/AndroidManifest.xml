@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="tv.ouya.examples.gamemaker.inapppurchases" platformBuildVersionCode="16" platformBuildVersionName="4.1.2-1425332">
+    <uses-feature android:glEsVersion="0x20000"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <supports-screens android:largeScreens="true" android:resizeable="true"/>
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:logo="@drawable/banner" android:name="tv.ouya.examples.gamemaker.inapppurchases.RunnerApplication" android:isGame="true">
+        <activity android:alwaysRetainTaskState="true" android:configChanges="keyboardHidden|orientation|screenSize" android:label="@string/app_name" android:launchMode="singleTop" android:name="tv.ouya.examples.gamemaker.inapppurchases.RunnerActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <category android:name="tv.ouya.intent.category.GAME"/>
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/menu_settings" android:name="tv.ouya.examples.gamemaker.inapppurchases.RunnerPreferenceActivity"/>
+        <service android:name="RunnerBillingService"/>
+        <activity android:configChanges="keyboardHidden|orientation|screenSize" android:label="@string/app_name" android:launchMode="singleTask" android:name="tv.ouya.examples.gamemaker.inapppurchases.RunnerActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="tv.ouya.intent.category.GAME"/>
+            </intent-filter>
+        </activity>
+        <meta-data android:name="xperiaplayoptimized_content" android:resource="@string/xperiaplayoptimized_content"/>
+        <meta-data android:name="game_display_name" android:resource="@string/app_name"/>
+        <meta-data android:name="game_icon" android:resource="@drawable/icon"/>
+        <meta-data android:name="YYUse24Bit" android:value="0"/>
+        <meta-data android:name="OrientLandscape" android:value="-1"/>
+        <meta-data android:name="OrientPortrait" android:value="-1"/>
+        <meta-data android:name="OrientLandscapeFlipped" android:value="-1"/>
+        <meta-data android:name="OrientPortraitFlipped" android:value="-1"/>
+        <meta-data android:name="YYAmazonGameCircle" android:value="0"/>
+        <meta-data android:name="YYNumExtensionClasses" android:value="1"/>
+        <meta-data android:name="YYExtensionClass0" android:value="OuyaSDK"/>
+        <meta-data android:name="YYiCadeSupport" android:value="true"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="5077000"/>
+    </application>
+</manifest>
