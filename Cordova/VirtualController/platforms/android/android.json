@@ -1,0 +1,51 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"OuyaSDK\"><param name=\"android-package\" value=\"tv.ouya.sdk.CordovaOuyaPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "cordova-plugin-ouya-sdk": {
+            "PACKAGE_NAME": "tv.ouya.examples.cordova.virtualcontroller"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "tv.ouya.examples.cordova.virtualcontroller"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "file": "plugins/cordova-plugin-ouya-sdk/ouya-sdk.js",
+            "id": "cordova-plugin-ouya-sdk.OuyaSDK",
+            "pluginId": "cordova-plugin-ouya-sdk",
+            "runs": true
+        },
+        {
+            "file": "plugins/cordova-plugin-whitelist/whitelist.js",
+            "id": "cordova-plugin-whitelist.whitelist",
+            "pluginId": "cordova-plugin-whitelist",
+            "runs": true
+        }
+    ],
+    "plugin_metadata": {
+        "cordova-plugin-ouya-sdk": "1.0.0",
+        "cordova-plugin-whitelist": "1.0.0"
+    }
+}
