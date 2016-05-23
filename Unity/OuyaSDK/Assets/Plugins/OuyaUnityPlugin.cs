@@ -1,4 +1,4 @@
-﻿//#define VERBOSE_LOGGING
+//#define VERBOSE_LOGGING
 
 using System.Reflection;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -624,7 +624,7 @@ namespace tv.ouya.sdk
 
 			if (result == IntPtr.Zero)
 			{
-				Debug.LogError("Failed to getGameData");
+				Debug.LogError("Failed to getDeviceHardwareName");
 				return null;
 			}
 			
