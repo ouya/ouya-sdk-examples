@@ -53,6 +53,10 @@ public class OuyaUnityPlugin
 	// most of the java functions that are called, need the ouya facade initialized
 	public static void initOuyaPlugin(final String jsonData)
 	{
+		if (null != IOuyaActivity.GetUnityOuyaFacade()) {
+			return;
+		}
+		
 		Activity activity = IOuyaActivity.GetActivity();
 		if (null != activity) {
 			Runnable runnable = new Runnable()
@@ -107,9 +111,6 @@ public class OuyaUnityPlugin
 								developerInfo);
 
 						IOuyaActivity.SetUnityOuyaFacade(unityOuyaFacade);
-			
-						Log.i(TAG, "initOuyaPlugin: OuyaGameObject send OnSuccessInitializePlugin");
-						UnityPlayer.UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");			
 					}
 					catch (Exception e)
 					{
