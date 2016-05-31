@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import com.unity3d.player.UnityPlayer;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -111,6 +112,18 @@ public class OuyaUnityPlugin
 								developerInfo);
 
 						IOuyaActivity.SetUnityOuyaFacade(unityOuyaFacade);
+						
+						Method registerInitCompletedListener = null;
+						try {
+							registerInitCompletedListener = OuyaFacade.class.getMethod("registerInitCompletedListener");
+						} catch (Exception e) {
+						  // skip
+						}
+						
+						if (null == registerInitCompletedListener) {
+							Log.i(TAG, "initOuyaPlugin: OuyaGameObject send OnSuccessInitializePlugin");
+							UnityPlayer.UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");	
+						}
 					}
 					catch (Exception e)
 					{

@@ -23,6 +23,7 @@ import android.util.Log;
 import com.unity3d.player.UnityPlayer;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
@@ -130,33 +131,47 @@ public class UnityOuyaFacade {
 
 	private void Init(Bundle developerInfo) {
         
-        mInitCompleteListener = new CancelIgnoringOuyaResponseListener<Bundle>() {
-            @Override
-            public void onSuccess(Bundle bundle) {
-                if (sEnableLogging) {
-                    Log.i(TAG, "InitCompleteListener onSuccess");
-                }
-                sInitialized = true;
-                Log.i(TAG, "initOuyaPlugin: OuyaGameObject send OnSuccessInitializePlugin");
-                UnityPlayer.UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");
-            }
+		Method registerInitCompletedListener = null;
+		try {
+			registerInitCompletedListener = OuyaFacade.class.getMethod("registerInitCompletedListener");
+		} catch (Exception e) {
+		  // skip
+		}
+		
+		try {
+			if (null == registerInitCompletedListener) {
+				sInitialized = true;
+			} else {
+				mInitCompleteListener = new CancelIgnoringOuyaResponseListener<Bundle>() {
+					@Override
+					public void onSuccess(Bundle bundle) {
+						if (sEnableLogging) {
+							Log.i(TAG, "InitCompleteListener onSuccess");
+						}
+						sInitialized = true;
+						Log.i(TAG, "initOuyaPlugin: OuyaGameObject send OnSuccessInitializePlugin");
+						UnityPlayer.UnitySendMessage("OuyaGameObject", "OnSuccessInitializePlugin", "");
+					}
 
-            @Override
-            public void onFailure(int i, String s, Bundle bundle) {
-                if (sEnableLogging) {
-                    Log.i(TAG, "InitCompleteListener onFailure");
-                }
-                UnityPlayer.UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "InitCompleteListener onFailure");
-            }
-        };
-
-        mOuyaFacade.registerInitCompletedListener(mInitCompleteListener);
+					@Override
+					public void onFailure(int i, String s, Bundle bundle) {
+						if (sEnableLogging) {
+							Log.i(TAG, "InitCompleteListener onFailure");
+						}
+						UnityPlayer.UnitySendMessage("OuyaGameObject", "OnFailureInitializePlugin", "InitCompleteListener onFailure");
+					}
+				};
+				registerInitCompletedListener.invoke(mOuyaFacade, mInitCompleteListener);
+			}
+		} catch (Exception e) {
+		  // skip
+		}
 
 		mRequestGamerInfoListener = new CancelIgnoringOuyaResponseListener<GamerInfo>() {
             @Override
             public void onSuccess(GamerInfo info) {
 				if (sEnableLogging) {
-					Log.i(TAG, "RequestGamerInfoListener onFailure");
+					Log.i(TAG, "RequestGamerInfoListener onSuccess");
 				}
 
             	JSONObject json = new JSONObject();
@@ -192,7 +207,7 @@ public class UnityOuyaFacade {
 			@Override
 			public void onSuccess(final List<Product> products) {
 				if (sEnableLogging) {
-					Log.i(TAG, "RequestProductsListener onCancel");
+					Log.i(TAG, "RequestProductsListener onSuccess");
 				}
 
 				if (products != null) {
@@ -635,6 +650,9 @@ public class UnityOuyaFacade {
      * Get the list of products the user can purchase from the server.
      */
     public void requestProducts(ArrayList<Purchasable> products) {
+        if (sEnableLogging) {
+            Log.i(TAG, "requestProducts");
+        }
 		if (null != mRequestProductsListener) {
 			mOuyaFacade.requestProductList(IOuyaActivity.GetActivity(), products, mRequestProductsListener);
 		}
@@ -667,7 +685,7 @@ public class UnityOuyaFacade {
 
     public void requestReceipts() {
         if (sEnableLogging) {
-            Log.i(TAG, "**************** requestReceipts");
+            Log.i(TAG, "requestReceipts");
         }
 		if (null != mRequestReceiptsListener) {
 			mOuyaFacade.requestReceipts(IOuyaActivity.GetActivity(), mRequestReceiptsListener);
