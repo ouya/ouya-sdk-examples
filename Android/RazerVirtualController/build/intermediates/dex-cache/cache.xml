@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="G:\Public\ouya-sdk-examples\Android\RazerVirtualController\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="a3b3e0aafb1340ca583fdcad9f34b02f2758b4a1">
+        <dex dex="G:\Public\ouya-sdk-examples\Android\RazerVirtualController\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_4b36119fbd5678d3f7e6ef6157c63bcb8cb8bf00\classes.dex" />
+    </item>
+    <item
+        jar="G:\Public\ouya-sdk-examples\Android\RazerVirtualController\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="2d9e9e46e4bf4f499cf937cd2740fbac266384b4">
+        <dex dex="G:\Public\ouya-sdk-examples\Android\RazerVirtualController\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_6ebed51f8be1ee606491aaad383307053e8f8216\classes.dex" />
+    </item>
+    <item
+        jar="C:\NVPACK\android-sdk-windows\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="G:\Public\ouya-sdk-examples\Android\RazerVirtualController\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-v4-18.0.0_9c051afeb18932f24e06ba6566d9a9b5de47c9ca\classes.dex" />
+    </item>
+
+</items>
