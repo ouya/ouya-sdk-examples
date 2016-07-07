@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="runtimeClasses">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../jar/runtimeClasses.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

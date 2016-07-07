@@ -1,2 +1,2 @@
-CALL gradlew clean build copyJar copyNativeArmeabi copyNativeArmeabiV7a copyNativeArmeabiX86
+CALL gradlew clean build copyJar copyNativeArmeabiV7a
 pause

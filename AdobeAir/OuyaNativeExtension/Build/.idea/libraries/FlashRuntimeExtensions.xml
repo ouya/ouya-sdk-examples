@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="FlashRuntimeExtensions">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../jar/FlashRuntimeExtensions.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
