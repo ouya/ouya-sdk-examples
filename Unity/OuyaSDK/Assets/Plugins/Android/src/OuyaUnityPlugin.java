@@ -671,4 +671,13 @@ public class OuyaUnityPlugin
 		}
 		return unityOuyaFacade.getDeviceHardwareName();
 	}
+	
+	public static void useDefaultInput() {
+		final MainActivity mainActivity = IOuyaActivity.GetMainActivity();
+		if (null == mainActivity) {
+			Log.e(TAG, "useDefaultInput: MainActivity is null!");
+			return;
+		}
+		mainActivity.useDefaultInput();
+	}
 }

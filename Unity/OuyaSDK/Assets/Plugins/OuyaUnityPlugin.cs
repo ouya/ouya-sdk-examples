@@ -42,6 +42,7 @@ namespace tv.ouya.sdk
         private static IntPtr _jmGetOuyaModScreenshotArray = IntPtr.Zero;
         private static IntPtr _jmGetStringArray = IntPtr.Zero;
         private static IntPtr _jmShutdown = IntPtr.Zero;
+        private static IntPtr _jmUseDefaultInput = IntPtr.Zero;
         private IntPtr _instance = IntPtr.Zero;
 
         /// <summary>
@@ -149,9 +150,9 @@ namespace tv.ouya.sdk
 					_jmGetDeviceHardwareName = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()Ljava/lang/String;");
 					if (_jmGetDeviceHardwareName != IntPtr.Zero)
 					{
-						#if VERBOSE_LOGGING
+#if VERBOSE_LOGGING
 						Debug.Log(string.Format("Found {0} method", strMethod));
-						#endif
+#endif
 					}
 					else
 					{
@@ -543,6 +544,22 @@ namespace tv.ouya.sdk
                         return;
                     }
                 }
+
+                {
+                    string strMethod = "useDefaultInput";
+                    _jmUseDefaultInput = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+                    if (_jmUseDefaultInput != IntPtr.Zero)
+                    {
+#if VERBOSE_LOGGING
+                        Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                        return;
+                    }
+                }
             }
             catch (System.Exception ex)
             {
@@ -605,9 +622,9 @@ namespace tv.ouya.sdk
 
 		public static string getDeviceHardwareName()
 		{
-			#if VERBOSE_LOGGING
+#if VERBOSE_LOGGING
 			Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
-			#endif
+#endif
 			JNIFind();
 			
 			if (_jcOuyaUnityPlugin == IntPtr.Zero)
@@ -1358,6 +1375,35 @@ namespace tv.ouya.sdk
             }
 
             string strMethod = "shutdown";
+            IntPtr method = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
+            if (method != IntPtr.Zero)
+            {
+#if VERBOSE_LOGGING
+                Debug.Log(string.Format("Found {0} method", strMethod));
+#endif
+            }
+            else
+            {
+                Debug.LogError(string.Format("Failed to find {0} method", strMethod));
+                return;
+            }
+
+            AndroidJNI.CallStaticVoidMethod(_jcOuyaUnityPlugin, method, new jvalue[] { });
+        }
+
+        public static void useDefaultInput()
+        {
+#if VERBOSE_LOGGING
+            Debug.Log(string.Format("Invoking {0}...", MethodBase.GetCurrentMethod().Name));
+#endif
+
+            if (_jcOuyaUnityPlugin == IntPtr.Zero)
+            {
+                Debug.LogError("_jcOuyaUnityPlugin is not initialized");
+                return;
+            }
+
+            string strMethod = "useDefaultInput";
             IntPtr method = AndroidJNI.GetStaticMethodID(_jcOuyaUnityPlugin, strMethod, "()V");
             if (method != IntPtr.Zero)
             {

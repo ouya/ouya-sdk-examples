@@ -36,6 +36,17 @@ public class IOuyaActivity
 	{
 		m_activity = activity;
 	}
+	
+	// save reference to the main activity
+	protected static MainActivity s_mainActivity = null;
+	public static MainActivity GetMainActivity()
+	{
+		return s_mainActivity;
+	}
+	public static void SetMainActivity(MainActivity activity)
+	{
+		s_mainActivity = activity;
+	}	
 
 	// save reference to the bundle
 	protected static Bundle m_savedInstanceState = null;

@@ -38,8 +38,6 @@ public class OuyaGameObject : MonoBehaviour
 
     public List<KeyValuePair> OuyaPluginInitValues = new List<KeyValuePair>() { new KeyValuePair() { Key = "tv.ouya.developer_id", Value = "310a8f51-4d6e-4ae5-bda0-b93878e5f5d0" } };
 
-    public bool m_useInputThreading = false;
-
     #endregion
 
     #region Private Variables
@@ -640,66 +638,32 @@ public class OuyaGameObject : MonoBehaviour
         DontDestroyOnLoad(transform.gameObject);
 
         StartCoroutine("InvokeInitOuyaPlugin", false);
-
-        #region Init Input
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-        if (m_useInputThreading)
-        {
-            ThreadStart ts = new ThreadStart(InputWorker);
-            Thread thread = new Thread(ts);
-            thread.Start();
-        }
-#endif
-
-        #endregion
     }
     #endregion
 
     #region Controllers
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-    private bool m_waitForExit = true;
-    void OnDestroy()
-    {
-        m_waitForExit = false;
-    }
-    void OnApplicationQuit()
-    {
-        m_waitForExit = false;
-    }
-    private bool m_clearFrame = true;
     public void Update()
     {
-        if (m_useInputThreading)
+        if (OuyaSDK.GetUseDefaultInput())
         {
-            m_clearFrame = true;   
+            return;
         }
-        else
-        {
-            OuyaSDK.OuyaInput.UpdateInputFrame();
-            OuyaSDK.OuyaInput.ClearButtonStates();
-        }
+        OuyaSDK.OuyaInput.UpdateInputFrame();
+        OuyaSDK.OuyaInput.ClearButtonStates();
     }
-    private void InputWorker()
-    {
-        while (m_waitForExit)
-        {
-            OuyaSDK.OuyaInput.UpdateInputFrame();
-            if (m_clearFrame)
-            {
-                m_clearFrame = false;
-                OuyaSDK.OuyaInput.ClearButtonStates();
-            }
-            Thread.Sleep(1);
-        }
-    }
-#endif
 
     private void FixedUpdate()
     {
+        if (OuyaSDK.GetUseDefaultInput())
+        {
+            return;
+        }
         OuyaSDK.UpdateJoysticks();
     }
+
+#endif
 
     #endregion
 

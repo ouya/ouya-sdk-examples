@@ -32,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import com.unity3d.player.UnityPlayer;
 
@@ -46,7 +47,7 @@ public class MainActivity extends Activity
 {
 	private static final String TAG = "MainActivity";
 
-	private static final String PLUGIN_VERSION = "2.1.0.3";
+	private static final String PLUGIN_VERSION = "2.1.0.4";
 
 	private static final boolean sEnableLogging = false;
 
@@ -109,7 +110,9 @@ public class MainActivity extends Activity
 	{
 		mUnityPlayer.quit();
 		super.onDestroy();
-		mInputView.shutdown();
+		if (null != mInputView) {
+			mInputView.shutdown();
+		}
 	}
 
 	/**
@@ -197,7 +200,9 @@ public class MainActivity extends Activity
     	if (sEnableLogging) {
 			Log.i(TAG, "dispatchGenericMotionEvent");
 		}
-    	if (null != mInputView) {
+		if (null == mInputView) {
+			return super.dispatchGenericMotionEvent(motionEvent);
+		} else {
 			mInputView.dispatchGenericMotionEvent(motionEvent);
 		}
 		return false;
@@ -225,6 +230,9 @@ public class MainActivity extends Activity
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
     	if (sEnableLogging) {
 			Log.i(TAG, "dispatchKeyEvent keyCode="+keyEvent.getKeyCode());
+		}
+		if (null == mInputView) {
+			return super.dispatchKeyEvent(keyEvent);
 		}
 		InputDevice device = keyEvent.getDevice();
 		if (null != device) {
@@ -284,7 +292,9 @@ public class MainActivity extends Activity
     	if (sEnableLogging) {
 			Log.i(TAG, "onGenericMotionEvent");
 		}
-    	if (null != mInputView) {
+		if (null == mInputView) {
+			return super.onGenericMotionEvent(motionEvent);
+		} else {
 			mInputView.requestFocus();
 		}
 		return true;
@@ -295,7 +305,9 @@ public class MainActivity extends Activity
     	if (sEnableLogging) {
 			Log.i(TAG, "onKeyUp");
 		}
-    	if (null != mInputView) {
+    	if (null == mInputView) {
+			return super.onKeyUp(keyCode, keyEvent);
+		} else {
 			mInputView.requestFocus();
 		}
 		return true;
@@ -306,7 +318,9 @@ public class MainActivity extends Activity
     	if (sEnableLogging) {
 			Log.i(TAG, "onKeyDown");
 		}
-    	if (null != mInputView) {
+		if (null == mInputView) {
+			return super.onKeyDown(keyCode, keyEvent);
+		} else {
 			mInputView.requestFocus();
 		}
 		return true;
@@ -328,5 +342,26 @@ public class MainActivity extends Activity
 		} else {
 			Log.e(TAG, "UnityOuyaFacade is null");
 		}
+	}
+	
+	void useDefaultInput() {
+		Runnable runnable = new Runnable()
+		{
+			public void run()
+			{
+				if (null == mInputView) {
+					return;
+				}
+				mInputView.shutdown();
+				FrameLayout content = (FrameLayout)findViewById(android.R.id.content);
+				if (null != content) {
+					content.removeView(mInputView);
+				} else {
+					Log.e(TAG, "Content view is missing");
+				}
+				mInputView = null;
+			}
+		};
+		runOnUiThread(runnable);
 	}
 }
