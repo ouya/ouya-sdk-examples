@@ -1155,6 +1155,7 @@ public class OuyaPanel : EditorWindow
             "Starter Kit Scenes",
             "OUYA Everywhere Icons",
             "SceneCommunityContent",
+            "SceneDefaultInput",
             "SceneSafeArea",
             "SceneShowJavaScript",
             "SceneShowProducts",
