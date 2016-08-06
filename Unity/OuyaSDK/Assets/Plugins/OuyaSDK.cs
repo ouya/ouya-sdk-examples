@@ -43,11 +43,11 @@ public static class OuyaSDK
     private static Dictionary<string, string> m_stringResources = new Dictionary<string, string>();
 
     // When true, disables plugin input handling
-    private static bool m_useDefaultInput = false;
+    private static bool s_useDefaultInput = false;
 
     public static bool GetUseDefaultInput()
     {
-        return m_useDefaultInput;
+        return s_useDefaultInput;
     }
 
     static OuyaSDK()
@@ -166,11 +166,16 @@ public static class OuyaSDK
 
         public static void UpdateInputFrame()
         {
+            if (s_useDefaultInput)
+            {
+                return;
+            }
+
             lock (m_lockObject)
             {
                 for (int deviceId = 0; deviceId < OuyaController.MAX_CONTROLLERS; ++deviceId)
                 {
-    #region Track Axis States
+                    #region Track Axis States
 
                     Dictionary<int, float> axisState = m_axisStates[deviceId];
                     axisState[OuyaController.AXIS_LS_X] = NdkWrapper.getAxis(deviceId, OuyaController.AXIS_LS_X);
@@ -180,9 +185,9 @@ public static class OuyaSDK
                     axisState[OuyaController.AXIS_L2] = NdkWrapper.getAxis(deviceId, OuyaController.AXIS_L2);
                     axisState[OuyaController.AXIS_R2] = NdkWrapper.getAxis(deviceId, OuyaController.AXIS_R2);
 
-    #endregion
+                    #endregion
 
-    #region Track Button Up / Down States
+                    #region Track Button Up / Down States
 
                     Dictionary<int, bool> buttonState = m_buttonStates[deviceId];
                     Dictionary<int, bool> buttonDownState = m_buttonDownStates[deviceId];
@@ -230,7 +235,7 @@ public static class OuyaSDK
                     buttonUpState[OuyaController.BUTTON_DPAD_LEFT] = NdkWrapper.isPressedUp(deviceId, OuyaController.BUTTON_DPAD_LEFT);
                     buttonUpState[OuyaController.BUTTON_MENU] = NdkWrapper.isPressedUp(deviceId, OuyaController.BUTTON_MENU);
 
-    #endregion
+                    #endregion
 
                     //debugOuyaController(deviceId);
                 }
@@ -282,9 +287,9 @@ public static class OuyaSDK
             debugOuyaController(deviceId, OuyaController.BUTTON_MENU);
         }
 
-    #endregion
+        #endregion
 
-    #region Public API
+        #region Public API
 
         public static bool IsControllerConnected(int playerNum)
         {
@@ -406,7 +411,7 @@ public static class OuyaSDK
             return false;
         }
 
-    #endregion
+        #endregion
     }
 
 #endif
@@ -512,21 +517,21 @@ public static class OuyaSDK
 #endif
     }
 
-	public static string getDeviceHardwareName()
-	{
+    public static string getDeviceHardwareName()
+    {
 #if UNITY_ANDROID && !UNITY_EDITOR
-		if (OuyaUnityPlugin.isInitialized())
-		{
-			return OuyaUnityPlugin.getDeviceHardwareName();
-		}
-		else
-		{
-			return string.Empty;
-		}
+        if (OuyaUnityPlugin.isInitialized())
+        {
+            return OuyaUnityPlugin.getDeviceHardwareName();
+        }
+        else
+        {
+            return string.Empty;
+        }
 #else
 		return string.Empty;
 #endif
-	}
+    }
 
     #region Mirror Java API
 
@@ -696,15 +701,20 @@ public static class OuyaSDK
         {
             return;
         }
-        m_useDefaultInput = true;
         OuyaUnityPlugin.useDefaultInput();
+        OuyaInput.ClearAxes();
+        OuyaInput.ClearButtons();
+        OuyaInput.ClearButtonStates();
+        OuyaInput.ClearButtonStates();
+        OuyaInput.UpdateInputFrame();
+        s_useDefaultInput = true;
     }
 
 #endif
 
-#endregion
+    #endregion
 
-#region Data containers
+    #region Data containers
 
     [Serializable]
     public class GamerInfo
@@ -844,11 +854,11 @@ public static class OuyaSDK
 #endif
     }
 
-#endregion
+    #endregion
 
 #if UNITY_ANDROID && !UNITY_EDITOR
 
-#region Joystick Callibration Listeners
+    #region Joystick Callibration Listeners
 
     public interface IJoystickCalibrationListener
     {
@@ -874,9 +884,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Menu Appearing Listeners
+    #region Menu Appearing Listeners
 
     public interface IMenuAppearingListener
     {
@@ -902,9 +912,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Pause Listeners
+    #region Pause Listeners
 
     public interface IPauseListener
     {
@@ -930,9 +940,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Resume Listeners
+    #region Resume Listeners
 
     public interface IResumeListener
     {
@@ -958,9 +968,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Initialized Listener
+    #region Content Initialized Listener
 
     public interface IContentInitializedListener
     {
@@ -987,9 +997,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Delete Listener
+    #region Content Delete Listener
 
     public interface IContentDeleteListener
     {
@@ -1016,9 +1026,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Download Listener
+    #region Content Download Listener
 
     public interface IContentDownloadListener
     {
@@ -1046,9 +1056,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Installed Search Listener
+    #region Content Installed Search Listener
 
     public interface IContentInstalledSearchListener
     {
@@ -1075,9 +1085,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Published Search Listener
+    #region Content Published Search Listener
 
     public interface IContentPublishedSearchListener
     {
@@ -1104,9 +1114,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Publish Listener
+    #region Content Publish Listener
 
     public interface IContentPublishListener
     {
@@ -1133,9 +1143,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Save Listener
+    #region Content Save Listener
 
     public interface IContentSaveListener
     {
@@ -1162,9 +1172,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Content Unpublish Listener
+    #region Content Unpublish Listener
 
     public interface IContentUnpublishListener
     {
@@ -1191,9 +1201,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Request Gamer Info Listener
+    #region Request Gamer Info Listener
 
     public interface IRequestGamerInfoListener
     {
@@ -1221,9 +1231,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Request Products Listeners
+    #region Request Products Listeners
 
     public interface IRequestProductsListener
     {
@@ -1251,9 +1261,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Request Purchase Listener
+    #region Request Purchase Listener
 
     public interface IRequestPurchaseListener
     {
@@ -1281,9 +1291,9 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
-#region Request Receipts Listeners
+    #region Request Receipts Listeners
 
     public interface IRequestReceiptsListener
     {
@@ -1311,7 +1321,7 @@ public static class OuyaSDK
         }
     }
 
-#endregion
+    #endregion
 
 #endif
 }

@@ -98,7 +98,40 @@ public class OuyaMenuAdmin : MonoBehaviour
         Debug.Log(string.Format("Export OuyaSDK-StarterKit.unitypackage success in: {0}", Directory.GetCurrentDirectory()));
     }
 
-    [MenuItem("OUYA/Copy Object Transform", priority=1000)]
+    [MenuItem("OUYA/Unset Symbol (UNITY_EDITOR)", priority = 1000)]
+    public static void MenuSymbolUnsetUnityEditor()
+    {
+        try
+        {
+            DirectoryInfo pathUnityProject = new DirectoryInfo(Directory.GetCurrentDirectory());
+            foreach (FileInfo file in pathUnityProject.GetFiles())
+            {
+                if (!file.Extension.ToUpper().Equals(".CSPROJ"))
+                {
+                    continue;
+                }
+                //Debug.Log(string.Format("Examine: {0}", file.Name));
+                string content;
+                using (StreamReader sr = new StreamReader(file.FullName))
+                {
+                    content = sr.ReadToEnd();
+                    content = content.Replace("UNITY_EDITOR;", string.Empty);
+                }
+                using (StreamWriter sw = new StreamWriter(file.FullName))
+                {
+                    sw.Write(content);
+                    sw.Flush();
+                }
+                Debug.Log(string.Format("Updated: {0}", file.Name));
+            }
+        }
+        catch (System.Exception)
+        {
+
+        }
+    }
+
+    [MenuItem("OUYA/Copy Object Transform", priority= 2010)]
     public static void MenuCopyObjectTransform()
     {
         if (Selection.activeGameObject)
@@ -108,7 +141,7 @@ public class OuyaMenuAdmin : MonoBehaviour
         }
     }
 
-    [MenuItem("OUYA/Copy Scene Transform", priority = 1000)]
+    [MenuItem("OUYA/Copy Scene Transform", priority = 2020)]
     public static void MenuCopySceneTransform()
     {
         if (SceneView.currentDrawingSceneView &&
@@ -120,7 +153,7 @@ public class OuyaMenuAdmin : MonoBehaviour
         }
     }
 
-    [MenuItem("OUYA/Paste Stored Transform", priority = 1000)]
+    [MenuItem("OUYA/Paste Stored Transform", priority = 2030)]
     public static void MenuSetTransform()
     {
         if (Selection.activeGameObject)
