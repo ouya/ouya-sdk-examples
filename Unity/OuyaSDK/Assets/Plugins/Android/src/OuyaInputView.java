@@ -75,7 +75,7 @@ public class OuyaInputView extends View {
 
     private void init() {
     	if (sEnableLogging) {
-    		Log.i(TAG, "Construct OuyaInputView");
+    		Log.i(TAG, "init: OuyaInputView");
     	}
 		Activity activity = ((Activity)getContext());		
 		if (null != activity) {			
@@ -84,7 +84,7 @@ public class OuyaInputView extends View {
 			if (null != content) {
 				content.addView(this);
 			} else {
-				Log.e(TAG, "Content view is missing");
+				Log.e(TAG, "init: Content view is missing");
 			}
 			
 			OuyaInputMapper.init(activity);			
@@ -92,17 +92,21 @@ public class OuyaInputView extends View {
 			setFocusable(true);
 			requestFocus();
 		} else {
-			Log.e(TAG, "Activity is null");
+			Log.e(TAG, "init: Activity is null");
 		}
 	}
 	
 	public void shutdown() {
-		Activity activity = ((Activity)getContext());		
-		if (null != activity) {
-    		OuyaInputMapper.shutdown(activity);
-    	} else {
-    		Log.e(TAG, "Activity was not found.");
-    	}
+		try {
+			Activity activity = ((Activity)getContext());		
+			if (null != activity) {
+				OuyaInputMapper.shutdown(activity);
+			} else {
+				Log.e(TAG, "shutdown: Activity was not found.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 	
 	@Override

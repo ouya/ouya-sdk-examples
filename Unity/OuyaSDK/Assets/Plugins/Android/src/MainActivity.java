@@ -62,6 +62,7 @@ public class MainActivity extends Activity
 
 		//make activity accessible to Unity
 		IOuyaActivity.SetActivity(this);
+		IOuyaActivity.SetMainActivity(this);
 
 		//make bundle accessible to Unity
 		if (null != savedInstanceState)
@@ -344,12 +345,14 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	void useDefaultInput() {
+	public void useDefaultInput() {
 		Runnable runnable = new Runnable()
 		{
 			public void run()
 			{
 				if (null == mInputView) {
+					Log.i(TAG, "useDefaultInput: Focus the Unity Player");
+					giveUnityFocus();
 					return;
 				}
 				mInputView.shutdown();
@@ -360,8 +363,16 @@ public class MainActivity extends Activity
 					Log.e(TAG, "Content view is missing");
 				}
 				mInputView = null;
+				Log.i(TAG, "useDefaultInput: Request focus for the Unity Player");
+				giveUnityFocus();
 			}
 		};
 		runOnUiThread(runnable);
+	}
+	
+	private void giveUnityFocus() {
+		takeKeyEvents(false);
+		mUnityPlayer.setFocusable(true);
+		mUnityPlayer.requestFocus();
 	}
 }
